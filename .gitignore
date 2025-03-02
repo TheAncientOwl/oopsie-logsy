@@ -1,0 +1,51 @@
+# Rust related
+/target/
+/**/target/
+/Cargo.lock
+**/*.rs.bk
+
+# Tauri build artifacts
+/src-tauri/target/
+/src-tauri/Cargo.lock
+/src-tauri/.fingerprint/
+/src-tauri/src-tauri-build
+/src-tauri/.tauri-build.json
+/src-tauri/bindings.json
+
+# Node.js related (if using a frontend framework)
+node_modules/
+dist/
+.pnp/
+.pnp.js
+
+# Bun package manager (if used)
+.bun/
+
+# Vite or Webpack cache (for React, Svelte, Vue, etc.)
+.vite/
+.vitepress/cache/
+.next/
+.nuxt/
+.svelte-kit/
+out/
+build/
+
+# Logs and OS files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+bun.lockb
+.DS_Store
+Thumbs.db
+
+# Editor/IDE specific
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Misc
+/tauir-build.log
