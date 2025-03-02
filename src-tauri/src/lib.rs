@@ -1,3 +1,15 @@
+/**
+ * -------------------------------------------------------------------------- *
+ *                     Copyright (c) by OopsieLogsy 2025                      *
+ * -------------------------------------------------------------------------- *
+ * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
+ *
+ * @file lib.rs
+ * @author Alexandru Delegeanu
+ * @version 0.1
+ * @description OopsieLogsy tauri lib
+ */
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {

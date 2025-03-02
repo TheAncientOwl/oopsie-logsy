@@ -1,3 +1,15 @@
+/**
+ * -------------------------------------------------------------------------- *
+ *                     Copyright (c) by OopsieLogsy 2025                      *
+ * -------------------------------------------------------------------------- *
+ * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
+ *
+ * @file App.css
+ * @author Alexandru Delegeanu
+ * @version 0.1
+ * @description React tempalte styles
+ */
+
 .logo.vite:hover {
   filter: drop-shadow(0 0 2em #747bff);
 }
