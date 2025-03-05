@@ -6,20 +6,22 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filters component
  */
 
-import { Box, Button, Heading, HStack, Stack, Tabs } from '@chakra-ui/react';
+import { Box, Button, ButtonGroup, Heading, HStack, IconButton, Span, Stack, Tabs } from '@chakra-ui/react';
 import { useColorModeValue } from '../ui/color-mode';
+import { GoMute, GoUnmute } from 'react-icons/go';
+import { CiExport, CiImport } from 'react-icons/ci';
+import { SiCcleaner } from 'react-icons/si';
+import { FaCheck, FaPlus } from 'react-icons/fa';
 
 interface FiltersProps {
   filtersOpen: boolean;
 }
 
 const Filters = ({ filtersOpen }: FiltersProps) => {
-  const bg = useColorModeValue('gray.100', 'gray.700');
-
   const filterTabs = [
     {
       id: 1,
@@ -56,10 +58,15 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
     { id: 3, name: 'filter-group3', title: 'FilterGroup3', filters: [] },
   ];
 
+  const bg = useColorModeValue('gray.200', 'gray.900');
+  const boxBorder = useColorModeValue('gray.700', 'gray.200');
+
   return (
     <Box
-      display={filtersOpen ? 'block' : 'none'}
       bg={bg}
+      borderTop='1px solid'
+      borderColor={boxBorder}
+      display={filtersOpen ? 'block' : 'none'}
       position='fixed'
       bottom='0'
       left='0'
@@ -68,42 +75,60 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
       height='40vh' // TODO: make height resizeable by dragging
     >
       <Tabs.Root variant='line' defaultValue={filterTabs[0].name}>
-        <Tabs.List>
+        <Tabs.List position='relative'>
           {filterTabs.map(tab => (
-            <Tabs.Trigger
-              key={tab.id}
-              value={tab.name}
-              style={{
-                all: 'unset', // Remove button styles
-                borderBottom: '2px solid transparent',
-                padding: '0.5rem 1rem',
-                cursor: 'pointer',
-              }}
-            >
+            <Tabs.Trigger colorPalette='green' key={tab.id} value={tab.name}>
               {tab.title}
             </Tabs.Trigger>
           ))}
+          <Button size='xs' variant='subtle' colorPalette='green' position='absolute' right='0.5em' top='0.5em'>
+            <FaPlus /> New
+          </Button>
         </Tabs.List>
         {filterTabs.map(tab => (
           <Tabs.Content key={tab.id} value={tab.name}>
-            <HStack>
-              <Button size='xs'>Apply</Button>
-              <Button size='xs'>Enable All</Button>
-              <Button size='xs'>Disable All</Button>
-              <Button size='xs'>Import</Button>
-              <Button size='xs'>Export</Button>
-              <Button size='xs'>Clear</Button>
+            <HStack mb='1em' padding='0 0.5em'>
+              <ButtonGroup size='xs' variant='subtle' colorPalette='green'>
+                <Button>
+                  <FaCheck />
+                  Apply
+                </Button>
+                <Button>
+                  <FaPlus /> New
+                </Button>
+                <Button>
+                  <GoUnmute /> Mute All
+                </Button>
+                <Button>
+                  <GoMute /> Mute All
+                </Button>
+              </ButtonGroup>
+              <Span flex='1' />
+              <ButtonGroup size='xs' variant='subtle' colorPalette='green'>
+                <Button>
+                  <CiImport /> Import
+                </Button>
+                <Button>
+                  <CiExport /> Export
+                </Button>
+                <Button>
+                  <SiCcleaner /> Clear
+                </Button>
+              </ButtonGroup>
             </HStack>
-            <Box>
-              <Stack border='1px solid green'>
-                {/* TODO: move into Filter component */}
-                {tab.filters.map(filter => (
-                  <Box key={`${tab.id}-${filter.id}`} borderBottom='2px solid white' paddingBottom='0.25em'>
-                    <Heading size='xl'>{filter.name}</Heading>
-                  </Box>
-                ))}
-              </Stack>
-            </Box>
+            <Stack border='1px solid green'>
+              {/* TODO: move into Filter component */}
+              {tab.filters.map(filter => (
+                <Box
+                  key={`${tab.id}-${filter.id}`}
+                  padding='0.5em 1em'
+                  borderBottom='2px solid white'
+                  paddingBottom='0.25em'
+                >
+                  <Heading size='xl'>{filter.name}</Heading>
+                </Box>
+              ))}
+            </Stack>
           </Tabs.Content>
         ))}
       </Tabs.Root>

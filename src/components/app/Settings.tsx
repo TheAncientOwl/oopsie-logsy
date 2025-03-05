@@ -6,7 +6,7 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description App settings
  */
 
@@ -20,15 +20,15 @@ interface SettingsProps {
 }
 
 const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
-  const bg = useColorModeValue('gray.100', 'gray.700');
-  const color = useColorModeValue('black', 'white');
+  const bg = useColorModeValue('white', 'gray.900');
+  const border = useColorModeValue('gray.700', 'gray.200');
 
   return (
     <Box
-      display={menuOpen ? 'block' : 'none'}
       bg={bg}
-      color={color}
-      border={`2px solid ${color}`}
+      border='2px solid'
+      borderColor={border}
+      display={menuOpen ? 'block' : 'none'}
       position='fixed'
       top='0'
       left='0'
@@ -37,7 +37,7 @@ const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
       padding={'1em'}
     >
       <HStack marginBottom={'0.5em'}>
-        <IconButton size='sm' variant='ghost' onClick={onMenuClose}>
+        <IconButton colorPalette='red' variant='surface' size='sm' onClick={onMenuClose}>
           <SlSettings />
         </IconButton>
         <Heading size='2xl'>Settings</Heading>

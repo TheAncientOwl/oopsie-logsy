@@ -6,7 +6,7 @@
  *
  * @file LogViewer.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Display logs in table format
  */
 
@@ -192,8 +192,8 @@ const LogViewer = () => {
   ];
 
   return (
-    <Table.Root size='sm' stickyHeader striped>
-      <Table.Header>
+    <Table.Root size='sm' striped>
+      <Table.Header position='sticky' top='3.5rem'>
         <Table.Row>
           <Table.ColumnHeader>Idx</Table.ColumnHeader>
           <Table.ColumnHeader>Timestamp</Table.ColumnHeader>

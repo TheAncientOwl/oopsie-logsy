@@ -6,7 +6,7 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description App main toolbar
  */
 
@@ -14,6 +14,7 @@ import { Flex, IconButton, Input } from '@chakra-ui/react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { SlSettings } from 'react-icons/sl';
+import { useColorModeValue } from '../ui/color-mode';
 
 interface ToolBarProps {
   onSettingsOpen: () => void;
@@ -21,23 +22,25 @@ interface ToolBarProps {
 }
 
 const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
+  const bg = useColorModeValue('white', 'black');
+
   return (
-    <Flex padding='0.5em' gap='0.5em' justify='center' alignItems='center'>
+    <Flex position='sticky' top='0' bg={bg} padding='0.5em' gap='0.5em' justify='center' alignItems='center'>
       <Flex gap='0.25em'>
-        <IconButton onClick={onSettingsOpen}>
+        <IconButton colorPalette='green' variant='outline' onClick={onSettingsOpen}>
           <SlSettings />
         </IconButton>
-        <IconButton onClick={onFiltersOpen}>
+        <IconButton colorPalette='green' variant='outline' onClick={onFiltersOpen}>
           <GiSettingsKnobs />
         </IconButton>
-        <IconButton>
+        <IconButton colorPalette='green' variant='outline'>
           <BsArrowLeft />
         </IconButton>
-        <IconButton>
+        <IconButton colorPalette='green' variant='outline'>
           <BsArrowRight />
         </IconButton>
       </Flex>
-      <Input variant='subtle' placeholder='search' />
+      <Input colorPalette='green' variant='subtle' placeholder='search' />
     </Flex>
   );
 };

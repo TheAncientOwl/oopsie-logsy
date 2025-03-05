@@ -6,19 +6,19 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description App class
  */
 
-import { ColorModeProvider } from '@/components/ui/color-mode';
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { Box, ChakraProvider, defaultSystem } from '@chakra-ui/react';
+import { ThemeProvider } from 'next-themes';
+import { useState } from 'react';
 
 import Filters from '@/components/app/Filters';
 import LogViewer from '@/components/app/LogViewer';
 import Settings from '@/components/app/Settings';
 import ToolBar from '@/components/app/ToolBar';
-import { useState } from 'react';
-import './App.css';
+import { ColorModeButton } from './components/ui/color-mode';
 
 const App = () => {
   // todo: refactor to useSwitch
@@ -26,19 +26,33 @@ const App = () => {
   const [filtersMenuOpen, setFiltersMenuOpen] = useState(false);
 
   return (
-    <main>
+    <>
       <ChakraProvider value={defaultSystem}>
-        <ColorModeProvider>
-          <Settings menuOpen={settingsMenuOpen} onMenuClose={() => setSettingsMenuOpen(false)} />
+        <ThemeProvider attribute='class' disableTransitionOnChange>
           <ToolBar
             onSettingsOpen={() => setSettingsMenuOpen(true)}
             onFiltersOpen={() => setFiltersMenuOpen(!filtersMenuOpen)}
           />
           <LogViewer />
+          <Settings menuOpen={settingsMenuOpen} onMenuClose={() => setSettingsMenuOpen(false)} />
           <Filters filtersOpen={filtersMenuOpen} />
-        </ColorModeProvider>
+          {/* For dev accesibility purpose - light/dark mode switch */}
+          <Box
+            style={{
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              background: 'tomato',
+              border: '2px solid cyan',
+              borderRadius: '0.25em',
+              zIndex: 8888,
+            }}
+          >
+            <ColorModeButton />
+          </Box>
+        </ThemeProvider>
       </ChakraProvider>
-    </main>
+    </>
   );
 };
 
