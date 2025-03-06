@@ -10,12 +10,13 @@
  * @description Filters component
  */
 
-import { Box, Button, ButtonGroup, Heading, HStack, IconButton, Span, Stack, Tabs } from '@chakra-ui/react';
-import { useColorModeValue } from '../../ui/color-mode';
-import { GoMute, GoUnmute } from 'react-icons/go';
+import { Box, Button, ButtonGroup, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
 import { CiExport, CiImport } from 'react-icons/ci';
-import { SiCcleaner } from 'react-icons/si';
 import { FaCheck, FaPlus } from 'react-icons/fa';
+import { GoMute, GoUnmute } from 'react-icons/go';
+import { SiCcleaner } from 'react-icons/si';
+import { useColorModeValue } from '../../ui/color-mode';
+import { Filter } from './Filter';
 
 interface FiltersProps {
   filtersOpen: boolean;
@@ -32,6 +33,13 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
           id: 1,
           name: 'Filter1',
           over: 'Payload',
+          active: true,
+          overAlternatives: [
+            { label: 'Timestamp', value: 'Timestamp' },
+            { label: 'Channel', value: 'Channel' },
+            { label: 'Level', value: 'Level' },
+            { label: 'Payload', value: 'Payload' },
+          ],
           highlightOnly: false,
           isRegex: false,
           formula: 'some string to filter',
@@ -44,6 +52,13 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
           id: 2,
           name: 'Filter2',
           over: 'Level',
+          active: false,
+          overAlternatives: [
+            { label: 'Timestamp', value: 'Timestamp' },
+            { label: 'Channel', value: 'Channel' },
+            { label: 'Level', value: 'Level' },
+            { label: 'Payload', value: 'Payload' },
+          ],
           highlightOnly: false,
           isRegex: true,
           formula: '(warn|error)',
@@ -72,16 +87,24 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
       left='0'
       right='0'
       zIndex={9999}
-      height='40vh' // TODO: make height resizeable by dragging
+      overflowY='scroll'
+      maxHeight='45vh' // TODO: make height resizeable by dragging
     >
       <Tabs.Root variant='line' defaultValue={filterTabs[0].name}>
-        <Tabs.List position='relative'>
+        <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
           {filterTabs.map(tab => (
             <Tabs.Trigger colorPalette='green' key={tab.id} value={tab.name}>
               {tab.title}
             </Tabs.Trigger>
           ))}
-          <Button size='xs' variant='subtle' colorPalette='green' position='absolute' right='0.5em' top='0.5em'>
+          <Button
+            size='xs'
+            variant='subtle'
+            colorPalette='green'
+            position='absolute'
+            right='0.5em'
+            top='0.5em'
+          >
             <FaPlus /> New
           </Button>
         </Tabs.List>
@@ -116,17 +139,9 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
                 </Button>
               </ButtonGroup>
             </HStack>
-            <Stack border='1px solid green'>
-              {/* TODO: move into Filter component */}
-              {tab.filters.map(filter => (
-                <Box
-                  key={`${tab.id}-${filter.id}`}
-                  padding='0.5em 1em'
-                  borderBottom='2px solid white'
-                  paddingBottom='0.25em'
-                >
-                  <Heading size='xl'>{filter.name}</Heading>
-                </Box>
+            <Stack gap='0'>
+              {tab.filters.map((filter, index) => (
+                <Filter key={`${tab.id}-${filter.id}`} {...filter} />
               ))}
             </Stack>
           </Tabs.Content>
