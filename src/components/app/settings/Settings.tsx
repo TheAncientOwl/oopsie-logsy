@@ -12,7 +12,7 @@
 
 import { Box, Heading, HStack, IconButton } from '@chakra-ui/react';
 import { SlSettings } from 'react-icons/sl';
-import { ColorModeButton, useColorModeValue } from '../ui/color-mode';
+import { ColorModeButton, useColorModeValue } from '../../ui/color-mode';
 
 interface SettingsProps {
   menuOpen: boolean;

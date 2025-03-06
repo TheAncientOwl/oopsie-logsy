@@ -14,7 +14,7 @@ import { Flex, IconButton, Input } from '@chakra-ui/react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { SlSettings } from 'react-icons/sl';
-import { useColorModeValue } from '../ui/color-mode';
+import { useColorModeValue } from '../../ui/color-mode';
 
 interface ToolBarProps {
   onSettingsOpen: () => void;

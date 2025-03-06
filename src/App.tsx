@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description App class
  */
 
@@ -14,10 +14,10 @@ import { Box, ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { ThemeProvider } from 'next-themes';
 import { useState } from 'react';
 
-import Filters from '@/components/app/Filters';
-import LogViewer from '@/components/app/LogViewer';
-import Settings from '@/components/app/Settings';
-import ToolBar from '@/components/app/ToolBar';
+import Filters from '@/components/app/filters';
+import LogViewer from '@/components/app/logs/LogViewer';
+import Settings from '@/components/app/settings/Settings';
+import ToolBar from '@/components/app/toolbar/ToolBar';
 import { ColorModeButton } from './components/ui/color-mode';
 
 const App = () => {

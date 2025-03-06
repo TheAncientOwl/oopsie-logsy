@@ -11,7 +11,7 @@
  */
 
 import { Box, Button, ButtonGroup, Heading, HStack, IconButton, Span, Stack, Tabs } from '@chakra-ui/react';
-import { useColorModeValue } from '../ui/color-mode';
+import { useColorModeValue } from '../../ui/color-mode';
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { CiExport, CiImport } from 'react-icons/ci';
 import { SiCcleaner } from 'react-icons/si';
