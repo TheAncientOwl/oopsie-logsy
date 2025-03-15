@@ -6,13 +6,13 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filter component
  */
 
-import { useColorModeValue } from '@/components/ui/color-mode';
-import { EyeClosedIcon, EyeOpenIcon, RegexOnIcon } from '@/components/ui/icons';
-import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
+import { useColorModeValue } from '@/components/ui/buttons/ColorMode';
+import { EyeClosedIcon, EyeOpenIcon, RegexOnIcon } from '@/components/ui/Icons';
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import useSwitch, { useSwitch2 } from '@/hooks/useSwitch';
 import {
   Box,

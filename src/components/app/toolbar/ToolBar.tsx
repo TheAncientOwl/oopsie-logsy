@@ -14,18 +14,26 @@ import { Flex, IconButton, Input } from '@chakra-ui/react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { SlSettings } from 'react-icons/sl';
-import { useColorModeValue } from '../../ui/color-mode';
+import { useColorModeValue } from '@/components/ui/buttons/ColorMode';
 
 interface ToolBarProps {
   onSettingsOpen: () => void;
   onFiltersOpen: () => void;
 }
 
-const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
+export const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
   const bg = useColorModeValue('white', 'black');
 
   return (
-    <Flex position='sticky' top='0' bg={bg} padding='0.5em' gap='0.5em' justify='center' alignItems='center'>
+    <Flex
+      position='sticky'
+      top='0'
+      bg={bg}
+      padding='0.5em'
+      gap='0.5em'
+      justify='center'
+      alignItems='center'
+    >
       <Flex gap='0.25em'>
         <IconButton colorPalette='green' variant='outline' onClick={onSettingsOpen}>
           <SlSettings />
@@ -44,5 +52,3 @@ const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
     </Flex>
   );
 };
-
-export default ToolBar;

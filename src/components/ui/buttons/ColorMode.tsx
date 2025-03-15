@@ -4,9 +4,9 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file color-mode.tsx
+ * @file ColorMode.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description CharkaUI color mode utilities
  */
 
@@ -16,9 +16,9 @@ import type { IconButtonProps } from '@chakra-ui/react';
 import { ClientOnly, IconButton, Skeleton } from '@chakra-ui/react';
 import type { ThemeProviderProps } from 'next-themes';
 import { ThemeProvider, useTheme } from 'next-themes';
-import * as React from 'react';
+import { forwardRef } from 'react';
 import { LuMoon, LuSun } from 'react-icons/lu';
-import { Tooltip } from './tooltip';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 export interface ColorModeProviderProps extends ThemeProviderProps {}
 
@@ -58,7 +58,7 @@ export function ColorModeIcon() {
 
 interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
 
-export const ColorModeButton = React.forwardRef<HTMLButtonElement, ColorModeButtonProps>(
+export const ColorModeButton = forwardRef<HTMLButtonElement, ColorModeButtonProps>(
   function ColorModeButton(props, ref) {
     const { toggleColorMode, colorMode } = useColorMode();
     return (

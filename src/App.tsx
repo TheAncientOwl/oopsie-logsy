@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description App class
  */
 
@@ -15,10 +15,10 @@ import { ThemeProvider } from 'next-themes';
 import { useState } from 'react';
 
 import Filters from '@/components/app/filters';
-import LogViewer from '@/components/app/logs/LogViewer';
-import Settings from '@/components/app/settings/Settings';
-import ToolBar from '@/components/app/toolbar/ToolBar';
-import { ColorModeButton } from './components/ui/color-mode';
+import LogView from '@/components/app/log-view';
+import Settings from '@/components/app/settings';
+import ToolBar from '@/components/app/toolbar';
+import { ColorModeButton } from './components/ui/buttons/ColorMode';
 
 const App = () => {
   // todo: refactor to useSwitch
@@ -33,7 +33,7 @@ const App = () => {
             onSettingsOpen={() => setSettingsMenuOpen(true)}
             onFiltersOpen={() => setFiltersMenuOpen(!filtersMenuOpen)}
           />
-          <LogViewer />
+          <LogView />
           <Settings menuOpen={settingsMenuOpen} onMenuClose={() => setSettingsMenuOpen(false)} />
           <Filters filtersOpen={filtersMenuOpen} />
           {/* For dev accesibility purpose - light/dark mode switch */}

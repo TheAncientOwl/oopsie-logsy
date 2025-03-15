@@ -6,14 +6,14 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description App settings
  */
 
-import { SettingsIcon } from '@/components/ui/icons';
-import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
+import { SettingsIcon } from '@/components/ui/Icons';
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { Box, Heading, HStack, Separator } from '@chakra-ui/react';
-import { ColorModeButton, useColorModeValue } from '../../ui/color-mode';
+import { ColorModeButton, useColorModeValue } from '@/components/ui/buttons/ColorMode';
 import { LogRegexConfigurator } from './LogRegexConfigurator';
 
 interface SettingsProps {
@@ -21,7 +21,7 @@ interface SettingsProps {
   onMenuClose: () => void;
 }
 
-const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
+export const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
   const bg = useColorModeValue('white', 'gray.900');
   const border = useColorModeValue('gray.700', 'gray.200');
 
@@ -60,5 +60,3 @@ const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
     </Box>
   );
 };
-
-export default Settings;

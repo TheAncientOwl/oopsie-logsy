@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Configure log line regex for parsing
  */
 
@@ -17,9 +17,9 @@ import {
   EyeOpenIcon,
   ImportIcon,
   NewIcon,
-} from '@/components/ui/icons';
-import { Tooltip } from '@/components/ui/tooltip';
-import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
+} from '@/components/ui/Icons';
+import { Tooltip } from '@/components/ui/Tooltip';
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useSwitch2 } from '@/hooks/useSwitch';
 import {
   ButtonGroup,

@@ -7,9 +7,9 @@
  * @file index.tsx
  * @author Alexandru Delegeanu
  * @version 0.1
- * @description Filters index
+ * @description LogView index
  */
 
-import { Filters } from '@/components/app/filters/Filters';
+import { LogView } from '@/components/app/log-view/LogView';
 
-export default Filters;
+export default LogView;

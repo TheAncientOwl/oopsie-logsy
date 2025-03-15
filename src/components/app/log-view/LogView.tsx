@@ -4,7 +4,7 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file LogViewer.tsx
+ * @file LogView.tsx
  * @author Alexandru Delegeanu
  * @version 0.2
  * @description Display logs in table format
@@ -12,7 +12,7 @@
 
 import { Table } from '@chakra-ui/react';
 
-const LogViewer = () => {
+export const LogView = () => {
   const items = [
     {
       id: 1,
@@ -217,5 +217,3 @@ const LogViewer = () => {
     </Table.Root>
   );
 };
-
-export default LogViewer;

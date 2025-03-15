@@ -6,7 +6,7 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filters component
  */
 
@@ -18,17 +18,17 @@ import {
   NewIcon,
   SoundOffIcon,
   SoundOnIcon,
-} from '@/components/ui/icons';
-import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
+} from '@/components/ui/Icons';
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { Box, ButtonGroup, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
-import { useColorModeValue } from '../../ui/color-mode';
+import { useColorModeValue } from '../../ui/buttons/ColorMode';
 import { Filter } from './Filter';
 
 interface FiltersProps {
   filtersOpen: boolean;
 }
 
-const Filters = ({ filtersOpen }: FiltersProps) => {
+export const Filters = ({ filtersOpen }: FiltersProps) => {
   const filterTabs = [
     {
       id: 1,
@@ -156,5 +156,3 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
     </Box>
   );
 };
-
-export default Filters;

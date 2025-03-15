@@ -4,23 +4,24 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file TooltipButton.tsx
+ * @file TooltipIconButton.tsx
  * @author Alexandru Delegeanu
  * @version 0.1
- * @description ChakraUI button with tooltip property
+ * @description ChakraUI icon button with tooltip property
  */
 
-import { Button, ButtonProps } from '@chakra-ui/react';
-import { Tooltip } from './tooltip';
+import { IconButton } from '@chakra-ui/react';
+import type { IconButtonProps } from '@chakra-ui/react';
+import { Tooltip } from '@/components/ui/Tooltip';
 
-export interface TooltipButtonProps extends ButtonProps {
-  tooltip: string;
+export interface TooltipIconButtonProps extends IconButtonProps {
+  tooltip?: string;
 }
 
-export const TooltipButton = (props: TooltipButtonProps) => {
+export const TooltipIconButton = (props: TooltipIconButtonProps) => {
   return (
     <Tooltip content={props.tooltip}>
-      <Button {...props} />
+      <IconButton {...props} />
     </Tooltip>
   );
 };
