@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Configure log line regex for parsing
  */
 
@@ -57,7 +57,7 @@ const mergeRegexSequences = (tags: Array<RegexTag>): string => {
 
 export const LogRegexConfigurator = () => {
   const [tags, setTags] = useState<Array<RegexTag>>(dummyTags);
-  const { state: isOpen, toggle: toggleOpen } = useSwitch(true);
+  const [isOpen, toggleOpen] = useSwitch(true);
 
   return (
     <Collapsible.Root defaultOpen={true}>

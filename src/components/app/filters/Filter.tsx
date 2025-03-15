@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filter component
  */
 
@@ -58,14 +58,14 @@ export const Filter = ({
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.300');
 
-  const { state: isOpen, toggle: toggleIsOpen } = useSwitch(false);
+  const [isOpen, toggleIsOpen] = useSwitch(false);
 
   const list = createListCollection({
     items: overAlternatives,
   });
 
   // TODO: remove when dynamic data is available
-  const { state: isRegexDbg, toggle: isRegexDbgToggle } = useSwitch(isRegex);
+  const [isRegexDbg, isRegexDbgToggle] = useSwitch(isRegex);
 
   return (
     <Box

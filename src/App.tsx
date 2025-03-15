@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description App class
  */
 
@@ -21,8 +21,8 @@ import { ColorModeButton } from '@/components/ui/buttons/ColorModeButton';
 import { useSwitch } from '@/hooks/useSwitch';
 
 export const App = () => {
-  const { state: settingsMenuOpen, toggle: toggleSettingsMenu } = useSwitch(false);
-  const { state: filtersMenuOpen, toggle: toggleFiltersMenu } = useSwitch(false);
+  const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
+  const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(false);
 
   return (
     <ThemeProvider>
