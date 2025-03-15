@@ -18,6 +18,7 @@ import type { ThemeProviderProps } from 'next-themes';
 import { ThemeProvider, useTheme } from 'next-themes';
 import * as React from 'react';
 import { LuMoon, LuSun } from 'react-icons/lu';
+import { Tooltip } from './tooltip';
 
 export interface ColorModeProviderProps extends ThemeProviderProps {}
 
@@ -57,29 +58,30 @@ export function ColorModeIcon() {
 
 interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
 
-export const ColorModeButton = React.forwardRef<HTMLButtonElement, ColorModeButtonProps>(function ColorModeButton(
-  props,
-  ref
-) {
-  const { toggleColorMode } = useColorMode();
-  return (
-    <ClientOnly fallback={<Skeleton boxSize='8' />}>
-      <IconButton
-        onClick={toggleColorMode}
-        variant='ghost'
-        aria-label='Toggle color mode'
-        size='sm'
-        ref={ref}
-        {...props}
-        css={{
-          _icon: {
-            width: '5',
-            height: '5',
-          },
-        }}
-      >
-        <ColorModeIcon />
-      </IconButton>
-    </ClientOnly>
-  );
-});
+export const ColorModeButton = React.forwardRef<HTMLButtonElement, ColorModeButtonProps>(
+  function ColorModeButton(props, ref) {
+    const { toggleColorMode, colorMode } = useColorMode();
+    return (
+      <ClientOnly fallback={<Skeleton boxSize='8' />}>
+        <Tooltip content={colorMode === 'light' ? 'Toggle dark theme' : 'Toggle light theme'}>
+          <IconButton
+            onClick={toggleColorMode}
+            variant='ghost'
+            aria-label='Toggle color mode'
+            size='sm'
+            ref={ref}
+            {...props}
+            css={{
+              _icon: {
+                width: '5',
+                height: '5',
+              },
+            }}
+          >
+            <ColorModeIcon />
+          </IconButton>
+        </Tooltip>
+      </ClientOnly>
+    );
+  }
+);

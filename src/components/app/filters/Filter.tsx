@@ -6,12 +6,13 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filter component
  */
 
 import { useColorModeValue } from '@/components/ui/color-mode';
-import { Tooltip } from '@/components/ui/tooltip';
+import { EyeClosedIcon, EyeOpenIcon, RegexOnIcon } from '@/components/ui/icons';
+import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
 import useSwitch, { useSwitch2 } from '@/hooks/useSwitch';
 import {
   Box,
@@ -20,7 +21,6 @@ import {
   createListCollection,
   Heading,
   HStack,
-  IconButton,
   Input,
   SelectContent,
   SelectItem,
@@ -30,8 +30,6 @@ import {
   SelectValueText,
   Stack,
 } from '@chakra-ui/react';
-import { FaEye, FaRegEyeSlash } from 'react-icons/fa';
-import { TbRegex, TbRegexOff } from 'react-icons/tb';
 
 interface FilterProps {
   name: string;
@@ -81,7 +79,7 @@ export const Filter = ({
       <Collapsible.Root>
         <Collapsible.Trigger onClick={toggleIsOpen}>
           <HStack>
-            <Heading size='md'>» {name}</Heading> {isOpen ? <FaEye /> : <FaRegEyeSlash />}
+            <Heading size='md'>» {name}</Heading> {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
           </HStack>
         </Collapsible.Trigger>
 
@@ -124,19 +122,15 @@ export const Filter = ({
             </SelectRoot>
 
             <HStack>
-              <Tooltip
-                content={isRegexDbg ? 'Regex: ON' : 'Regex: Off'}
-                positioning={{ placement: 'bottom' }}
+              <TooltipIconButton
+                tooltip={isRegexDbg ? 'Regex: Off' : 'Regex: On'}
+                onClick={isRegexDbgToggle}
+                colorPalette='green'
+                variant='subtle'
+                size='xs'
               >
-                <IconButton
-                  onClick={isRegexDbgToggle}
-                  colorPalette='green'
-                  variant='subtle'
-                  size='xs'
-                >
-                  {isRegexDbg ? <TbRegex /> : <TbRegexOff />}{' '}
-                </IconButton>
-              </Tooltip>
+                {isRegexDbg ? <RegexOnIcon /> : <RegexOnIcon />}{' '}
+              </TooltipIconButton>
               <Input
                 borderColor={border}
                 colorPalette='green'

@@ -6,13 +6,15 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description App settings
  */
 
-import { Box, Heading, HStack, IconButton } from '@chakra-ui/react';
-import { SlSettings } from 'react-icons/sl';
+import { SettingsIcon } from '@/components/ui/icons';
+import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
+import { Box, Heading, HStack, Separator } from '@chakra-ui/react';
 import { ColorModeButton, useColorModeValue } from '../../ui/color-mode';
+import { LogRegexConfigurator } from './LogRegexConfigurator';
 
 interface SettingsProps {
   menuOpen: boolean;
@@ -26,23 +28,35 @@ const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
   return (
     <Box
       bg={bg}
-      border='2px solid'
+      border='1px solid'
       borderColor={border}
       display={menuOpen ? 'block' : 'none'}
       position='fixed'
       top='0'
       left='0'
-      zIndex={9999}
-      minWidth={'80vw'}
+      zIndex={10000}
+      width='min(700px,100vw)'
+      height='100vh'
       padding={'1em'}
+      overflow='scroll'
     >
       <HStack marginBottom={'0.5em'}>
-        <IconButton colorPalette='red' variant='surface' size='sm' onClick={onMenuClose}>
-          <SlSettings />
-        </IconButton>
-        <Heading size='2xl'>Settings</Heading>
+        <TooltipIconButton
+          tooltip='Close'
+          colorPalette='red'
+          variant='surface'
+          size='sm'
+          onClick={onMenuClose}
+        >
+          <SettingsIcon />
+        </TooltipIconButton>
+        <Heading size='2xl' ml='0.25em'>
+          Settings
+        </Heading>
         <ColorModeButton />
       </HStack>
+      <LogRegexConfigurator />
+      <Separator borderColor={border} mt='1em' />
     </Box>
   );
 };

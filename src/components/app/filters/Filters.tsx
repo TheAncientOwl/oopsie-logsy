@@ -6,15 +6,21 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filters component
  */
 
-import { Box, Button, ButtonGroup, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
-import { CiExport, CiImport } from 'react-icons/ci';
-import { FaCheck, FaPlus } from 'react-icons/fa';
-import { GoMute, GoUnmute } from 'react-icons/go';
-import { SiCcleaner } from 'react-icons/si';
+import {
+  CheckedIcon,
+  ClearIcon,
+  ExportIcon,
+  ImportIcon,
+  NewIcon,
+  SoundOffIcon,
+  SoundOnIcon,
+} from '@/components/ui/icons';
+import { TooltipIconButton } from '@/components/ui/TooltipIconButton';
+import { Box, ButtonGroup, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
 import { useColorModeValue } from '../../ui/color-mode';
 import { Filter } from './Filter';
 
@@ -97,7 +103,8 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
               {tab.title}
             </Tabs.Trigger>
           ))}
-          <Button
+          <TooltipIconButton
+            tooltip='New filters group'
             size='xs'
             variant='subtle'
             colorPalette='green'
@@ -105,42 +112,41 @@ const Filters = ({ filtersOpen }: FiltersProps) => {
             right='0.5em'
             top='0.5em'
           >
-            <FaPlus /> New
-          </Button>
+            <NewIcon />
+          </TooltipIconButton>
         </Tabs.List>
         {filterTabs.map(tab => (
           <Tabs.Content key={tab.id} value={tab.name}>
             <HStack mb='1em' padding='0 0.5em'>
-              <ButtonGroup size='xs' variant='subtle' colorPalette='green'>
-                <Button>
-                  <FaCheck />
-                  Apply
-                </Button>
-                <Button>
-                  <FaPlus /> New
-                </Button>
-                <Button>
-                  <GoUnmute /> Mute All
-                </Button>
-                <Button>
-                  <GoMute /> Mute All
-                </Button>
+              <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
+                <TooltipIconButton tooltip='Apply filters'>
+                  <CheckedIcon />
+                </TooltipIconButton>
+                <TooltipIconButton tooltip='New filter'>
+                  <NewIcon />
+                </TooltipIconButton>
+                <TooltipIconButton tooltip='Unmute All'>
+                  <SoundOnIcon />
+                </TooltipIconButton>
+                <TooltipIconButton tooltip='Mute all'>
+                  <SoundOffIcon />
+                </TooltipIconButton>
               </ButtonGroup>
               <Span flex='1' />
-              <ButtonGroup size='xs' variant='subtle' colorPalette='green'>
-                <Button>
-                  <CiImport /> Import
-                </Button>
-                <Button>
-                  <CiExport /> Export
-                </Button>
-                <Button>
-                  <SiCcleaner /> Clear
-                </Button>
+              <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
+                <TooltipIconButton tooltip='Import filters'>
+                  <ImportIcon />
+                </TooltipIconButton>
+                <TooltipIconButton tooltip='Export filters'>
+                  <ExportIcon />
+                </TooltipIconButton>
+                <TooltipIconButton tooltip='Clear filters'>
+                  <ClearIcon />
+                </TooltipIconButton>
               </ButtonGroup>
             </HStack>
             <Stack gap='0'>
-              {tab.filters.map((filter, index) => (
+              {tab.filters.map(filter => (
                 <Filter key={`${tab.id}-${filter.id}`} {...filter} />
               ))}
             </Stack>
