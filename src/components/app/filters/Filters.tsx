@@ -6,7 +6,7 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filters component
  */
 
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { Box, ButtonGroup, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
-import { useColorModeValue } from '../../ui/buttons/ColorMode';
+import { useColorModeValue } from '@/hooks/useColorMode';
 import { Filter } from './Filter';
 
 interface FiltersProps {

@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Configure log line regex for parsing
  */
 
@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/Icons';
 import { Tooltip } from '@/components/ui/Tooltip';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { useSwitch2 } from '@/hooks/useSwitch';
+import { useSwitch } from '@/hooks/useSwitch';
 import {
   ButtonGroup,
   Collapsible,
@@ -57,7 +57,7 @@ const mergeRegexSequences = (tags: Array<RegexTag>): string => {
 
 export const LogRegexConfigurator = () => {
   const [tags, setTags] = useState<Array<RegexTag>>(dummyTags);
-  const { state: isOpen, toggle: toggleOpen } = useSwitch2(true);
+  const { state: isOpen, toggle: toggleOpen } = useSwitch(true);
 
   return (
     <Collapsible.Root defaultOpen={true}>

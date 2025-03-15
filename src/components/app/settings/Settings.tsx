@@ -6,15 +6,16 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description App settings
  */
 
 import { SettingsIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { Box, Heading, HStack, Separator } from '@chakra-ui/react';
-import { ColorModeButton, useColorModeValue } from '@/components/ui/buttons/ColorMode';
+import { ColorModeButton } from '@/components/ui/buttons/ColorModeButton';
 import { LogRegexConfigurator } from './LogRegexConfigurator';
+import { useColorModeValue } from '@/hooks/useColorMode';
 
 interface SettingsProps {
   menuOpen: boolean;

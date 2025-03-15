@@ -6,54 +6,44 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description App class
  */
 
-import { Box, ChakraProvider, defaultSystem } from '@chakra-ui/react';
-import { ThemeProvider } from 'next-themes';
-import { useState } from 'react';
+import { Box } from '@chakra-ui/react';
 
+import ToolBar from '@/components/app/toolbar';
 import Filters from '@/components/app/filters';
 import LogView from '@/components/app/log-view';
 import Settings from '@/components/app/settings';
-import ToolBar from '@/components/app/toolbar';
-import { ColorModeButton } from './components/ui/buttons/ColorMode';
+import ThemeProvider from '@/components/app/theme';
+import { ColorModeButton } from '@/components/ui/buttons/ColorModeButton';
+import { useSwitch } from '@/hooks/useSwitch';
 
-const App = () => {
-  // todo: refactor to useSwitch
-  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
-  const [filtersMenuOpen, setFiltersMenuOpen] = useState(false);
+export const App = () => {
+  const { state: settingsMenuOpen, toggle: toggleSettingsMenu } = useSwitch(false);
+  const { state: filtersMenuOpen, toggle: toggleFiltersMenu } = useSwitch(false);
 
   return (
-    <>
-      <ChakraProvider value={defaultSystem}>
-        <ThemeProvider attribute='class' disableTransitionOnChange>
-          <ToolBar
-            onSettingsOpen={() => setSettingsMenuOpen(true)}
-            onFiltersOpen={() => setFiltersMenuOpen(!filtersMenuOpen)}
-          />
-          <LogView />
-          <Settings menuOpen={settingsMenuOpen} onMenuClose={() => setSettingsMenuOpen(false)} />
-          <Filters filtersOpen={filtersMenuOpen} />
-          {/* For dev accesibility purpose - light/dark mode switch */}
-          <Box
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              background: 'tomato',
-              border: '2px solid cyan',
-              borderRadius: '0.25em',
-              zIndex: 8888,
-            }}
-          >
-            <ColorModeButton />
-          </Box>
-        </ThemeProvider>
-      </ChakraProvider>
-    </>
+    <ThemeProvider>
+      <ToolBar onSettingsOpen={toggleSettingsMenu} onFiltersOpen={toggleFiltersMenu} />
+      <LogView />
+      <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
+      <Filters filtersOpen={filtersMenuOpen} />
+      {/* For dev accesibility purpose - light/dark mode switch */}
+      <Box
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          background: 'green',
+          border: '2px solid gray',
+          borderRadius: '0.25em',
+          zIndex: 8888,
+        }}
+      >
+        <ColorModeButton />
+      </Box>
+    </ThemeProvider>
   );
 };
-
-export default App;

@@ -4,18 +4,12 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file useSwitch.tsx
+ * @file index.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
- * @description Utility hook to handle switch states
+ * @version 0.1
+ * @description Theme index
  */
 
-import { useState, useCallback } from 'react';
+import { ThemeProvider } from '@/components/app/theme/ThemeProvider';
 
-export const useSwitch = (initialValue: boolean) => {
-  const [state, setState] = useState(initialValue);
-
-  const toggle = useCallback(() => setState(prev => !prev), []);
-
-  return { state, toggle };
-};
+export default ThemeProvider;

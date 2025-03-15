@@ -6,13 +6,15 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Icons used along the app design
  */
 
+import { useColorMode } from '@/hooks/useColorMode';
 import { CiExport, CiImport } from 'react-icons/ci';
 import { FaCheck, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
 import { GoMute, GoUnmute } from 'react-icons/go';
+import { LuMoon, LuSun } from 'react-icons/lu';
 import { MdDelete } from 'react-icons/md';
 import { SiCcleaner } from 'react-icons/si';
 import { SlSettings } from 'react-icons/sl';
@@ -31,3 +33,7 @@ export const RegexOnIcon = () => <TbRegex />;
 export const RegexOffIcon = () => <TbRegexOff />;
 export const ClearIcon = () => <SiCcleaner />;
 export const CheckedIcon = () => <FaCheck />;
+export const ColorModeIcon = () => {
+  const { colorMode } = useColorMode();
+  return colorMode === 'dark' ? <LuMoon /> : <LuSun />;
+};

@@ -6,14 +6,14 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filter component
  */
 
-import { useColorModeValue } from '@/components/ui/buttons/ColorMode';
+import { useColorModeValue } from '@/hooks/useColorMode';
 import { EyeClosedIcon, EyeOpenIcon, RegexOnIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import useSwitch, { useSwitch2 } from '@/hooks/useSwitch';
+import { useSwitch } from '@/hooks/useSwitch';
 import {
   Box,
   Checkbox,
@@ -58,14 +58,14 @@ export const Filter = ({
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.300');
 
-  const { state: isOpen, toggle: toggleIsOpen } = useSwitch();
+  const { state: isOpen, toggle: toggleIsOpen } = useSwitch(false);
 
   const list = createListCollection({
     items: overAlternatives,
   });
 
   // TODO: remove when dynamic data is available
-  const { state: isRegexDbg, toggle: isRegexDbgToggle } = useSwitch2(isRegex);
+  const { state: isRegexDbg, toggle: isRegexDbgToggle } = useSwitch(isRegex);
 
   return (
     <Box

@@ -6,7 +6,7 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description App main toolbar
  */
 
@@ -14,7 +14,7 @@ import { Flex, IconButton, Input } from '@chakra-ui/react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { SlSettings } from 'react-icons/sl';
-import { useColorModeValue } from '@/components/ui/buttons/ColorMode';
+import { useColorModeValue } from '@/hooks/useColorMode';
 
 interface ToolBarProps {
   onSettingsOpen: () => void;
