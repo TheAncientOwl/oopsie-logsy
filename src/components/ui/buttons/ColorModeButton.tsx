@@ -6,7 +6,7 @@
  *
  * @file ColorModeButton.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ColorMode toggle button
  */
 
@@ -25,16 +25,11 @@ export const ColorModeButton = (props: ColorModeButtonProps) => {
       <TooltipIconButton
         tooltip={colorMode === 'light' ? 'Toggle dark theme' : 'Toggle light theme'}
         onClick={toggleColorMode}
-        variant='ghost'
+        variant='subtle'
+        colorPalette={colorMode === 'light' ? 'white' : 'black'}
         aria-label='Toggle color mode'
-        size='sm'
+        size='md'
         {...props}
-        css={{
-          _icon: {
-            width: '5',
-            height: '5',
-          },
-        }}
       >
         <ColorModeIcon />
       </TooltipIconButton>

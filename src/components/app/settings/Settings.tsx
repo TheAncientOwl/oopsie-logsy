@@ -6,7 +6,7 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description App settings
  */
 
@@ -16,6 +16,7 @@ import { Box, Heading, HStack, Separator } from '@chakra-ui/react';
 import { ColorModeButton } from '@/components/ui/buttons/ColorModeButton';
 import { LogRegexConfigurator } from './LogRegexConfigurator';
 import { useColorModeValue } from '@/hooks/useColorMode';
+import { LogsImportButton } from './LogsImporter';
 
 interface SettingsProps {
   menuOpen: boolean;
@@ -44,17 +45,18 @@ export const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
       <HStack marginBottom={'0.5em'}>
         <TooltipIconButton
           tooltip='Close'
-          colorPalette='red'
+          colorPalette='blue'
           variant='surface'
           size='sm'
           onClick={onMenuClose}
         >
           <SettingsIcon />
         </TooltipIconButton>
+        <LogsImportButton />
+        <ColorModeButton />
         <Heading size='2xl' ml='0.25em'>
           Settings
         </Heading>
-        <ColorModeButton />
       </HStack>
       <LogRegexConfigurator />
       <Separator borderColor={border} mt='1em' />
