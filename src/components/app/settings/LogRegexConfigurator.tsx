@@ -51,6 +51,7 @@ const getTags = async (): Promise<Array<RegexTag>> => {
 export const LogRegexConfigurator = () => {
   const [tags, setTags] = useState<Array<RegexTag>>([]);
   const [isOpen, toggleOpen] = useSwitch(true);
+  const [canApply, setCanApply] = useState(false);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -63,6 +64,7 @@ export const LogRegexConfigurator = () => {
   const applyRegex = async () => {
     try {
       const response = await invoke('set_tags', { tags });
+      setCanApply(false);
       console.log('::LogRegexConfigurator::applyRegex: Rust response:', response);
     } catch (error) {
       console.error('::LogRegexConfigurator::applyRegex: Error sending tags:', error);
@@ -78,14 +80,27 @@ export const LogRegexConfigurator = () => {
             { id: tags[tags.length - 1].id + 1, displayed: false, regex: '', name: 'new tag' },
           ]
     );
+    setCanApply(true);
+  };
+
+  const deleteTag = (index: number) => {
+    setTags([...tags.slice(0, index), ...tags.slice(index + 1, tags.length)]);
+    setCanApply(true);
   };
 
   const setTagName = (index: number, value: string) => {
     setTags(tags.map((tag, idx) => (idx === index ? { ...tag, name: value } : tag)));
+    setCanApply(true);
   };
 
   const setTagRegex = (index: number, value: string) => {
     setTags(tags.map((tag, idx) => (idx === index ? { ...tag, regex: value } : tag)));
+    setCanApply(true);
+  };
+
+  const toggleTagDisplayed = (index: number) => {
+    setTags(tags.map((tag, idx) => (idx === index ? { ...tag, displayed: !tag.displayed } : tag)));
+    setCanApply(true);
   };
 
   return (
@@ -126,6 +141,7 @@ export const LogRegexConfigurator = () => {
               colorPalette='green'
               variant='surface'
               onClick={applyRegex}
+              disabled={!canApply}
             >
               <ApplyIcon />
             </TooltipIconButton>
@@ -134,10 +150,20 @@ export const LogRegexConfigurator = () => {
           </HStack>
           {tags.map((tag, index) => (
             <HStack key={tag.id}>
-              <TooltipIconButton tooltip='Delete tag' colorPalette='red' variant='subtle'>
+              <TooltipIconButton
+                onClick={() => {
+                  deleteTag(index);
+                }}
+                tooltip='Delete tag'
+                colorPalette='red'
+                variant='subtle'
+              >
                 <DeleteIcon />
               </TooltipIconButton>
               <TooltipIconButton
+                onClick={() => {
+                  toggleTagDisplayed(index);
+                }}
                 tooltip={tag.displayed ? 'Hide tag in log view' : 'Show tag in log view'}
                 colorPalette='green'
                 variant='subtle'
