@@ -12,7 +12,7 @@
 
 import { useColorMode } from '@/hooks/useColorMode';
 import { CiExport, CiImport } from 'react-icons/ci';
-import { FaCheck, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import { FaCheck, FaEye, FaEyeSlash, FaPencilAlt, FaPlus } from 'react-icons/fa';
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { LuMoon, LuSun } from 'react-icons/lu';
 import { MdDelete } from 'react-icons/md';
@@ -33,6 +33,7 @@ export const RegexOnIcon = () => <TbRegex />;
 export const RegexOffIcon = () => <TbRegexOff />;
 export const ClearIcon = () => <SiCcleaner />;
 export const CheckedIcon = () => <FaCheck />;
+export const ApplyIcon = () => <FaPencilAlt />;
 export const ColorModeIcon = () => {
   const { colorMode } = useColorMode();
   return colorMode === 'dark' ? <LuMoon /> : <LuSun />;

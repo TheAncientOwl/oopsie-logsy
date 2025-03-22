@@ -11,6 +11,7 @@
  */
 
 import {
+  ApplyIcon,
   DeleteIcon,
   ExportIcon,
   EyeClosedIcon,
@@ -21,43 +22,71 @@ import {
 import { Tooltip } from '@/components/ui/Tooltip';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useSwitch } from '@/hooks/useSwitch';
-import {
-  ButtonGroup,
-  Collapsible,
-  Heading,
-  HStack,
-  IconButton,
-  Input,
-  Stack,
-} from '@chakra-ui/react';
-import { useState } from 'react';
-import { FaInfo } from 'react-icons/fa';
+import { ButtonGroup, Collapsible, Heading, HStack, Input, Stack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { GrConfigure } from 'react-icons/gr';
+import { invoke } from '@tauri-apps/api/core';
 
 interface RegexTag {
-  id: string;
+  id: number;
   displayed: boolean;
-  sequence: string;
+  regex: string;
   name: string;
 }
 
-const dummyTags = Array.from<RegexTag>([
-  { id: '1', displayed: true, sequence: '^d+', name: 'Timestamp' },
-  { id: '2', displayed: false, sequence: '\\s+', name: 'whitespace' },
-  { id: '3', displayed: true, sequence: 'S+', name: 'Channel' },
-  { id: '4', displayed: false, sequence: '\\s+', name: 'whitespace' },
-  { id: '5', displayed: true, sequence: 'S+', name: 'Level' },
-  { id: '6', displayed: false, sequence: '\\s+', name: 'whitespace' },
-  { id: '7', displayed: true, sequence: '.+$', name: 'Payload' },
-]);
-
 const mergeRegexSequences = (tags: Array<RegexTag>): string => {
-  return tags.map(tag => tag.sequence).join('');
+  return tags.map(tag => tag.regex).join('');
+};
+
+const getTags = async (): Promise<Array<RegexTag>> => {
+  try {
+    const response = await invoke<Array<RegexTag>>('get_tags');
+    return response;
+  } catch (error) {
+    console.log('Error getting tags from rust: ', error);
+  }
+  return [];
 };
 
 export const LogRegexConfigurator = () => {
-  const [tags, setTags] = useState<Array<RegexTag>>(dummyTags);
+  const [tags, setTags] = useState<Array<RegexTag>>([]);
   const [isOpen, toggleOpen] = useSwitch(true);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      const loadedTags = await getTags();
+      setTags(loadedTags);
+    };
+    fetchTags();
+  }, []);
+
+  const applyRegex = async () => {
+    try {
+      const response = await invoke('set_tags', { tags });
+      console.log('Rust response:', response);
+    } catch (error) {
+      console.error('Error sending tags:', error);
+    }
+  };
+
+  const addTag = () => {
+    setTags(
+      tags.length == 0
+        ? [{ id: 0, displayed: false, regex: '', name: 'new tag' }]
+        : [
+            ...tags,
+            { id: tags[tags.length - 1].id + 1, displayed: false, regex: '', name: 'new tag' },
+          ]
+    );
+  };
+
+  const setTagName = (index: number, value: string) => {
+    setTags(tags.map((tag, idx) => (idx === index ? { ...tag, name: value } : tag)));
+  };
+
+  const setTagRegex = (index: number, value: string) => {
+    setTags(tags.map((tag, idx) => (idx === index ? { ...tag, regex: value } : tag)));
+  };
 
   return (
     <Collapsible.Root defaultOpen={true}>
@@ -84,16 +113,26 @@ export const LogRegexConfigurator = () => {
             <Input disabled cursor='default' value={mergeRegexSequences(tags)} />
           </HStack>
           <HStack>
-            <TooltipIconButton tooltip='New tag' colorPalette='green' variant='surface'>
+            <TooltipIconButton
+              tooltip='New tag'
+              colorPalette='green'
+              variant='surface'
+              onClick={addTag}
+            >
               <NewIcon />
             </TooltipIconButton>
-            <IconButton disabled colorPalette='blue' variant='subtle' cursor='default'>
-              <FaInfo />
-            </IconButton>
+            <TooltipIconButton
+              tooltip='Apply regex'
+              colorPalette='green'
+              variant='surface'
+              onClick={applyRegex}
+            >
+              <ApplyIcon />
+            </TooltipIconButton>
             <Input disabled cursor='default' value='Tag Name' />
             <Input disabled cursor='default' value='Tag Regex' />
           </HStack>
-          {tags.map(tag => (
+          {tags.map((tag, index) => (
             <HStack key={tag.id}>
               <TooltipIconButton tooltip='Delete tag' colorPalette='red' variant='subtle'>
                 <DeleteIcon />
@@ -105,8 +144,18 @@ export const LogRegexConfigurator = () => {
               >
                 {tag.displayed ? <EyeOpenIcon /> : <EyeClosedIcon />}
               </TooltipIconButton>
-              <Input defaultValue={tag.name} />
-              <Input defaultValue={tag.sequence} />
+              <Input
+                defaultValue={tag.name}
+                onChange={event => {
+                  setTagName(index, event.target.value);
+                }}
+              />
+              <Input
+                defaultValue={tag.regex}
+                onChange={event => {
+                  setTagRegex(index, event.target.value);
+                }}
+              />
             </HStack>
           ))}
         </Stack>
