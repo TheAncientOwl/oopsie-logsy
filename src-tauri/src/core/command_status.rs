@@ -4,12 +4,13 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `mod.rs`
+//! # `status.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
-//! **Description**: core mod file.
+//! **Version**: 0.1
+//! **Description**: Response codes.
 //!
 
-pub mod command_status;
-pub mod data;
+pub fn ok() -> u16 {
+    200
+}

@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Configure log line regex for parsing
  */
 
@@ -63,9 +63,9 @@ export const LogRegexConfigurator = () => {
   const applyRegex = async () => {
     try {
       const response = await invoke('set_tags', { tags });
-      console.log('Rust response:', response);
+      console.log('::LogRegexConfigurator::applyRegex: Rust response:', response);
     } catch (error) {
-      console.error('Error sending tags:', error);
+      console.error('::LogRegexConfigurator::applyRegex: Error sending tags:', error);
     }
   };
 
