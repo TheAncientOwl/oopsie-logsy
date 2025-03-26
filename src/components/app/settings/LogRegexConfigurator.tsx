@@ -86,11 +86,12 @@ export const LogRegexConfigurator = () => {
     if (result) {
       setHasApplied(true);
     }
-  }, [setHasApplied]);
+  }, [tags.data, setHasApplied]);
 
   useEffect(() => {
     const fetchTags = async () => {
       const loadedTags = await invokeGetTags();
+
       if (loadedTags.length == 0) {
         Console.info(LogRegexConfigurator.name, 'no tags received from rust');
         await handleApplyTags();
@@ -99,7 +100,7 @@ export const LogRegexConfigurator = () => {
       }
     };
     fetchTags();
-  }, [tags.set, handleApplyTags]);
+  }, []);
 
   const addTag = () => {
     const id = tags.data.length === 0 ? 0 : tags.data[tags.data.length - 1].id + 1;
