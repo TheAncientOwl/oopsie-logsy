@@ -6,7 +6,7 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description App settings
  */
 
@@ -59,7 +59,7 @@ export const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
         </Heading>
       </HStack>
       <LogRegexConfigurator />
-      <Separator borderColor={border} mt='1em' />
+      <Separator borderColor={border} mt='1.5em' />
     </Box>
   );
 };
