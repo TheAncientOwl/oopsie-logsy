@@ -24,6 +24,7 @@ import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
 import { useArray } from '@/hooks/useArray';
 import { useSwitch } from '@/hooks/useSwitch';
+import { Console } from '@/console/Console';
 import { ButtonGroup, Collapsible, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/core';
 import React, { useEffect, useState } from 'react';
@@ -62,9 +63,7 @@ interface RegexTagItemProps {
 }
 
 const RegexTagItem = (props: RegexTagItemProps) => {
-  console.log(
-    `::${LogRegexConfigurator.name}::${RegexTagItem.name}: render item ID ${props.tag.id}`
-  );
+  Console.debug(RegexTagItem.name, `Renger item ID ${props.tag.id}`);
 
   return (
     <HStack>
@@ -95,7 +94,7 @@ const RegexTagItem = (props: RegexTagItemProps) => {
 };
 
 export const LogRegexConfigurator = () => {
-  console.log(`::${LogRegexConfigurator.name}: render`);
+  Console.debug(LogRegexConfigurator.name, 'render');
   const tags = useArray<RegexTag>([{ id: 0, displayed: true, regex: '.*', name: 'payload' }]);
 
   const [isOpen, toggleOpen] = useSwitch(true);
@@ -105,11 +104,11 @@ export const LogRegexConfigurator = () => {
     try {
       const response = await invoke('set_tags', { tags: tags.data });
       setCanApply(false);
-      console.log(`::${LogRegexConfigurator.name}::${applyRegex.name} : Rust response:`, response);
+      Console.info(`${LogRegexConfigurator.name}::${applyRegex.name}`, `rust response ${response}`);
     } catch (error) {
-      console.error(
-        `::${LogRegexConfigurator.name}::${applyRegex.name} : Error sending tags to rust:`,
-        error
+      Console.error(
+        `${LogRegexConfigurator.name}::${applyRegex.name}`,
+        `error sending tags to rust: ${error}`
       );
     }
   };
@@ -118,14 +117,10 @@ export const LogRegexConfigurator = () => {
     const fetchTags = async () => {
       const loadedTags = await getTags();
       if (loadedTags.length == 0) {
-        console.log(
-          `::${LogRegexConfigurator.name}::useEffect::${fetchTags.name}: No tags received from rust`
-        );
+        Console.info(LogRegexConfigurator.name, 'no tags received from rust');
         await applyRegex();
       } else {
-        console.log(
-          `::${LogRegexConfigurator.name}::useEffect::${fetchTags.name}: Received rust tags`
-        );
+        Console.info(LogRegexConfigurator.name, 'received rust tags');
         tags.set(loadedTags);
       }
     };

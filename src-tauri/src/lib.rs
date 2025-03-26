@@ -33,8 +33,10 @@ fn get_tags() -> Result<Vec<core::data::RegexTag>, String> {
     let instance = core::data::OopsieLogsy::get_instance()?;
     log_trace!(
         &get_tags,
-        "Sending {} tags",
-        instance.get_regex_tags().len()
+        "Sending {} tags: {}",
+        instance.get_regex_tags().len(),
+        serde_json::to_string(&instance.get_regex_tags())
+            .unwrap_or_else(|_| "Failed to serialize tags".to_string())
     );
 
     Ok(instance.get_regex_tags().clone())

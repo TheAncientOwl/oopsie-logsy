@@ -11,8 +11,6 @@
 //! **Description**: Defines application data structures.
 //!
 
-use crate::log_trace;
-
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct RegexTag {
     pub id: u64,
@@ -47,34 +45,15 @@ impl OopsieLogsy {
     }
 
     pub fn set_regex_tags(&mut self, new_tags: &Vec<RegexTag>) {
-        log_trace!(
-            &OopsieLogsy::set_regex_tags,
-            "tags: {}",
-            serde_json::to_string(new_tags)
-                .unwrap_or_else(|_| "Failed to serialize tags".to_string())
-        );
-
         self.regex_tags.clear();
         self.regex_tags.extend(new_tags.iter().cloned());
     }
 
     pub fn get_regex_tags(&self) -> &Vec<RegexTag> {
-        log_trace!(
-            &OopsieLogsy::get_regex_tags,
-            "{} tags",
-            self.regex_tags.len()
-        );
         &self.regex_tags
     }
 
     pub fn set_current_log_path(&mut self, new_path: &Vec<std::path::PathBuf>) {
-        log_trace!(
-            &OopsieLogsy::set_current_log_path,
-            "paths: {}",
-            serde_json::to_string(new_path)
-                .unwrap_or_else(|_| "Failed to serialize log paths".to_string())
-        );
-
         self.current_log_paths.clear();
         self.current_log_paths.extend(new_path.iter().cloned());
     }
