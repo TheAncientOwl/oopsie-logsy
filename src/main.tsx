@@ -6,16 +6,32 @@
  *
  * @file main.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description OopsieLogsy frontend entry point
  */
 
+import { App } from '@/App';
+import { DebugMenu } from '@/DebugMenu';
+import ThemeProvider from '@/components/app/theme';
+import { useSwitch } from '@/hooks/useSwitch';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from '@/App';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const DebugModeApp = () => {
+  const [strictModeOn, toggleStrictMode] = useSwitch(false);
+
+  return (
+    <ThemeProvider>
+      <DebugMenu strictModeOn={strictModeOn} onStrictModeToggle={toggleStrictMode} />
+      {strictModeOn ? (
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      ) : (
+        <App />
+      )}
+    </ThemeProvider>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<DebugModeApp />);

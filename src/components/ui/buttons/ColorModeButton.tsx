@@ -6,14 +6,14 @@
  *
  * @file ColorModeButton.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ColorMode toggle button
  */
 
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { ColorModeIcon } from '@/components/ui/Icons';
 import { useColorMode } from '@/hooks/useColorMode';
 import { ClientOnly, Skeleton, type IconButtonProps } from '@chakra-ui/react';
-import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 
 interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
 
@@ -28,7 +28,6 @@ export const ColorModeButton = (props: ColorModeButtonProps) => {
         variant='subtle'
         colorPalette={colorMode === 'light' ? 'white' : 'black'}
         aria-label='Toggle color mode'
-        size='md'
         {...props}
       >
         <ColorModeIcon />
