@@ -6,13 +6,12 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Configure log line regex for parsing
  */
 
 import {
   ApplyIcon,
-  DeleteIcon,
   ExportIcon,
   EyeClosedIcon,
   EyeOpenIcon,
@@ -22,15 +21,16 @@ import {
 import { Tooltip } from '@/components/ui/Tooltip';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
+import { Console } from '@/console/Console';
 import { useArray } from '@/hooks/useArray';
 import { useSwitch } from '@/hooks/useSwitch';
-import { Console } from '@/console/Console';
 import { ButtonGroup, Collapsible, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/core';
-import React, { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GrConfigure } from 'react-icons/gr';
+import { RegexTagItem } from './RegexTagItem';
 
-interface RegexTag {
+export interface RegexTag {
   id: number;
   displayed: boolean;
   regex: string;
@@ -41,101 +41,79 @@ const mergeRegexSequences = (tags: Array<RegexTag>): string => {
   return tags.map(tag => (tag.displayed ? `(${tag.regex})` : tag.regex)).join('');
 };
 
-const getTags = async (): Promise<Array<RegexTag>> => {
+const invokeGetTags = async (): Promise<Array<RegexTag>> => {
   try {
     const response = await invoke<Array<RegexTag>>('get_tags');
+    Console.info(
+      `${LogRegexConfigurator.name}::${invokeGetTags.name}`,
+      `received ${response.length} tags`
+    );
     return response;
   } catch (error) {
-    console.error(
-      `::${LogRegexConfigurator.name}::${getTags.name}: Error getting tags from rust: `,
-      error
+    Console.error(
+      `${LogRegexConfigurator.name}::${invokeGetTags.name}`,
+      `error getting tags from rust: ${error}`
     );
   }
   return [];
 };
 
-interface RegexTagItemProps {
-  tag: RegexTag;
-  onDelete: () => void;
-  onDisplayToggle: () => void;
-  onNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onRegexChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-const RegexTagItem = (props: RegexTagItemProps) => {
-  Console.debug(RegexTagItem.name, `Renger item ID ${props.tag.id}`);
-
-  return (
-    <HStack>
-      <TooltipIconButton
-        onClick={props.onDelete}
-        tooltip='Delete tag'
-        colorPalette='red'
-        variant='subtle'
-      >
-        <DeleteIcon />
-      </TooltipIconButton>
-      <TooltipIconButton
-        onClick={props.onDisplayToggle}
-        tooltip={props.tag.displayed ? 'Hide tag in log view' : 'Show tag in log view'}
-        colorPalette='green'
-        variant='subtle'
-      >
-        {props.tag.displayed ? <EyeOpenIcon /> : <EyeClosedIcon />}
-      </TooltipIconButton>
-      <Input defaultValue={props.tag.name} onChange={props.onNameChange} />
-      <Input
-        defaultValue={props.tag.regex}
-        onChange={props.onRegexChange}
-        colorPalette={props.tag.regex.length > 0 ? 'current' : 'red'}
-      />
-    </HStack>
-  );
+const invokeSetTags = async (tags: Array<RegexTag>): Promise<boolean> => {
+  try {
+    const response = await invoke('set_tags', { tags });
+    Console.info(
+      `${LogRegexConfigurator.name}::${invokeSetTags.name}`,
+      `rust response ${response}`
+    );
+    return true;
+  } catch (error) {
+    Console.error(
+      `${LogRegexConfigurator.name}::${invokeSetTags.name}`,
+      `error sending tags to rust: ${error}`
+    );
+    return false;
+  }
 };
 
 export const LogRegexConfigurator = () => {
-  Console.debug(LogRegexConfigurator.name, 'render');
   const tags = useArray<RegexTag>([{ id: 0, displayed: true, regex: '.*', name: 'payload' }]);
 
   const [isOpen, toggleOpen] = useSwitch(true);
-  const [canApply, setCanApply] = useState(false);
+  const [hasApplied, setHasApplied] = useState(true);
 
-  const applyRegex = async () => {
-    try {
-      const response = await invoke('set_tags', { tags: tags.data });
-      setCanApply(false);
-      Console.info(`${LogRegexConfigurator.name}::${applyRegex.name}`, `rust response ${response}`);
-    } catch (error) {
-      Console.error(
-        `${LogRegexConfigurator.name}::${applyRegex.name}`,
-        `error sending tags to rust: ${error}`
-      );
+  const handleApplyTags = useCallback(async () => {
+    const result = await invokeSetTags(tags.data);
+    if (result) {
+      setHasApplied(true);
     }
-  };
+  }, [setHasApplied]);
 
   useEffect(() => {
     const fetchTags = async () => {
-      const loadedTags = await getTags();
+      const loadedTags = await invokeGetTags();
       if (loadedTags.length == 0) {
         Console.info(LogRegexConfigurator.name, 'no tags received from rust');
-        await applyRegex();
+        await handleApplyTags();
       } else {
-        Console.info(LogRegexConfigurator.name, 'received rust tags');
         tags.set(loadedTags);
       }
     };
     fetchTags();
-  }, [tags.set]);
+  }, [tags.set, handleApplyTags]);
 
   const addTag = () => {
+    const id = tags.data.length === 0 ? 0 : tags.data[tags.data.length - 1].id + 1;
     tags.add({
-      id: tags.data.length === 0 ? 0 : tags.data[tags.data.length - 1].id + 1,
+      id: id,
       displayed: false,
       regex: '.*',
-      name: 'new tag',
+      name: `new tag ${id}`,
     });
-    setCanApply(true);
   };
+
+  useEffect(() => {
+    setHasApplied(!(tags.data.length > 0 && tags.data.every(tag => tag.regex.length > 0)));
+  }, [tags.data, setHasApplied]);
 
   return (
     <Collapsible.Root defaultOpen={true}>
@@ -168,8 +146,8 @@ export const LogRegexConfigurator = () => {
                 <NewIcon />
               </TooltipIconButton>
               <TooltipIconButton
-                onClick={applyRegex}
-                disabled={!canApply}
+                onClick={handleApplyTags}
+                disabled={hasApplied}
                 tooltip='Apply regex'
                 colorPalette='green'
               >
@@ -181,30 +159,8 @@ export const LogRegexConfigurator = () => {
           </HStack>
 
           <For each={tags.data}>
-            {(tag, index) => (
-              <RegexTagItem
-                key={tag.id}
-                tag={tag}
-                onDelete={() => {
-                  tags.delete(index);
-                  setCanApply(true);
-                }}
-                onDisplayToggle={() => {
-                  tags.modify(index, {
-                    ...tags.data[index],
-                    displayed: !tags.data[index].displayed,
-                  });
-                  setCanApply(true);
-                }}
-                onNameChange={event => {
-                  tags.modify(index, { ...tags.data[index], name: event.target.value });
-                  setCanApply(true);
-                }}
-                onRegexChange={event => {
-                  tags.modify(index, { ...tags.data[index], regex: event.target.value });
-                  setCanApply(true);
-                }}
-              />
+            {tag => (
+              <RegexTagItem key={tag.id} tag={tag} onDelete={tags.delete} onModify={tags.modify} />
             )}
           </For>
         </Stack>
