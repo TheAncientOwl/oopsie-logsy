@@ -26,7 +26,7 @@ import { useArray } from '@/hooks/useArray';
 import { useSwitch } from '@/hooks/useSwitch';
 import { ButtonGroup, Collapsible, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/core';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GrConfigure } from 'react-icons/gr';
 
 interface RegexTag {
@@ -45,7 +45,10 @@ const getTags = async (): Promise<Array<RegexTag>> => {
     const response = await invoke<Array<RegexTag>>('get_tags');
     return response;
   } catch (error) {
-    console.log(':LogRegexConfigurator::getTags: Error getting tags from rust: ', error);
+    console.error(
+      `::${LogRegexConfigurator.name}::${getTags.name}: Error getting tags from rust: `,
+      error
+    );
   }
   return [];
 };
@@ -59,10 +62,12 @@ interface RegexTagItemProps {
 }
 
 const RegexTagItem = (props: RegexTagItemProps) => {
-  console.log('Render');
+  console.log(
+    `::${LogRegexConfigurator.name}::${RegexTagItem.name}: render item ID ${props.tag.id}`
+  );
 
   return (
-    <HStack key={props.tag.id}>
+    <HStack>
       <TooltipIconButton
         onClick={props.onDelete}
         tooltip='Delete tag'
@@ -80,40 +85,58 @@ const RegexTagItem = (props: RegexTagItemProps) => {
         {props.tag.displayed ? <EyeOpenIcon /> : <EyeClosedIcon />}
       </TooltipIconButton>
       <Input defaultValue={props.tag.name} onChange={props.onNameChange} />
-      <Input defaultValue={props.tag.regex} onChange={props.onRegexChange} />
+      <Input
+        defaultValue={props.tag.regex}
+        onChange={props.onRegexChange}
+        colorPalette={props.tag.regex.length > 0 ? 'current' : 'red'}
+      />
     </HStack>
   );
 };
 
 export const LogRegexConfigurator = () => {
-  const tags = useArray<RegexTag>(undefined);
+  console.log(`::${LogRegexConfigurator.name}: render`);
+  const tags = useArray<RegexTag>([{ id: 0, displayed: true, regex: '.*', name: 'payload' }]);
 
   const [isOpen, toggleOpen] = useSwitch(true);
   const [canApply, setCanApply] = useState(false);
-
-  useEffect(() => {
-    const fetchTags = async () => {
-      const loadedTags = await getTags();
-      tags.set(loadedTags);
-    };
-    fetchTags();
-  }, [tags.set]);
 
   const applyRegex = async () => {
     try {
       const response = await invoke('set_tags', { tags: tags.data });
       setCanApply(false);
-      console.log('::LogRegexConfigurator::applyRegex: Rust response:', response);
+      console.log(`::${LogRegexConfigurator.name}::${applyRegex.name} : Rust response:`, response);
     } catch (error) {
-      console.error('::LogRegexConfigurator::applyRegex: Error sending tags to rust:', error);
+      console.error(
+        `::${LogRegexConfigurator.name}::${applyRegex.name} : Error sending tags to rust:`,
+        error
+      );
     }
   };
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      const loadedTags = await getTags();
+      if (loadedTags.length == 0) {
+        console.log(
+          `::${LogRegexConfigurator.name}::useEffect::${fetchTags.name}: No tags received from rust`
+        );
+        await applyRegex();
+      } else {
+        console.log(
+          `::${LogRegexConfigurator.name}::useEffect::${fetchTags.name}: Received rust tags`
+        );
+        tags.set(loadedTags);
+      }
+    };
+    fetchTags();
+  }, [tags.set]);
 
   const addTag = () => {
     tags.add({
       id: tags.data.length === 0 ? 0 : tags.data[tags.data.length - 1].id + 1,
-      displayed: true,
-      regex: '',
+      displayed: false,
+      regex: '.*',
       name: 'new tag',
     });
     setCanApply(true);
@@ -165,6 +188,7 @@ export const LogRegexConfigurator = () => {
           <For each={tags.data}>
             {(tag, index) => (
               <RegexTagItem
+                key={tag.id}
                 tag={tag}
                 onDelete={() => {
                   tags.delete(index);
