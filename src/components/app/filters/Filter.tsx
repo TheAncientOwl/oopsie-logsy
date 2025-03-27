@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Filter component
  */
 
@@ -80,7 +80,6 @@ export const Filter = ({
             <Box flex='1' />
 
             <TooltipIconButton
-              zIndex='10001'
               tooltip='Delete filter'
               size='xs'
               colorPalette='red'
