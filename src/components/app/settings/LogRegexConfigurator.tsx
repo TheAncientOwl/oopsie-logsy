@@ -6,25 +6,16 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Configure log line regex for parsing
  */
 
-import {
-  ApplyIcon,
-  ExportIcon,
-  EyeClosedIcon,
-  EyeOpenIcon,
-  ImportIcon,
-  NewIcon,
-} from '@/components/ui/Icons';
-import { Tooltip } from '@/components/ui/Tooltip';
+import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
 import { Console } from '@/console/Console';
 import { useArray } from '@/hooks/useArray';
-import { useSwitch } from '@/hooks/useSwitch';
-import { ButtonGroup, Collapsible, Heading, HStack, Input, Stack } from '@chakra-ui/react';
+import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useState } from 'react';
 import { GrConfigure } from 'react-icons/gr';
@@ -45,13 +36,13 @@ const invokeGetTags = async (): Promise<Array<RegexTag>> => {
   try {
     const response = await invoke<Array<RegexTag>>('get_tags');
     Console.info(
-      `${LogRegexConfigurator.name}::${invokeGetTags.name}`,
+      `${LogRegexConfiguratorContent.name}::${invokeGetTags.name}`,
       `received ${response.length} tags`
     );
     return response;
   } catch (error) {
     Console.error(
-      `${LogRegexConfigurator.name}::${invokeGetTags.name}`,
+      `${LogRegexConfiguratorContent.name}::${invokeGetTags.name}`,
       `error getting tags from rust: ${error}`
     );
   }
@@ -62,23 +53,31 @@ const invokeSetTags = async (tags: Array<RegexTag>): Promise<boolean> => {
   try {
     const response = await invoke('set_tags', { tags });
     Console.info(
-      `${LogRegexConfigurator.name}::${invokeSetTags.name}`,
+      `${LogRegexConfiguratorContent.name}::${invokeSetTags.name}`,
       `rust response ${response}`
     );
     return true;
   } catch (error) {
     Console.error(
-      `${LogRegexConfigurator.name}::${invokeSetTags.name}`,
+      `${LogRegexConfiguratorContent.name}::${invokeSetTags.name}`,
       `error sending tags to rust: ${error}`
     );
     return false;
   }
 };
 
-export const LogRegexConfigurator = () => {
+export const LogRegexConfiguratorTrigger = () => {
+  return (
+    <HStack alignItems='center' justifyContent='center' cursor='button'>
+      <GrConfigure />
+      <Heading size='md'>Regex configurator</Heading>
+    </HStack>
+  );
+};
+
+export const LogRegexConfiguratorContent = () => {
   const tags = useArray<RegexTag>([{ id: 0, displayed: true, regex: '.*', name: 'payload' }]);
 
-  const [isOpen, toggleOpen] = useSwitch(true);
   const [hasApplied, setHasApplied] = useState(true);
 
   const handleApplyTags = useCallback(async () => {
@@ -93,7 +92,7 @@ export const LogRegexConfigurator = () => {
       const loadedTags = await invokeGetTags();
 
       if (loadedTags.length == 0) {
-        Console.info(LogRegexConfigurator.name, 'no tags received from rust');
+        Console.info(LogRegexConfiguratorContent.name, 'no tags received from rust');
         await handleApplyTags();
       } else {
         tags.set(loadedTags);
@@ -117,55 +116,42 @@ export const LogRegexConfigurator = () => {
   }, [tags.data, setHasApplied]);
 
   return (
-    <Collapsible.Root defaultOpen={true}>
-      <Collapsible.Trigger onClick={toggleOpen} cursor='button'>
-        <Tooltip content={isOpen ? 'Hide configuration' : 'Show configurator'}>
-          <HStack alignItems='center' justifyContent='center' cursor='button'>
-            {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
-            <Heading size='xl'>Regex configurator</Heading>
-            <GrConfigure />
-          </HStack>
-        </Tooltip>
-      </Collapsible.Trigger>
-      <Collapsible.Content pt='1em'>
-        <Stack>
-          <HStack>
-            <ButtonGroup colorPalette='blue' variant='subtle' size='md'>
-              <TooltipIconButton tooltip='Import configuration'>
-                <ImportIcon />
-              </TooltipIconButton>
-              <TooltipIconButton tooltip='Export configuration'>
-                <ExportIcon />
-              </TooltipIconButton>
-            </ButtonGroup>
-            <Input disabled cursor='default' value={mergeRegexSequences(tags.data)} />
-          </HStack>
+    <Stack>
+      <HStack>
+        <ButtonGroup colorPalette='blue' variant='subtle' size='md'>
+          <TooltipIconButton tooltip='Import configuration'>
+            <ImportIcon />
+          </TooltipIconButton>
+          <TooltipIconButton tooltip='Export configuration'>
+            <ExportIcon />
+          </TooltipIconButton>
+        </ButtonGroup>
+        <Input disabled cursor='default' value={mergeRegexSequences(tags.data)} />
+      </HStack>
 
-          <HStack>
-            <ButtonGroup variant='surface'>
-              <TooltipIconButton onClick={addTag} tooltip='New tag' colorPalette='green'>
-                <NewIcon />
-              </TooltipIconButton>
-              <TooltipIconButton
-                onClick={handleApplyTags}
-                disabled={hasApplied}
-                tooltip='Apply regex'
-                colorPalette='green'
-              >
-                <ApplyIcon />
-              </TooltipIconButton>
-            </ButtonGroup>
-            <Input disabled cursor='default' value='Tag Name' />
-            <Input disabled cursor='default' value='Tag Regex' />
-          </HStack>
+      <HStack>
+        <ButtonGroup variant='surface'>
+          <TooltipIconButton onClick={addTag} tooltip='New tag' colorPalette='green'>
+            <NewIcon />
+          </TooltipIconButton>
+          <TooltipIconButton
+            onClick={handleApplyTags}
+            disabled={hasApplied}
+            tooltip='Apply regex'
+            colorPalette='green'
+          >
+            <ApplyIcon />
+          </TooltipIconButton>
+        </ButtonGroup>
+        <Input disabled cursor='default' value='Tag Name' />
+        <Input disabled cursor='default' value='Tag Regex' />
+      </HStack>
 
-          <For each={tags.data}>
-            {tag => (
-              <RegexTagItem key={tag.id} tag={tag} onDelete={tags.delete} onModify={tags.modify} />
-            )}
-          </For>
-        </Stack>
-      </Collapsible.Content>
-    </Collapsible.Root>
+      <For each={tags.data}>
+        {tag => (
+          <RegexTagItem key={tag.id} tag={tag} onDelete={tags.delete} onModify={tags.modify} />
+        )}
+      </For>
+    </Stack>
   );
 };

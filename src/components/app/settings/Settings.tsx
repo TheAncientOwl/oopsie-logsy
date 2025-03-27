@@ -6,16 +6,16 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description App settings
  */
 
 import { SettingsIcon } from '@/components/ui/Icons';
-import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { Box, Heading, HStack, Separator } from '@chakra-ui/react';
 import { ColorModeButton } from '@/components/ui/buttons/ColorModeButton';
-import { LogRegexConfigurator } from './LogRegexConfigurator';
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
+import { Box, Heading, HStack, Tabs } from '@chakra-ui/react';
+import { LogRegexConfiguratorContent, LogRegexConfiguratorTrigger } from './LogRegexConfigurator';
 import { LogsImportButton } from './LogsImporter';
 
 interface SettingsProps {
@@ -58,8 +58,18 @@ export const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
           Settings
         </Heading>
       </HStack>
-      <LogRegexConfigurator />
-      <Separator borderColor={border} mt='1.5em' />
+
+      <Tabs.Root defaultValue='log-regex-configurator' colorPalette='green'>
+        <Tabs.List position='sticky'>
+          <Tabs.Trigger value='log-regex-configurator'>
+            <LogRegexConfiguratorTrigger />
+          </Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value='log-regex-configurator'>
+          <LogRegexConfiguratorContent />
+        </Tabs.Content>
+      </Tabs.Root>
     </Box>
   );
 };
