@@ -6,7 +6,7 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filters component
  */
 
@@ -20,7 +20,7 @@ import {
   SoundOnIcon,
 } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { Box, ButtonGroup, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
+import { Box, ButtonGroup, Collapsible, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { Filter } from './Filter';
 
@@ -80,79 +80,84 @@ export const Filters = ({ filtersOpen }: FiltersProps) => {
   ];
 
   const bg = useColorModeValue('gray.200', 'gray.900');
-  const boxBorder = useColorModeValue('gray.700', 'gray.200');
+  const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
   return (
-    <Box
-      bg={bg}
-      borderTop='1px solid'
-      borderColor={boxBorder}
-      display={filtersOpen ? 'block' : 'none'}
+    <Collapsible.Root
+      open={filtersOpen}
       position='fixed'
       bottom='0'
       left='0'
       right='0'
       zIndex={9999}
-      overflowY='scroll'
-      maxHeight='45vh' // TODO: make height resizeable by dragging
     >
-      <Tabs.Root variant='line' defaultValue={filterTabs[0].name}>
-        <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
-          {filterTabs.map(tab => (
-            <Tabs.Trigger colorPalette='green' key={tab.id} value={tab.name}>
-              {tab.title}
-            </Tabs.Trigger>
-          ))}
-          <TooltipIconButton
-            tooltip='New filters group'
-            size='xs'
-            variant='subtle'
-            colorPalette='green'
-            position='absolute'
-            right='0.5em'
-            top='0.5em'
-          >
-            <NewIcon />
-          </TooltipIconButton>
-        </Tabs.List>
-        {filterTabs.map(tab => (
-          <Tabs.Content key={tab.id} value={tab.name}>
-            <HStack mb='1em' padding='0 0.5em'>
-              <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
-                <TooltipIconButton tooltip='Apply filters'>
-                  <CheckedIcon />
-                </TooltipIconButton>
-                <TooltipIconButton tooltip='New filter'>
-                  <NewIcon />
-                </TooltipIconButton>
-                <TooltipIconButton tooltip='Unmute All'>
-                  <SoundOnIcon />
-                </TooltipIconButton>
-                <TooltipIconButton tooltip='Mute all'>
-                  <SoundOffIcon />
-                </TooltipIconButton>
-              </ButtonGroup>
-              <Span flex='1' />
-              <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
-                <TooltipIconButton tooltip='Import filters'>
-                  <ImportIcon />
-                </TooltipIconButton>
-                <TooltipIconButton tooltip='Export filters'>
-                  <ExportIcon />
-                </TooltipIconButton>
-                <TooltipIconButton tooltip='Clear filters'>
-                  <ClearIcon />
-                </TooltipIconButton>
-              </ButtonGroup>
-            </HStack>
-            <Stack gap='0'>
-              {tab.filters.map(filter => (
-                <Filter key={`${tab.id}-${filter.id}`} {...filter} />
+      <Collapsible.Content>
+        <Box
+          bg={bg}
+          borderTop='1px solid'
+          borderColor={boxBorder}
+          overflowY='scroll'
+          maxHeight='45vh' // TODO: make height resizeable by dragging
+        >
+          <Tabs.Root variant='line' defaultValue={filterTabs[0].name}>
+            <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
+              {filterTabs.map(tab => (
+                <Tabs.Trigger colorPalette='green' key={tab.id} value={tab.name}>
+                  {tab.title}
+                </Tabs.Trigger>
               ))}
-            </Stack>
-          </Tabs.Content>
-        ))}
-      </Tabs.Root>
-    </Box>
+              <TooltipIconButton
+                tooltip='New filters group'
+                size='xs'
+                variant='subtle'
+                colorPalette='green'
+                position='absolute'
+                right='0.5em'
+                top='0.5em'
+              >
+                <NewIcon />
+              </TooltipIconButton>
+            </Tabs.List>
+            {filterTabs.map(tab => (
+              <Tabs.Content key={tab.id} value={tab.name}>
+                <HStack mb='1em' padding='0 0.5em'>
+                  <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
+                    <TooltipIconButton tooltip='Apply filters'>
+                      <CheckedIcon />
+                    </TooltipIconButton>
+                    <TooltipIconButton tooltip='New filter'>
+                      <NewIcon />
+                    </TooltipIconButton>
+                    <TooltipIconButton tooltip='Unmute All'>
+                      <SoundOnIcon />
+                    </TooltipIconButton>
+                    <TooltipIconButton tooltip='Mute all'>
+                      <SoundOffIcon />
+                    </TooltipIconButton>
+                  </ButtonGroup>
+                  <Span flex='1' />
+                  <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
+                    <TooltipIconButton tooltip='Import filters'>
+                      <ImportIcon />
+                    </TooltipIconButton>
+                    <TooltipIconButton tooltip='Export filters'>
+                      <ExportIcon />
+                    </TooltipIconButton>
+                    <TooltipIconButton tooltip='Clear filters'>
+                      <ClearIcon />
+                    </TooltipIconButton>
+                  </ButtonGroup>
+                </HStack>
+                <Stack gap='0'>
+                  {tab.filters.map(filter => (
+                    <Filter key={`${tab.id}-${filter.id}`} {...filter} />
+                  ))}
+                </Stack>
+              </Tabs.Content>
+            ))}
+          </Tabs.Root>
+        </Box>
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 };
