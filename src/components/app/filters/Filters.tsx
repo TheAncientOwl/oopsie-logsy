@@ -6,12 +6,12 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filters component
  */
 
 import {
-  CheckedIcon,
+  ApplyIcon,
   ClearIcon,
   ExportIcon,
   ImportIcon,
@@ -20,8 +20,8 @@ import {
   SoundOnIcon,
 } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { Box, ButtonGroup, Collapsible, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
 import { useColorModeValue } from '@/hooks/useColorMode';
+import { Box, ButtonGroup, Collapsible, HStack, Span, Stack, Tabs } from '@chakra-ui/react';
 import { Filter } from './Filter';
 
 interface FiltersProps {
@@ -123,7 +123,7 @@ export const Filters = ({ filtersOpen }: FiltersProps) => {
                 <HStack mb='1em' padding='0 0.5em'>
                   <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
                     <TooltipIconButton tooltip='Apply filters'>
-                      <CheckedIcon />
+                      <ApplyIcon />
                     </TooltipIconButton>
                     <TooltipIconButton tooltip='New filter'>
                       <NewIcon />

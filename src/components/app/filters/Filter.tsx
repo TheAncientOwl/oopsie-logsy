@@ -6,13 +6,13 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filter component
  */
 
-import { useColorModeValue } from '@/hooks/useColorMode';
-import { EyeClosedIcon, EyeOpenIcon, RegexOnIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/Icons';
+import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
 import {
   Box,
@@ -22,12 +22,7 @@ import {
   Heading,
   HStack,
   Input,
-  SelectContent,
-  SelectItem,
-  SelectLabel,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
+  Select,
   Stack,
 } from '@chakra-ui/react';
 
@@ -56,9 +51,9 @@ export const Filter = ({
   colors,
 }: FilterProps) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
-  const border = useColorModeValue('gray.500', 'gray.300');
+  const border = useColorModeValue('gray.500', 'gray.500');
 
-  const [isOpen, toggleIsOpen] = useSwitch(false);
+  const [isOpen, toggleIsOpen] = useSwitch(true);
 
   const list = createListCollection({
     items: overAlternatives,
@@ -74,18 +69,32 @@ export const Filter = ({
       borderTop='1px solid'
       borderBottom='1px solid'
       borderColor={border}
-      padding='1em'
+      padding='0.5em 0.75em'
     >
-      <Collapsible.Root>
-        <Collapsible.Trigger onClick={toggleIsOpen}>
+      <Collapsible.Root open={isOpen}>
+        <Collapsible.Trigger width='100%' onClick={toggleIsOpen} cursor='pointer'>
           <HStack>
-            <Heading size='md'>» {name}</Heading> {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
+            {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
+            <Heading size='md'> {name}</Heading>
+
+            <Box flex='1' />
+
+            <TooltipIconButton
+              zIndex='10001'
+              tooltip='Delete filter'
+              size='xs'
+              colorPalette='red'
+              variant='subtle'
+              onClick={event => event.stopPropagation()}
+            >
+              <DeleteIcon />
+            </TooltipIconButton>
           </HStack>
         </Collapsible.Trigger>
 
         <Collapsible.Content padding='1em 0.5em'>
           <Stack gap='1em'>
-            <HStack gap='1.5em'>
+            <HStack gap='1em'>
               {/* TODO: add check/uncheck handlers */}
               <Checkbox.Root checked={active} variant='subtle' colorPalette='green'>
                 <Checkbox.HiddenInput />
@@ -103,34 +112,46 @@ export const Filter = ({
                 </Checkbox.Control>
                 <Checkbox.Label>Highlight Only</Checkbox.Label>
               </Checkbox.Root>
+
+              <Checkbox.Root
+                checked={isRegexDbg}
+                variant='subtle'
+                colorPalette='green'
+                onCheckedChange={() => isRegexDbgToggle()}
+              >
+                <Checkbox.HiddenInput />
+                <Checkbox.Control>
+                  <Checkbox.Indicator />
+                </Checkbox.Control>
+                <Checkbox.Label>IsRegex</Checkbox.Label>
+              </Checkbox.Root>
             </HStack>
 
-            <SelectRoot collection={list} size='sm' variant='outline'>
-              <HStack>
-                <SelectLabel>Over</SelectLabel>
-                <SelectTrigger borderColor={border}>
-                  <SelectValueText placeholder={over} />
-                </SelectTrigger>
-              </HStack>
-              <SelectContent colorPalette='green'>
-                {list.items.map(item => (
-                  <SelectItem item={item} key={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </SelectRoot>
-
             <HStack>
-              <TooltipIconButton
-                tooltip={isRegexDbg ? 'Regex: Off' : 'Regex: On'}
-                onClick={isRegexDbgToggle}
-                colorPalette='green'
-                variant='subtle'
-                size='xs'
-              >
-                {isRegexDbg ? <RegexOnIcon /> : <RegexOnIcon />}{' '}
-              </TooltipIconButton>
+              <Select.Root collection={list} size='md' maxWidth='150px'>
+                <Select.HiddenSelect />
+
+                <Select.Control>
+                  <Select.Trigger>
+                    <Select.ValueText placeholder={over} />
+                  </Select.Trigger>
+                  <Select.IndicatorGroup>
+                    <Select.Indicator />
+                  </Select.IndicatorGroup>
+                </Select.Control>
+
+                <Select.Positioner>
+                  <Select.Content colorPalette='green'>
+                    {list.items.map(item => (
+                      <Select.Item item={item} key={item.value}>
+                        {item.label}
+                        <Select.ItemIndicator />
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Positioner>
+              </Select.Root>
+
               <Input
                 borderColor={border}
                 colorPalette='green'
