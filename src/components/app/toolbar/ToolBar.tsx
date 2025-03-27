@@ -6,15 +6,16 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description App main toolbar
  */
 
-import { Flex, IconButton, Input } from '@chakra-ui/react';
+import { SettingsIcon } from '@/components/ui/Icons';
+import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { useColorModeValue } from '@/hooks/useColorMode';
+import { ButtonGroup, Flex, Input } from '@chakra-ui/react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { GiSettingsKnobs } from 'react-icons/gi';
-import { SlSettings } from 'react-icons/sl';
-import { useColorModeValue } from '@/hooks/useColorMode';
 
 interface ToolBarProps {
   onSettingsOpen: () => void;
@@ -35,18 +36,20 @@ export const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
       alignItems='center'
     >
       <Flex gap='0.25em'>
-        <IconButton colorPalette='green' variant='outline' onClick={onSettingsOpen}>
-          <SlSettings />
-        </IconButton>
-        <IconButton colorPalette='green' variant='outline' onClick={onFiltersOpen}>
-          <GiSettingsKnobs />
-        </IconButton>
-        <IconButton colorPalette='green' variant='outline'>
-          <BsArrowLeft />
-        </IconButton>
-        <IconButton colorPalette='green' variant='outline'>
-          <BsArrowRight />
-        </IconButton>
+        <ButtonGroup colorPalette='green' variant='outline'>
+          <TooltipIconButton tooltip='Open Settings' onClick={onSettingsOpen}>
+            <SettingsIcon />
+          </TooltipIconButton>
+          <TooltipIconButton tooltip='Toggle filters' onClick={onFiltersOpen}>
+            <GiSettingsKnobs />
+          </TooltipIconButton>
+          <TooltipIconButton tooltip='Prev'>
+            <BsArrowLeft />
+          </TooltipIconButton>
+          <TooltipIconButton tooltip='Next'>
+            <BsArrowRight />
+          </TooltipIconButton>
+        </ButtonGroup>
       </Flex>
       <Input colorPalette='green' variant='subtle' placeholder='search' />
     </Flex>

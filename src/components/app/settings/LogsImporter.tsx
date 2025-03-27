@@ -6,7 +6,7 @@
  *
  * @file LogsImporter.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Import logs button
  */
 
@@ -44,7 +44,7 @@ export const LogsImportButton = () => {
     <TooltipIconButton
       tooltip='Import logs'
       colorPalette='green'
-      variant='surface'
+      variant='outline'
       onClick={handleImportClick}
     >
       <ImportIcon />
