@@ -6,7 +6,7 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Logger utility.
  */
 
@@ -57,7 +57,7 @@ export class Console {
   }
 
   public static info(caller: string, message: string) {
-    this._log('info', 'color: cyan', caller, message);
+    this._log('info', 'color: cornsilk', caller, message);
   }
 
   public static warn(caller: string, message: string) {
