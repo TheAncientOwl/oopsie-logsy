@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filter component
  */
 
@@ -79,7 +79,7 @@ export const Filter = ({
 
             <Box flex='1' />
 
-            <TooltipIconButton
+            {/* <TooltipIconButton
               tooltip='Delete filter'
               size='xs'
               colorPalette='red'
@@ -87,7 +87,7 @@ export const Filter = ({
               onClick={event => event.stopPropagation()}
             >
               <DeleteIcon />
-            </TooltipIconButton>
+            </TooltipIconButton> */}
           </HStack>
         </Collapsible.Trigger>
 
