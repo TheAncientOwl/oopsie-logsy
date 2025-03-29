@@ -6,7 +6,7 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Filters component
  */
 
@@ -97,7 +97,7 @@ export const Filters = ({ filtersOpen }: FiltersProps) => {
           borderTop='1px solid'
           borderColor={boxBorder}
           overflowY='scroll'
-          maxHeight='45vh' // TODO: make height resizeable by dragging
+          height='45vh' // TODO: make height resizeable by dragging
         >
           <Tabs.Root variant='line' defaultValue={filterTabs[0].name}>
             <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
