@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Filter component
  */
 
@@ -19,7 +19,6 @@ import {
   Checkbox,
   Collapsible,
   createListCollection,
-  Heading,
   HStack,
   Input,
   Select,
@@ -71,30 +70,38 @@ export const Filter = ({
       borderColor={border}
       padding='0.5em 0.75em'
     >
+      <HStack>
+        <TooltipIconButton
+          size='sm'
+          variant='subtle'
+          colorPalette='green'
+          tooltip={isOpen ? 'Hide Filter' : 'Show filter'}
+          onClick={toggleIsOpen}
+        >
+          {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
+        </TooltipIconButton>
+        <Input
+          borderColor={border}
+          colorPalette='green'
+          placeholder='Filter Name'
+          defaultValue={name}
+        />
+
+        <TooltipIconButton
+          tooltip='Delete filter'
+          size='sm'
+          colorPalette='red'
+          variant='subtle'
+          onClick={event => event.stopPropagation()}
+        >
+          <DeleteIcon />
+        </TooltipIconButton>
+      </HStack>
+
       <Collapsible.Root open={isOpen}>
-        <Collapsible.Trigger width='100%' onClick={toggleIsOpen} cursor='pointer'>
-          <HStack>
-            {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
-            <Heading size='md'> {name}</Heading>
-
-            <Box flex='1' />
-
-            {/* <TooltipIconButton
-              tooltip='Delete filter'
-              size='xs'
-              colorPalette='red'
-              variant='subtle'
-              onClick={event => event.stopPropagation()}
-            >
-              <DeleteIcon />
-            </TooltipIconButton> */}
-          </HStack>
-        </Collapsible.Trigger>
-
-        <Collapsible.Content padding='1em 0.5em'>
-          <Stack gap='1em'>
+        <Collapsible.Content>
+          <Stack gap='1em' padding='0.75em 0.5em'>
             <HStack gap='1em'>
-              {/* TODO: add check/uncheck handlers */}
               <Checkbox.Root checked={active} variant='subtle' colorPalette='green'>
                 <Checkbox.HiddenInput />
                 <Checkbox.Control>
@@ -102,8 +109,6 @@ export const Filter = ({
                 </Checkbox.Control>
                 <Checkbox.Label>Active</Checkbox.Label>
               </Checkbox.Root>
-
-              {/* TODO: add check/uncheck handlers */}
               <Checkbox.Root checked={highlightOnly} variant='subtle' colorPalette='green'>
                 <Checkbox.HiddenInput />
                 <Checkbox.Control>
@@ -111,7 +116,6 @@ export const Filter = ({
                 </Checkbox.Control>
                 <Checkbox.Label>Highlight Only</Checkbox.Label>
               </Checkbox.Root>
-
               <Checkbox.Root
                 checked={isRegexDbg}
                 variant='subtle'
@@ -125,7 +129,6 @@ export const Filter = ({
                 <Checkbox.Label>IsRegex</Checkbox.Label>
               </Checkbox.Root>
             </HStack>
-
             <HStack>
               <Select.Root collection={list} size='md' maxWidth='150px'>
                 <Select.HiddenSelect />
