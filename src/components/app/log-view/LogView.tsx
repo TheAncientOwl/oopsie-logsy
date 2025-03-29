@@ -12,7 +12,11 @@
 
 import { Table } from '@chakra-ui/react';
 
-export const LogView = () => {
+interface LogViewProps {
+  offsetTop: string;
+}
+
+export const LogView = ({ offsetTop }: LogViewProps) => {
   const items = [
     {
       id: 1,
@@ -193,7 +197,7 @@ export const LogView = () => {
 
   return (
     <Table.Root size='sm' striped>
-      <Table.Header position='sticky' top='3.5rem'>
+      <Table.Header position='sticky' top={offsetTop} zIndex='1'>
         <Table.Row>
           <Table.ColumnHeader>Idx</Table.ColumnHeader>
           <Table.ColumnHeader>Timestamp</Table.ColumnHeader>

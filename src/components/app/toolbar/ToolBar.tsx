@@ -19,14 +19,16 @@ import { GiSettingsKnobs } from 'react-icons/gi';
 
 interface ToolBarProps {
   onSettingsOpen: () => void;
-  onFiltersOpen: () => void;
+  onFiltersToggle: () => void;
+  _ref: React.RefObject<HTMLDivElement>;
 }
 
-export const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
+export const ToolBar = ({ onSettingsOpen, onFiltersToggle, _ref }: ToolBarProps) => {
   const bg = useColorModeValue('white', 'black');
 
   return (
     <Flex
+      ref={_ref}
       position='sticky'
       top='0'
       bg={bg}
@@ -40,7 +42,7 @@ export const ToolBar = ({ onSettingsOpen, onFiltersOpen }: ToolBarProps) => {
           <TooltipIconButton tooltip='Open Settings' onClick={onSettingsOpen}>
             <SettingsIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Toggle filters' onClick={onFiltersOpen}>
+          <TooltipIconButton tooltip='Toggle filters' onClick={onFiltersToggle}>
             <GiSettingsKnobs />
           </TooltipIconButton>
           <TooltipIconButton tooltip='Prev'>
