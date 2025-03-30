@@ -6,12 +6,14 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Filter component
  */
 
+import { type FilterData, type OverAlternatives } from '@/components/app/filters/interfaces';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/Icons';
+import { DeleteIcon, EyeClosedIcon, EyeOpenIcon, NewIcon } from '@/components/ui/Icons';
+import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
 import {
@@ -21,45 +23,26 @@ import {
   createListCollection,
   HStack,
   Input,
-  Select,
   Stack,
 } from '@chakra-ui/react';
+import { FilterComponent } from './FilterComponent';
 
-interface FilterProps {
-  name: string;
-  over: string;
-  overAlternatives: { label: string; value: string }[];
-  highlightOnly: boolean;
-  isRegex: boolean;
-  formula: string;
-  active: boolean;
-  colors: {
-    bg: string;
-    fg: string;
-  };
+interface FilterProps extends FilterData {
+  overAlternatives: OverAlternatives;
 }
 
-export const Filter = ({
-  name,
-  over,
-  overAlternatives,
-  highlightOnly,
-  isRegex,
-  active,
-  formula,
-  colors,
-}: FilterProps) => {
+export const Filter = (props: FilterProps) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.500');
 
   const [isOpen, toggleIsOpen] = useSwitch(true);
 
-  const list = createListCollection({
-    items: overAlternatives,
-  });
+  const [isActive, toggleIsActive] = useSwitch(props.isActive);
+  const [isHighlightOnly, toggleIsHighlightOnly] = useSwitch(props.isHighlightOnly);
 
-  // TODO: remove when dynamic data is available
-  const [isRegexDbg, isRegexDbgToggle] = useSwitch(isRegex);
+  const list = createListCollection({
+    items: props.overAlternatives.data,
+  });
 
   return (
     <Box
@@ -84,7 +67,7 @@ export const Filter = ({
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Name'
-          defaultValue={name}
+          defaultValue={props.name}
         />
 
         <TooltipIconButton
@@ -102,65 +85,48 @@ export const Filter = ({
         <Collapsible.Content>
           <Stack gap='1em' padding='0.75em 0.5em'>
             <HStack gap='1em'>
-              <Checkbox.Root checked={active} variant='subtle' colorPalette='green'>
+              {/* TODO: implement add component button */}
+              <TooltipIconButton
+                tooltip='Add component'
+                size='xs'
+                colorPalette='green'
+                variant='subtle'
+              >
+                <NewIcon />
+              </TooltipIconButton>
+
+              <Checkbox.Root
+                cursor='pointer'
+                onCheckedChange={toggleIsActive}
+                checked={isActive}
+                variant='subtle'
+                colorPalette='green'
+              >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control>
                   <Checkbox.Indicator />
                 </Checkbox.Control>
                 <Checkbox.Label>Active</Checkbox.Label>
               </Checkbox.Root>
-              <Checkbox.Root checked={highlightOnly} variant='subtle' colorPalette='green'>
+
+              <Checkbox.Root
+                cursor='pointer'
+                onCheckedChange={toggleIsHighlightOnly}
+                checked={isHighlightOnly}
+                variant='subtle'
+                colorPalette='green'
+              >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control>
                   <Checkbox.Indicator />
                 </Checkbox.Control>
                 <Checkbox.Label>Highlight Only</Checkbox.Label>
               </Checkbox.Root>
-              <Checkbox.Root
-                checked={isRegexDbg}
-                variant='subtle'
-                colorPalette='green'
-                onCheckedChange={() => isRegexDbgToggle()}
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control>
-                  <Checkbox.Indicator />
-                </Checkbox.Control>
-                <Checkbox.Label>IsRegex</Checkbox.Label>
-              </Checkbox.Root>
             </HStack>
-            <HStack>
-              <Select.Root collection={list} size='md' maxWidth='150px'>
-                <Select.HiddenSelect />
 
-                <Select.Control>
-                  <Select.Trigger>
-                    <Select.ValueText placeholder={over} />
-                  </Select.Trigger>
-                  <Select.IndicatorGroup>
-                    <Select.Indicator />
-                  </Select.IndicatorGroup>
-                </Select.Control>
-
-                <Select.Positioner>
-                  <Select.Content colorPalette='green'>
-                    {list.items.map(item => (
-                      <Select.Item item={item} key={item.value}>
-                        {item.label}
-                        <Select.ItemIndicator />
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
-                </Select.Positioner>
-              </Select.Root>
-
-              <Input
-                borderColor={border}
-                colorPalette='green'
-                defaultValue={formula}
-                placeholder='Filter'
-              />
-            </HStack>
+            <For each={props.components}>
+              {component => <FilterComponent {...component} overAlternatives={list} />}
+            </For>
           </Stack>
         </Collapsible.Content>
       </Collapsible.Root>

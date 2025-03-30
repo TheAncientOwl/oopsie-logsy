@@ -6,10 +6,11 @@
  *
  * @file Filters.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filters component
  */
 
+import { type FilterTabData } from '@/components/app/filters/interfaces';
 import {
   ApplyIcon,
   ClearIcon,
@@ -28,57 +29,139 @@ interface FiltersProps {
   filtersOpen: boolean;
 }
 
-export const Filters = ({ filtersOpen }: FiltersProps) => {
-  const filterTabs = [
-    {
-      id: 1,
-      name: 'filter-group1',
-      title: 'FilterGroup1',
-      filters: [
-        {
-          id: 1,
-          name: 'Filter1',
-          over: 'Payload',
-          active: true,
-          overAlternatives: [
-            { label: 'Timestamp', value: 'Timestamp' },
-            { label: 'Channel', value: 'Channel' },
-            { label: 'Level', value: 'Level' },
-            { label: 'Payload', value: 'Payload' },
-          ],
-          highlightOnly: false,
-          isRegex: false,
-          formula: 'some string to filter',
-          colors: {
-            bg: '#111111',
-            fg: '#000000',
-          },
-        },
-        {
-          id: 2,
-          name: 'Filter2',
-          over: 'Level',
-          active: false,
-          overAlternatives: [
-            { label: 'Timestamp', value: 'Timestamp' },
-            { label: 'Channel', value: 'Channel' },
-            { label: 'Level', value: 'Level' },
-            { label: 'Payload', value: 'Payload' },
-          ],
-          highlightOnly: false,
-          isRegex: true,
-          formula: '(warn|error)',
-          colors: {
-            bg: '#111111',
-            fg: '#000000',
-          },
-        },
-      ],
-    },
-    { id: 2, name: 'filter-group2', title: 'FilterGroup2', filters: [] },
-    { id: 3, name: 'filter-group3', title: 'FilterGroup3', filters: [] },
-  ];
+const overAlternativesHC = {
+  data: [
+    { label: 'Timestamp', value: 'Timestamp' },
+    { label: 'Channel', value: 'Channel' },
+    { label: 'Level', value: 'Level' },
+    { label: 'Payload', value: 'Payload' },
+  ],
+};
 
+const filterTabsHC: Array<FilterTabData> = [
+  {
+    id: '01JQM6ZMY2CJW0SV24CW5MT63Z',
+    name: 'FilterGroup1',
+    filters: [
+      {
+        id: '01JQM6ZSJECYSD1R0J4MNWDXA8',
+        name: 'Filter1',
+        isActive: true,
+        isHighlightOnly: false,
+        components: [
+          {
+            id: '01JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Payload',
+            data: '.*',
+            isRegex: false,
+            isEquals: true,
+          },
+          {
+            id: '02JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Timestamp',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+          {
+            id: '03JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Level',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+          {
+            id: '04JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Payload',
+            data: '.*',
+            isRegex: false,
+            isEquals: true,
+          },
+        ],
+      },
+      {
+        id: '02JQM6ZSJECYSD1R0J4MNWDXA8',
+        name: 'Filter2',
+        isActive: true,
+        isHighlightOnly: false,
+        components: [
+          {
+            id: '01JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Payload',
+            data: '.*',
+            isRegex: false,
+            isEquals: true,
+          },
+          {
+            id: '02JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Timestamp',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+          {
+            id: '03JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Level',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+          {
+            id: '04JQM708N9XAYX1GJX84YXKMRY',
+            over: 'Payload',
+            data: '.*',
+            isRegex: false,
+            isEquals: true,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: '01JQM74SS15G4T8KVBZ3M4JA55',
+    name: 'FilterGroup2',
+    filters: [
+      {
+        id: '01JQM74YEJQN9SGX2E8YM2FD34',
+        name: 'Filter1',
+        isActive: true,
+        isHighlightOnly: false,
+        components: [
+          {
+            id: '01JQM751WVAYSDK2ARNG5PMD45',
+            over: 'Payload',
+            data: '.*',
+            isRegex: true,
+            isEquals: false,
+          },
+          {
+            id: '02JQM751WVAYSDK2ARNG5PMD45',
+            over: 'Timestamp',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+          {
+            id: '03JQM751WVAYSDK2ARNG5PMD45',
+            over: 'Level',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+          {
+            id: '04JQM751WVAYSDK2ARNG5PMD45',
+            over: 'Payload',
+            data: '.*',
+            isRegex: true,
+            isEquals: true,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+export const Filters = ({ filtersOpen }: FiltersProps) => {
   const bg = useColorModeValue('gray.200', 'gray.900');
   const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
@@ -99,11 +182,11 @@ export const Filters = ({ filtersOpen }: FiltersProps) => {
           overflowY='scroll'
           height='45vh' // TODO: make height resizeable by dragging
         >
-          <Tabs.Root variant='line' defaultValue={filterTabs[0].name}>
+          <Tabs.Root variant='line' defaultValue={filterTabsHC[0].name}>
             <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
-              {filterTabs.map(tab => (
+              {filterTabsHC.map(tab => (
                 <Tabs.Trigger colorPalette='green' key={tab.id} value={tab.name}>
-                  {tab.title}
+                  {tab.name}
                 </Tabs.Trigger>
               ))}
               <TooltipIconButton
@@ -118,7 +201,7 @@ export const Filters = ({ filtersOpen }: FiltersProps) => {
                 <NewIcon />
               </TooltipIconButton>
             </Tabs.List>
-            {filterTabs.map(tab => (
+            {filterTabsHC.map(tab => (
               <Tabs.Content key={tab.id} value={tab.name}>
                 <HStack mb='1em' padding='0 0.5em'>
                   <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
@@ -150,7 +233,7 @@ export const Filters = ({ filtersOpen }: FiltersProps) => {
                 </HStack>
                 <Stack gap='0'>
                   {tab.filters.map(filter => (
-                    <Filter key={`${tab.id}-${filter.id}`} {...filter} />
+                    <Filter key={filter.id} {...filter} overAlternatives={overAlternativesHC} />
                   ))}
                 </Stack>
               </Tabs.Content>

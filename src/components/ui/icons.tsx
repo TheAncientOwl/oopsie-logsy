@@ -6,13 +6,21 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Icons used along the app design
  */
 
 import { useColorMode } from '@/hooks/useColorMode';
 import { CiExport, CiImport } from 'react-icons/ci';
-import { FaCheck, FaEye, FaEyeSlash, FaPencilAlt, FaPlus } from 'react-icons/fa';
+import {
+  FaCheck,
+  FaEquals,
+  FaEye,
+  FaEyeSlash,
+  FaNotEqual,
+  FaPencilAlt,
+  FaPlus,
+} from 'react-icons/fa';
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { LuMoon, LuSun } from 'react-icons/lu';
 import { MdDelete } from 'react-icons/md';
@@ -38,3 +46,5 @@ export const ColorModeIcon = () => {
   const { colorMode } = useColorMode();
   return colorMode === 'dark' ? <LuMoon /> : <LuSun />;
 };
+export const EqualsIcon = () => <FaEquals />;
+export const NotEqualsIcon = () => <FaNotEqual />;
