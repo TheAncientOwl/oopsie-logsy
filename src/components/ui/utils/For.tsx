@@ -6,9 +6,11 @@
  *
  * @file For.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Simple utility to mask Array.map usage.
  */
+
+import React from 'react';
 
 interface ForProps<T> {
   each: Array<T>;
@@ -16,5 +18,11 @@ interface ForProps<T> {
 }
 
 export const For = <T,>({ each, children }: ForProps<T>) => {
-  return <>{each.map(children)}</>;
+  return (
+    <>
+      {each.map((item, index) => (
+        <React.Fragment key={(item as any)?.key ?? index}>{children(item, index)}</React.Fragment>
+      ))}
+    </>
+  );
 };
