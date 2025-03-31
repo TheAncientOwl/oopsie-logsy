@@ -50,7 +50,7 @@ export const App = () => {
       : CONTENT_HEIGHTS.whenFiltersOpen;
 
     const difference = CONTENT_HEIGHTS.whenFiltersClosed - CONTENT_HEIGHTS.whenFiltersOpen;
-    const step = difference / 2;
+    const step = difference / (filtersMenuOpen ? 1 : 4);
 
     let currentHeight = parseFloat(contentHeight);
     resizeIntervalRef.current = setInterval(() => {
