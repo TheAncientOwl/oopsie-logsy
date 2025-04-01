@@ -6,11 +6,10 @@
  *
  * @file action.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description LogRegexTags actions dispatchers.
  */
 
-import { Console } from '@/console/Console';
 import { invoke } from '@tauri-apps/api/core';
 import { defaultRegexTag, RegexTag } from './reducer';
 import { ActionType, Dispatch } from './types';
@@ -20,13 +19,13 @@ export const invokeGetTags = () => async (dispatch: Dispatch) => {
 
   try {
     const tags = await invoke<Array<RegexTag>>('get_tags');
-    Console.info(invokeGetTags.name, `received ${tags.length} tags`);
+    console.infoX(invokeGetTags.name, `received ${tags.length} tags`);
     dispatch({
       type: ActionType.InvokeGetTagsOK,
       payload: tags.length !== 0 ? tags : [defaultRegexTag],
     });
   } catch (error) {
-    Console.error(invokeGetTags.name, `error getting tags from rust: ${error}`);
+    console.errorX(invokeGetTags.name, `error getting tags from rust: ${error}`);
     dispatch({ type: ActionType.InvokeGetTagsNOK, payload: error });
   }
 };
@@ -36,10 +35,10 @@ export const invokeSetTags = (tags: Array<RegexTag>) => async (dispatch: Dispatc
 
   try {
     const response = await invoke('set_tags', { tags });
-    Console.log(invokeSetTags.name, `rust response: ${response}`);
+    console.logX(invokeSetTags.name, `rust response: ${response}`);
     dispatch({ type: ActionType.InvokeSetTagsOK });
   } catch (error) {
-    Console.error(invokeGetTags.name, `error sending tags to rust: ${error}`);
+    console.errorX(invokeGetTags.name, `error sending tags to rust: ${error}`);
     dispatch({ type: ActionType.InvokeSetTagsNOK });
   }
 };

@@ -6,15 +6,14 @@
  *
  * @file LogsImporter.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Import logs button
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { ImportIcon } from '@/components/ui/Icons';
-import { open } from '@tauri-apps/plugin-dialog';
 import { invoke } from '@tauri-apps/api/core';
-import { Console } from '@/console/Console';
+import { open } from '@tauri-apps/plugin-dialog';
 
 export const LogsImportButton = () => {
   // TODO: use array of log files instead of single file
@@ -27,12 +26,12 @@ export const LogsImportButton = () => {
     if (selectedFile) {
       try {
         const response = await invoke('set_current_log_paths', { paths: [selectedFile] });
-        Console.info(
+        console.infoX(
           `${LogsImportButton.name}::${handleImportClick.name}`,
           `rust response: ${response}`
         );
       } catch (error) {
-        Console.error(
+        console.errorX(
           `${LogsImportButton.name}::${handleImportClick.name}`,
           `error sending log file paths: ${error}`
         );

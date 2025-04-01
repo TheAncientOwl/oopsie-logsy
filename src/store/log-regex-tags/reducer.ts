@@ -6,11 +6,10 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description LogRegexTags data reducer.
  */
 
-import { Console } from '@/console/Console';
 import { Reducer } from '@reduxjs/toolkit';
 import { v7 as uuidv7 } from 'uuid';
 import { ActionType, ArrayUpdateID, ArrayValueUpdate, DispatchTypes } from './types';
@@ -160,13 +159,13 @@ export const logRegexTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
     }
 
     default: {
-      Console.error(
+      console.errorX(
         logRegexTagsReducer.name,
         `received unhandled action ${JSON.stringify(action)}`
       );
     }
   }
 
-  Console.trace(logRegexTagsReducer.name, `returning input state due to unknown action`);
+  console.traceX(logRegexTagsReducer.name, `returning input state due to unknown action`);
   return state;
 };
