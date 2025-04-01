@@ -7,13 +7,13 @@
 //! # `data.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Defines application data structures.
 //!
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct RegexTag {
-    pub id: u64,
+    pub id: String,
     pub displayed: bool,
     pub regex: String,
     pub name: String,

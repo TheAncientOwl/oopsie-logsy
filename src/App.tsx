@@ -17,6 +17,8 @@ import ToolBar from '@/components/app/toolbar';
 import { useSwitch } from '@/hooks/useSwitch';
 import { Box } from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '@/store';
 
 const CONTENT_HEIGHTS = {
   whenFiltersOpen: 55,
@@ -72,7 +74,7 @@ export const App = () => {
   }, [filtersMenuOpen, toggleFiltersMenu, contentHeight, setContentHeight]);
 
   return (
-    <>
+    <ReduxProvider store={store}>
       <Box height={contentHeight} overflow='scroll'>
         <ToolBar
           _ref={toolbarRef}
@@ -83,6 +85,6 @@ export const App = () => {
       </Box>
       <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
       <Filters filtersOpen={filtersMenuOpen} />
-    </>
+    </ReduxProvider>
   );
 };

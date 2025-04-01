@@ -6,64 +6,24 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Configure log line regex for parsing
  */
 
 import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
-import { Console } from '@/console/Console';
-import { useArray } from '@/hooks/useArray';
+import { RootState } from '@/store';
+import { addTag, invokeGetTags, invokeSetTags } from '@/store/log-regex-tags/action';
+import { RegexTag } from '@/store/log-regex-tags/reducer';
 import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
-import { invoke } from '@tauri-apps/api/core';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { GrConfigure } from 'react-icons/gr';
+import { connect, ConnectedProps } from 'react-redux';
 import { RegexTagItem } from './RegexTagItem';
-
-export interface RegexTag {
-  id: number;
-  displayed: boolean;
-  regex: string;
-  name: string;
-}
 
 const mergeRegexSequences = (tags: Array<RegexTag>): string => {
   return tags.map(tag => (tag.displayed ? `(${tag.regex})` : tag.regex)).join('');
-};
-
-const invokeGetTags = async (): Promise<Array<RegexTag>> => {
-  try {
-    const response = await invoke<Array<RegexTag>>('get_tags');
-    Console.info(
-      `${LogRegexConfiguratorContent.name}::${invokeGetTags.name}`,
-      `received ${response.length} tags`
-    );
-    return response;
-  } catch (error) {
-    Console.error(
-      `${LogRegexConfiguratorContent.name}::${invokeGetTags.name}`,
-      `error getting tags from rust: ${error}`
-    );
-  }
-  return [];
-};
-
-const invokeSetTags = async (tags: Array<RegexTag>): Promise<boolean> => {
-  try {
-    const response = await invoke('set_tags', { tags });
-    Console.info(
-      `${LogRegexConfiguratorContent.name}::${invokeSetTags.name}`,
-      `rust response ${response}`
-    );
-    return true;
-  } catch (error) {
-    Console.error(
-      `${LogRegexConfiguratorContent.name}::${invokeSetTags.name}`,
-      `error sending tags to rust: ${error}`
-    );
-    return false;
-  }
 };
 
 export const LogRegexConfiguratorTrigger = () => {
@@ -75,45 +35,10 @@ export const LogRegexConfiguratorTrigger = () => {
   );
 };
 
-export const LogRegexConfiguratorContent = () => {
-  const tags = useArray<RegexTag>([{ id: 0, displayed: true, regex: '.*', name: 'payload' }]);
-
-  const [hasApplied, setHasApplied] = useState(true);
-
-  const handleApplyTags = useCallback(async () => {
-    const result = await invokeSetTags(tags.data);
-    if (result) {
-      setHasApplied(true);
-    }
-  }, [tags.data, setHasApplied]);
-
+const LogRegexConfiguratorContentImpl: React.FC<PropsFromRedux> = props => {
   useEffect(() => {
-    const fetchTags = async () => {
-      const loadedTags = await invokeGetTags();
-
-      if (loadedTags.length == 0) {
-        Console.info(LogRegexConfiguratorContent.name, 'no tags received from rust');
-        await handleApplyTags();
-      } else {
-        tags.set(loadedTags);
-      }
-    };
-    fetchTags();
+    props.invokeGetTags();
   }, []);
-
-  const addTag = () => {
-    const id = tags.data.length === 0 ? 0 : tags.data[tags.data.length - 1].id + 1;
-    tags.add({
-      id: id,
-      displayed: false,
-      regex: '.*',
-      name: `new tag ${id}`,
-    });
-  };
-
-  useEffect(() => {
-    setHasApplied(!(tags.data.length > 0 && tags.data.every(tag => tag.regex.length > 0)));
-  }, [tags.data, setHasApplied]);
 
   return (
     <Stack>
@@ -126,17 +51,17 @@ export const LogRegexConfiguratorContent = () => {
             <ExportIcon />
           </TooltipIconButton>
         </ButtonGroup>
-        <Input disabled cursor='default' value={mergeRegexSequences(tags.data)} />
+        <Input disabled cursor='default' value={mergeRegexSequences(props.tags)} />
       </HStack>
 
       <HStack>
         <ButtonGroup variant='surface'>
-          <TooltipIconButton onClick={addTag} tooltip='New tag' colorPalette='green'>
+          <TooltipIconButton onClick={props.addTag} tooltip='New tag' colorPalette='green'>
             <NewIcon />
           </TooltipIconButton>
           <TooltipIconButton
-            onClick={handleApplyTags}
-            disabled={hasApplied}
+            onClick={() => props.invokeSetTags(props.tags)}
+            disabled={!props.canApply}
             tooltip='Apply regex'
             colorPalette='green'
           >
@@ -147,11 +72,26 @@ export const LogRegexConfiguratorContent = () => {
         <Input disabled cursor='default' value='Tag Regex' />
       </HStack>
 
-      <For each={tags.data}>
-        {tag => (
-          <RegexTagItem key={tag.id} tag={tag} onDelete={tags.delete} onModify={tags.modify} />
-        )}
-      </For>
+      <For each={props.tags}>{tag => <RegexTagItem key={tag.id} tag={tag} />}</For>
     </Stack>
   );
 };
+
+// <redux>
+const mapState = (state: RootState) => ({
+  tags: state.logRegexTags.tags,
+  canApply: state.logRegexTags.canApplyTags,
+  loading: state.logRegexTags.loading,
+});
+
+const mapDispatch = {
+  invokeGetTags,
+  invokeSetTags,
+  addTag,
+};
+
+const connector = connect(mapState, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const LogRegexConfiguratorContent = connector(LogRegexConfiguratorContentImpl);
+// </redux>
