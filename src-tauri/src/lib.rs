@@ -7,12 +7,14 @@
 //! # `lib.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: OopsieLogsy tauri lib.
 //!
 
 mod core;
 pub mod logger;
+
+use tauri::Manager;
 
 #[tauri::command]
 fn set_tags(tags: Vec<core::data::RegexTag>) -> Result<u16, String> {
@@ -60,6 +62,15 @@ fn set_current_log_paths(paths: Vec<std::path::PathBuf>) -> Result<u16, String> 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)]
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
+            }
+            Ok(())
+        })
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
