@@ -6,13 +6,14 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description LogRegexTags data reducer.
  */
 
 import { Reducer } from '@reduxjs/toolkit';
 import { v7 as uuidv7 } from 'uuid';
 import { ActionType, ArrayUpdateID, ArrayValueUpdate, DispatchTypes } from './types';
+import { shouldIgnoreAction } from '@/store/common/shouldIgnoreAction';
 
 export interface RegexTag {
   id: string;
@@ -157,15 +158,12 @@ export const logRegexTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
         canApplyTags: checkCanApply(newTags),
       };
     }
-
-    default: {
-      console.errorX(
-        logRegexTagsReducer.name,
-        `received unhandled action ${JSON.stringify(action)}`
-      );
-    }
   }
 
-  console.traceX(logRegexTagsReducer.name, `returning input state due to unknown action`);
+  if (!shouldIgnoreAction(action)) {
+    console.warnX(logRegexTagsReducer.name, `received unhandled action ${action}`);
+    console.traceX(logRegexTagsReducer.name, `returning input state due to unknown action`);
+  }
+
   return state;
 };
