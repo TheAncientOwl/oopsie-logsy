@@ -6,7 +6,7 @@
  *
  * @file RegexTagItem.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description LogRegexConfigurator regex tag item.
  */
 
@@ -18,13 +18,13 @@ import {
   updateTagName,
   updateTagRegex,
 } from '@/store/log-regex-tags/action';
-import { RegexTag } from '@/store/log-regex-tags/reducer';
+import { TRegexTag } from '@/store/log-regex-tags/reducer';
 import { HStack, Input } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 interface RegexTagItemProps extends PropsFromRedux {
-  tag: RegexTag;
+  tag: TRegexTag;
 }
 
 const RegexTagItemImpl: React.FC<RegexTagItemProps> = props => {

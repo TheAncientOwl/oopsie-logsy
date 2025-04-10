@@ -6,19 +6,19 @@
  *
  * @file action.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description LogRegexTags actions dispatchers.
  */
 
 import { invoke } from '@tauri-apps/api/core';
-import { defaultRegexTag, RegexTag } from './reducer';
-import { ActionType, Dispatch } from './types';
+import { defaultRegexTag, TRegexTag } from './reducer';
+import { ActionType, TDispatch } from './types';
 
-export const invokeGetTags = () => async (dispatch: Dispatch) => {
+export const invokeGetTags = () => async (dispatch: TDispatch) => {
   dispatch({ type: ActionType.Loading });
 
   try {
-    const tags = await invoke<Array<RegexTag>>('get_tags');
+    const tags = await invoke<Array<TRegexTag>>('get_tags');
     console.infoX(invokeGetTags.name, `received ${tags.length} tags`);
 
     const finalTags = tags.length === 0 ? [defaultRegexTag] : tags;
@@ -37,7 +37,7 @@ export const invokeGetTags = () => async (dispatch: Dispatch) => {
   }
 };
 
-export const invokeSetTags = (tags: Array<RegexTag>) => async (dispatch: Dispatch) => {
+export const invokeSetTags = (tags: Array<TRegexTag>) => async (dispatch: TDispatch) => {
   dispatch({ type: ActionType.Loading });
 
   try {
@@ -50,22 +50,22 @@ export const invokeSetTags = (tags: Array<RegexTag>) => async (dispatch: Dispatc
   }
 };
 
-export const addTag = () => (dispatch: Dispatch) => {
+export const addTag = () => (dispatch: TDispatch) => {
   dispatch({ type: ActionType.AddTag });
 };
 
-export const removeTag = (id: string) => (dispatch: Dispatch) => {
+export const removeTag = (id: string) => (dispatch: TDispatch) => {
   dispatch({ type: ActionType.RemoveTag, payload: { id } });
 };
 
-export const toggleTagDisplay = (id: string) => (dispatch: Dispatch) => {
+export const toggleTagDisplay = (id: string) => (dispatch: TDispatch) => {
   dispatch({ type: ActionType.ToggleTagDisplay, payload: { id } });
 };
 
-export const updateTagName = (id: string, value: string) => (dispatch: Dispatch) => {
+export const updateTagName = (id: string, value: string) => (dispatch: TDispatch) => {
   dispatch({ type: ActionType.UpdateTagName, payload: { id, value } });
 };
 
-export const updateTagRegex = (id: string, value: string) => (dispatch: Dispatch) => {
+export const updateTagRegex = (id: string, value: string) => (dispatch: TDispatch) => {
   dispatch({ type: ActionType.UpdateTagRegex, payload: { id, value } });
 };

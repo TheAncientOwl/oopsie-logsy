@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filters data reducer.
  */
 
@@ -30,7 +30,7 @@ import {
   type TSetOverAlternativePayload,
 } from './types';
 
-import { RegexTag } from '../log-regex-tags/reducer';
+import { TRegexTag } from '../log-regex-tags/reducer';
 
 export type TOverAlternative = {
   label: string;
@@ -41,7 +41,7 @@ export type TOverAlternatives = {
   data: Array<TOverAlternative>;
 };
 
-export const makeOverAlternatives = (regexTags: Array<RegexTag>): TOverAlternatives => {
+export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternatives => {
   return {
     data: regexTags.map(tag => ({
       label: tag.name,

@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Configure log line regex for parsing
  */
 
@@ -15,14 +15,14 @@ import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
 import { RootState } from '@/store';
 import { addTag, invokeGetTags, invokeSetTags } from '@/store/log-regex-tags/action';
-import { RegexTag } from '@/store/log-regex-tags/reducer';
+import { TRegexTag } from '@/store/log-regex-tags/reducer';
 import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { GrConfigure } from 'react-icons/gr';
 import { connect, ConnectedProps } from 'react-redux';
 import { RegexTagItem } from './RegexTagItem';
 
-const mergeRegexSequences = (tags: Array<RegexTag>): string => {
+const mergeRegexSequences = (tags: Array<TRegexTag>): string => {
   return tags.map(tag => (tag.displayed ? `(${tag.regex})` : tag.regex)).join('');
 };
 

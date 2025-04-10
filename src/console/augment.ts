@@ -6,13 +6,13 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Extend logging functionality.
  */
 
-type LogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'log';
+type TLogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'log';
 
-const logFunctions: Record<LogLevel, (...args: any[]) => void> = {
+const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
   error: console.error,
   warn: console.warn,
   debug: console.debug,
@@ -31,7 +31,7 @@ const getCallerLocation = (depth = 3): string => {
   return callerLine.trim().replace(/^.*?:\/\/localhost:\d+\//, '');
 };
 
-const _log = (level: LogLevel, levelStyle: string, caller: string, message: string) => {
+const _log = (level: TLogLevel, levelStyle: string, caller: string, message: string) => {
   const date = new Date();
   const timestamp = `${padLeft(date.getHours())}:${padLeft(date.getMinutes())}:${padLeft(
     date.getSeconds()

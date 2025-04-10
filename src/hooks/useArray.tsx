@@ -6,25 +6,25 @@
  *
  * @file useArray.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Handle array operations
  */
 
 import { useCallback, useState } from 'react';
 
-export type ArrayWherePredicate<T> = (obj: T) => boolean;
-export type DeleteArrayObject<T> = (where: ArrayWherePredicate<T>) => void;
-export type ModifyArrayObject<T> = (where: ArrayWherePredicate<T>, newObj: T) => void;
+export type TArrayWherePredicate<T> = (obj: T) => boolean;
+export type TDeleteArrayObject<T> = (where: TArrayWherePredicate<T>) => void;
+export type TModifyArrayObject<T> = (where: TArrayWherePredicate<T>, newObj: T) => void;
 
-export interface ArrayManager<T> {
+export interface IArrayManager<T> {
   data: Array<T>;
   set: React.Dispatch<React.SetStateAction<T[]>>;
   add: (obj: T) => void;
-  delete: DeleteArrayObject<T>;
-  modify: ModifyArrayObject<T>;
+  delete: TDeleteArrayObject<T>;
+  modify: TModifyArrayObject<T>;
 }
 
-export const useArray = <T,>(initialValue: Array<T> | undefined): ArrayManager<T> => {
+export const useArray = <T,>(initialValue: Array<T> | undefined): IArrayManager<T> => {
   const [arr, setArr] = useState<Array<T>>(initialValue === undefined ? [] : initialValue);
 
   const addElement = useCallback(
@@ -35,14 +35,14 @@ export const useArray = <T,>(initialValue: Array<T> | undefined): ArrayManager<T
   );
 
   const deleteElement = useCallback(
-    (wherePredicate: ArrayWherePredicate<T>) => {
+    (wherePredicate: TArrayWherePredicate<T>) => {
       setArr(prevArr => prevArr.filter(obj => !wherePredicate(obj)));
     },
     [setArr]
   );
 
   const modifyElement = useCallback(
-    (wherePredicate: ArrayWherePredicate<T>, newObj: T) => {
+    (wherePredicate: TArrayWherePredicate<T>, newObj: T) => {
       setArr(prevArr => prevArr.map(obj => (wherePredicate(obj) ? newObj : obj)));
     },
     [setArr]

@@ -6,12 +6,12 @@
  *
  * @file types.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description LogRegexTags action types.
  */
 
 import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
-import { RegexTag } from './reducer';
+import { TRegexTag } from './reducer';
 
 export enum ActionType {
   Loading = 'LogRegexTags__Loading',
@@ -26,68 +26,68 @@ export enum ActionType {
   UpdateTagRegex = 'LogRegexTags__UpdateTagRegex',
 }
 
-interface InvokeGetTagsOK {
+interface IInvokeGetTagsOK {
   type: typeof ActionType.InvokeGetTagsOK;
-  payload: Array<RegexTag>;
+  payload: Array<TRegexTag>;
 }
 
-interface InvokeGetTagsNOK {
+interface IInvokeGetTagsNOK {
   type: typeof ActionType.InvokeGetTagsNOK;
   payload: any;
 }
 
-interface InvokeSetTagsOK {
+interface IInvokeSetTagsOK {
   type: typeof ActionType.InvokeSetTagsOK;
 }
 
-interface InvokeSetTagsNOK {
+interface IInvokeSetTagsNOK {
   type: typeof ActionType.InvokeSetTagsNOK;
   payload: any;
 }
 
-interface AddTag {
+interface IAddTag {
   type: typeof ActionType.AddTag;
 }
 
-export interface ArrayUpdateID {
+export type TArrayUpdateIDPayload = {
   id: string;
-}
+};
 
-interface RemoveTag {
+interface IRemoveTag {
   type: typeof ActionType.RemoveTag;
-  payload: ArrayUpdateID;
+  payload: TArrayUpdateIDPayload;
 }
 
-interface ToggleTagDisplay {
+interface IToggleTagDisplay {
   type: typeof ActionType.ToggleTagDisplay;
-  payload: ArrayUpdateID;
+  payload: TArrayUpdateIDPayload;
 }
 
-export interface ArrayValueUpdate {
+export type TArrayValueUpdatePayload = {
   id: string;
   value: string;
-}
+};
 
-interface UpdateTagName {
+interface IUpdateTagName {
   type: typeof ActionType.UpdateTagName;
-  payload: ArrayValueUpdate;
+  payload: TArrayValueUpdatePayload;
 }
 
-interface UpdateTagRegex {
+interface IUpdateTagRegex {
   type: typeof ActionType.UpdateTagRegex;
-  payload: ArrayValueUpdate;
+  payload: TArrayValueUpdatePayload;
 }
 
 export type DispatchTypes =
   | UnknownAction
-  | InvokeGetTagsOK
-  | InvokeGetTagsNOK
-  | InvokeSetTagsOK
-  | InvokeSetTagsNOK
-  | AddTag
-  | RemoveTag
-  | ToggleTagDisplay
-  | UpdateTagName
-  | UpdateTagRegex;
+  | IInvokeGetTagsOK
+  | IInvokeGetTagsNOK
+  | IInvokeSetTagsOK
+  | IInvokeSetTagsNOK
+  | IAddTag
+  | IRemoveTag
+  | IToggleTagDisplay
+  | IUpdateTagName
+  | IUpdateTagRegex;
 
-export type Dispatch = ReduxDispatch<DispatchTypes>;
+export type TDispatch = ReduxDispatch<DispatchTypes>;
