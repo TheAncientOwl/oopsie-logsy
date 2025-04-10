@@ -6,7 +6,7 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Extend logging functionality.
  */
 
@@ -23,6 +23,14 @@ const logFunctions: Record<LogLevel, (...args: any[]) => void> = {
 
 const padLeft = (value: number) => value.toString().padStart(2, '0');
 
+const getCallerLocation = (depth = 3): string => {
+  const stack = new Error().stack;
+  if (!stack) return 'unknown';
+  const lines = stack.split('\n');
+  const callerLine = lines[depth] || 'unknown';
+  return callerLine.trim().replace(/^.*?:\/\/localhost:\d+\//, '');
+};
+
 const _log = (level: LogLevel, levelStyle: string, caller: string, message: string) => {
   const date = new Date();
   const timestamp = `${padLeft(date.getHours())}:${padLeft(date.getMinutes())}:${padLeft(
@@ -30,9 +38,11 @@ const _log = (level: LogLevel, levelStyle: string, caller: string, message: stri
   )}:${date.getMilliseconds()}`;
 
   (logFunctions[level] || console.log)(
-    `%c| %c${timestamp} %c| ::%c${caller} %c» %c${message}`,
+    `%c| %c${timestamp} %c| %c${getCallerLocation()}%c@%c${caller} %c» %c${message}`,
     'color: gray',
     'color: dodgerblue',
+    'color: gray',
+    'color: lightslategrey',
     'color: gray',
     levelStyle,
     'color: gray',
