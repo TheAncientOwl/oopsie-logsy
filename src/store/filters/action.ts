@@ -6,13 +6,14 @@
  *
  * @file action.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filters actions dispatchers.
  */
 
 import { TFilterComponent } from './reducer';
 import {
   ActionType,
+  TFilterTabFocusPayload,
   type TDispatch,
   type TFilterAddPayload,
   type TFilterComponentAddPayload,
@@ -54,6 +55,13 @@ export const deleteFilterTab = (targetId: string) => (dispatch: TDispatch) => {
   dispatch({
     type: ActionType.FilterTabDelete,
     payload: { targetId } as TFilterTabDeletePayload,
+  });
+};
+
+export const focusFilterTab = (targetId: string) => (dispatch: TDispatch) => {
+  dispatch({
+    type: ActionType.FilterTabFocus,
+    payload: { targetId } as TFilterTabFocusPayload,
   });
 };
 

@@ -6,18 +6,23 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Filters component
  */
 
-import { NewIcon } from '@/components/ui/Icons';
+import { DeleteIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
-import { invokeGetFilters, invokeSetFilters, newFilterTab } from '@/store/filters/action';
+import {
+  deleteFilterTab,
+  invokeGetFilters,
+  invokeSetFilters,
+  newFilterTab,
+} from '@/store/filters/action';
 import { makeOverAlternatives } from '@/store/filters/reducer';
-import { Box, Collapsible, createListCollection, Tabs } from '@chakra-ui/react';
-import React, { useMemo } from 'react';
+import { Box, ButtonGroup, Collapsible, createListCollection, Tabs } from '@chakra-ui/react';
+import React, { useCallback, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 
@@ -33,6 +38,10 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
     () => createListCollection({ items: makeOverAlternatives(props.logRegexTags).data }),
     [props.logRegexTags]
   );
+
+  const handleDeleteFilterTabClick = useCallback(() => {
+    props.deleteFilterTab(props.focusedTab);
+  }, [props.deleteFilterTab, props.focusedTab]);
 
   return (
     <Collapsible.Root
@@ -51,24 +60,28 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
           overflowY='scroll'
           height='60vh' // TODO: make height resizeable by dragging
         >
-          <Tabs.Root variant='line' defaultValue={props.filterTabs[0].name}>
+          <Tabs.Root variant='line' defaultValue={props.focusedTab} value={props.focusedTab}>
             <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
               {props.filterTabs.map(tab => (
-                <FilterTabHeader key={tab.id} name={tab.name} />
+                <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
               ))}
 
-              <TooltipIconButton
-                size='xs'
-                variant='subtle'
-                colorPalette='green'
-                position='absolute'
-                right='0.5em'
-                top='0.5em'
-                tooltip='New filters group'
-                onClick={props.newFilterTab}
-              >
-                <NewIcon />
-              </TooltipIconButton>
+              <ButtonGroup size='xs' variant='subtle' position='absolute' right='0.5em' top='0.5em'>
+                <TooltipIconButton
+                  colorPalette='green'
+                  tooltip='New filters tab'
+                  onClick={props.newFilterTab}
+                >
+                  <NewIcon />
+                </TooltipIconButton>
+                <TooltipIconButton
+                  colorPalette='red'
+                  tooltip='Delete current filters tab'
+                  onClick={handleDeleteFilterTabClick}
+                >
+                  <DeleteIcon />
+                </TooltipIconButton>
+              </ButtonGroup>
             </Tabs.List>
 
             {props.filterTabs.map(tab => (
@@ -86,12 +99,14 @@ const mapState = (state: RootState) => ({
   filterTabs: state.filters.filterTabs,
   loading: state.filters.loading,
   logRegexTags: state.logRegexTags.tags,
+  focusedTab: state.filters.focusedTabId,
 });
 
 const mapDispatch = {
   invokeGetFilters,
   invokeSetFilters,
   newFilterTab,
+  deleteFilterTab,
 };
 
 const connector = connect(mapState, mapDispatch);

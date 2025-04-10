@@ -6,7 +6,7 @@
  *
  * @file types.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filters action types.
  */
 
@@ -23,6 +23,7 @@ export enum ActionType {
 
   FilterTabAdd = 'Filters__FilterTabAdd',
   FilterTabDelete = 'Filters__FilterTabDelete',
+  FilterTabFocus = 'Filters__FilterTabFocus',
 
   FilterAdd = 'Filters__FilterAdd',
   FilterDelete = 'Filters__FilterDelete',
@@ -72,6 +73,14 @@ export type TFilterTabDeletePayload = {
 interface IFilterTabDelete {
   type: typeof ActionType.FilterTabDelete;
   payload: TFilterTabDeletePayload;
+}
+
+export type TFilterTabFocusPayload = {
+  targetId: string;
+};
+interface IFilterTabFocusPayload {
+  type: typeof ActionType.FilterTabFocus;
+  payload: TFilterTabFocusPayload;
 }
 
 export type TFilterAddPayload = {
@@ -169,6 +178,7 @@ export type DispatchTypes =
   | IInvokeSetFiltersNOK
   | IFilterTabAdd
   | IFilterTabDelete
+  | IFilterTabFocusPayload
   | IFilterAdd
   | IFilterDelete
   | IFilterToggleActive

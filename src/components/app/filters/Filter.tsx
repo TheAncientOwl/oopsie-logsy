@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Filter component
  */
 
@@ -15,7 +15,6 @@ import { DeleteIcon, EyeClosedIcon, EyeOpenIcon, NewIcon } from '@/components/ui
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
-import { RootState } from '@/store';
 import {
   deleteFilter,
   filterSetName,
@@ -25,9 +24,9 @@ import {
 } from '@/store/filters/action';
 import { TFilter, TOverAlternative } from '@/store/filters/reducer';
 import { Box, Checkbox, Collapsible, HStack, Input, ListCollection, Stack } from '@chakra-ui/react';
+import React, { useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponent } from './FilterComponent';
-import React, { useCallback } from 'react';
 
 interface FilterProps extends PropsFromRedux {
   tabId: string;
@@ -169,7 +168,7 @@ const FilterImpl = (props: FilterProps) => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({});
+const mapState = () => ({});
 
 const mapDispatch = {
   deleteFilter,

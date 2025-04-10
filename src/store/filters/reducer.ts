@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filters data reducer.
  */
 
@@ -14,6 +14,7 @@ import { Reducer } from '@reduxjs/toolkit';
 import { v7 as uuidv7 } from 'uuid';
 import {
   ActionType,
+  TFilterTabFocusPayload,
   type DispatchTypes,
   type TFilterAddPayload,
   type TFilterComponentAddPayload,
@@ -75,6 +76,7 @@ export type TFilterTab = {
 interface IDefaultState {
   loading: boolean;
   filterTabs: Array<TFilterTab>;
+  focusedTabId: string;
 }
 
 const DummyFilterMaker = {
@@ -117,9 +119,12 @@ const DummyFilterMaker = {
   },
 };
 
+const dummyTabs = [DummyFilterMaker.makeDummyTab(), DummyFilterMaker.makeDummyTab()];
+
 const defaultState: IDefaultState = {
   loading: false,
-  filterTabs: [DummyFilterMaker.makeDummyTab(), DummyFilterMaker.makeDummyTab()],
+  filterTabs: dummyTabs,
+  focusedTabId: dummyTabs[0].id,
 };
 
 export const filtersTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
@@ -167,15 +172,35 @@ export const filtersTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
       return {
         ...state,
         filterTabs: [...state.filterTabs, tab],
+        focusedTabId: tab.id,
       };
     }
 
     case ActionType.FilterTabDelete: {
       const { targetId } = action.payload as TFilterTabDeletePayload;
 
+      let newFocusIndex = 0;
+      const newTabs = state.filterTabs.filter((tab, idx) => {
+        if (tab.id === targetId) {
+          newFocusIndex = idx;
+        }
+        return tab.id !== targetId;
+      });
+      newFocusIndex = Math.min(newFocusIndex, newTabs.length - 1);
+
       return {
         ...state,
-        filterTabs: state.filterTabs.filter(tab => tab.id !== targetId),
+        filterTabs: newTabs,
+        focusedTabId: newFocusIndex >= 0 ? newTabs[newFocusIndex].id : '',
+      };
+    }
+
+    case ActionType.FilterTabFocus: {
+      const { targetId } = action.payload as TFilterTabFocusPayload;
+
+      return {
+        ...state,
+        focusedTabId: targetId,
       };
     }
 

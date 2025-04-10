@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filter tab.
  */
 
@@ -22,26 +22,45 @@ import {
   SoundOffIcon,
   SoundOnIcon,
 } from '@/components/ui/Icons';
-import { RootState } from '@/store';
-import { newFilter } from '@/store/filters/action';
+import { focusFilterTab, newFilter } from '@/store/filters/action';
 import { type TFilterTab, type TOverAlternative } from '@/store/filters/reducer';
 import { ButtonGroup, HStack, ListCollection, Span, Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
-interface FilterTabHeaderProps {
+interface FilterTabHeaderProps extends HeaderPropsFromRedux {
+  tabId: string;
   name: string;
 }
 
-export const FilterTabHeader: React.FC<FilterTabHeaderProps> = (props: FilterTabHeaderProps) => {
+export const FilterTabHeaderImpl: React.FC<FilterTabHeaderProps> = (
+  props: FilterTabHeaderProps
+) => {
+  const handleFocusClick = useCallback(() => {
+    props.focusFilterTab(props.tabId);
+  }, [props.focusFilterTab, props.tabId]);
+
   return (
-    <Tabs.Trigger colorPalette='green' value={props.name}>
+    <Tabs.Trigger colorPalette='green' value={props.tabId} onClick={handleFocusClick}>
       {props.name}
     </Tabs.Trigger>
   );
 };
 
-interface FilterContentTabProps extends PropsFromRedux {
+// <redux-content>
+const mapStateHeader = () => ({});
+
+const mapDispatchHeader = {
+  focusFilterTab,
+};
+
+const connectorHeader = connect(mapStateHeader, mapDispatchHeader);
+type HeaderPropsFromRedux = ConnectedProps<typeof connectorHeader>;
+
+export const FilterTabHeader = connectorHeader(FilterTabHeaderImpl);
+// </redux-content>
+
+interface FilterContentTabProps extends ContentPropsFromRedux {
   tab: TFilterTab;
   overAlternatives: ListCollection<TOverAlternative>;
 }
@@ -52,7 +71,7 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
   }, [props.newFilter, props.tab.id]);
 
   return (
-    <Tabs.Content value={props.tab.name}>
+    <Tabs.Content value={props.tab.id}>
       <HStack mb='1em' padding='0 0.5em'>
         <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
           <TooltipIconButton tooltip='Apply filters'>
@@ -95,15 +114,15 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
   );
 };
 
-// <redux>
-const mapState = (state: RootState) => ({});
+// <redux-content>
+const mapStateContent = () => ({});
 
-const mapDispatch = {
+const mapDispatchContent = {
   newFilter,
 };
 
-const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+const connectorContent = connect(mapStateContent, mapDispatchContent);
+type ContentPropsFromRedux = ConnectedProps<typeof connectorContent>;
 
-export const FilterTabContent = connector(FilterTabContentImpl);
-// </redux>
+export const FilterTabContent = connectorContent(FilterTabContentImpl);
+// </redux-content>
