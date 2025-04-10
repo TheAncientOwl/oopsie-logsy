@@ -6,7 +6,7 @@
  *
  * @file action.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description LogRegexTags actions dispatchers.
  */
 
@@ -20,9 +20,16 @@ export const invokeGetTags = () => async (dispatch: Dispatch) => {
   try {
     const tags = await invoke<Array<RegexTag>>('get_tags');
     console.infoX(invokeGetTags.name, `received ${tags.length} tags`);
+
+    const finalTags = tags.length === 0 ? [defaultRegexTag] : tags;
+
+    if (tags.length === 0) {
+      await invokeSetTags(finalTags)(dispatch);
+    }
+
     dispatch({
       type: ActionType.InvokeGetTagsOK,
-      payload: tags.length !== 0 ? tags : [defaultRegexTag],
+      payload: finalTags,
     });
   } catch (error) {
     console.errorX(invokeGetTags.name, `error getting tags from rust: ${error}`);
