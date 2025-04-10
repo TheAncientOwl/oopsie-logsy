@@ -6,14 +6,10 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filter component.
  */
 
-import {
-  type FilterComponentData,
-  type OverAlternative,
-} from '@/components/app/filters/interfaces';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import {
   DeleteIcon,
@@ -24,27 +20,63 @@ import {
 } from '@/components/ui/Icons';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { useSwitch } from '@/hooks/useSwitch';
+import { RootState } from '@/store';
+import {
+  deleteFilterComponent,
+  filterComponentSetData,
+  filterComponentSetOverAlternative,
+  filterComponentToggleIsEquals,
+  filterComponentToggleIsRegex,
+  newFilterComponent,
+} from '@/store/filters/action';
+import { TFilterComponent, TOverAlternative } from '@/store/filters/reducer';
 import { ButtonGroup, HStack, Input, ListCollection, Select } from '@chakra-ui/react';
+import React, { useCallback } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 
-interface FilterComponentProps extends FilterComponentData {
-  overAlternatives: ListCollection<OverAlternative>;
+interface FilterComponentProps extends PropsFromRedux {
+  tabId: string;
+  filterId: string;
+  component: TFilterComponent;
+  overAlternatives: ListCollection<TOverAlternative>;
 }
 
-export const FilterComponent = (props: FilterComponentProps) => {
+const FilterComponentImpl = (props: FilterComponentProps) => {
   const border = useColorModeValue('gray.500', 'gray.500');
 
-  const [isEquals, toggleIsEquals] = useSwitch(props.isEquals);
-  const [isRegex, toggleIsRegex] = useSwitch(props.isRegex);
+  const handleToggleIsRegexClick = useCallback(() => {
+    props.filterComponentToggleIsRegex(props.tabId, props.filterId, props.component.id);
+  }, [props.filterComponentToggleIsRegex, props.tabId, props.filterId, props.component.id]);
+
+  const handleToggleIsEqualsClick = useCallback(() => {
+    props.filterComponentToggleIsEquals(props.tabId, props.filterId, props.component.id);
+  }, [props.filterComponentToggleIsEquals, props.tabId, props.filterId, props.component.id]);
+
+  const handleDataChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.filterComponentSetData(
+        props.tabId,
+        props.filterId,
+        props.component.id,
+        event.target.value
+      );
+    },
+    [props.filterComponentSetData, props.tabId, props.filterId, props.component.id]
+  );
+
+  const handleDeleteClick = useCallback(() => {
+    props.deleteFilterComponent(props.tabId, props.filterId, props.component.id);
+  }, [props.deleteFilterComponent, props.tabId, props.filterId, props.component.id]);
 
   return (
     <HStack>
       <Select.Root collection={props.overAlternatives} size='md' maxWidth='150px'>
+        {/* TODO: select... */}
         <Select.HiddenSelect />
 
         <Select.Control>
           <Select.Trigger cursor='pointer'>
-            <Select.ValueText placeholder={props.over} />
+            <Select.ValueText placeholder={props.component.over} />
           </Select.Trigger>
           <Select.IndicatorGroup>
             <Select.Indicator />
@@ -67,29 +99,54 @@ export const FilterComponent = (props: FilterComponentProps) => {
 
       <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
         <TooltipIconButton
-          onClick={toggleIsRegex}
-          tooltip={isRegex ? 'Toggle regex: Off' : 'Toggle regex: On'}
+          tooltip={props.component.isRegex ? 'Toggle regex: Off' : 'Toggle regex: On'}
+          onClick={handleToggleIsRegexClick}
         >
-          {isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
+          {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
         </TooltipIconButton>
         <TooltipIconButton
-          onClick={toggleIsEquals}
-          tooltip={isEquals ? 'Toggle not equals' : 'Toggle equals'}
+          tooltip={props.component.isEquals ? 'Toggle not equals' : 'Toggle equals'}
+          onClick={handleToggleIsEqualsClick}
         >
-          {isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
+          {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
         </TooltipIconButton>
       </ButtonGroup>
 
       <Input
         borderColor={border}
         colorPalette='green'
-        defaultValue={props.data}
+        defaultValue={props.component.data}
         placeholder='Filter'
+        onChange={handleDataChange}
       />
 
-      <TooltipIconButton tooltip='Delete component' size='sm' colorPalette='red' variant='subtle'>
+      <TooltipIconButton
+        size='sm'
+        colorPalette='red'
+        variant='subtle'
+        tooltip='Delete component'
+        onClick={handleDeleteClick}
+      >
         <DeleteIcon />
       </TooltipIconButton>
     </HStack>
   );
 };
+
+// <redux>
+const mapState = (state: RootState) => ({});
+
+const mapDispatch = {
+  newFilterComponent,
+  deleteFilterComponent,
+  filterComponentSetOverAlternative,
+  filterComponentToggleIsRegex,
+  filterComponentToggleIsEquals,
+  filterComponentSetData,
+};
+
+const connector = connect(mapState, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const FilterComponent = connector(FilterComponentImpl);
+// </redux>

@@ -6,10 +6,10 @@
  *
  * @file index.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filters index
  */
 
-import { Filters } from '@/components/app/filters/Filters';
+import { FilterTabs } from '@/components/app/filters/FilterTabs';
 
-export default Filters;
+export default FilterTabs;

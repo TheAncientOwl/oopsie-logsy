@@ -6,43 +6,67 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Filter component
  */
 
-import { type FilterData, type OverAlternatives } from '@/components/app/filters/interfaces';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { DeleteIcon, EyeClosedIcon, EyeOpenIcon, NewIcon } from '@/components/ui/Icons';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
+import { RootState } from '@/store';
 import {
-  Box,
-  Checkbox,
-  Collapsible,
-  createListCollection,
-  HStack,
-  Input,
-  Stack,
-} from '@chakra-ui/react';
+  deleteFilter,
+  filterSetName,
+  filterToggleActive,
+  filterToggleHighlightOnly,
+  newFilterComponent,
+} from '@/store/filters/action';
+import { TFilter, TOverAlternative } from '@/store/filters/reducer';
+import { Box, Checkbox, Collapsible, HStack, Input, ListCollection, Stack } from '@chakra-ui/react';
+import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponent } from './FilterComponent';
+import React, { useCallback } from 'react';
 
-interface FilterProps extends FilterData {
-  overAlternatives: OverAlternatives;
+interface FilterProps extends PropsFromRedux {
+  tabId: string;
+  filter: TFilter;
+  overAlternatives: ListCollection<TOverAlternative>;
 }
 
-export const Filter = (props: FilterProps) => {
+const FilterImpl = (props: FilterProps) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.500');
 
   const [isOpen, toggleIsOpen] = useSwitch(true);
 
-  const [isActive, toggleIsActive] = useSwitch(props.isActive);
-  const [isHighlightOnly, toggleIsHighlightOnly] = useSwitch(props.isHighlightOnly);
+  const handleNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.filterSetName(props.tabId, props.filter.id, event.target.value);
+    },
+    [props.filterSetName, props.tabId, props.filter.id]
+  );
 
-  const list = createListCollection({
-    items: props.overAlternatives.data,
-  });
+  const handleDeleteClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      event.stopPropagation();
+      props.deleteFilter(props.tabId, props.filter.id);
+    },
+    [props.deleteFilter, props.tabId, props.filter.id]
+  );
+
+  const handleNewComponentClick = useCallback(() => {
+    props.newFilterComponent(props.tabId, props.filter.id);
+  }, [props.newFilterComponent, props.tabId, props.filter.id]);
+
+  const handleFilterToggle = useCallback(() => {
+    props.filterToggleActive(props.tabId, props.filter.id);
+  }, [props.filterToggleActive, props.tabId, props.filter.id]);
+
+  const handleFilterToggleHiglightOnly = useCallback(() => {
+    props.filterToggleHighlightOnly(props.tabId, props.filter.id);
+  }, [props.filterToggleHighlightOnly, props.tabId, props.filter.id]);
 
   return (
     <Box
@@ -63,11 +87,13 @@ export const Filter = (props: FilterProps) => {
         >
           {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
         </TooltipIconButton>
+
         <Input
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Name'
-          defaultValue={props.name}
+          defaultValue={props.filter.name}
+          onChange={handleNameChange}
         />
 
         <TooltipIconButton
@@ -75,7 +101,7 @@ export const Filter = (props: FilterProps) => {
           size='sm'
           colorPalette='red'
           variant='subtle'
-          onClick={event => event.stopPropagation()}
+          onClick={handleDeleteClick}
         >
           <DeleteIcon />
         </TooltipIconButton>
@@ -85,20 +111,20 @@ export const Filter = (props: FilterProps) => {
         <Collapsible.Content>
           <Stack gap='1em' padding='0.75em 0.5em'>
             <HStack gap='1em'>
-              {/* TODO: implement add component button */}
               <TooltipIconButton
                 tooltip='Add component'
                 size='xs'
                 colorPalette='green'
                 variant='subtle'
+                onClick={handleNewComponentClick}
               >
                 <NewIcon />
               </TooltipIconButton>
 
               <Checkbox.Root
                 cursor='pointer'
-                onCheckedChange={toggleIsActive}
-                checked={isActive}
+                onCheckedChange={handleFilterToggle}
+                checked={props.filter.isActive}
                 variant='subtle'
                 colorPalette='green'
               >
@@ -111,8 +137,8 @@ export const Filter = (props: FilterProps) => {
 
               <Checkbox.Root
                 cursor='pointer'
-                onCheckedChange={toggleIsHighlightOnly}
-                checked={isHighlightOnly}
+                onCheckedChange={handleFilterToggleHiglightOnly}
+                checked={props.filter.isHighlightOnly}
                 variant='subtle'
                 colorPalette='green'
               >
@@ -124,8 +150,16 @@ export const Filter = (props: FilterProps) => {
               </Checkbox.Root>
             </HStack>
 
-            <For each={props.components}>
-              {component => <FilterComponent {...component} overAlternatives={list} />}
+            <For each={props.filter.components}>
+              {component => (
+                <FilterComponent
+                  key={component.id}
+                  tabId={props.tabId}
+                  filterId={props.filter.id}
+                  component={component}
+                  overAlternatives={props.overAlternatives}
+                />
+              )}
             </For>
           </Stack>
         </Collapsible.Content>
@@ -133,3 +167,20 @@ export const Filter = (props: FilterProps) => {
     </Box>
   );
 };
+
+// <redux>
+const mapState = (state: RootState) => ({});
+
+const mapDispatch = {
+  deleteFilter,
+  filterToggleActive,
+  filterToggleHighlightOnly,
+  filterSetName,
+  newFilterComponent,
+};
+
+const connector = connect(mapState, mapDispatch);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const Filter = connector(FilterImpl);
+// </redux>

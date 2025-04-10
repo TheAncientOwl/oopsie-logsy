@@ -10,7 +10,7 @@
  * @description App class
  */
 
-import Filters from '@/components/app/filters';
+import FilterTabs from '@/components/app/filters';
 import LogView from '@/components/app/log-view';
 import Settings from '@/components/app/settings';
 import ToolBar from '@/components/app/toolbar';
@@ -84,7 +84,7 @@ export const App = () => {
         <LogView offsetTop={`${toolbarHeight}px`} />
       </Box>
       <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
-      <Filters filtersOpen={filtersMenuOpen} />
+      <FilterTabs filtersOpen={filtersMenuOpen} />
     </ReduxProvider>
   );
 };
