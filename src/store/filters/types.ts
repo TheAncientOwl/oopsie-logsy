@@ -6,7 +6,7 @@
  *
  * @file types.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filters action types.
  */
 
@@ -30,6 +30,7 @@ export enum ActionType {
   FilterToggleActive = 'Filters__FilterToggleActive',
   FilterToggleHighlightOnly = 'Filters__FilterToggleHighlightOnly',
   FilterSetName = 'Filters__FilterSetName',
+  FilterDuplicate = 'Filters__FilterDuplicate',
 
   FilterComponentAdd = 'Filters__FilterComponentAdd',
   FilterComponentDelete = 'Filters__FilterComponentDelete',
@@ -123,6 +124,12 @@ interface IFilterSetName {
   payload: TFilterSetNamePayload;
 }
 
+export type TFilterDuplicatePayload = TTargetedFilterPayload;
+interface IFilterDuplicate {
+  type: typeof ActionType.FilterDuplicate;
+  payload: TFilterDuplicatePayload;
+}
+
 export type TFilterComponentAddPayload = TTargetedFilterPayload & {
   component: TFilterComponent;
 };
@@ -181,6 +188,7 @@ export type DispatchTypes =
   | IFilterTabFocusPayload
   | IFilterAdd
   | IFilterDelete
+  | IFilterDuplicate
   | IFilterToggleActive
   | IFilterToggleHighlightOnly
   | IFilterSetName

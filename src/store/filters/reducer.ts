@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filters data reducer.
  */
 
@@ -14,6 +14,7 @@ import { Reducer } from '@reduxjs/toolkit';
 import { v7 as uuidv7 } from 'uuid';
 import {
   ActionType,
+  TFilterDuplicatePayload,
   TFilterTabFocusPayload,
   type DispatchTypes,
   type TFilterAddPayload,
@@ -192,6 +193,35 @@ export const filtersTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
         ...state,
         filterTabs: newTabs,
         focusedTabId: newFocusIndex >= 0 ? newTabs[newFocusIndex].id : '',
+      };
+    }
+
+    case ActionType.FilterDuplicate: {
+      const { targetTabId, targetFilterId } = action.payload as TFilterDuplicatePayload;
+
+      const handleDuplication = (filters: Array<TFilter>): Array<TFilter> => {
+        const newArr = [] as Array<TFilter>;
+
+        filters.forEach(filter => {
+          newArr.push(filter);
+          if (filter.id === targetFilterId) {
+            newArr.push({ ...filter, id: uuidv7() });
+          }
+        });
+
+        return newArr;
+      };
+
+      return {
+        ...state,
+        filterTabs: state.filterTabs.map(tab =>
+          tab.id !== targetTabId
+            ? tab
+            : {
+                ...tab,
+                filters: handleDuplication(tab.filters),
+              }
+        ),
       };
     }
 

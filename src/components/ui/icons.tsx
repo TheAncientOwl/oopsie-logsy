@@ -6,13 +6,14 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Icons used along the app design
  */
 
 import { useColorMode } from '@/hooks/useColorMode';
 import { CiExport, CiImport } from 'react-icons/ci';
 import {
+  FaAngleDoubleDown,
   FaCheck,
   FaEquals,
   FaEye,
@@ -48,3 +49,4 @@ export const ColorModeIcon = () => {
 };
 export const EqualsIcon = () => <FaEquals />;
 export const NotEqualsIcon = () => <FaNotEqual />;
+export const DuplicateIcon = () => <FaAngleDoubleDown />;

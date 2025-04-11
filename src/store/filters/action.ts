@@ -6,13 +6,14 @@
  *
  * @file action.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filters actions dispatchers.
  */
 
 import { TFilterComponent } from './reducer';
 import {
   ActionType,
+  TFilterDuplicatePayload,
   TFilterTabFocusPayload,
   type TDispatch,
   type TFilterAddPayload,
@@ -89,6 +90,17 @@ export const deleteFilter =
         targetTabId,
         targetFilterId,
       } as TFilterDeletePayload,
+    });
+  };
+
+export const duplicateFilter =
+  (targetTabId: string, targetFilterId: string) => (dispatch: TDispatch) => {
+    dispatch({
+      type: ActionType.FilterDuplicate,
+      payload: {
+        targetTabId,
+        targetFilterId,
+      } as TFilterDuplicatePayload,
     });
   };
 

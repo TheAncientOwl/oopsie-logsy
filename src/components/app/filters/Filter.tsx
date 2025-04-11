@@ -6,24 +6,40 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filter component
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { DeleteIcon, EyeClosedIcon, EyeOpenIcon, NewIcon } from '@/components/ui/Icons';
+import {
+  DeleteIcon,
+  DuplicateIcon,
+  EyeClosedIcon,
+  EyeOpenIcon,
+  NewIcon,
+} from '@/components/ui/Icons';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
 import {
   deleteFilter,
+  duplicateFilter,
   filterSetName,
   filterToggleActive,
   filterToggleHighlightOnly,
   newFilterComponent,
 } from '@/store/filters/action';
 import { TFilter, TOverAlternative } from '@/store/filters/reducer';
-import { Box, Checkbox, Collapsible, HStack, Input, ListCollection, Stack } from '@chakra-ui/react';
+import {
+  Box,
+  ButtonGroup,
+  Checkbox,
+  Collapsible,
+  HStack,
+  Input,
+  ListCollection,
+  Stack,
+} from '@chakra-ui/react';
 import React, { useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponent } from './FilterComponent';
@@ -54,6 +70,10 @@ const FilterImpl = (props: FilterProps) => {
     },
     [props.deleteFilter, props.tabId, props.filter.id]
   );
+
+  const handleDuplicateClick = useCallback(() => {
+    props.duplicateFilter(props.tabId, props.filter.id);
+  }, [props.duplicateFilter, props.tabId, props.filter.id]);
 
   const handleNewComponentClick = useCallback(() => {
     props.newFilterComponent(props.tabId, props.filter.id);
@@ -95,15 +115,19 @@ const FilterImpl = (props: FilterProps) => {
           onChange={handleNameChange}
         />
 
-        <TooltipIconButton
-          tooltip='Delete filter'
-          size='sm'
-          colorPalette='red'
-          variant='subtle'
-          onClick={handleDeleteClick}
-        >
-          <DeleteIcon />
-        </TooltipIconButton>
+        <ButtonGroup size='sm' variant='subtle'>
+          <TooltipIconButton
+            colorPalette='green'
+            tooltip='Duplicate filter'
+            onClick={handleDuplicateClick}
+          >
+            <DuplicateIcon />
+          </TooltipIconButton>
+
+          <TooltipIconButton tooltip='Delete filter' colorPalette='red' onClick={handleDeleteClick}>
+            <DeleteIcon />
+          </TooltipIconButton>
+        </ButtonGroup>
       </HStack>
 
       <Collapsible.Root open={isOpen}>
@@ -176,6 +200,7 @@ const mapDispatch = {
   filterToggleHighlightOnly,
   filterSetName,
   newFilterComponent,
+  duplicateFilter,
 };
 
 const connector = connect(mapState, mapDispatch);
