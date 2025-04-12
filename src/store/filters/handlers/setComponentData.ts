@@ -6,13 +6,13 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SetComponentData handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type SetComponentDataPayload = {
   targetTabId: string;
@@ -47,25 +47,28 @@ export const setComponentData: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId, targetComponentId, data } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    components: filter.components.map(component =>
+                      component.id !== targetComponentId ? component : { ...component, data }
+                    ),
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      components: filter.components.map(component =>
-                        component.id !== targetComponentId ? component : { ...component, data }
-                      ),
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

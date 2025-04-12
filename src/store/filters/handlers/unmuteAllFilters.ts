@@ -6,13 +6,13 @@
  *
  * @file unmuteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description UnmuteAllFilters handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type UnmuteAllFiltersPayload = {
   targetTabId: string;
@@ -34,16 +34,19 @@ export const unmuteAllFilters: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter => ({ ...filter, isActive: true })),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter => ({ ...filter, isActive: true })),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

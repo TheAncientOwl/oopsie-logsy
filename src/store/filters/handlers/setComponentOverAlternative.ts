@@ -6,13 +6,13 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SetComponentOverAlternative handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type SetComponentOverAlternativePayload = {
   targetTabId: string;
@@ -47,27 +47,30 @@ export const setComponentOverAlternative: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId, targetComponentId, overAlternativeId } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    components: filter.components.map(component =>
+                      component.id !== targetComponentId
+                        ? component
+                        : { ...component, overAlternativeId: overAlternativeId }
+                    ),
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      components: filter.components.map(component =>
-                        component.id !== targetComponentId
-                          ? component
-                          : { ...component, overAlternativeId: overAlternativeId }
-                      ),
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

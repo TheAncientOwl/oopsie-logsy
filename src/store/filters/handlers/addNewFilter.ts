@@ -6,13 +6,13 @@
  *
  * @file addNewFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description AddNewFilter handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { DefaultFactory, IDefaultState, TFilter } from '../data';
+import { checkCanSaveTabs, DefaultFactory, IDefaultState, TFilter } from '../data';
 
 type AddNewFilterPayload = {
   targetTabId: string;
@@ -34,16 +34,19 @@ export const addNewFilter: IBasicStoreHandler<IDefaultState, AddNewFilterPayload
   reduce: (state, payload) => {
     const { targetTabId, filter } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: [...tab.filters, filter],
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: [...tab.filters, filter],
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

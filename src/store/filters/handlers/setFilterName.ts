@@ -6,13 +6,13 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SetFilterName handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type SetFilterNamePayload = {
   targetTabId: string;
@@ -36,23 +36,26 @@ export const setFilterName: IBasicStoreHandler<IDefaultState, SetFilterNamePaylo
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId, name } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    name,
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      name,
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

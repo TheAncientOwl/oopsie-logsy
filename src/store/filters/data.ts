@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filters data structures.
  */
 
@@ -61,6 +61,11 @@ export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternat
       value: tag.id,
     })),
   };
+};
+
+export const checkCanSaveTabs = (tabs: Array<TFilterTab>) => {
+  // TODO: do actual checking...
+  return true;
 };
 
 export const DefaultFactory = {

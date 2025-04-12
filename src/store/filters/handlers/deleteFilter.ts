@@ -6,13 +6,13 @@
  *
  * @file deleteFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description DeleteFilter handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type DeleteFilterPayload = {
   targetTabId: string;
@@ -34,16 +34,19 @@ export const deleteFilter: IBasicStoreHandler<IDefaultState, DeleteFilterPayload
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.filter(filter => filter.id !== targetFilterId),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.filter(filter => filter.id !== targetFilterId),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

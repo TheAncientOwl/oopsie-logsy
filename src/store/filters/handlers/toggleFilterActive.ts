@@ -6,7 +6,7 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ToggleFilterActive handler.
  */
 
@@ -38,23 +38,25 @@ export const toggleFilterActive: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    isActive: !filter.isActive,
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      isActive: !filter.isActive,
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
     };
   },
 };

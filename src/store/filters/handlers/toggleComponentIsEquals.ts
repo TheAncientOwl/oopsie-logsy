@@ -6,13 +6,13 @@
  *
  * @file toggleComponentIsEquals.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ToggleComponentIsEquals handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type ToggleComponentIsEqualsPayload = {
   targetTabId: string;
@@ -40,27 +40,30 @@ export const toggleComponentIsEquals: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId, targetComponentId } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    components: filter.components.map(component =>
+                      component.id !== targetComponentId
+                        ? component
+                        : { ...component, isEquals: !component.isEquals }
+                    ),
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      components: filter.components.map(component =>
-                        component.id !== targetComponentId
-                          ? component
-                          : { ...component, isEquals: !component.isEquals }
-                      ),
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

@@ -6,23 +6,31 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filter tab.
  */
 
 import React, { useCallback } from 'react';
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { ApplyIcon, ClearIcon, NewIcon, SoundOffIcon, SoundOnIcon } from '@/components/ui/Icons';
+import {
+  ApplyIcon,
+  ClearIcon,
+  DeleteIcon,
+  NewIcon,
+  SoundOffIcon,
+  SoundOnIcon,
+} from '@/components/ui/Icons';
 import { TFilterTab, TOverAlternative } from '@/store/filters/data';
 import {
   addNewFilter,
   deleteAllFilters,
+  deleteFilterTab,
   focusFilterTab,
   muteAllFilters,
   unmuteAllFilters,
 } from '@/store/filters/handlers';
-import { ButtonGroup, HStack, ListCollection, Stack, Tabs } from '@chakra-ui/react';
+import { ButtonGroup, HStack, ListCollection, Separator, Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
@@ -80,6 +88,10 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
     props.deleteAllFilters(props.tab.id);
   }, [props.deleteAllFilters, props.tab.id]);
 
+  const handleDeleteFilterTabClick = useCallback(() => {
+    props.deleteFilterTab(props.tab.id);
+  }, [props.deleteFilterTab, props.tab.id]);
+
   return (
     <Tabs.Content value={props.tab.id}>
       <HStack mb='1em' padding='0 0.5em'>
@@ -96,8 +108,18 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
           <TooltipIconButton tooltip='Mute all' onClick={handleMuteAllClick}>
             <SoundOffIcon />
           </TooltipIconButton>
+
+          <Separator orientation='vertical' height='7' size='md' />
+
           <TooltipIconButton colorPalette='red' tooltip='Clear filters' onClick={handleClearClick}>
             <ClearIcon />
+          </TooltipIconButton>
+          <TooltipIconButton
+            colorPalette='red'
+            tooltip='Delete Tab'
+            onClick={handleDeleteFilterTabClick}
+          >
+            <DeleteIcon />
           </TooltipIconButton>
         </ButtonGroup>
       </HStack>
@@ -123,6 +145,7 @@ const mapDispatchContent = {
   muteAllFilters: muteAllFilters.dispatch,
   unmuteAllFilters: unmuteAllFilters.dispatch,
   deleteAllFilters: deleteAllFilters.dispatch,
+  deleteFilterTab: deleteFilterTab.dispatch,
 };
 
 const connectorContent = connect(mapStateContent, mapDispatchContent);

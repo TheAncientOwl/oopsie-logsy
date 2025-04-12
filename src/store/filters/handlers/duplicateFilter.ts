@@ -6,14 +6,14 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description DuplicateFilter handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
-import { IDefaultState, TFilter } from '../data';
+import { checkCanSaveTabs, IDefaultState, TFilter } from '../data';
 
 type DuplicateFilterPayload = {
   targetTabId: string;
@@ -54,16 +54,19 @@ export const duplicateFilter: IBasicStoreHandler<
       return newArr;
     };
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: handleDuplication(tab.filters),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: handleDuplication(tab.filters),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

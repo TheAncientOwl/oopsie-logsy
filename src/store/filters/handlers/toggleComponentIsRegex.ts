@@ -6,13 +6,13 @@
  *
  * @file toggleComponentIsRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ToggleComponentIsRegex handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { IDefaultState } from '../data';
+import { checkCanSaveTabs, IDefaultState } from '../data';
 
 type ToggleComponentIsRegexPayload = {
   targetTabId: string;
@@ -40,27 +40,30 @@ export const toggleComponentIsRegex: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId, targetComponentId } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    components: filter.components.map(component =>
+                      component.id !== targetComponentId
+                        ? component
+                        : { ...component, isRegex: !component.isRegex }
+                    ),
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      components: filter.components.map(component =>
-                        component.id !== targetComponentId
-                          ? component
-                          : { ...component, isRegex: !component.isRegex }
-                      ),
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

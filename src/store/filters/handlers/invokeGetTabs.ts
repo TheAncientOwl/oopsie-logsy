@@ -6,7 +6,7 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description InvokeGetTabs handler.
  */
 
@@ -69,6 +69,7 @@ export const invokeGetTabs: IApiCallStoreHandler<
         canApplyTabs: false,
         filterTabs: payload.tabs,
         focusedTabId: payload.tabs[0]?.id,
+        canSaveTabs: false,
       };
     },
 

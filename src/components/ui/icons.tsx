@@ -24,6 +24,7 @@ import {
   FaSave,
 } from 'react-icons/fa';
 import { GoMute, GoUnmute } from 'react-icons/go';
+import { IoMdClose } from 'react-icons/io';
 import { LuMoon, LuSun } from 'react-icons/lu';
 import { MdDelete } from 'react-icons/md';
 import { SiCcleaner } from 'react-icons/si';
@@ -52,3 +53,4 @@ export const EqualsIcon = () => <FaEquals />;
 export const NotEqualsIcon = () => <FaNotEqual />;
 export const DuplicateIcon = () => <FaCopy />;
 export const SaveIcon = () => <FaSave />;
+export const CloseIcon = () => <IoMdClose />;

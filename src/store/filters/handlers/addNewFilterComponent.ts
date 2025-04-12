@@ -6,13 +6,13 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description AddFilterComponent.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { DefaultFactory, IDefaultState, TFilterComponent } from '../data';
+import { checkCanSaveTabs, DefaultFactory, IDefaultState, TFilterComponent } from '../data';
 
 type AddNewFilterComponentPayload = {
   targetTabId: string;
@@ -40,23 +40,26 @@ export const addNewFilterComponent: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId, component } = payload;
 
+    const newTabs = state.filterTabs.map(tab =>
+      tab.id !== targetTabId
+        ? tab
+        : {
+            ...tab,
+            filters: tab.filters.map(filter =>
+              filter.id !== targetFilterId
+                ? filter
+                : {
+                    ...filter,
+                    components: [...filter.components, { ...component }],
+                  }
+            ),
+          }
+    );
+
     return {
       ...state,
-      filterTabs: state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
-          : {
-              ...tab,
-              filters: tab.filters.map(filter =>
-                filter.id !== targetFilterId
-                  ? filter
-                  : {
-                      ...filter,
-                      components: [...filter.components, { ...component }],
-                    }
-              ),
-            }
-      ),
+      filterTabs: newTabs,
+      canSaveTabs: checkCanSaveTabs(newTabs),
     };
   },
 };

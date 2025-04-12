@@ -6,21 +6,16 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Filters component
  */
 
-import { DeleteIcon, NewIcon, SaveIcon } from '@/components/ui/Icons';
+import { NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
 import { makeOverAlternatives } from '@/store/filters/data';
-import {
-  addNewFilterTab,
-  deleteFilterTab,
-  invokeGetTabs,
-  invokeSetTabs,
-} from '@/store/filters/handlers';
+import { addNewFilterTab, invokeGetTabs, invokeSetTabs } from '@/store/filters/handlers';
 import { Box, ButtonGroup, Collapsible, createListCollection, Tabs } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -43,9 +38,9 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
     [props.logRegexTags]
   );
 
-  const handleDeleteFilterTabClick = useCallback(() => {
-    props.deleteFilterTab(props.focusedTab);
-  }, [props.deleteFilterTab, props.focusedTab]);
+  const handleSaveClick = useCallback(() => {
+    props.invokeSetTabs(props.filterTabs);
+  }, [props.invokeSetTabs, props.filterTabs]);
 
   return (
     <Collapsible.Root
@@ -78,22 +73,16 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
                 right='0.5em'
                 top='0.5em'
               >
-                <TooltipIconButton
-                  tooltip='Save tabs'
-                  onClick={() => props.invokeSetTabs(props.filterTabs)}
-                >
-                  <SaveIcon />
-                </TooltipIconButton>
-
                 <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
                   <NewIcon />
                 </TooltipIconButton>
                 <TooltipIconButton
-                  colorPalette='red'
-                  tooltip='Delete current filters tab'
-                  onClick={handleDeleteFilterTabClick}
+                  colorPalette={props.canSaveTabs ? 'green' : 'gray'}
+                  disabled={!props.canSaveTabs}
+                  tooltip='Save tabs'
+                  onClick={handleSaveClick}
                 >
-                  <DeleteIcon />
+                  <SaveIcon />
                 </TooltipIconButton>
               </ButtonGroup>
             </Tabs.List>
@@ -114,11 +103,11 @@ const mapState = (state: RootState) => ({
   loading: state.filters.loading,
   logRegexTags: state.logRegexTags.tags,
   focusedTab: state.filters.focusedTabId,
+  canSaveTabs: state.filters.canSaveTabs,
 });
 
 const mapDispatch = {
   addNewFilterTab: addNewFilterTab.dispatch,
-  deleteFilterTab: deleteFilterTab.dispatch,
   invokeGetTabs: invokeGetTabs.dispatch,
   invokeSetTabs: invokeSetTabs.dispatch,
 };
