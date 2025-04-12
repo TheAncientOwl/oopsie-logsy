@@ -6,13 +6,14 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Handlers index file.
  */
 
 import { addNewFilter } from './addNewFilter';
 import { addNewFilterComponent } from './addNewFilterComponent';
 import { addNewFilterTab } from './addNewFilterTab';
+import { deleteAllFilters } from './deleteAllFilters';
 import { deleteFilter } from './deleteFilter';
 import { deleteFilterComponent } from './deleteFilterComponent';
 import { deleteFilterTab } from './deleteFilterTab';
@@ -33,6 +34,7 @@ export {
   addNewFilter,
   addNewFilterComponent,
   addNewFilterTab,
+  deleteAllFilters,
   deleteFilter,
   deleteFilterComponent,
   deleteFilterTab,

@@ -6,30 +6,23 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filter tab.
  */
 
 import React, { useCallback } from 'react';
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import {
-  ApplyIcon,
-  ClearIcon,
-  ExportIcon,
-  ImportIcon,
-  NewIcon,
-  SoundOffIcon,
-  SoundOnIcon,
-} from '@/components/ui/Icons';
+import { ApplyIcon, ClearIcon, NewIcon, SoundOffIcon, SoundOnIcon } from '@/components/ui/Icons';
 import { TFilterTab, TOverAlternative } from '@/store/filters/data';
 import {
   addNewFilter,
+  deleteAllFilters,
   focusFilterTab,
   muteAllFilters,
   unmuteAllFilters,
 } from '@/store/filters/handlers';
-import { ButtonGroup, HStack, ListCollection, Span, Stack, Tabs } from '@chakra-ui/react';
+import { ButtonGroup, HStack, ListCollection, Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
@@ -83,6 +76,10 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
     props.unmuteAllFilters(props.tab.id);
   }, [props.unmuteAllFilters, props.tab.id]);
 
+  const handleClearClick = useCallback(() => {
+    props.deleteAllFilters(props.tab.id);
+  }, [props.deleteAllFilters, props.tab.id]);
+
   return (
     <Tabs.Content value={props.tab.id}>
       <HStack mb='1em' padding='0 0.5em'>
@@ -99,16 +96,7 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
           <TooltipIconButton tooltip='Mute all' onClick={handleMuteAllClick}>
             <SoundOffIcon />
           </TooltipIconButton>
-        </ButtonGroup>
-        <Span flex='1' />
-        <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
-          <TooltipIconButton tooltip='Import filters'>
-            <ImportIcon />
-          </TooltipIconButton>
-          <TooltipIconButton tooltip='Export filters'>
-            <ExportIcon />
-          </TooltipIconButton>
-          <TooltipIconButton tooltip='Clear filters'>
+          <TooltipIconButton colorPalette='red' tooltip='Clear filters' onClick={handleClearClick}>
             <ClearIcon />
           </TooltipIconButton>
         </ButtonGroup>
@@ -134,6 +122,7 @@ const mapDispatchContent = {
   addNewFilter: addNewFilter.dispatch,
   muteAllFilters: muteAllFilters.dispatch,
   unmuteAllFilters: unmuteAllFilters.dispatch,
+  deleteAllFilters: deleteAllFilters.dispatch,
 };
 
 const connectorContent = connect(mapStateContent, mapDispatchContent);

@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filters action types.
  */
 
@@ -30,6 +30,7 @@ import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex'
 import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
 import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
+import { DeleteAllFiltersAction } from './handlers/deleteAllFilters';
 
 export enum ActionType {
   Loading = 'Filters__Loading',
@@ -46,6 +47,7 @@ export enum ActionType {
   DuplicateFilter = 'Filters__DuplicateFilter',
   MuteAllFilters = 'Filters__MuteAllFilters',
   UnmuteAllFilters = 'Filters__UnmuteAllFilters',
+  DeleteAllFilters = 'Filters__DeleteAllFilters',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
@@ -73,6 +75,7 @@ export type DispatchTypes =
   | ToggleComponentIsEqualsAction
   | SetComponentDataAction
   | MuteAllFiltersAction
-  | UnmuteAllFiltersAction;
+  | UnmuteAllFiltersAction
+  | DeleteAllFiltersAction;
 
 export type Dispatch = ReduxDispatch<DispatchTypes>;
