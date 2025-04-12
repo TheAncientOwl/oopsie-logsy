@@ -36,6 +36,10 @@ const reducerMap: ReducerMap<ActionType, IDefaultState> = {
   [ActionType.MuteAllFilters]: handlers.muteAllFilters.reduce,
   [ActionType.UnmuteAllFilters]: handlers.unmuteAllFilters.reduce,
   [ActionType.DeleteAllFilters]: handlers.deleteAllFilters.reduce,
+  [ActionType.InvokeGetTabsOK]: handlers.invokeGetTabs.reduce.ok,
+  [ActionType.InvokeGetTabsNOK]: handlers.invokeGetTabs.reduce.nok,
+  [ActionType.InvokeSetTabsOK]: handlers.invokeSetTabs.reduce.ok,
+  [ActionType.InvokeSetTabsNOK]: handlers.invokeSetTabs.reduce.nok,
 };
 
 export const filtersTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(

@@ -10,14 +10,19 @@
  * @description Filters component
  */
 
-import { DeleteIcon, NewIcon } from '@/components/ui/Icons';
+import { DeleteIcon, NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
 import { makeOverAlternatives } from '@/store/filters/data';
-import { addNewFilterTab, deleteFilterTab } from '@/store/filters/handlers';
+import {
+  addNewFilterTab,
+  deleteFilterTab,
+  invokeGetTabs,
+  invokeSetTabs,
+} from '@/store/filters/handlers';
 import { Box, ButtonGroup, Collapsible, createListCollection, Tabs } from '@chakra-ui/react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 
@@ -26,6 +31,10 @@ interface FiltersProps extends PropsFromRedux {
 }
 
 const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
+  useEffect(() => {
+    props.invokeGetTabs();
+  }, []);
+
   const bg = useColorModeValue('gray.200', 'gray.900');
   const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
@@ -61,12 +70,22 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
                 <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
               ))}
 
-              <ButtonGroup size='xs' variant='subtle' position='absolute' right='0.5em' top='0.5em'>
+              <ButtonGroup
+                colorPalette='green'
+                size='xs'
+                variant='subtle'
+                position='absolute'
+                right='0.5em'
+                top='0.5em'
+              >
                 <TooltipIconButton
-                  colorPalette='green'
-                  tooltip='New filters tab'
-                  onClick={props.addNewFilterTab}
+                  tooltip='Save tabs'
+                  onClick={() => props.invokeSetTabs(props.filterTabs)}
                 >
+                  <SaveIcon />
+                </TooltipIconButton>
+
+                <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
                   <NewIcon />
                 </TooltipIconButton>
                 <TooltipIconButton
@@ -100,6 +119,8 @@ const mapState = (state: RootState) => ({
 const mapDispatch = {
   addNewFilterTab: addNewFilterTab.dispatch,
   deleteFilterTab: deleteFilterTab.dispatch,
+  invokeGetTabs: invokeGetTabs.dispatch,
+  invokeSetTabs: invokeSetTabs.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

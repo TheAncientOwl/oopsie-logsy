@@ -49,6 +49,7 @@ export interface IDefaultState {
   loading: boolean;
   filterTabs: Array<TFilterTab>;
   focusedTabId: string;
+  canSaveTabs: boolean;
 }
 // </types>
 
@@ -94,5 +95,6 @@ export const defaultState: IDefaultState = {
   loading: false,
   filterTabs: defaultFilterTabs,
   focusedTabId: defaultFilterTabs[0].id,
+  canSaveTabs: false,
 };
 // </data>

@@ -19,6 +19,8 @@ import { deleteFilterComponent } from './deleteFilterComponent';
 import { deleteFilterTab } from './deleteFilterTab';
 import { duplicateFilter } from './duplicateFilter';
 import { focusFilterTab } from './focusFilterTab';
+import { invokeGetTabs } from './invokeGetTabs';
+import { invokeSetTabs } from './invokeSetTabs';
 import { loading } from './loading';
 import { muteAllFilters } from './muteAllFilters';
 import { setComponentData } from './setComponentData';
@@ -40,6 +42,8 @@ export {
   deleteFilterTab,
   duplicateFilter,
   focusFilterTab,
+  invokeGetTabs,
+  invokeSetTabs,
   loading,
   muteAllFilters,
   setComponentData,

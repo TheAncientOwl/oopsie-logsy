@@ -21,6 +21,7 @@ import {
   FaNotEqual,
   FaPencilAlt,
   FaPlus,
+  FaSave,
 } from 'react-icons/fa';
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { LuMoon, LuSun } from 'react-icons/lu';
@@ -50,3 +51,4 @@ export const ColorModeIcon = () => {
 export const EqualsIcon = () => <FaEquals />;
 export const NotEqualsIcon = () => <FaNotEqual />;
 export const DuplicateIcon = () => <FaCopy />;
+export const SaveIcon = () => <FaSave />;

@@ -31,9 +31,16 @@ import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
 import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 import { DeleteAllFiltersAction } from './handlers/deleteAllFilters';
+import { InvokeGetTabsNOkAction, InvokeGetTabsOkAction } from './handlers/invokeGetTabs';
+import { InvokeSetTabsNOkAction, InvokeSetTabsOkAction } from './handlers/invokeSetTabs';
 
 export enum ActionType {
   Loading = 'Filters__Loading',
+
+  InvokeSetTabsOK = 'Filters__InvokeSetTabsOK',
+  InvokeSetTabsNOK = 'Filters__InvokeSetTabsNOK',
+  InvokeGetTabsOK = 'Filters__InvokeGetTabsOK',
+  InvokeGetTabsNOK = 'Filters__InvokeGetTabsNOK',
 
   AddNewFilterTab = 'Filters__AddNewFilterTab',
   DeleteFilterTab = 'Filters__DeleteFilterTab',
@@ -76,6 +83,10 @@ export type DispatchTypes =
   | SetComponentDataAction
   | MuteAllFiltersAction
   | UnmuteAllFiltersAction
-  | DeleteAllFiltersAction;
+  | DeleteAllFiltersAction
+  | InvokeGetTabsOkAction
+  | InvokeGetTabsNOkAction
+  | InvokeSetTabsOkAction
+  | InvokeSetTabsNOkAction;
 
 export type Dispatch = ReduxDispatch<DispatchTypes>;

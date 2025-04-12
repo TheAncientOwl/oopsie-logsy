@@ -62,7 +62,7 @@ export const setComponentOverAlternative: IBasicStoreHandler<
                       components: filter.components.map(component =>
                         component.id !== targetComponentId
                           ? component
-                          : { ...component, overAlternativeId }
+                          : { ...component, overAlternativeId: overAlternativeId }
                       ),
                     }
               ),

@@ -54,10 +54,7 @@ export const invokeGetTags: IApiCallStoreHandler<
         await invokeSetTags.dispatch(finalTags)(dispatch);
       }
 
-      dispatch({
-        type: ActionType.InvokeGetTagsOK,
-        payload: { tags: finalTags },
-      });
+      dispatch({ type: ActionType.InvokeGetTagsOK, payload: { tags: finalTags } });
     } catch (error) {
       console.errorX(`invokeGetTags::dispatch`, `error getting tags from rust: ${error}`);
       dispatch({ type: ActionType.InvokeGetTagsNOK, payload: { error } });
