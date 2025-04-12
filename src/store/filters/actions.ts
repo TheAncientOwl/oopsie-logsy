@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filters action types.
  */
 
@@ -15,24 +15,25 @@ import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { AddNewFilterAction } from './handlers/addNewFilter';
 import { AddNewFilterComponentAction } from './handlers/addNewFilterComponent';
 import { AddNewFilterTabAction } from './handlers/addNewFilterTab';
+import { DeleteAllFiltersAction } from './handlers/deleteAllFilters';
 import { DeleteFilterAction } from './handlers/deleteFilter';
 import { DeleteFilterComponentAction } from './handlers/deleteFilterComponent';
 import { DeleteFilterTabAction } from './handlers/deleteFilterTab';
 import { DuplicateFilterAction } from './handlers/duplicateFilter';
 import { FocusFilterTabAction } from './handlers/focusFilterTab';
+import { InvokeGetTabsNOkAction, InvokeGetTabsOkAction } from './handlers/invokeGetTabs';
+import { InvokeSetTabsNOkAction, InvokeSetTabsOkAction } from './handlers/invokeSetTabs';
 import { LoadingAction } from './handlers/loading';
 import { MuteAllFiltersAction } from './handlers/muteAllFilters';
 import { SetComponentDataAction } from './handlers/setComponentData';
 import { SetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
 import { SetFilterNameAction } from './handlers/setFilterName';
+import { SetFilterTabNameAction } from './handlers/setFilterTabName';
 import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
 import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
 import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
 import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
-import { DeleteAllFiltersAction } from './handlers/deleteAllFilters';
-import { InvokeGetTabsNOkAction, InvokeGetTabsOkAction } from './handlers/invokeGetTabs';
-import { InvokeSetTabsNOkAction, InvokeSetTabsOkAction } from './handlers/invokeSetTabs';
 
 export enum ActionType {
   Loading = 'Filters__Loading',
@@ -45,6 +46,7 @@ export enum ActionType {
   AddNewFilterTab = 'Filters__AddNewFilterTab',
   DeleteFilterTab = 'Filters__DeleteFilterTab',
   FocusFilterTab = 'Filters__FocusFilterTab',
+  SetFilterTabName = 'Filters__SetFilterTabName',
 
   AddNewFilter = 'Filters__AddNewFilter',
   DeleteFilter = 'Filters__DeleteFilter',
@@ -88,6 +90,7 @@ export type DispatchTypes =
   | InvokeGetTabsOkAction
   | InvokeGetTabsNOkAction
   | InvokeSetTabsOkAction
-  | InvokeSetTabsNOkAction;
+  | InvokeSetTabsNOkAction
+  | SetFilterTabNameAction;
 
 export type Dispatch = ReduxDispatch<DispatchTypes>;

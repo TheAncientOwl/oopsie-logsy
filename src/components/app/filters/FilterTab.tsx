@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Filter tab.
  */
 
@@ -21,6 +21,7 @@ import {
   SoundOffIcon,
   SoundOnIcon,
 } from '@/components/ui/Icons';
+import { useColorModeValue } from '@/hooks/useColorMode';
 import { TFilterTab, TOverAlternative } from '@/store/filters/data';
 import {
   addNewFilter,
@@ -28,9 +29,18 @@ import {
   deleteFilterTab,
   focusFilterTab,
   muteAllFilters,
+  setFilterTabName,
   unmuteAllFilters,
 } from '@/store/filters/handlers';
-import { ButtonGroup, HStack, ListCollection, Separator, Stack, Tabs } from '@chakra-ui/react';
+import {
+  ButtonGroup,
+  HStack,
+  Input,
+  ListCollection,
+  Separator,
+  Stack,
+  Tabs,
+} from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
@@ -77,6 +87,8 @@ interface FilterContentTabProps extends ContentPropsFromRedux {
 }
 
 const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterContentTabProps) => {
+  const border = useColorModeValue('gray.500', 'gray.500');
+
   const handleNewFilterClick = useCallback(() => {
     props.addNewFilter(props.tab.id);
   }, [props.addNewFilter, props.tab.id]);
@@ -96,6 +108,13 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
   const handleDeleteFilterTabClick = useCallback(() => {
     props.deleteFilterTab(props.tab.id);
   }, [props.deleteFilterTab, props.tab.id]);
+
+  const handleNameChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      props.setFilterTabName(props.tab.id, event.target.value);
+    },
+    [props.setFilterTabName, props.tab.id]
+  );
 
   return (
     <Tabs.Content value={props.tab.id}>
@@ -126,7 +145,17 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
           >
             <DeleteIcon />
           </TooltipIconButton>
+
+          <Separator orientation='vertical' height='7' size='md' />
         </ButtonGroup>
+
+        <Input
+          borderColor={border}
+          colorPalette='green'
+          placeholder='Filter Tab Name'
+          defaultValue={props.tab.name}
+          onChange={handleNameChange}
+        />
       </HStack>
       <Stack gap='0'>
         {props.tab.filters.map(filter => (
@@ -151,6 +180,7 @@ const mapDispatchContent = {
   unmuteAllFilters: unmuteAllFilters.dispatch,
   deleteAllFilters: deleteAllFilters.dispatch,
   deleteFilterTab: deleteFilterTab.dispatch,
+  setFilterTabName: setFilterTabName.dispatch,
 };
 
 const connectorContent = connect(mapStateContent, mapDispatchContent);

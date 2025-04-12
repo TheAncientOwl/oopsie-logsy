@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Common reducer utilities.
  */
 
@@ -16,7 +16,7 @@ export type ReducerMap<ActionType extends string, IDefaultState> = Partial<
 
 type DispatchType<ActionType = any, Payload = any> = {
   type: ActionType;
-  payload: Payload;
+  payload?: Payload;
 };
 
 export const makeReducer =

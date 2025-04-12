@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filters data reducer.
  */
 
@@ -40,6 +40,7 @@ const reducerMap: ReducerMap<ActionType, IDefaultState> = {
   [ActionType.InvokeGetTabsNOK]: handlers.invokeGetTabs.reduce.nok,
   [ActionType.InvokeSetTabsOK]: handlers.invokeSetTabs.reduce.ok,
   [ActionType.InvokeSetTabsNOK]: handlers.invokeSetTabs.reduce.nok,
+  [ActionType.SetFilterTabName]: handlers.setFilterTabName.reduce,
 };
 
 export const filtersTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(
