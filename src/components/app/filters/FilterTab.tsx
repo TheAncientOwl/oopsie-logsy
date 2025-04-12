@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filter tab.
  */
 
@@ -23,7 +23,12 @@ import {
   SoundOnIcon,
 } from '@/components/ui/Icons';
 import { TFilterTab, TOverAlternative } from '@/store/filters/data';
-import { addNewFilter, focusFilterTab } from '@/store/filters/handlers';
+import {
+  addNewFilter,
+  focusFilterTab,
+  muteAllFilters,
+  unmuteAllFilters,
+} from '@/store/filters/handlers';
 import { ButtonGroup, HStack, ListCollection, Span, Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
@@ -70,6 +75,14 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
     props.addNewFilter(props.tab.id);
   }, [props.addNewFilter, props.tab.id]);
 
+  const handleMuteAllClick = useCallback(() => {
+    props.muteAllFilters(props.tab.id);
+  }, [props.muteAllFilters, props.tab.id]);
+
+  const handleUnmuteAllClick = useCallback(() => {
+    props.unmuteAllFilters(props.tab.id);
+  }, [props.unmuteAllFilters, props.tab.id]);
+
   return (
     <Tabs.Content value={props.tab.id}>
       <HStack mb='1em' padding='0 0.5em'>
@@ -80,10 +93,10 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
           <TooltipIconButton tooltip='New filter' onClick={handleNewFilterClick}>
             <NewIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Unmute All'>
+          <TooltipIconButton tooltip='Unmute All' onClick={handleUnmuteAllClick}>
             <SoundOnIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Mute all'>
+          <TooltipIconButton tooltip='Mute all' onClick={handleMuteAllClick}>
             <SoundOffIcon />
           </TooltipIconButton>
         </ButtonGroup>
@@ -119,6 +132,8 @@ const mapStateContent = () => ({});
 
 const mapDispatchContent = {
   addNewFilter: addNewFilter.dispatch,
+  muteAllFilters: muteAllFilters.dispatch,
+  unmuteAllFilters: unmuteAllFilters.dispatch,
 };
 
 const connectorContent = connect(mapStateContent, mapDispatchContent);

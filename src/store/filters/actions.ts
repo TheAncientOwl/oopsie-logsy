@@ -6,28 +6,30 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filters action types.
  */
 
 import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
 
-import { LoadingAction } from './handlers/loading';
-import { AddNewFilterTabAction } from './handlers/addNewFilterTab';
-import { DeleteFilterTabAction } from './handlers/deleteFilterTab';
-import { FocusFilterTabAction } from './handlers/focusFilterTab';
 import { AddNewFilterAction } from './handlers/addNewFilter';
+import { AddNewFilterComponentAction } from './handlers/addNewFilterComponent';
+import { AddNewFilterTabAction } from './handlers/addNewFilterTab';
 import { DeleteFilterAction } from './handlers/deleteFilter';
+import { DeleteFilterComponentAction } from './handlers/deleteFilterComponent';
+import { DeleteFilterTabAction } from './handlers/deleteFilterTab';
 import { DuplicateFilterAction } from './handlers/duplicateFilter';
+import { FocusFilterTabAction } from './handlers/focusFilterTab';
+import { LoadingAction } from './handlers/loading';
+import { MuteAllFiltersAction } from './handlers/muteAllFilters';
+import { SetComponentDataAction } from './handlers/setComponentData';
+import { SetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
+import { SetFilterNameAction } from './handlers/setFilterName';
+import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
+import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
 import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
-import { SetFilterNameAction } from './handlers/setFilterName';
-import { AddNewFilterComponentAction } from './handlers/addNewFilterComponent';
-import { DeleteFilterComponentAction } from './handlers/deleteFilterComponent';
-import { SetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
-import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
-import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
-import { SetComponentDataAction } from './handlers/setComponentData';
+import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 
 export enum ActionType {
   Loading = 'Filters__Loading',
@@ -42,6 +44,8 @@ export enum ActionType {
   ToggleFilterHighlightOnly = 'Filters__ToggleFilterHighlightOnly',
   SetFilterName = 'Filters__SetFilterName',
   DuplicateFilter = 'Filters__DuplicateFilter',
+  MuteAllFilters = 'Filters__MuteAllFilters',
+  UnmuteAllFilters = 'Filters__UnmuteAllFilters',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
@@ -67,6 +71,8 @@ export type DispatchTypes =
   | SetComponentOverAlternativeAction
   | ToggleComponentIsRegexAction
   | ToggleComponentIsEqualsAction
-  | SetComponentDataAction;
+  | SetComponentDataAction
+  | MuteAllFiltersAction
+  | UnmuteAllFiltersAction;
 
 export type Dispatch = ReduxDispatch<DispatchTypes>;

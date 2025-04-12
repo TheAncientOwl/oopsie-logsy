@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filters data reducer.
  */
 
@@ -33,6 +33,8 @@ const reducerMap: ReducerMap<ActionType, IDefaultState> = {
   [ActionType.ToggleFilterComponentIsRegex]: handlers.toggleComponentIsRegex.reduce,
   [ActionType.ToggleFilterComponentIsEquals]: handlers.toggleComponentIsEquals.reduce,
   [ActionType.SetFilterComponentData]: handlers.setComponentData.reduce,
+  [ActionType.MuteAllFilters]: handlers.muteAllFilters.reduce,
+  [ActionType.UnmuteAllFilters]: handlers.unmuteAllFilters.reduce,
 };
 
 export const filtersTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(

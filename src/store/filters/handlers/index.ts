@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Handlers index file.
  */
 
@@ -19,6 +19,7 @@ import { deleteFilterTab } from './deleteFilterTab';
 import { duplicateFilter } from './duplicateFilter';
 import { focusFilterTab } from './focusFilterTab';
 import { loading } from './loading';
+import { muteAllFilters } from './muteAllFilters';
 import { setComponentData } from './setComponentData';
 import { setComponentOverAlternative } from './setComponentOverAlternative';
 import { setFilterName } from './setFilterName';
@@ -26,6 +27,7 @@ import { toggleComponentIsEquals } from './toggleComponentIsEquals';
 import { toggleComponentIsRegex } from './toggleComponentIsRegex';
 import { toggleFilterActive } from './toggleFilterActive';
 import { toggleFilterHighlightOnly } from './toggleFilterHighlightOnly';
+import { unmuteAllFilters } from './unmuteAllFilters';
 
 export {
   addNewFilter,
@@ -37,6 +39,7 @@ export {
   duplicateFilter,
   focusFilterTab,
   loading,
+  muteAllFilters,
   setComponentData,
   setComponentOverAlternative,
   setFilterName,
@@ -44,4 +47,5 @@ export {
   toggleComponentIsRegex,
   toggleFilterActive,
   toggleFilterHighlightOnly,
+  unmuteAllFilters,
 };
