@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Filter component
  */
 
@@ -97,15 +97,23 @@ const FilterImpl = (props: FilterProps) => {
       padding='0.5em 0.75em'
     >
       <HStack>
-        <TooltipIconButton
-          size='sm'
-          variant='subtle'
-          colorPalette='green'
-          tooltip={isOpen ? 'Hide Filter' : 'Show filter'}
-          onClick={toggleIsOpen}
-        >
-          {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
-        </TooltipIconButton>
+        <ButtonGroup size='sm' variant='subtle'>
+          <TooltipIconButton
+            colorPalette='green'
+            tooltip={isOpen ? 'Hide Filter' : 'Show filter'}
+            onClick={toggleIsOpen}
+          >
+            {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
+          </TooltipIconButton>
+
+          <TooltipIconButton
+            colorPalette='green'
+            tooltip='Duplicate filter'
+            onClick={handleDuplicateClick}
+          >
+            <DuplicateIcon />
+          </TooltipIconButton>
+        </ButtonGroup>
 
         <Input
           borderColor={border}
@@ -116,14 +124,6 @@ const FilterImpl = (props: FilterProps) => {
         />
 
         <ButtonGroup size='sm' variant='subtle'>
-          <TooltipIconButton
-            colorPalette='green'
-            tooltip='Duplicate filter'
-            onClick={handleDuplicateClick}
-          >
-            <DuplicateIcon />
-          </TooltipIconButton>
-
           <TooltipIconButton tooltip='Delete filter' colorPalette='red' onClick={handleDeleteClick}>
             <DeleteIcon />
           </TooltipIconButton>
