@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Configure log line regex for parsing
  */
 
@@ -14,8 +14,8 @@ import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/Icon
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
 import { RootState } from '@/store';
-import { addTag, invokeGetTags, invokeSetTags } from '@/store/log-regex-tags/action';
-import { TRegexTag } from '@/store/log-regex-tags/reducer';
+import { TRegexTag } from '@/store/log-regex-tags/data';
+import { addNewTag, invokeGetTags, invokeSetTags } from '@/store/log-regex-tags/handlers';
 import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { GrConfigure } from 'react-icons/gr';
@@ -39,7 +39,6 @@ const LogRegexConfiguratorContentImpl: React.FC<PropsFromRedux> = props => {
   useEffect(() => {
     props.invokeGetTags();
   }, []);
-
   return (
     <Stack>
       <HStack>
@@ -56,7 +55,7 @@ const LogRegexConfiguratorContentImpl: React.FC<PropsFromRedux> = props => {
 
       <HStack>
         <ButtonGroup variant='surface'>
-          <TooltipIconButton onClick={props.addTag} tooltip='New tag' colorPalette='green'>
+          <TooltipIconButton onClick={props.addNewTag} tooltip='New tag' colorPalette='green'>
             <NewIcon />
           </TooltipIconButton>
           <TooltipIconButton
@@ -85,9 +84,9 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = {
-  invokeGetTags,
-  invokeSetTags,
-  addTag,
+  invokeGetTags: invokeGetTags.dispatch,
+  invokeSetTags: invokeSetTags.dispatch,
+  addNewTag: addNewTag.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

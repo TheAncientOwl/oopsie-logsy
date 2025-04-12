@@ -6,11 +6,11 @@
  *
  * @file deleteFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description DeleteFilter handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -24,7 +24,7 @@ export interface DeleteFilterAction {
   payload: DeleteFilterPayload;
 }
 
-export const deleteFilter: IStoreHandler<IDefaultState, DeleteFilterPayload, ActionType> = {
+export const deleteFilter: IBasicStoreHandler<IDefaultState, DeleteFilterPayload, ActionType> = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
     basicDispatcher(ActionType.FilterDelete, () => ({
       targetTabId,

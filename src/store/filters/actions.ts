@@ -4,9 +4,9 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file types.ts
+ * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filters action types.
  */
 

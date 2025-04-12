@@ -6,7 +6,7 @@
  *
  * @file dispatchers.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Dispatcher helpers.
  */
 
@@ -24,6 +24,8 @@ export const basicAsyncDispatcher =
     dispatch({ type, payload: makePayload() });
   };
 
+type AsyncDispatcher<Dispatch> = (...args: any[]) => (dispatch: Dispatch) => Promise<void>;
+
 type BasicDispatcher<ActionType, Payload> = (
   ...args: any[]
 ) => (dispatch: (action: { type: ActionType; payload: Payload }) => void) => void;
@@ -32,13 +34,15 @@ type BasicAsyncDispatcher<ActionType, Payload> = (
   ...args: any[]
 ) => (dispatch: (action: { type: ActionType; payload: Payload }) => void) => Promise<void>;
 
-type Dispatcher<ActionType, Payload> =
-  | BasicDispatcher<ActionType, Payload>
-  | BasicAsyncDispatcher<ActionType, Payload>;
-
 type Reducer<IDefaultState, Payload> = (state: IDefaultState, payload: Payload) => IDefaultState;
 
-export interface IStoreHandler<IDefaultState, Payload, ActionType> {
-  dispatch: Dispatcher<ActionType, Payload>;
+export interface IBasicStoreHandler<IDefaultState, Payload, ActionType> {
+  dispatch: BasicDispatcher<ActionType, Payload> | BasicAsyncDispatcher<ActionType, Payload>;
   reduce: Reducer<IDefaultState, Payload>;
+}
+
+export interface IResponseStoreHandler<IDefaultState, Dispatch, PayloadOK, PayloadNOK> {
+  dispatch: AsyncDispatcher<Dispatch>;
+  reduceOK: Reducer<IDefaultState, PayloadOK>;
+  reduceNOK: Reducer<IDefaultState, PayloadNOK>;
 }

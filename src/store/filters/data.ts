@@ -6,12 +6,12 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filters data structures.
  */
 
-import { TRegexTag } from '@/store/log-regex-tags/reducer';
 import { v7 as uuidv7 } from 'uuid';
+import { TRegexTag } from '../log-regex-tags/data';
 
 // <types>
 export type TOverAlternative = {

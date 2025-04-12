@@ -6,11 +6,11 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description SetFilterName handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -25,7 +25,7 @@ export interface SetFilterNameAction {
   payload: SetFilterNamePayload;
 }
 
-export const setFilterName: IStoreHandler<IDefaultState, SetFilterNamePayload, ActionType> = {
+export const setFilterName: IBasicStoreHandler<IDefaultState, SetFilterNamePayload, ActionType> = {
   dispatch: (targetTabId: string, targetFilterId: string, name: string) =>
     basicDispatcher(ActionType.FilterSetName, () => ({
       targetTabId,

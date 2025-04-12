@@ -6,11 +6,11 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description SetComponentData handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -26,7 +26,11 @@ export interface SetComponentDataAction {
   payload: SetComponentDataPayload;
 }
 
-export const setComponentData: IStoreHandler<IDefaultState, SetComponentDataPayload, ActionType> = {
+export const setComponentData: IBasicStoreHandler<
+  IDefaultState,
+  SetComponentDataPayload,
+  ActionType
+> = {
   dispatch: (
     targetTabId: string,
     targetFilterId: string,

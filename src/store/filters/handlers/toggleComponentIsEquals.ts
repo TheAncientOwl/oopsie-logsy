@@ -6,11 +6,11 @@
  *
  * @file toggleComponentIsEquals.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ToggleComponentIsEquals handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -25,7 +25,7 @@ export interface ToggleComponentIsEqualsAction {
   payload: ToggleComponentIsEqualsPayload;
 }
 
-export const toggleComponentIsEquals: IStoreHandler<
+export const toggleComponentIsEquals: IBasicStoreHandler<
   IDefaultState,
   ToggleComponentIsEqualsPayload,
   ActionType

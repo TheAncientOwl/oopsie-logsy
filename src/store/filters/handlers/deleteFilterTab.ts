@@ -6,11 +6,11 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description DeleteFilterTab handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { defaultFilterTabs, IDefaultState } from '../data';
 
@@ -23,7 +23,11 @@ export interface DeleteFilterTabAction {
   payload: DeleteFilterTabPayload;
 }
 
-export const deleteFilterTab: IStoreHandler<IDefaultState, DeleteFilterTabPayload, ActionType> = {
+export const deleteFilterTab: IBasicStoreHandler<
+  IDefaultState,
+  DeleteFilterTabPayload,
+  ActionType
+> = {
   dispatch: (targetId: string) => basicDispatcher(ActionType.FilterTabDelete, () => ({ targetId })),
 
   reduce: (state, payload) => {

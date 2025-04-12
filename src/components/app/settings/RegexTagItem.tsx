@@ -6,19 +6,19 @@
  *
  * @file RegexTagItem.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description LogRegexConfigurator regex tag item.
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/Icons';
+import { TRegexTag } from '@/store/log-regex-tags/data';
 import {
   removeTag,
+  setTagName,
+  setTagRegex,
   toggleTagDisplay,
-  updateTagName,
-  updateTagRegex,
-} from '@/store/log-regex-tags/action';
-import { TRegexTag } from '@/store/log-regex-tags/reducer';
+} from '@/store/log-regex-tags/handlers';
 import { HStack, Input } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -37,11 +37,11 @@ const RegexTagItemImpl: React.FC<RegexTagItemProps> = props => {
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.updateTagName(props.tag.id, event.target.value);
+    props.setTagName(props.tag.id, event.target.value);
   };
 
   const handleRegexChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.updateTagRegex(props.tag.id, event.target.value);
+    props.setTagRegex(props.tag.id, event.target.value);
   };
 
   return (
@@ -76,10 +76,10 @@ const RegexTagItemImpl: React.FC<RegexTagItemProps> = props => {
 const mapState = () => ({});
 
 const mapDispatch = {
-  removeTag,
-  toggleTagDisplay,
-  updateTagName,
-  updateTagRegex,
+  removeTag: removeTag.dispatch,
+  toggleTagDisplay: toggleTagDisplay.dispatch,
+  setTagName: setTagName.dispatch,
+  setTagRegex: setTagRegex.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

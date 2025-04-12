@@ -6,11 +6,11 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ToggleFilterActive handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -24,7 +24,7 @@ export interface ToggleFilterActiveAction {
   payload: ToggleFilterActivePayload;
 }
 
-export const toggleFilterActive: IStoreHandler<
+export const toggleFilterActive: IBasicStoreHandler<
   IDefaultState,
   ToggleFilterActivePayload,
   ActionType

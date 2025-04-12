@@ -6,11 +6,11 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description SetComponentOverAlternative handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -26,7 +26,7 @@ export interface SetComponentOverAlternativeAction {
   payload: SetComponentOverAlternativePayload;
 }
 
-export const setComponentOverAlternative: IStoreHandler<
+export const setComponentOverAlternative: IBasicStoreHandler<
   IDefaultState,
   SetComponentOverAlternativePayload,
   ActionType

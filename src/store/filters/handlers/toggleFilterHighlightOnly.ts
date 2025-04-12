@@ -6,11 +6,11 @@
  *
  * @file toggleFilterHighlight.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ToggleFilterHighlight handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -24,7 +24,7 @@ export interface ToggleFilterHighlightAction {
   payload: ToggleFilterHighlightPayload;
 }
 
-export const toggleFilterHighlightOnly: IStoreHandler<
+export const toggleFilterHighlightOnly: IBasicStoreHandler<
   IDefaultState,
   ToggleFilterHighlightPayload,
   ActionType

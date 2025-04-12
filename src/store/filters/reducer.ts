@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filters data reducer.
  */
 
@@ -14,20 +14,20 @@ import { Reducer, Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
 
 import { ActionType, DispatchTypes } from './actions';
 import { defaultState, IDefaultState } from './data';
-import { deleteFilter, duplicateFilter, toggleComponentIsRegex } from './handlers';
+
+import { addNewFilter, AddNewFilterPayload } from './handlers/addNewFilter';
 import {
   addNewFilterComponent,
   AddNewFilterComponentPayload,
 } from './handlers/addNewFilterComponent';
-import { addNewFilter, AddNewFilterPayload } from './handlers/addNewFilter';
 import { addNewFilterTab, AddNewFilterTabPayload } from './handlers/addNewFilterTab';
-import { DeleteFilterPayload } from './handlers/deleteFilter';
+import { deleteFilter, DeleteFilterPayload } from './handlers/deleteFilter';
 import {
   deleteFilterComponent,
   DeleteFilterComponentPayload,
 } from './handlers/deleteFilterComponent';
 import { deleteFilterTab, DeleteFilterTabPayload } from './handlers/deleteFilterTab';
-import { DuplicateFilterPayload } from './handlers/duplicateFilter';
+import { duplicateFilter, DuplicateFilterPayload } from './handlers/duplicateFilter';
 import { focusFilterTab, FocusFilterTabPayload } from './handlers/focusFilterTab';
 import { loading, LoadingPayload } from './handlers/loading';
 import { setComponentData, SetComponentDataPayload } from './handlers/setComponentData';
@@ -40,7 +40,10 @@ import {
   toggleComponentIsEquals,
   ToggleComponentIsEqualsPayload,
 } from './handlers/toggleComponentIsEquals';
-import { ToggleComponentIsRegexPayload } from './handlers/toggleComponentIsRegex';
+import {
+  toggleComponentIsRegex,
+  ToggleComponentIsRegexPayload,
+} from './handlers/toggleComponentIsRegex';
 import { toggleFilterActive, ToggleFilterActivePayload } from './handlers/toggleFilterActive';
 import {
   toggleFilterHighlightOnly,

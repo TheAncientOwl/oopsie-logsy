@@ -6,11 +6,11 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description DuplicateFilter handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
 import { IDefaultState, TFilter } from '../data';
@@ -25,7 +25,11 @@ export interface DuplicateFilterAction {
   payload: DuplicateFilterPayload;
 }
 
-export const duplicateFilter: IStoreHandler<IDefaultState, DuplicateFilterPayload, ActionType> = {
+export const duplicateFilter: IBasicStoreHandler<
+  IDefaultState,
+  DuplicateFilterPayload,
+  ActionType
+> = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
     basicDispatcher(ActionType.FilterDuplicate, () => ({
       targetTabId,

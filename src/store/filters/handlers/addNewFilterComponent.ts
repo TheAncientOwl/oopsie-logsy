@@ -6,11 +6,11 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description AddFilterComponent.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { DefaultFactory, IDefaultState, TFilterComponent } from '../data';
 
@@ -25,7 +25,7 @@ export interface AddNewFilterComponentAction {
   payload: AddNewFilterComponentPayload;
 }
 
-export const addNewFilterComponent: IStoreHandler<
+export const addNewFilterComponent: IBasicStoreHandler<
   IDefaultState,
   AddNewFilterComponentPayload,
   ActionType

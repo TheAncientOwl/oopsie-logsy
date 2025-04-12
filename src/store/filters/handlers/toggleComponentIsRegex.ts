@@ -6,11 +6,11 @@
  *
  * @file toggleComponentIsRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ToggleComponentIsRegex handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -25,7 +25,7 @@ export interface ToggleComponentIsRegexAction {
   payload: ToggleComponentIsRegexPayload;
 }
 
-export const toggleComponentIsRegex: IStoreHandler<
+export const toggleComponentIsRegex: IBasicStoreHandler<
   IDefaultState,
   ToggleComponentIsRegexPayload,
   ActionType

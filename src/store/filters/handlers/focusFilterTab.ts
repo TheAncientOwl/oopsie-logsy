@@ -6,11 +6,11 @@
  *
  * @file focusFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description FocusFilterTab handler.
  */
 
-import { basicDispatcher, IStoreHandler } from '@/store/common/storeHandler';
+import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
@@ -23,15 +23,17 @@ export interface FocusFilterTabAction {
   payload: FocusFilterTabPayload;
 }
 
-export const focusFilterTab: IStoreHandler<IDefaultState, FocusFilterTabPayload, ActionType> = {
-  dispatch: (targetId: string) => basicDispatcher(ActionType.FilterTabFocus, () => ({ targetId })),
+export const focusFilterTab: IBasicStoreHandler<IDefaultState, FocusFilterTabPayload, ActionType> =
+  {
+    dispatch: (targetId: string) =>
+      basicDispatcher(ActionType.FilterTabFocus, () => ({ targetId })),
 
-  reduce: (state, payload) => {
-    const { targetId } = payload;
+    reduce: (state, payload) => {
+      const { targetId } = payload;
 
-    return {
-      ...state,
-      focusedTabId: targetId,
-    };
-  },
-};
+      return {
+        ...state,
+        focusedTabId: targetId,
+      };
+    },
+  };

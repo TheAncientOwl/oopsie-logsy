@@ -6,163 +6,62 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description LogRegexTags data reducer.
  */
 
-import { Reducer } from '@reduxjs/toolkit';
-import { v7 as uuidv7 } from 'uuid';
+import { Reducer, Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
+import { ActionType, DispatchTypes } from './actions';
+import { defaultState, IDefaultState } from './data';
+import { addNewTag, AddNewTagPayload } from './handlers/addNewTag';
 import {
-  ActionType,
-  TArrayUpdateIDPayload,
-  TArrayValueUpdatePayload,
-  DispatchTypes,
-} from './types';
+  invokeGetTags,
+  InvokeGetTagsNOkPayload,
+  InvokeGetTagsOkPayload,
+} from './handlers/invokeGetTags';
+import {
+  invokeSetTags,
+  InvokeSetTagsNOkPayload,
+  InvokeSetTagsOkPayload,
+} from './handlers/invokeSetTags';
+import { loading, LoadingPayload } from './handlers/loading';
+import { removeTag, RemoveTagPayload } from './handlers/removeTag';
+import { setTagName, SetTagNamePayload } from './handlers/setTagName';
+import { setTagRegex, SetTagRegexPayload } from './handlers/setTagRegex';
+import { toggleTagDisplay, ToggleTagDisplayPayload } from './handlers/toggleTagDisplay';
 
-export type TRegexTag = {
-  id: string;
-  displayed: boolean;
-  regex: string;
-  name: string;
-};
-
-interface IDefaultState {
-  tags: Array<TRegexTag>;
-  loading: boolean;
-  canApplyTags: boolean;
-}
-
-export const defaultRegexTag: TRegexTag = {
-  id: uuidv7(),
-  displayed: true,
-  regex: '.*',
-  name: 'Payload',
-};
-
-const defaultState: IDefaultState = {
-  tags: [defaultRegexTag],
-  loading: false,
-  canApplyTags: false,
-};
-
-const checkCanApply = (tags: Array<TRegexTag>) => {
-  return tags.length > 0 && tags.every(tag => tag.regex.length > 0);
-};
+export type Dispatch = ReduxDispatch<DispatchTypes>;
 
 export const logRegexTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
   state: IDefaultState = defaultState,
   action: DispatchTypes
 ): IDefaultState => {
   switch (action.type) {
-    case ActionType.Loading: {
-      return {
-        ...state,
-        loading: true,
-      };
-    }
+    case ActionType.Loading:
+      return loading.reduce(state, action.payload as LoadingPayload);
 
-    case ActionType.InvokeGetTagsOK: {
-      return {
-        loading: false,
-        canApplyTags: false,
-        tags: action.payload as Array<TRegexTag>,
-      };
-    }
+    case ActionType.InvokeGetTagsOK:
+      return invokeGetTags.reduceOK(state, action.payload as InvokeGetTagsOkPayload);
+    case ActionType.InvokeGetTagsNOK:
+      return invokeGetTags.reduceNOK(state, action.payload as InvokeGetTagsNOkPayload);
 
-    case ActionType.InvokeGetTagsNOK: {
-      return {
-        ...state,
-        loading: false,
-      };
-    }
+    case ActionType.InvokeSetTagsOK:
+      return invokeSetTags.reduceOK(state, action.payload as InvokeSetTagsOkPayload);
+    case ActionType.InvokeSetTagsNOK:
+      return invokeSetTags.reduceNOK(state, action.payload as InvokeSetTagsNOkPayload);
 
-    case ActionType.InvokeSetTagsOK: {
-      return {
-        ...state,
-        loading: false,
-        canApplyTags: false,
-      };
-    }
+    case ActionType.AddNewTag:
+      return addNewTag.reduce(state, action.payload as AddNewTagPayload);
+    case ActionType.RemoveTag:
+      return removeTag.reduce(state, action.payload as RemoveTagPayload);
+    case ActionType.ToggleTagDisplay:
+      return toggleTagDisplay.reduce(state, action.payload as ToggleTagDisplayPayload);
+    case ActionType.SetTagName:
+      return setTagName.reduce(state, action.payload as SetTagNamePayload);
+    case ActionType.SetTagRegex:
+      return setTagRegex.reduce(state, action.payload as SetTagRegexPayload);
 
-    case ActionType.InvokeSetTagsNOK: {
-      return {
-        ...state,
-        loading: false,
-      };
-    }
-
-    case ActionType.AddTag: {
-      const newTags = [
-        ...state.tags,
-        { id: uuidv7(), displayed: true, regex: '.*', name: 'new-tag' },
-      ];
-      return {
-        ...state,
-        tags: newTags,
-        canApplyTags: checkCanApply(newTags),
-      };
-    }
-
-    case ActionType.RemoveTag: {
-      const { id } = action.payload as TArrayUpdateIDPayload;
-      const newTags = state.tags.filter(obj => obj.id !== id);
-
-      return {
-        ...state,
-        tags: newTags,
-        canApplyTags: checkCanApply(newTags),
-      };
-    }
-
-    case ActionType.ToggleTagDisplay: {
-      const { id } = action.payload as TArrayUpdateIDPayload;
-      const newTags = state.tags.map(obj =>
-        obj.id !== id ? obj : { ...obj, displayed: !obj.displayed }
-      );
-
-      return {
-        ...state,
-        tags: state.tags.map(obj => (obj.id !== id ? obj : { ...obj, displayed: !obj.displayed })),
-        canApplyTags: checkCanApply(newTags),
-      };
-    }
-
-    case ActionType.UpdateTagName: {
-      const { id, value } = action.payload as TArrayValueUpdatePayload;
-      const newTags = state.tags.map(obj =>
-        obj.id !== id
-          ? obj
-          : {
-              ...obj,
-              name: value,
-            }
-      );
-
-      return {
-        ...state,
-        tags: newTags,
-        canApplyTags: checkCanApply(newTags),
-      };
-    }
-
-    case ActionType.UpdateTagRegex: {
-      const { id, value } = action.payload as TArrayValueUpdatePayload;
-      const newTags = state.tags.map(obj =>
-        obj.id !== id
-          ? obj
-          : {
-              ...obj,
-              regex: value,
-            }
-      );
-
-      return {
-        ...state,
-        tags: newTags,
-        canApplyTags: checkCanApply(newTags),
-      };
-    }
+    default:
+      return state;
   }
-
-  return state;
 };
