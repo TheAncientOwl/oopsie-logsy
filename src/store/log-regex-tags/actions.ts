@@ -6,11 +6,11 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description LogRegexTags action types.
  */
 
-import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
+import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
 
 import { AddNewTagAction } from './handlers/addNewTag';
 import { InvokeGetTagsNOkAction, InvokeGetTagsOkAction } from './handlers/invokeGetTags';
@@ -35,6 +35,7 @@ export enum ActionType {
 }
 
 export type DispatchTypes =
+  | UnknownAction
   | LoadingAction
   | InvokeGetTagsOkAction
   | InvokeGetTagsNOkAction

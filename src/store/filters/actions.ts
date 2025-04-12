@@ -6,11 +6,11 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Filters action types.
  */
 
-import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
+import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
 
 import { AddNewFilterAction } from './handlers/addNewFilter';
 import { AddNewFilterComponentAction } from './handlers/addNewFilterComponent';
@@ -65,6 +65,7 @@ export enum ActionType {
 }
 
 export type DispatchTypes =
+  | UnknownAction
   | LoadingAction
   | AddNewFilterTabAction
   | DeleteFilterTabAction
