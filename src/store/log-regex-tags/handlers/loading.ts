@@ -6,7 +6,7 @@
  *
  * @file loading.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Loading handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type LoadingPayload = undefined;
+type LoadingPayload = {};
 
 export interface LoadingAction {
   type: typeof ActionType.Loading;
@@ -22,7 +22,7 @@ export interface LoadingAction {
 }
 
 export const loading: IBasicStoreHandler<IDefaultState, LoadingPayload, ActionType> = {
-  dispatch: () => basicDispatcher(ActionType.Loading, () => undefined),
+  dispatch: () => basicDispatcher(ActionType.Loading, () => ({})),
 
   reduce: state => {
     return {

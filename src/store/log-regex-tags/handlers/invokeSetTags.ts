@@ -6,24 +6,23 @@
  *
  * @file invokeSetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description InvokeSetTags handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
-import { ActionType } from '../actions';
+import { ActionType, Dispatch } from '../actions';
 import { IDefaultState, TRegexTag } from '../data';
-import { Dispatch } from '../reducer';
 
-export type InvokeSetTagsOkPayload = {};
+type InvokeSetTagsOkPayload = {};
 
 export interface InvokeSetTagsOkAction {
   type: typeof ActionType.InvokeSetTagsOK;
   payload: InvokeSetTagsOkPayload;
 }
 
-export type InvokeSetTagsNOkPayload = {
+type InvokeSetTagsNOkPayload = {
   error: any;
 };
 
@@ -39,15 +38,15 @@ export const invokeSetTags: IApiCallStoreHandler<
   InvokeSetTagsNOkPayload
 > = {
   dispatch: (tags: Array<TRegexTag>) => async (dispatch: Dispatch) => {
-    dispatch({ type: ActionType.Loading });
+    dispatch({ type: ActionType.Loading, payload: {} });
 
     try {
       const response = await invoke('set_tags', { tags });
       console.logX(`invokeSetTags::dispatch`, `rust response: ${response}`);
-      dispatch({ type: ActionType.InvokeSetTagsOK });
+      dispatch({ type: ActionType.InvokeSetTagsOK, payload: {} });
     } catch (error) {
       console.errorX(`invokeGetTags::dispatch`, `error sending tags to rust: ${error}`);
-      dispatch({ type: ActionType.InvokeSetTagsNOK });
+      dispatch({ type: ActionType.InvokeSetTagsNOK, payload: { error } });
     }
   },
 

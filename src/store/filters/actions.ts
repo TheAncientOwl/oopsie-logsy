@@ -6,11 +6,12 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filters action types.
  */
 
-import { UnknownAction } from '@reduxjs/toolkit';
+import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
+
 import { LoadingAction } from './handlers/loading';
 import { AddNewFilterTabAction } from './handlers/addNewFilterTab';
 import { DeleteFilterTabAction } from './handlers/deleteFilterTab';
@@ -31,27 +32,26 @@ import { SetComponentDataAction } from './handlers/setComponentData';
 export enum ActionType {
   Loading = 'Filters__Loading',
 
-  AddNewFilterTab = 'Filters__FilterTabAdd',
-  FilterTabDelete = 'Filters__FilterTabDelete',
-  FilterTabFocus = 'Filters__FilterTabFocus',
+  AddNewFilterTab = 'Filters__AddNewFilterTab',
+  DeleteFilterTab = 'Filters__DeleteFilterTab',
+  FocusFilterTab = 'Filters__FocusFilterTab',
 
-  FilterAdd = 'Filters__FilterAdd',
-  FilterDelete = 'Filters__FilterDelete',
-  FilterToggleActive = 'Filters__FilterToggleActive',
-  FilterToggleHighlightOnly = 'Filters__FilterToggleHighlightOnly',
-  FilterSetName = 'Filters__FilterSetName',
-  FilterDuplicate = 'Filters__FilterDuplicate',
+  AddNewFilter = 'Filters__AddNewFilter',
+  DeleteFilter = 'Filters__DeleteFilter',
+  ToggleFilterActive = 'Filters__ToggleFilterActive',
+  ToggleFilterHighlightOnly = 'Filters__ToggleFilterHighlightOnly',
+  SetFilterName = 'Filters__SetFilterName',
+  DuplicateFilter = 'Filters__DuplicateFilter',
 
-  FilterComponentAdd = 'Filters__FilterComponentAdd',
-  FilterComponentDelete = 'Filters__FilterComponentDelete',
-  FilterComponentSetOverAlternative = 'Filters__FilterComponentSetOverAlternative',
-  FilterComponentToggleIsRegex = 'Filters__FilterComponentToggleIsRegex',
-  FilterComponentToggleIsEquals = 'Filters__FilterComponentToggleIsEquals',
-  FilterComponentSetData = 'Filters__FilterComponentSetData',
+  AddNewFilterComponent = 'Filters__AddNewFilterComponent',
+  DeleteFilterComponent = 'Filters__DeleteFilterComponent',
+  SetFilterComponentOverAlternative = 'Filters__SetFilterComponentOverAlternative',
+  ToggleFilterComponentIsRegex = 'Filters__ToggleFilterComponentIsRegex',
+  ToggleFilterComponentIsEquals = 'Filters__ToggleFilterComponentIsEquals',
+  SetFilterComponentData = 'Filters__SetFilterComponentData',
 }
 
 export type DispatchTypes =
-  | UnknownAction
   | LoadingAction
   | AddNewFilterTabAction
   | DeleteFilterTabAction
@@ -68,3 +68,5 @@ export type DispatchTypes =
   | ToggleComponentIsRegexAction
   | ToggleComponentIsEqualsAction
   | SetComponentDataAction;
+
+export type Dispatch = ReduxDispatch<DispatchTypes>;

@@ -6,7 +6,7 @@
  *
  * @file toggleFilterHighlight.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ToggleFilterHighlight handler.
  */
 
@@ -14,13 +14,13 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type ToggleFilterHighlightPayload = {
+type ToggleFilterHighlightPayload = {
   targetTabId: string;
   targetFilterId: string;
 };
 
 export interface ToggleFilterHighlightAction {
-  type: ActionType.FilterToggleHighlightOnly;
+  type: ActionType.ToggleFilterHighlightOnly;
   payload: ToggleFilterHighlightPayload;
 }
 
@@ -30,7 +30,7 @@ export const toggleFilterHighlightOnly: IBasicStoreHandler<
   ActionType
 > = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.FilterToggleHighlightOnly, () => ({
+    basicDispatcher(ActionType.ToggleFilterHighlightOnly, () => ({
       targetTabId,
       targetFilterId,
     })),

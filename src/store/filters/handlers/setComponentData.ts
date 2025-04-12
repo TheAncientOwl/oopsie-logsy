@@ -6,7 +6,7 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SetComponentData handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type SetComponentDataPayload = {
+type SetComponentDataPayload = {
   targetTabId: string;
   targetFilterId: string;
   targetComponentId: string;
@@ -22,7 +22,7 @@ export type SetComponentDataPayload = {
 };
 
 export interface SetComponentDataAction {
-  type: ActionType.FilterComponentSetData;
+  type: ActionType.SetFilterComponentData;
   payload: SetComponentDataPayload;
 }
 
@@ -37,7 +37,7 @@ export const setComponentData: IBasicStoreHandler<
     targetComponentId: string,
     data: string
   ) =>
-    basicDispatcher(ActionType.FilterComponentSetData, () => ({
+    basicDispatcher(ActionType.SetFilterComponentData, () => ({
       targetTabId,
       targetFilterId,
       targetComponentId,

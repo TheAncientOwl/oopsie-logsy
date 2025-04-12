@@ -6,19 +6,20 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description LogRegexTags action types.
  */
 
-import { UnknownAction } from '@reduxjs/toolkit';
+import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
+
+import { AddNewTagAction } from './handlers/addNewTag';
 import { InvokeGetTagsNOkAction, InvokeGetTagsOkAction } from './handlers/invokeGetTags';
 import { InvokeSetTagsNOkAction, InvokeSetTagsOkAction } from './handlers/invokeSetTags';
 import { LoadingAction } from './handlers/loading';
-import { AddNewTagAction } from './handlers/addNewTag';
 import { RemoveTagAction } from './handlers/removeTag';
-import { ToggleTagDisplayAction } from './handlers/toggleTagDisplay';
 import { SetTagNameAction } from './handlers/setTagName';
 import { SetTagRegexAction } from './handlers/setTagRegex';
+import { ToggleTagDisplayAction } from './handlers/toggleTagDisplay';
 
 export enum ActionType {
   Loading = 'LogRegexTags__Loading',
@@ -34,7 +35,6 @@ export enum ActionType {
 }
 
 export type DispatchTypes =
-  | UnknownAction
   | LoadingAction
   | InvokeGetTagsOkAction
   | InvokeGetTagsNOkAction
@@ -45,3 +45,5 @@ export type DispatchTypes =
   | ToggleTagDisplayAction
   | SetTagNameAction
   | SetTagRegexAction;
+
+export type Dispatch = ReduxDispatch<DispatchTypes>;

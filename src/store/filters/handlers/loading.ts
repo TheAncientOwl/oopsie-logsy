@@ -6,7 +6,7 @@
  *
  * @file loading.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Loading handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type LoadingPayload = undefined;
+type LoadingPayload = undefined;
 
 export interface LoadingAction {
   type: typeof ActionType.Loading;

@@ -6,7 +6,7 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description AddFilterComponent.
  */
 
@@ -14,14 +14,14 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { DefaultFactory, IDefaultState, TFilterComponent } from '../data';
 
-export type AddNewFilterComponentPayload = {
+type AddNewFilterComponentPayload = {
   targetTabId: string;
   targetFilterId: string;
   component: TFilterComponent;
 };
 
 export interface AddNewFilterComponentAction {
-  type: ActionType.FilterComponentAdd;
+  type: ActionType.AddNewFilterComponent;
   payload: AddNewFilterComponentPayload;
 }
 
@@ -31,7 +31,7 @@ export const addNewFilterComponent: IBasicStoreHandler<
   ActionType
 > = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.FilterComponentAdd, () => ({
+    basicDispatcher(ActionType.AddNewFilterComponent, () => ({
       targetTabId,
       targetFilterId,
       component: DefaultFactory.makeFilterComponent(),

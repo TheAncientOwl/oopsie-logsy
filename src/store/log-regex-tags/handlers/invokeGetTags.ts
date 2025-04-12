@@ -6,18 +6,17 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description InvokeGetTags handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
+import { ActionType, Dispatch } from '../actions';
 import { DefaultFactory, IDefaultState, TRegexTag } from '../data';
-import { Dispatch } from '../reducer';
 import { invoke } from '@tauri-apps/api/core';
 import { invokeSetTags } from './invokeSetTags';
 
-export type InvokeGetTagsOkPayload = {
+type InvokeGetTagsOkPayload = {
   tags: Array<TRegexTag>;
 };
 
@@ -26,8 +25,8 @@ export interface InvokeGetTagsOkAction {
   payload: InvokeGetTagsOkPayload;
 }
 
-export type InvokeGetTagsNOkPayload = {
-  error: any;
+type InvokeGetTagsNOkPayload = {
+  error: unknown;
 };
 
 export interface InvokeGetTagsNOkAction {
@@ -42,7 +41,7 @@ export const invokeGetTags: IApiCallStoreHandler<
   InvokeGetTagsNOkPayload
 > = {
   dispatch: () => async (dispatch: Dispatch) => {
-    dispatch({ type: ActionType.Loading });
+    dispatch({ type: ActionType.Loading, payload: {} });
 
     try {
       const tags = await invoke<Array<TRegexTag>>('get_tags');
@@ -61,7 +60,7 @@ export const invokeGetTags: IApiCallStoreHandler<
       });
     } catch (error) {
       console.errorX(`invokeGetTags::dispatch`, `error getting tags from rust: ${error}`);
-      dispatch({ type: ActionType.InvokeGetTagsNOK, payload: error });
+      dispatch({ type: ActionType.InvokeGetTagsNOK, payload: { error } });
     }
   },
 

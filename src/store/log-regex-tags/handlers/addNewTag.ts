@@ -6,7 +6,7 @@
  *
  * @file addNewTag.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description AddNewTag handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { checkCanApply, DefaultFactory, IDefaultState } from '../data';
 
-export type AddNewTagPayload = {};
+type AddNewTagPayload = {};
 
 export interface AddNewTagAction {
   type: ActionType.AddNewTag;

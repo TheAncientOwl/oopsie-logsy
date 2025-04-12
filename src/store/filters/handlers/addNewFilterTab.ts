@@ -6,7 +6,7 @@
  *
  * @file addNewFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description AddNewFilterTab handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { DefaultFactory, IDefaultState, TFilterTab } from '../data';
 
-export type AddNewFilterTabPayload = {
+type AddNewFilterTabPayload = {
   tab: TFilterTab;
 };
 

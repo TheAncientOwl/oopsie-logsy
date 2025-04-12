@@ -6,7 +6,7 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SetComponentOverAlternative handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type SetComponentOverAlternativePayload = {
+type SetComponentOverAlternativePayload = {
   targetTabId: string;
   targetFilterId: string;
   targetComponentId: string;
@@ -22,7 +22,7 @@ export type SetComponentOverAlternativePayload = {
 };
 
 export interface SetComponentOverAlternativeAction {
-  type: ActionType.FilterComponentSetOverAlternative;
+  type: ActionType.SetFilterComponentOverAlternative;
   payload: SetComponentOverAlternativePayload;
 }
 
@@ -37,7 +37,7 @@ export const setComponentOverAlternative: IBasicStoreHandler<
     targetComponentId: string,
     overAlternativeId: string
   ) =>
-    basicDispatcher(ActionType.FilterComponentSetOverAlternative, () => ({
+    basicDispatcher(ActionType.SetFilterComponentOverAlternative, () => ({
       targetTabId,
       targetFilterId,
       targetComponentId,

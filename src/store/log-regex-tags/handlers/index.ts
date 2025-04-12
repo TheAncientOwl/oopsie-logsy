@@ -6,13 +6,14 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Handlers index file.
  */
 
+import { addNewTag } from './addNewTag';
 import { invokeGetTags } from './invokeGetTags';
 import { invokeSetTags } from './invokeSetTags';
-import { addNewTag } from './addNewTag';
+import { loading } from './loading';
 import { removeTag } from './removeTag';
 import { setTagName } from './setTagName';
 import { setTagRegex } from './setTagRegex';
@@ -22,6 +23,7 @@ export {
   addNewTag,
   invokeGetTags,
   invokeSetTags,
+  loading,
   removeTag,
   setTagName,
   setTagRegex,

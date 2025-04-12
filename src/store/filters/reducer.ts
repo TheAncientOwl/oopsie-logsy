@@ -6,99 +6,36 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filters data reducer.
  */
 
-import { Reducer, Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
-
+import { makeReducer, ReducerMap } from '../common/reducer';
 import { ActionType, DispatchTypes } from './actions';
 import { defaultState, IDefaultState } from './data';
 
-import { addNewFilter, AddNewFilterPayload } from './handlers/addNewFilter';
-import {
-  addNewFilterComponent,
-  AddNewFilterComponentPayload,
-} from './handlers/addNewFilterComponent';
-import { addNewFilterTab, AddNewFilterTabPayload } from './handlers/addNewFilterTab';
-import { deleteFilter, DeleteFilterPayload } from './handlers/deleteFilter';
-import {
-  deleteFilterComponent,
-  DeleteFilterComponentPayload,
-} from './handlers/deleteFilterComponent';
-import { deleteFilterTab, DeleteFilterTabPayload } from './handlers/deleteFilterTab';
-import { duplicateFilter, DuplicateFilterPayload } from './handlers/duplicateFilter';
-import { focusFilterTab, FocusFilterTabPayload } from './handlers/focusFilterTab';
-import { loading, LoadingPayload } from './handlers/loading';
-import { setComponentData, SetComponentDataPayload } from './handlers/setComponentData';
-import {
-  setComponentOverAlternative,
-  SetComponentOverAlternativePayload,
-} from './handlers/setComponentOverAlternative';
-import { setFilterName, SetFilterNamePayload } from './handlers/setFilterName';
-import {
-  toggleComponentIsEquals,
-  ToggleComponentIsEqualsPayload,
-} from './handlers/toggleComponentIsEquals';
-import {
-  toggleComponentIsRegex,
-  ToggleComponentIsRegexPayload,
-} from './handlers/toggleComponentIsRegex';
-import { toggleFilterActive, ToggleFilterActivePayload } from './handlers/toggleFilterActive';
-import {
-  toggleFilterHighlightOnly,
-  ToggleFilterHighlightPayload,
-} from './handlers/toggleFilterHighlightOnly';
+import * as handlers from './handlers';
 
-export type Dispatch = ReduxDispatch<DispatchTypes>;
-
-export const filtersTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
-  state: IDefaultState = defaultState,
-  action: DispatchTypes
-): IDefaultState => {
-  switch (action.type) {
-    case ActionType.Loading:
-      return loading.reduce(state, action.payload as LoadingPayload);
-    case ActionType.AddNewFilterTab:
-      return addNewFilterTab.reduce(state, action.payload as AddNewFilterTabPayload);
-    case ActionType.FilterTabDelete:
-      return deleteFilterTab.reduce(state, action.payload as DeleteFilterTabPayload);
-    case ActionType.FilterDuplicate:
-      return duplicateFilter.reduce(state, action.payload as DuplicateFilterPayload);
-    case ActionType.FilterTabFocus:
-      return focusFilterTab.reduce(state, action.payload as FocusFilterTabPayload);
-    case ActionType.FilterAdd:
-      return addNewFilter.reduce(state, action.payload as AddNewFilterPayload);
-    case ActionType.FilterDelete:
-      return deleteFilter.reduce(state, action.payload as DeleteFilterPayload);
-    case ActionType.FilterToggleActive:
-      return toggleFilterActive.reduce(state, action.payload as ToggleFilterActivePayload);
-    case ActionType.FilterToggleHighlightOnly:
-      return toggleFilterHighlightOnly.reduce(
-        state,
-        action.payload as ToggleFilterHighlightPayload
-      );
-    case ActionType.FilterSetName:
-      return setFilterName.reduce(state, action.payload as SetFilterNamePayload);
-    case ActionType.FilterComponentAdd:
-      return addNewFilterComponent.reduce(state, action.payload as AddNewFilterComponentPayload);
-    case ActionType.FilterComponentDelete:
-      return deleteFilterComponent.reduce(state, action.payload as DeleteFilterComponentPayload);
-    case ActionType.FilterComponentSetOverAlternative:
-      return setComponentOverAlternative.reduce(
-        state,
-        action.payload as SetComponentOverAlternativePayload
-      );
-    case ActionType.FilterComponentToggleIsRegex:
-      return toggleComponentIsRegex.reduce(state, action.payload as ToggleComponentIsRegexPayload);
-    case ActionType.FilterComponentToggleIsEquals:
-      return toggleComponentIsEquals.reduce(
-        state,
-        action.payload as ToggleComponentIsEqualsPayload
-      );
-    case ActionType.FilterComponentSetData:
-      return setComponentData.reduce(state, action.payload as SetComponentDataPayload);
-    default:
-      return state;
-  }
+const reducerMap: ReducerMap<ActionType, IDefaultState> = {
+  [ActionType.Loading]: handlers.loading.reduce,
+  [ActionType.AddNewFilterTab]: handlers.addNewFilterTab.reduce,
+  [ActionType.DeleteFilterTab]: handlers.deleteFilterTab.reduce,
+  [ActionType.DuplicateFilter]: handlers.duplicateFilter.reduce,
+  [ActionType.FocusFilterTab]: handlers.focusFilterTab.reduce,
+  [ActionType.AddNewFilter]: handlers.addNewFilter.reduce,
+  [ActionType.DeleteFilter]: handlers.deleteFilter.reduce,
+  [ActionType.ToggleFilterActive]: handlers.toggleFilterActive.reduce,
+  [ActionType.ToggleFilterHighlightOnly]: handlers.toggleFilterHighlightOnly.reduce,
+  [ActionType.SetFilterName]: handlers.setFilterName.reduce,
+  [ActionType.AddNewFilterComponent]: handlers.addNewFilterComponent.reduce,
+  [ActionType.DeleteFilterComponent]: handlers.deleteFilterComponent.reduce,
+  [ActionType.SetFilterComponentOverAlternative]: handlers.setComponentOverAlternative.reduce,
+  [ActionType.ToggleFilterComponentIsRegex]: handlers.toggleComponentIsRegex.reduce,
+  [ActionType.ToggleFilterComponentIsEquals]: handlers.toggleComponentIsEquals.reduce,
+  [ActionType.SetFilterComponentData]: handlers.setComponentData.reduce,
 };
+
+export const filtersTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(
+  defaultState,
+  reducerMap
+);

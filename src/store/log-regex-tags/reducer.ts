@@ -6,62 +6,30 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description LogRegexTags data reducer.
  */
 
-import { Reducer, Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
+import { makeReducer, ReducerMap } from '../common/reducer';
 import { ActionType, DispatchTypes } from './actions';
 import { defaultState, IDefaultState } from './data';
-import { addNewTag, AddNewTagPayload } from './handlers/addNewTag';
-import {
-  invokeGetTags,
-  InvokeGetTagsNOkPayload,
-  InvokeGetTagsOkPayload,
-} from './handlers/invokeGetTags';
-import {
-  invokeSetTags,
-  InvokeSetTagsNOkPayload,
-  InvokeSetTagsOkPayload,
-} from './handlers/invokeSetTags';
-import { loading, LoadingPayload } from './handlers/loading';
-import { removeTag, RemoveTagPayload } from './handlers/removeTag';
-import { setTagName, SetTagNamePayload } from './handlers/setTagName';
-import { setTagRegex, SetTagRegexPayload } from './handlers/setTagRegex';
-import { toggleTagDisplay, ToggleTagDisplayPayload } from './handlers/toggleTagDisplay';
 
-export type Dispatch = ReduxDispatch<DispatchTypes>;
+import * as handlers from './handlers';
 
-export const logRegexTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
-  state: IDefaultState = defaultState,
-  action: DispatchTypes
-): IDefaultState => {
-  switch (action.type) {
-    case ActionType.Loading:
-      return loading.reduce(state, action.payload as LoadingPayload);
-
-    case ActionType.InvokeGetTagsOK:
-      return invokeGetTags.reduce.ok(state, action.payload as InvokeGetTagsOkPayload);
-    case ActionType.InvokeGetTagsNOK:
-      return invokeGetTags.reduce.nok(state, action.payload as InvokeGetTagsNOkPayload);
-
-    case ActionType.InvokeSetTagsOK:
-      return invokeSetTags.reduce.ok(state, action.payload as InvokeSetTagsOkPayload);
-    case ActionType.InvokeSetTagsNOK:
-      return invokeSetTags.reduce.nok(state, action.payload as InvokeSetTagsNOkPayload);
-
-    case ActionType.AddNewTag:
-      return addNewTag.reduce(state, action.payload as AddNewTagPayload);
-    case ActionType.RemoveTag:
-      return removeTag.reduce(state, action.payload as RemoveTagPayload);
-    case ActionType.ToggleTagDisplay:
-      return toggleTagDisplay.reduce(state, action.payload as ToggleTagDisplayPayload);
-    case ActionType.SetTagName:
-      return setTagName.reduce(state, action.payload as SetTagNamePayload);
-    case ActionType.SetTagRegex:
-      return setTagRegex.reduce(state, action.payload as SetTagRegexPayload);
-
-    default:
-      return state;
-  }
+const reducerMap: ReducerMap<ActionType, IDefaultState> = {
+  [ActionType.Loading]: handlers.loading.reduce,
+  [ActionType.InvokeGetTagsOK]: handlers.invokeGetTags.reduce.ok,
+  [ActionType.InvokeGetTagsNOK]: handlers.invokeGetTags.reduce.nok,
+  [ActionType.InvokeSetTagsOK]: handlers.invokeSetTags.reduce.ok,
+  [ActionType.InvokeSetTagsNOK]: handlers.invokeSetTags.reduce.nok,
+  [ActionType.AddNewTag]: handlers.addNewTag.reduce,
+  [ActionType.RemoveTag]: handlers.removeTag.reduce,
+  [ActionType.ToggleTagDisplay]: handlers.toggleTagDisplay.reduce,
+  [ActionType.SetTagName]: handlers.setTagName.reduce,
+  [ActionType.SetTagRegex]: handlers.setTagRegex.reduce,
 };
+
+export const logRegexTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(
+  defaultState,
+  reducerMap
+);

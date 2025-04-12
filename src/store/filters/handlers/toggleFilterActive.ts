@@ -6,7 +6,7 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ToggleFilterActive handler.
  */
 
@@ -14,13 +14,13 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type ToggleFilterActivePayload = {
+type ToggleFilterActivePayload = {
   targetTabId: string;
   targetFilterId: string;
 };
 
 export interface ToggleFilterActiveAction {
-  type: ActionType.FilterToggleActive;
+  type: ActionType.ToggleFilterActive;
   payload: ToggleFilterActivePayload;
 }
 
@@ -30,7 +30,7 @@ export const toggleFilterActive: IBasicStoreHandler<
   ActionType
 > = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.FilterToggleActive, () => ({
+    basicDispatcher(ActionType.ToggleFilterActive, () => ({
       targetTabId,
       targetFilterId,
     })),

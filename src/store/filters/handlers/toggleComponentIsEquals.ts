@@ -6,7 +6,7 @@
  *
  * @file toggleComponentIsEquals.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ToggleComponentIsEquals handler.
  */
 
@@ -14,14 +14,14 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { IDefaultState } from '../data';
 
-export type ToggleComponentIsEqualsPayload = {
+type ToggleComponentIsEqualsPayload = {
   targetTabId: string;
   targetFilterId: string;
   targetComponentId: string;
 };
 
 export interface ToggleComponentIsEqualsAction {
-  type: ActionType.FilterComponentToggleIsEquals;
+  type: ActionType.ToggleFilterComponentIsEquals;
   payload: ToggleComponentIsEqualsPayload;
 }
 
@@ -31,7 +31,7 @@ export const toggleComponentIsEquals: IBasicStoreHandler<
   ActionType
 > = {
   dispatch: (targetTabId: string, targetFilterId: string, targetComponentId: string) =>
-    basicDispatcher(ActionType.FilterComponentToggleIsEquals, () => ({
+    basicDispatcher(ActionType.ToggleFilterComponentIsEquals, () => ({
       targetTabId,
       targetFilterId,
       targetComponentId,

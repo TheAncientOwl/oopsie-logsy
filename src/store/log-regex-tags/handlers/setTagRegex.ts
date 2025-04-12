@@ -6,7 +6,7 @@
  *
  * @file setTagRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description SetTagRegex handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { checkCanApply, IDefaultState } from '../data';
 
-export type SetTagRegexPayload = {
+type SetTagRegexPayload = {
   targetId: string;
   newRegex: string;
 };

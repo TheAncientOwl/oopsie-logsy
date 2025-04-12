@@ -6,7 +6,7 @@
  *
  * @file removeTag.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description RemoveTag handler.
  */
 
@@ -14,7 +14,7 @@ import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler
 import { ActionType } from '../actions';
 import { checkCanApply, IDefaultState } from '../data';
 
-export type RemoveTagPayload = {
+type RemoveTagPayload = {
   targetId: string;
 };
 

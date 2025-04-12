@@ -6,7 +6,7 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description DuplicateFilter handler.
  */
 
@@ -15,13 +15,13 @@ import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
 import { IDefaultState, TFilter } from '../data';
 
-export type DuplicateFilterPayload = {
+type DuplicateFilterPayload = {
   targetTabId: string;
   targetFilterId: string;
 };
 
 export interface DuplicateFilterAction {
-  type: ActionType.FilterDuplicate;
+  type: ActionType.DuplicateFilter;
   payload: DuplicateFilterPayload;
 }
 
@@ -31,7 +31,7 @@ export const duplicateFilter: IBasicStoreHandler<
   ActionType
 > = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.FilterDuplicate, () => ({
+    basicDispatcher(ActionType.DuplicateFilter, () => ({
       targetTabId,
       targetFilterId,
     })),
