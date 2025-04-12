@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filters component
  */
 
@@ -16,7 +16,14 @@ import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
 import { makeOverAlternatives } from '@/store/filters/data';
 import { addNewFilterTab, invokeGetTabs, invokeSetTabs } from '@/store/filters/handlers';
-import { Box, ButtonGroup, Collapsible, createListCollection, Tabs } from '@chakra-ui/react';
+import {
+  Box,
+  ButtonGroup,
+  Collapsible,
+  createListCollection,
+  HStack,
+  Tabs,
+} from '@chakra-ui/react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
@@ -60,19 +67,8 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
           height='60vh' // TODO: make height resizeable by dragging
         >
           <Tabs.Root variant='line' defaultValue={props.focusedTab} value={props.focusedTab}>
-            <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
-              {props.filterTabs.map(tab => (
-                <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
-              ))}
-
-              <ButtonGroup
-                colorPalette='green'
-                size='xs'
-                variant='subtle'
-                position='absolute'
-                right='0.5em'
-                top='0.5em'
-              >
+            <HStack>
+              <ButtonGroup ml='0.5em' pt='0.25em' colorPalette='green' size='xs' variant='subtle'>
                 <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
                   <NewIcon />
                 </TooltipIconButton>
@@ -85,7 +81,15 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
                   <SaveIcon />
                 </TooltipIconButton>
               </ButtonGroup>
-            </Tabs.List>
+
+              <Box overflowX='scroll'>
+                <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
+                  {props.filterTabs.map(tab => (
+                    <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
+                  ))}
+                </Tabs.List>
+              </Box>
+            </HStack>
 
             {props.filterTabs.map(tab => (
               <FilterTabContent key={tab.id} tab={tab} overAlternatives={overAlternatives} />

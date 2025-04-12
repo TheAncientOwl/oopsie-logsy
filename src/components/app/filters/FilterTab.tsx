@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filter tab.
  */
 
@@ -47,7 +47,12 @@ export const FilterTabHeaderImpl: React.FC<FilterTabHeaderProps> = (
   }, [props.focusFilterTab, props.tabId]);
 
   return (
-    <Tabs.Trigger colorPalette='green' value={props.tabId} onClick={handleFocusClick}>
+    <Tabs.Trigger
+      minWidth={`${props.name.length}ch`}
+      colorPalette='green'
+      value={props.tabId}
+      onClick={handleFocusClick}
+    >
       {props.name}
     </Tabs.Trigger>
   );
