@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description LogRegexTags data reducer.
  */
 
@@ -41,14 +41,14 @@ export const logRegexTagsReducer: Reducer<IDefaultState, DispatchTypes> = (
       return loading.reduce(state, action.payload as LoadingPayload);
 
     case ActionType.InvokeGetTagsOK:
-      return invokeGetTags.reduceOK(state, action.payload as InvokeGetTagsOkPayload);
+      return invokeGetTags.reduce.ok(state, action.payload as InvokeGetTagsOkPayload);
     case ActionType.InvokeGetTagsNOK:
-      return invokeGetTags.reduceNOK(state, action.payload as InvokeGetTagsNOkPayload);
+      return invokeGetTags.reduce.nok(state, action.payload as InvokeGetTagsNOkPayload);
 
     case ActionType.InvokeSetTagsOK:
-      return invokeSetTags.reduceOK(state, action.payload as InvokeSetTagsOkPayload);
+      return invokeSetTags.reduce.ok(state, action.payload as InvokeSetTagsOkPayload);
     case ActionType.InvokeSetTagsNOK:
-      return invokeSetTags.reduceNOK(state, action.payload as InvokeSetTagsNOkPayload);
+      return invokeSetTags.reduce.nok(state, action.payload as InvokeSetTagsNOkPayload);
 
     case ActionType.AddNewTag:
       return addNewTag.reduce(state, action.payload as AddNewTagPayload);

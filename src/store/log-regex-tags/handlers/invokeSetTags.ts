@@ -6,11 +6,11 @@
  *
  * @file invokeSetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description InvokeSetTags handler.
  */
 
-import { IResponseStoreHandler } from '@/store/common/storeHandler';
+import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { ActionType } from '../actions';
 import { IDefaultState, TRegexTag } from '../data';
@@ -32,7 +32,7 @@ export interface InvokeSetTagsNOkAction {
   payload: InvokeSetTagsNOkPayload;
 }
 
-export const invokeSetTags: IResponseStoreHandler<
+export const invokeSetTags: IApiCallStoreHandler<
   IDefaultState,
   Dispatch,
   InvokeSetTagsOkPayload,
@@ -51,19 +51,21 @@ export const invokeSetTags: IResponseStoreHandler<
     }
   },
 
-  reduceOK: state => {
-    return {
-      ...state,
-      loading: false,
-      canApplyTags: false,
-    };
-  },
+  reduce: {
+    ok: state => {
+      return {
+        ...state,
+        loading: false,
+        canApplyTags: false,
+      };
+    },
 
-  reduceNOK: state => {
-    return {
-      ...state,
-      loading: false,
-      canApplyTags: false,
-    };
+    nok: state => {
+      return {
+        ...state,
+        loading: false,
+        canApplyTags: false,
+      };
+    },
   },
 };

@@ -6,7 +6,7 @@
  *
  * @file dispatchers.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Dispatcher helpers.
  */
 
@@ -18,31 +18,38 @@ export const basicDispatcher =
     dispatch({ type, payload: makePayload() });
   };
 
-export const basicAsyncDispatcher =
-  <Payload, ActionType>(type: ActionType, makePayload: PayloadMaker<Payload>) =>
-  async (dispatch: (action: { type: ActionType; payload: Payload }) => void) => {
-    dispatch({ type, payload: makePayload() });
-  };
-
-type AsyncDispatcher<Dispatch> = (...args: any[]) => (dispatch: Dispatch) => Promise<void>;
-
-type BasicDispatcher<ActionType, Payload> = (
+// <dispatchers>
+type SingleDispatcher<ActionType, Payload> = (
   ...args: any[]
 ) => (dispatch: (action: { type: ActionType; payload: Payload }) => void) => void;
 
-type BasicAsyncDispatcher<ActionType, Payload> = (
-  ...args: any[]
-) => (dispatch: (action: { type: ActionType; payload: Payload }) => void) => Promise<void>;
+type AsyncMultiDispatcher<Dispatch> = (...args: any[]) => (dispatch: Dispatch) => Promise<void>;
+// </dispatchers>
 
+// <reducers>
 type Reducer<IDefaultState, Payload> = (state: IDefaultState, payload: Payload) => IDefaultState;
 
-export interface IBasicStoreHandler<IDefaultState, Payload, ActionType> {
-  dispatch: BasicDispatcher<ActionType, Payload> | BasicAsyncDispatcher<ActionType, Payload>;
-  reduce: Reducer<IDefaultState, Payload>;
+type ResponseReducer<IDefaultState, PayloadOK, PayloadNOK> = {
+  ok: Reducer<IDefaultState, PayloadOK>;
+  nok: Reducer<IDefaultState, PayloadNOK>;
+};
+// </reducers>
+
+// <handlers
+export interface IStoreHandler<
+  TDispatcher extends SingleDispatcher<any, any> | AsyncMultiDispatcher<any>,
+  TReducer extends Reducer<any, any> | ResponseReducer<any, any, any>
+> {
+  dispatch: TDispatcher;
+  reduce: TReducer;
 }
 
-export interface IResponseStoreHandler<IDefaultState, Dispatch, PayloadOK, PayloadNOK> {
-  dispatch: AsyncDispatcher<Dispatch>;
-  reduceOK: Reducer<IDefaultState, PayloadOK>;
-  reduceNOK: Reducer<IDefaultState, PayloadNOK>;
-}
+export interface IBasicStoreHandler<IDefaultState, Payload, ActionType>
+  extends IStoreHandler<SingleDispatcher<ActionType, Payload>, Reducer<IDefaultState, Payload>> {}
+
+export interface IApiCallStoreHandler<IDefaultState, Dispatch, PayloadOK, PayloadNOK>
+  extends IStoreHandler<
+    AsyncMultiDispatcher<Dispatch>,
+    ResponseReducer<IDefaultState, PayloadOK, PayloadNOK>
+  > {}
+// </handlers>

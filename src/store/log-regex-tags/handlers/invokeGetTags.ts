@@ -6,11 +6,11 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description InvokeGetTags handler.
  */
 
-import { IResponseStoreHandler } from '@/store/common/storeHandler';
+import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { DefaultFactory, IDefaultState, TRegexTag } from '../data';
 import { Dispatch } from '../reducer';
@@ -35,7 +35,7 @@ export interface InvokeGetTagsNOkAction {
   payload: InvokeGetTagsNOkPayload;
 }
 
-export const invokeGetTags: IResponseStoreHandler<
+export const invokeGetTags: IApiCallStoreHandler<
   IDefaultState,
   Dispatch,
   InvokeGetTagsOkPayload,
@@ -65,19 +65,21 @@ export const invokeGetTags: IResponseStoreHandler<
     }
   },
 
-  reduceOK: (state, payload) => {
-    return {
-      ...state,
-      loading: false,
-      canApplyTags: false,
-      tags: payload.tags,
-    };
-  },
+  reduce: {
+    ok: (state, payload) => {
+      return {
+        ...state,
+        loading: false,
+        canApplyTags: false,
+        tags: payload.tags,
+      };
+    },
 
-  reduceNOK: state => {
-    return {
-      ...state,
-      loading: false,
-    };
+    nok: state => {
+      return {
+        ...state,
+        loading: false,
+      };
+    },
   },
 };
