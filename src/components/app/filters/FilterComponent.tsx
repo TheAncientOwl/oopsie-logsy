@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filter component.
  */
 
@@ -18,19 +18,18 @@ import {
   RegexOffIcon,
   RegexOnIcon,
 } from '@/components/ui/Icons';
-import { For } from '@/components/ui/utils/For';
+import { SingleSelect } from '@/components/ui/select/SingleSelect';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { RootState } from '@/store';
+import { TFilterComponent, TOverAlternative } from '@/store/filters/data';
 import {
+  addNewFilterComponent,
   deleteFilterComponent,
-  filterComponentSetData,
-  filterComponentSetOverAlternative,
-  filterComponentToggleIsEquals,
-  filterComponentToggleIsRegex,
-  newFilterComponent,
-} from '@/store/filters/action';
-import { TFilterComponent, TOverAlternative } from '@/store/filters/reducer';
-import { ButtonGroup, HStack, Input, ListCollection, Select } from '@chakra-ui/react';
+  setComponentData,
+  setComponentOverAlternative,
+  toggleComponentIsEquals,
+  toggleComponentIsRegex,
+} from '@/store/filters/handlers';
+import { ButtonGroup, HStack, Input, ListCollection } from '@chakra-ui/react';
 import React, { useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
@@ -45,57 +44,44 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
   const border = useColorModeValue('gray.500', 'gray.500');
 
   const handleToggleIsRegexClick = useCallback(() => {
-    props.filterComponentToggleIsRegex(props.tabId, props.filterId, props.component.id);
-  }, [props.filterComponentToggleIsRegex, props.tabId, props.filterId, props.component.id]);
+    props.toggleComponentIsRegex(props.tabId, props.filterId, props.component.id);
+  }, [props.toggleComponentIsRegex, props.tabId, props.filterId, props.component.id]);
 
   const handleToggleIsEqualsClick = useCallback(() => {
-    props.filterComponentToggleIsEquals(props.tabId, props.filterId, props.component.id);
-  }, [props.filterComponentToggleIsEquals, props.tabId, props.filterId, props.component.id]);
+    props.toggleComponentIsEquals(props.tabId, props.filterId, props.component.id);
+  }, [props.toggleComponentIsEquals, props.tabId, props.filterId, props.component.id]);
 
   const handleDataChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.filterComponentSetData(
-        props.tabId,
-        props.filterId,
-        props.component.id,
-        event.target.value
-      );
+      props.setComponentData(props.tabId, props.filterId, props.component.id, event.target.value);
     },
-    [props.filterComponentSetData, props.tabId, props.filterId, props.component.id]
+    [props.setComponentData, props.tabId, props.filterId, props.component.id]
   );
 
   const handleDeleteClick = useCallback(() => {
     props.deleteFilterComponent(props.tabId, props.filterId, props.component.id);
   }, [props.deleteFilterComponent, props.tabId, props.filterId, props.component.id]);
 
+  const handleChangeOverAlternative = useCallback(
+    (overAlternativeId: string) => {
+      props.setComponentOverAlternative(
+        props.tabId,
+        props.filterId,
+        props.component.id,
+        overAlternativeId
+      );
+    },
+    [props.setComponentOverAlternative]
+  );
+
   return (
     <HStack>
-      <Select.Root collection={props.overAlternatives} size='md' maxWidth='150px'>
-        {/* TODO: select... */}
-        <Select.HiddenSelect />
-
-        <Select.Control>
-          <Select.Trigger cursor='pointer'>
-            <Select.ValueText placeholder={props.component.over} />
-          </Select.Trigger>
-          <Select.IndicatorGroup>
-            <Select.Indicator />
-          </Select.IndicatorGroup>
-        </Select.Control>
-
-        <Select.Positioner>
-          <Select.Content>
-            <For each={props.overAlternatives.items}>
-              {item => (
-                <Select.Item item={item} key={item.value}>
-                  {item.label}
-                  <Select.ItemIndicator />
-                </Select.Item>
-              )}
-            </For>
-          </Select.Content>
-        </Select.Positioner>
-      </Select.Root>
+      <SingleSelect
+        root={{ size: 'md', maxWidth: '150px', variant: 'outline' }}
+        collection={props.overAlternatives}
+        value={props.component.overAlternativeId}
+        onChange={handleChangeOverAlternative}
+      />
 
       <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
         <TooltipIconButton
@@ -134,15 +120,15 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({});
+const mapState = () => ({});
 
 const mapDispatch = {
-  newFilterComponent,
-  deleteFilterComponent,
-  filterComponentSetOverAlternative,
-  filterComponentToggleIsRegex,
-  filterComponentToggleIsEquals,
-  filterComponentSetData,
+  addNewFilterComponent: addNewFilterComponent.dispatch,
+  deleteFilterComponent: deleteFilterComponent.dispatch,
+  setComponentOverAlternative: setComponentOverAlternative.dispatch,
+  toggleComponentIsRegex: toggleComponentIsRegex.dispatch,
+  toggleComponentIsEquals: toggleComponentIsEquals.dispatch,
+  setComponentData: setComponentData.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

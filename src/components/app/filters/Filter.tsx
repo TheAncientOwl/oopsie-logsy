@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Filter component
  */
 
@@ -21,15 +21,15 @@ import {
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
+import { TFilter, TOverAlternative } from '@/store/filters/data';
 import {
+  addNewFilterComponent,
   deleteFilter,
   duplicateFilter,
-  filterSetName,
-  filterToggleActive,
-  filterToggleHighlightOnly,
-  newFilterComponent,
-} from '@/store/filters/action';
-import { TFilter, TOverAlternative } from '@/store/filters/reducer';
+  setFilterName,
+  toggleFilterActive,
+  toggleFilterHighlightOnly,
+} from '@/store/filters/handlers';
 import {
   Box,
   ButtonGroup,
@@ -58,9 +58,9 @@ const FilterImpl = (props: FilterProps) => {
 
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.filterSetName(props.tabId, props.filter.id, event.target.value);
+      props.setFilterName(props.tabId, props.filter.id, event.target.value);
     },
-    [props.filterSetName, props.tabId, props.filter.id]
+    [props.setFilterName, props.tabId, props.filter.id]
   );
 
   const handleDeleteClick = useCallback(
@@ -76,16 +76,16 @@ const FilterImpl = (props: FilterProps) => {
   }, [props.duplicateFilter, props.tabId, props.filter.id]);
 
   const handleNewComponentClick = useCallback(() => {
-    props.newFilterComponent(props.tabId, props.filter.id);
-  }, [props.newFilterComponent, props.tabId, props.filter.id]);
+    props.addNewFilterComponent(props.tabId, props.filter.id);
+  }, [props.addNewFilterComponent, props.tabId, props.filter.id]);
 
   const handleFilterToggle = useCallback(() => {
-    props.filterToggleActive(props.tabId, props.filter.id);
-  }, [props.filterToggleActive, props.tabId, props.filter.id]);
+    props.toggleFilterActive(props.tabId, props.filter.id);
+  }, [props.toggleFilterActive, props.tabId, props.filter.id]);
 
   const handleFilterToggleHiglightOnly = useCallback(() => {
-    props.filterToggleHighlightOnly(props.tabId, props.filter.id);
-  }, [props.filterToggleHighlightOnly, props.tabId, props.filter.id]);
+    props.toggleFilterHighlightOnly(props.tabId, props.filter.id);
+  }, [props.toggleFilterHighlightOnly, props.tabId, props.filter.id]);
 
   return (
     <Box
@@ -195,12 +195,12 @@ const FilterImpl = (props: FilterProps) => {
 const mapState = () => ({});
 
 const mapDispatch = {
-  deleteFilter,
-  filterToggleActive,
-  filterToggleHighlightOnly,
-  filterSetName,
-  newFilterComponent,
-  duplicateFilter,
+  deleteFilter: deleteFilter.dispatch,
+  toggleFilterActive: toggleFilterActive.dispatch,
+  toggleFilterHighlightOnly: toggleFilterHighlightOnly.dispatch,
+  setFilterName: setFilterName.dispatch,
+  addNewFilterComponent: addNewFilterComponent.dispatch,
+  duplicateFilter: duplicateFilter.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

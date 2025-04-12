@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Filters component
  */
 
@@ -14,13 +14,8 @@ import { DeleteIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
-import {
-  deleteFilterTab,
-  invokeGetFilters,
-  invokeSetFilters,
-  newFilterTab,
-} from '@/store/filters/action';
-import { makeOverAlternatives } from '@/store/filters/reducer';
+import { makeOverAlternatives } from '@/store/filters/data';
+import { addNewFilterTab, deleteFilterTab } from '@/store/filters/handlers';
 import { Box, ButtonGroup, Collapsible, createListCollection, Tabs } from '@chakra-ui/react';
 import React, { useCallback, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -70,7 +65,7 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
                 <TooltipIconButton
                   colorPalette='green'
                   tooltip='New filters tab'
-                  onClick={props.newFilterTab}
+                  onClick={props.addNewFilterTab}
                 >
                   <NewIcon />
                 </TooltipIconButton>
@@ -103,10 +98,8 @@ const mapState = (state: RootState) => ({
 });
 
 const mapDispatch = {
-  invokeGetFilters,
-  invokeSetFilters,
-  newFilterTab,
-  deleteFilterTab,
+  addNewFilterTab: addNewFilterTab.dispatch,
+  deleteFilterTab: deleteFilterTab.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

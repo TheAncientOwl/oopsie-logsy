@@ -11,10 +11,10 @@
  */
 
 import { thunk } from 'redux-thunk';
+import { filtersTagsReducer } from './filters/reducer';
 import { logRegexTagsReducer } from './log-regex-tags/reducer';
 
 import { configureStore } from '@reduxjs/toolkit';
-import { filtersTagsReducer } from './filters/reducer';
 
 export const store = configureStore({
   reducer: {

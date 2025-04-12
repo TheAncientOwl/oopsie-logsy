@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filter tab.
  */
 
@@ -22,8 +22,8 @@ import {
   SoundOffIcon,
   SoundOnIcon,
 } from '@/components/ui/Icons';
-import { focusFilterTab, newFilter } from '@/store/filters/action';
-import { type TFilterTab, type TOverAlternative } from '@/store/filters/reducer';
+import { TFilterTab, TOverAlternative } from '@/store/filters/data';
+import { addNewFilter, focusFilterTab } from '@/store/filters/handlers';
 import { ButtonGroup, HStack, ListCollection, Span, Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
@@ -51,7 +51,7 @@ export const FilterTabHeaderImpl: React.FC<FilterTabHeaderProps> = (
 const mapStateHeader = () => ({});
 
 const mapDispatchHeader = {
-  focusFilterTab,
+  focusFilterTab: focusFilterTab.dispatch,
 };
 
 const connectorHeader = connect(mapStateHeader, mapDispatchHeader);
@@ -67,8 +67,8 @@ interface FilterContentTabProps extends ContentPropsFromRedux {
 
 const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterContentTabProps) => {
   const handleNewFilterClick = useCallback(() => {
-    props.newFilter(props.tab.id);
-  }, [props.newFilter, props.tab.id]);
+    props.addNewFilter(props.tab.id);
+  }, [props.addNewFilter, props.tab.id]);
 
   return (
     <Tabs.Content value={props.tab.id}>
@@ -118,7 +118,7 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
 const mapStateContent = () => ({});
 
 const mapDispatchContent = {
-  newFilter,
+  addNewFilter: addNewFilter.dispatch,
 };
 
 const connectorContent = connect(mapStateContent, mapDispatchContent);
