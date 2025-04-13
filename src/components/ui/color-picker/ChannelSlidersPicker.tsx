@@ -6,7 +6,7 @@
  *
  * @file ChannelSliders.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ColorPicker with channel sliders.
  */
 
@@ -56,7 +56,7 @@ export const ChannelSlidersPicker: React.FC<ChannelSliderPickerProps> = props =>
       onValueChange={props.onValueChange}
     >
       <ColorPicker.Control>
-        <ColorPicker.Trigger />
+        <ColorPicker.Trigger cursor='pointer' />
       </ColorPicker.Control>
       <Portal>
         <ColorPicker.Positioner>
