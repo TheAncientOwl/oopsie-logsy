@@ -4,39 +4,41 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file toggleFilterIgnoreCase.ts
+ * @file toggleFilterComponentIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.1
- * @description ToggleFilterIgnoreCase handler.
+ * @version 0.2
+ * @description ToggleFilterComponentIgnoreCase handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { checkCanSaveTabs, IDefaultState } from '../data';
 
-type ToggleFilterIgnoreCasePayload = {
+type ToggleFilterComponentIgnoreCasePayload = {
   targetTabId: string;
   targetFilterId: string;
+  targetComponentId: string;
 };
 
-export interface ToggleFilterIgnoreCaseAction {
-  type: ActionType.ToggleFilterIgnoreCase;
-  payload: ToggleFilterIgnoreCasePayload;
+export interface ToggleFilterComponentIgnoreCaseAction {
+  type: ActionType.ToggleFilterComponentIgnoreCase;
+  payload: ToggleFilterComponentIgnoreCasePayload;
 }
 
-export const toggleFilterIgnoreCase: IBasicStoreHandler<
+export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
   IDefaultState,
-  ToggleFilterIgnoreCasePayload,
+  ToggleFilterComponentIgnoreCasePayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.ToggleFilterIgnoreCase, () => ({
+  dispatch: (targetTabId: string, targetFilterId: string, targetComponentId: string) =>
+    basicDispatcher(ActionType.ToggleFilterComponentIgnoreCase, () => ({
       targetTabId,
       targetFilterId,
+      targetComponentId,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId } = payload;
+    const { targetTabId, targetFilterId, targetComponentId } = payload;
 
     const newTabs = state.filterTabs.map(tab =>
       tab.id !== targetTabId
@@ -48,7 +50,11 @@ export const toggleFilterIgnoreCase: IBasicStoreHandler<
                 ? filter
                 : {
                     ...filter,
-                    ignoreCase: !filter.ignoreCase,
+                    components: filter.components.map(component =>
+                      component.id !== targetComponentId
+                        ? component
+                        : { ...component, ignoreCase: !component.ignoreCase }
+                    ),
                   }
             ),
           }

@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description Filter component
  */
 
@@ -30,7 +30,6 @@ import {
   setFilterName,
   toggleFilterActive,
   toggleFilterHighlightOnly,
-  toggleFilterIgnoreCase,
 } from '@/store/filters/handlers';
 import {
   Box,
@@ -92,10 +91,6 @@ const FilterImpl = (props: FilterProps) => {
   const handleFilterToggleHiglightOnly = useCallback(() => {
     props.toggleFilterHighlightOnly(props.tabId, props.filter.id);
   }, [props.toggleFilterHighlightOnly, props.tabId, props.filter.id]);
-
-  const handleFilterToggleIgnoreCase = useCallback(() => {
-    props.toggleFilterIgnoreCase(props.tabId, props.filter.id);
-  }, [props.toggleFilterIgnoreCase, props.tabId, props.filter.id]);
 
   return (
     <Box
@@ -163,12 +158,6 @@ const FilterImpl = (props: FilterProps) => {
                 Active
               </CheckBox>
               <CheckBox
-                checked={props.filter.ignoreCase}
-                onCheckedChange={handleFilterToggleIgnoreCase}
-              >
-                Ignore Case
-              </CheckBox>
-              <CheckBox
                 checked={props.filter.isHighlightOnly}
                 onCheckedChange={handleFilterToggleHiglightOnly}
               >
@@ -204,7 +193,6 @@ const mapDispatch = {
   setFilterName: setFilterName.dispatch,
   addNewFilterComponent: addNewFilterComponent.dispatch,
   duplicateFilter: duplicateFilter.dispatch,
-  toggleFilterIgnoreCase: toggleFilterIgnoreCase.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

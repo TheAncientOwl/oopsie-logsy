@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filter component.
  */
 
@@ -14,6 +14,8 @@ import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import {
   DeleteIcon,
   EqualsIcon,
+  IgnoreCaseIcon,
+  MatchCaseIcon,
   NotEqualsIcon,
   RegexOffIcon,
   RegexOnIcon,
@@ -28,6 +30,7 @@ import {
   setComponentOverAlternative,
   toggleComponentIsEquals,
   toggleComponentIsRegex,
+  toggleFilterIgnoreCase,
 } from '@/store/filters/handlers';
 import { ButtonGroup, HStack, Input, ListCollection } from '@chakra-ui/react';
 import React, { useCallback } from 'react';
@@ -50,6 +53,10 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
   const handleToggleIsEqualsClick = useCallback(() => {
     props.toggleComponentIsEquals(props.tabId, props.filterId, props.component.id);
   }, [props.toggleComponentIsEquals, props.tabId, props.filterId, props.component.id]);
+
+  const handleToggleFilterIgnoreCaseClick = useCallback(() => {
+    props.toggleFilterIgnoreCase(props.tabId, props.filterId, props.component.id);
+  }, [props.toggleFilterIgnoreCase, props.tabId, props.filterId, props.component.id]);
 
   const handleDataChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,13 +102,19 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
 
       <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
         <TooltipIconButton
-          tooltip={props.component.isRegex ? 'Toggle regex: Off' : 'Toggle regex: On'}
+          tooltip={props.component.isRegex ? 'Regex: ON' : 'Regex: Off'}
           onClick={handleToggleIsRegexClick}
         >
           {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
         </TooltipIconButton>
         <TooltipIconButton
-          tooltip={props.component.isEquals ? 'Toggle not equals' : 'Toggle equals'}
+          tooltip={props.component.ignoreCase ? 'Ignore Case' : 'Match Case'}
+          onClick={handleToggleFilterIgnoreCaseClick}
+        >
+          {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
+        </TooltipIconButton>
+        <TooltipIconButton
+          tooltip={props.component.isEquals ? 'Equals' : 'Not Equals'}
           onClick={handleToggleIsEqualsClick}
         >
           {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
@@ -129,6 +142,7 @@ const mapDispatch = {
   toggleComponentIsRegex: toggleComponentIsRegex.dispatch,
   toggleComponentIsEquals: toggleComponentIsEquals.dispatch,
   setComponentData: setComponentData.dispatch,
+  toggleFilterIgnoreCase: toggleFilterIgnoreCase.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

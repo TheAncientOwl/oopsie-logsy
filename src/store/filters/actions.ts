@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Filters action types.
  */
 
@@ -33,8 +33,8 @@ import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEqual
 import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
 import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
-import { ToggleFilterIgnoreCaseAction } from './handlers/toggleFilterIgnoreActive';
 import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
+import { ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterIgnoreActive';
 
 export enum ActionType {
   Loading = 'Filters__Loading',
@@ -60,7 +60,6 @@ export enum ActionType {
   DeleteAllFilters = 'Filters__DeleteAllFilters',
   SetFilterFg = 'Filters__SetFilterFg',
   SetFilterBg = 'Filters__SetFilterBg',
-  ToggleFilterIgnoreCase = 'Filters__ToggleFilterIgnoreCase',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
@@ -68,6 +67,7 @@ export enum ActionType {
   ToggleFilterComponentIsRegex = 'Filters__ToggleFilterComponentIsRegex',
   ToggleFilterComponentIsEquals = 'Filters__ToggleFilterComponentIsEquals',
   SetFilterComponentData = 'Filters__SetFilterComponentData',
+  ToggleFilterComponentIgnoreCase = 'Filters__ToggleFilterComponentIgnoreCase',
 }
 
 export type DispatchTypes =
@@ -96,6 +96,6 @@ export type DispatchTypes =
   | InvokeSetTabsOkAction
   | InvokeSetTabsNOkAction
   | SetFilterTabNameAction
-  | ToggleFilterIgnoreCaseAction;
+  | ToggleFilterComponentIgnoreCaseAction;
 
 export type Dispatch = ReduxDispatch<DispatchTypes>;

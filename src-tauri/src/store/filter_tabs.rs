@@ -7,7 +7,7 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: FilterTabs data.
 //!
 
@@ -21,6 +21,8 @@ pub struct FilterComponent {
     pub is_regex: bool,
     #[serde(rename = "isEquals")]
     pub is_equals: bool,
+    #[serde(rename = "ignoreCase")]
+    pub ignore_case: bool,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -39,8 +41,6 @@ pub struct Filter {
     pub is_highlight_only: bool,
     pub components: Vec<FilterComponent>,
     pub colors: FilterColors,
-    #[serde(rename = "ignoreCase")]
-    pub ignore_case: bool,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
