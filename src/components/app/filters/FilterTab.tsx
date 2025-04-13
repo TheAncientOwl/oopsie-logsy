@@ -6,13 +6,14 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filter tab.
  */
 
 import React, { useCallback } from 'react';
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { DoubleCheck } from '@/components/ui/DoubleCheck';
 import {
   ApplyIcon,
   ClearIcon,
@@ -22,6 +23,7 @@ import {
   SoundOnIcon,
 } from '@/components/ui/Icons';
 import { useColorModeValue } from '@/hooks/useColorMode';
+import { useSwitch } from '@/hooks/useSwitch';
 import { TFilterTab, TOverAlternative } from '@/store/filters/data';
 import {
   addNewFilter,
@@ -38,6 +40,7 @@ import {
   Input,
   ListCollection,
   Separator,
+  Span,
   Stack,
   Tabs,
 } from '@chakra-ui/react';
@@ -87,6 +90,9 @@ interface FilterContentTabProps extends ContentPropsFromRedux {
 }
 
 const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterContentTabProps) => {
+  const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
+  const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
+
   const border = useColorModeValue('gray.500', 'gray.500');
 
   const handleNewFilterClick = useCallback(() => {
@@ -103,11 +109,13 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
 
   const handleClearClick = useCallback(() => {
     props.deleteAllFilters(props.tab.id);
+    toggleClearDoubleCheck();
   }, [props.deleteAllFilters, props.tab.id]);
 
   const handleDeleteFilterTabClick = useCallback(() => {
     props.deleteFilterTab(props.tab.id);
-  }, [props.deleteFilterTab, props.tab.id]);
+    toggleDeleteDoubleCheck();
+  }, [props.deleteFilterTab, props.tab.id, toggleDeleteDoubleCheck]);
 
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,57 +125,86 @@ const FilterTabContentImpl: React.FC<FilterContentTabProps> = (props: FilterCont
   );
 
   return (
-    <Tabs.Content value={props.tab.id}>
-      <HStack mb='1em' padding='0 0.5em'>
-        <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
-          <TooltipIconButton tooltip='Apply filters'>
-            <ApplyIcon />
-          </TooltipIconButton>
-          <TooltipIconButton tooltip='New filter' onClick={handleNewFilterClick}>
-            <NewIcon />
-          </TooltipIconButton>
-          <TooltipIconButton tooltip='Unmute All' onClick={handleUnmuteAllClick}>
-            <SoundOnIcon />
-          </TooltipIconButton>
-          <TooltipIconButton tooltip='Mute all' onClick={handleMuteAllClick}>
-            <SoundOffIcon />
-          </TooltipIconButton>
+    <>
+      <Tabs.Content value={props.tab.id}>
+        <HStack mb='1em' padding='0 0.5em'>
+          <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
+            <TooltipIconButton tooltip='Apply filters'>
+              <ApplyIcon />
+            </TooltipIconButton>
+            <TooltipIconButton tooltip='New filter' onClick={handleNewFilterClick}>
+              <NewIcon />
+            </TooltipIconButton>
+            <TooltipIconButton tooltip='Unmute All' onClick={handleUnmuteAllClick}>
+              <SoundOnIcon />
+            </TooltipIconButton>
+            <TooltipIconButton tooltip='Mute all' onClick={handleMuteAllClick}>
+              <SoundOffIcon />
+            </TooltipIconButton>
 
-          <Separator orientation='vertical' height='7' size='md' />
+            <Separator orientation='vertical' height='7' size='md' />
 
-          <TooltipIconButton colorPalette='red' tooltip='Clear filters' onClick={handleClearClick}>
-            <ClearIcon />
-          </TooltipIconButton>
-          <TooltipIconButton
-            colorPalette='red'
-            tooltip='Delete Tab'
-            onClick={handleDeleteFilterTabClick}
-          >
-            <DeleteIcon />
-          </TooltipIconButton>
+            <TooltipIconButton
+              colorPalette='red'
+              tooltip='Clear filters'
+              onClick={toggleClearDoubleCheck}
+            >
+              <ClearIcon />
+            </TooltipIconButton>
+            <TooltipIconButton
+              colorPalette='red'
+              tooltip='Delete Tab'
+              onClick={toggleDeleteDoubleCheck}
+            >
+              <DeleteIcon />
+            </TooltipIconButton>
 
-          <Separator orientation='vertical' height='7' size='md' />
-        </ButtonGroup>
+            <Separator orientation='vertical' height='7' size='md' />
+          </ButtonGroup>
 
-        <Input
-          borderColor={border}
-          colorPalette='green'
-          placeholder='Filter Tab Name'
-          defaultValue={props.tab.name}
-          onChange={handleNameChange}
-        />
-      </HStack>
-      <Stack gap='0'>
-        {props.tab.filters.map(filter => (
-          <Filter
-            key={filter.id}
-            tabId={props.tab.id}
-            filter={filter}
-            overAlternatives={props.overAlternatives}
+          <Input
+            borderColor={border}
+            colorPalette='green'
+            placeholder='Filter Tab Name'
+            defaultValue={props.tab.name}
+            onChange={handleNameChange}
           />
-        ))}
-      </Stack>
-    </Tabs.Content>
+        </HStack>
+        <Stack gap='0'>
+          {props.tab.filters.map(filter => (
+            <Filter
+              key={filter.id}
+              tabId={props.tab.id}
+              filter={filter}
+              overAlternatives={props.overAlternatives}
+            />
+          ))}
+        </Stack>
+      </Tabs.Content>
+
+      <DoubleCheck
+        isShown={doubleCheckDeleteShown}
+        label='Delete tab'
+        acceptLabel='Yes, Delete'
+        declineLabel='No, Cancel'
+        onAccept={handleDeleteFilterTabClick}
+        onDecline={toggleDeleteDoubleCheck}
+      >
+        Are you sure you want to <Span color='red.500'>delete</Span> <b>{props.tab.name}</b>?
+      </DoubleCheck>
+
+      <DoubleCheck
+        isShown={doubleCheckClearShown}
+        label='Clear All Filters'
+        acceptLabel='Yes, Clear'
+        declineLabel='No, Cancel'
+        onAccept={handleClearClick}
+        onDecline={toggleClearDoubleCheck}
+      >
+        Are you sure you want to <Span color='red.500'>clear all filters</Span> of{' '}
+        <b>{props.tab.name}</b>?
+      </DoubleCheck>
+    </>
   );
 };
 
