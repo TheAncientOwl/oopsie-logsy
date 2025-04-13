@@ -76,6 +76,16 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
 
   return (
     <HStack>
+      <TooltipIconButton
+        size='sm'
+        colorPalette='red'
+        variant='subtle'
+        tooltip='Delete component'
+        onClick={handleDeleteClick}
+      >
+        <DeleteIcon />
+      </TooltipIconButton>
+
       <SingleSelect
         root={{ size: 'md', maxWidth: '150px', variant: 'outline' }}
         collection={props.overAlternatives}
@@ -105,16 +115,6 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
         placeholder='Filter'
         onChange={handleDataChange}
       />
-
-      <TooltipIconButton
-        size='sm'
-        colorPalette='red'
-        variant='subtle'
-        tooltip='Delete component'
-        onClick={handleDeleteClick}
-      >
-        <DeleteIcon />
-      </TooltipIconButton>
     </HStack>
   );
 };

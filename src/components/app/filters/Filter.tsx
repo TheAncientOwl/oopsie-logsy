@@ -97,21 +97,18 @@ const FilterImpl = (props: FilterProps) => {
       padding='0.5em 0.75em'
     >
       <HStack>
-        <ButtonGroup size='sm' variant='subtle'>
+        <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
           <TooltipIconButton
-            colorPalette='green'
             tooltip={isOpen ? 'Hide Filter' : 'Show filter'}
             onClick={toggleIsOpen}
           >
             {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
           </TooltipIconButton>
-
-          <TooltipIconButton
-            colorPalette='green'
-            tooltip='Duplicate filter'
-            onClick={handleDuplicateClick}
-          >
+          <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
             <DuplicateIcon />
+          </TooltipIconButton>
+          <TooltipIconButton colorPalette='red' tooltip='Delete filter' onClick={handleDeleteClick}>
+            <DeleteIcon />
           </TooltipIconButton>
         </ButtonGroup>
 
@@ -122,12 +119,6 @@ const FilterImpl = (props: FilterProps) => {
           defaultValue={props.filter.name}
           onChange={handleNameChange}
         />
-
-        <ButtonGroup size='sm' variant='subtle'>
-          <TooltipIconButton tooltip='Delete filter' colorPalette='red' onClick={handleDeleteClick}>
-            <DeleteIcon />
-          </TooltipIconButton>
-        </ButtonGroup>
       </HStack>
 
       <Collapsible.Root open={isOpen}>
