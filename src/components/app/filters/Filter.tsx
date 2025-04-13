@@ -6,11 +6,12 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description Filter component
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { CheckBox } from '@/components/ui/check-box/CheckBox';
 import {
   DeleteIcon,
   DuplicateIcon,
@@ -29,11 +30,11 @@ import {
   setFilterName,
   toggleFilterActive,
   toggleFilterHighlightOnly,
+  toggleFilterIgnoreCase,
 } from '@/store/filters/handlers';
 import {
   Box,
   ButtonGroup,
-  Checkbox,
   Collapsible,
   HStack,
   Input,
@@ -91,6 +92,10 @@ const FilterImpl = (props: FilterProps) => {
   const handleFilterToggleHiglightOnly = useCallback(() => {
     props.toggleFilterHighlightOnly(props.tabId, props.filter.id);
   }, [props.toggleFilterHighlightOnly, props.tabId, props.filter.id]);
+
+  const handleFilterToggleIgnoreCase = useCallback(() => {
+    props.toggleFilterIgnoreCase(props.tabId, props.filter.id);
+  }, [props.toggleFilterIgnoreCase, props.tabId, props.filter.id]);
 
   return (
     <Box
@@ -154,33 +159,21 @@ const FilterImpl = (props: FilterProps) => {
                 <NewIcon />
               </TooltipIconButton>
 
-              <Checkbox.Root
-                cursor='pointer'
-                onCheckedChange={handleFilterToggle}
-                checked={props.filter.isActive}
-                variant='subtle'
-                colorPalette='green'
+              <CheckBox checked={props.filter.isActive} onCheckedChange={handleFilterToggle}>
+                Active
+              </CheckBox>
+              <CheckBox
+                checked={props.filter.ignoreCase}
+                onCheckedChange={handleFilterToggleIgnoreCase}
               >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control>
-                  <Checkbox.Indicator />
-                </Checkbox.Control>
-                <Checkbox.Label>Active</Checkbox.Label>
-              </Checkbox.Root>
-
-              <Checkbox.Root
-                cursor='pointer'
-                onCheckedChange={handleFilterToggleHiglightOnly}
+                Ignore Case
+              </CheckBox>
+              <CheckBox
                 checked={props.filter.isHighlightOnly}
-                variant='subtle'
-                colorPalette='green'
+                onCheckedChange={handleFilterToggleHiglightOnly}
               >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control>
-                  <Checkbox.Indicator />
-                </Checkbox.Control>
-                <Checkbox.Label>Highlight Only</Checkbox.Label>
-              </Checkbox.Root>
+                Highlight Only
+              </CheckBox>
             </HStack>
 
             <For each={props.filter.components}>
@@ -211,6 +204,7 @@ const mapDispatch = {
   setFilterName: setFilterName.dispatch,
   addNewFilterComponent: addNewFilterComponent.dispatch,
   duplicateFilter: duplicateFilter.dispatch,
+  toggleFilterIgnoreCase: toggleFilterIgnoreCase.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

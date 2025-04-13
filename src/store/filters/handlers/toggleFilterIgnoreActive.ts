@@ -4,33 +4,33 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file toggleFilterActive.ts
+ * @file toggleFilterIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.5
- * @description ToggleFilterActive handler.
+ * @version 0.1
+ * @description ToggleFilterIgnoreCase handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { checkCanSaveTabs, IDefaultState } from '../data';
 
-type ToggleFilterActivePayload = {
+type ToggleFilterIgnoreCasePayload = {
   targetTabId: string;
   targetFilterId: string;
 };
 
-export interface ToggleFilterActiveAction {
-  type: ActionType.ToggleFilterActive;
-  payload: ToggleFilterActivePayload;
+export interface ToggleFilterIgnoreCaseAction {
+  type: ActionType.ToggleFilterIgnoreCase;
+  payload: ToggleFilterIgnoreCasePayload;
 }
 
-export const toggleFilterActive: IBasicStoreHandler<
+export const toggleFilterIgnoreCase: IBasicStoreHandler<
   IDefaultState,
-  ToggleFilterActivePayload,
+  ToggleFilterIgnoreCasePayload,
   ActionType
 > = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.ToggleFilterActive, () => ({
+    basicDispatcher(ActionType.ToggleFilterIgnoreCase, () => ({
       targetTabId,
       targetFilterId,
     })),
@@ -48,7 +48,7 @@ export const toggleFilterActive: IBasicStoreHandler<
                 ? filter
                 : {
                     ...filter,
-                    isActive: !filter.isActive,
+                    ignoreCase: !filter.ignoreCase,
                   }
             ),
           }
