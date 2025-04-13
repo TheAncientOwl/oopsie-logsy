@@ -7,7 +7,7 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: FilterTabs data.
 //!
 
@@ -24,6 +24,12 @@ pub struct FilterComponent {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct FilterColors {
+    pub fg: String,
+    pub bg: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Filter {
     pub id: String,
     pub name: String,
@@ -32,6 +38,7 @@ pub struct Filter {
     #[serde(rename = "isHighlightOnly")]
     pub is_highlight_only: bool,
     pub components: Vec<FilterComponent>,
+    pub colors: FilterColors,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

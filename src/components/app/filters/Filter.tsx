@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Filter component
  */
 
@@ -38,10 +38,12 @@ import {
   HStack,
   Input,
   ListCollection,
+  Separator,
   Stack,
 } from '@chakra-ui/react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
 
 interface FilterProps extends PropsFromRedux {
@@ -53,6 +55,9 @@ interface FilterProps extends PropsFromRedux {
 const FilterImpl = (props: FilterProps) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.500');
+
+  const [filterFg, setFilterFg] = useState(props.filter.colors.fg);
+  const [filterBg, setFilterBg] = useState(props.filter.colors.bg);
 
   const [isOpen, toggleIsOpen] = useSwitch(true);
 
@@ -112,12 +117,26 @@ const FilterImpl = (props: FilterProps) => {
           </TooltipIconButton>
         </ButtonGroup>
 
+        <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+
+        <FilterColorPicker
+          tabId={props.tabId}
+          filterId={props.filter.id}
+          defaultColors={props.filter.colors}
+          onColorChangeFg={details => setFilterFg(details.valueAsString)}
+          onColorChangeBg={details => setFilterBg(details.valueAsString)}
+        />
+
+        <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+
         <Input
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Name'
           defaultValue={props.filter.name}
           onChange={handleNameChange}
+          color={filterFg}
+          backgroundColor={filterBg}
         />
       </HStack>
 

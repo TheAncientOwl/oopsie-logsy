@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Filters action types.
  */
 
@@ -57,6 +57,8 @@ export enum ActionType {
   MuteAllFilters = 'Filters__MuteAllFilters',
   UnmuteAllFilters = 'Filters__UnmuteAllFilters',
   DeleteAllFilters = 'Filters__DeleteAllFilters',
+  SetFilterFg = 'Filters__SetFilterFg',
+  SetFilterBg = 'Filters__SetFilterBg',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
