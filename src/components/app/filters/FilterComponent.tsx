@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filter component.
  */
 
@@ -102,19 +102,19 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
 
       <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
         <TooltipIconButton
-          tooltip={props.component.isRegex ? 'Regex: ON' : 'Regex: Off'}
+          tooltip={props.component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
           onClick={handleToggleIsRegexClick}
         >
           {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
         </TooltipIconButton>
         <TooltipIconButton
-          tooltip={props.component.ignoreCase ? 'Ignore Case' : 'Match Case'}
+          tooltip={`Toggle Case: (Now ${props.component.ignoreCase ? 'Ignore' : 'Match'})`}
           onClick={handleToggleFilterIgnoreCaseClick}
         >
           {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
         </TooltipIconButton>
         <TooltipIconButton
-          tooltip={props.component.isEquals ? 'Equals' : 'Not Equals'}
+          tooltip={`Toggle: (Now ${props.component.isEquals ? '' : 'Not '}Equals)`}
           onClick={handleToggleIsEqualsClick}
         >
           {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
