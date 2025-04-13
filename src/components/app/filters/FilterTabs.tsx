@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Filters component
  */
 
@@ -27,6 +27,7 @@ import {
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
+import { FilterTabToolBox } from './FilterTabToolBox';
 
 interface FiltersProps extends PropsFromRedux {
   filtersOpen: boolean;
@@ -67,7 +68,7 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
           height='60vh' // TODO: make height resizeable by dragging
         >
           <Tabs.Root variant='line' defaultValue={props.focusedTab} value={props.focusedTab}>
-            <HStack>
+            <HStack mb='0.75em'>
               <ButtonGroup ml='0.5em' pt='0.25em' colorPalette='green' size='xs' variant='subtle'>
                 <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
                   <NewIcon />
@@ -90,6 +91,8 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
                 </Tabs.List>
               </Box>
             </HStack>
+
+            <FilterTabToolBox />
 
             {props.filterTabs.map(tab => (
               <FilterTabContent key={tab.id} tab={tab} overAlternatives={overAlternatives} />

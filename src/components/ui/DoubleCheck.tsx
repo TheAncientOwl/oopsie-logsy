@@ -6,14 +6,14 @@
  *
  * @file DoubleCheck.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Self explanatory.
  */
 
 import React, { PropsWithChildren } from 'react';
 
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { Box, Button, ButtonGroup, Stack } from '@chakra-ui/react';
+import { Box, BoxProps, Button, ButtonGroup, Stack } from '@chakra-ui/react';
 
 interface DoubleCheckProps extends PropsWithChildren {
   isShown: boolean;
@@ -22,6 +22,7 @@ interface DoubleCheckProps extends PropsWithChildren {
   declineLabel: string;
   onAccept: () => void;
   onDecline: () => void;
+  contentProps?: BoxProps;
 }
 
 export const DoubleCheck: React.FC<DoubleCheckProps> = props => {
@@ -53,13 +54,16 @@ export const DoubleCheck: React.FC<DoubleCheckProps> = props => {
           {props.label}
         </Box>
 
-        <Box mb='1.5em'>{props.children}</Box>
+        <Box mb='1.5em' textAlign='center' {...props.contentProps}>
+          {props.children}
+        </Box>
 
         <ButtonGroup
           size='md'
           variant='surface'
           display='flex'
-          justifyContent='space-between'
+          gap='10rem'
+          justifyContent='center'
           width='100%'
         >
           <Button colorPalette='green' onClick={props.onAccept}>
