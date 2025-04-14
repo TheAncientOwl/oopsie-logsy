@@ -6,13 +6,13 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Pick fg/bg colors of logs.
  */
 
 import React, { useCallback } from 'react';
 
-import { ChannelSlidersPicker } from '@/components/ui/color-picker/ChannelSlidersPicker';
+import { UltraColorPicker } from '@/components/ui/color-picker/UltraColorPicker';
 import { TFilterColors } from '@/store/filters/data';
 import { setFilterBg, setFilterFg } from '@/store/filters/handlers';
 import { ColorPickerValueChangeDetails, HStack } from '@chakra-ui/react';
@@ -43,12 +43,14 @@ const FilterColorPickerImpl: React.FC<ColorPickerProps> = props => {
 
   return (
     <HStack>
-      <ChannelSlidersPicker
+      <UltraColorPicker
+        label='Foreground'
         defaultValue={props.defaultColors.fg}
         onValueChangeEnd={handleFgColorPick}
         onValueChange={props.onColorChangeFg}
       />
-      <ChannelSlidersPicker
+      <UltraColorPicker
+        label='Background'
         defaultValue={props.defaultColors.bg}
         onValueChangeEnd={handleBgColorPick}
         onValueChange={props.onColorChangeBg}

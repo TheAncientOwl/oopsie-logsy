@@ -6,11 +6,12 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Icons used along the app design
  */
 
 import { useColorMode } from '@/hooks/useColorMode';
+import { BsStars } from 'react-icons/bs';
 import { CiExport, CiImport } from 'react-icons/ci';
 import {
   FaCheck,
@@ -22,7 +23,9 @@ import {
   FaPencilAlt,
   FaPlus,
   FaSave,
+  FaStar,
 } from 'react-icons/fa';
+import { GiStarFormation } from 'react-icons/gi';
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { IoMdClose } from 'react-icons/io';
 import { LuMoon, LuSun } from 'react-icons/lu';
@@ -63,3 +66,6 @@ export const IgnoreCaseIcon = () => <RxLetterCaseLowercase />;
 export const MatchCaseIcon = () => <RxLetterCaseToggle />;
 export const CollapseIcon = () => <MdOutlineKeyboardDoubleArrowUp />;
 export const ExpandIcon = () => <MdOutlineKeyboardDoubleArrowDown />;
+export const StarsIcon = () => <BsStars />;
+export const StarIcon = () => <FaStar />;
+export const StarsFormation = () => <GiStarFormation />;

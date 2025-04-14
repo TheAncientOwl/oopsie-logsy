@@ -6,7 +6,7 @@
  *
  * @file ChannelSliders.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ColorPicker with channel sliders.
  */
 
@@ -25,7 +25,7 @@ interface ChannelSliderProps {
   format: ColorPicker.ColorFormat;
 }
 
-const ChannelSliders: React.FC<ChannelSliderProps> = props => {
+export const ChannelSliders: React.FC<ChannelSliderProps> = props => {
   const channels = getColorChannels(props.format);
 
   return (
