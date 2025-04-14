@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Filters component
  */
 
@@ -74,7 +74,6 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
                   <NewIcon />
                 </TooltipIconButton>
                 <TooltipIconButton
-                  colorPalette={props.canSaveTabs ? 'green' : 'gray'}
                   disabled={!props.canSaveTabs}
                   tooltip='Save tabs'
                   onClick={handleSaveClick}
