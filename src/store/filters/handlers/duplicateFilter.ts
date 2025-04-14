@@ -6,7 +6,7 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description DuplicateFilter handler.
  */
 
@@ -47,6 +47,10 @@ export const duplicateFilter: IBasicStoreHandler<
         if (filter.id === targetFilterId) {
           const newFilter = structuredClone(filter);
           newFilter.id = uuidv7();
+          newFilter.name = `${newFilter.name}*`;
+          for (let component of newFilter.components) {
+            component.id = uuidv7();
+          }
           newArr.push(newFilter);
         }
       });

@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Handlers index file.
  */
 
@@ -18,6 +18,7 @@ import { deleteFilter } from './deleteFilter';
 import { deleteFilterComponent } from './deleteFilterComponent';
 import { deleteFilterTab } from './deleteFilterTab';
 import { duplicateFilter } from './duplicateFilter';
+import { duplicateFiltersTab } from './duplicateFiltersTab';
 import { focusFilterTab } from './focusFilterTab';
 import { invokeGetTabs } from './invokeGetTabs';
 import { invokeSetTabs } from './invokeSetTabs';
@@ -48,6 +49,7 @@ export {
   deleteFilterComponent,
   deleteFilterTab,
   duplicateFilter,
+  duplicateFiltersTab,
   focusFilterTab,
   invokeGetTabs,
   invokeSetTabs,

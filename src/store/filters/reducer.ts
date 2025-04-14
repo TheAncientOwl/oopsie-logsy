@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Filters data reducer.
  */
 
@@ -47,6 +47,7 @@ const reducerMap: ReducerMap<ActionType, IDefaultState> = {
   [ActionType.SetFilterPriority]: handlers.setFilterPriority.reduce,
   [ActionType.ToggleFilterCollapsed]: handlers.toggleFilterCollapsed.reduce,
   [ActionType.SetAllFiltersCollapsed]: handlers.setAllFiltersCollapsed.reduce,
+  [ActionType.DuplicateFiltersTab]: handlers.duplicateFiltersTab.reduce,
 };
 
 export const filtersTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(

@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Filter tab related tools.
  */
 
@@ -20,6 +20,7 @@ import {
   ClearIcon,
   CollapseIcon,
   DeleteIcon,
+  DuplicateIcon,
   ExpandIcon,
   NewIcon,
   SoundOffIcon,
@@ -32,13 +33,14 @@ import {
   addNewFilter,
   deleteAllFilters,
   deleteFilterTab,
+  duplicateFiltersTab,
   muteAllFilters,
   setFilterTabName,
   unmuteAllFilters,
 } from '@/store/filters/handlers';
+import { setAllFiltersCollapsed } from '@/store/filters/handlers/setAllFiltersCollapsed';
 import { ButtonGroup, HStack, Input, Separator, Span } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
-import { setAllFiltersCollapsed } from '@/store/filters/handlers/setAllFiltersCollapsed';
 
 const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
   const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
@@ -94,6 +96,10 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
     props.setAllFiltersCollapsed(props.focusedTabId, false);
   }, [props.setAllFiltersCollapsed, props.focusedTabId]);
 
+  const handleDuplicateTabClick = useCallback(() => {
+    props.duplicateFiltersTab(props.focusedTabId);
+  }, [props.duplicateFiltersTab, props.focusedTabId]);
+
   return (
     <>
       <HStack padding='0 0.5em'>
@@ -138,6 +144,9 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
 
           <Separator orientation='vertical' height='7' size='md' />
 
+          <TooltipIconButton tooltip='Duplicate Tab' onClick={handleDuplicateTabClick}>
+            <DuplicateIcon />
+          </TooltipIconButton>
           <TooltipIconButton
             colorPalette='red'
             tooltip='Clear filters'
@@ -205,6 +214,7 @@ const mapDispatch = {
   deleteFilterTab: deleteFilterTab.dispatch,
   setFilterTabName: setFilterTabName.dispatch,
   setAllFiltersCollapsed: setAllFiltersCollapsed.dispatch,
+  duplicateFiltersTab: duplicateFiltersTab.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);
