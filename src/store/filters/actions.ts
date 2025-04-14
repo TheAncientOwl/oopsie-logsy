@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filters action types.
  */
 
@@ -27,14 +27,17 @@ import { LoadingAction } from './handlers/loading';
 import { MuteAllFiltersAction } from './handlers/muteAllFilters';
 import { SetComponentDataAction } from './handlers/setComponentData';
 import { SetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
+import { ToggleFilterCollapsedAction } from './handlers/toggleFilterCollapsed';
 import { SetFilterNameAction } from './handlers/setFilterName';
+import { SetFilterPriorityAction } from './handlers/setFilterPriority';
 import { SetFilterTabNameAction } from './handlers/setFilterTabName';
 import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
 import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
 import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
-import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 import { ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterIgnoreActive';
+import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
+import { SetAllFiltersCollapsedAction } from './handlers/setAllFiltersCollapsed';
 
 export enum ActionType {
   Loading = 'Filters__Loading',
@@ -61,6 +64,8 @@ export enum ActionType {
   SetFilterFg = 'Filters__SetFilterFg',
   SetFilterBg = 'Filters__SetFilterBg',
   SetFilterPriority = 'Filters__SetFilterPriority',
+  ToggleFilterCollapsed = 'Filters__ToggleFilterCollapsed',
+  SetAllFiltersCollapsed = 'Filters__SetAllFiltersCollapsed',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
@@ -97,6 +102,9 @@ export type DispatchTypes =
   | InvokeSetTabsOkAction
   | InvokeSetTabsNOkAction
   | SetFilterTabNameAction
-  | ToggleFilterComponentIgnoreCaseAction;
+  | ToggleFilterComponentIgnoreCaseAction
+  | SetFilterPriorityAction
+  | ToggleFilterCollapsedAction
+  | SetAllFiltersCollapsedAction;
 
 export type Dispatch = ReduxDispatch<DispatchTypes>;

@@ -6,7 +6,7 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Icons used along the app design
  */
 
@@ -26,7 +26,11 @@ import {
 import { GoMute, GoUnmute } from 'react-icons/go';
 import { IoMdClose } from 'react-icons/io';
 import { LuMoon, LuSun } from 'react-icons/lu';
-import { MdDelete } from 'react-icons/md';
+import {
+  MdDelete,
+  MdOutlineKeyboardDoubleArrowDown,
+  MdOutlineKeyboardDoubleArrowUp,
+} from 'react-icons/md';
 import { RxLetterCaseLowercase, RxLetterCaseToggle } from 'react-icons/rx';
 import { SiCcleaner } from 'react-icons/si';
 import { SlSettings } from 'react-icons/sl';
@@ -57,3 +61,5 @@ export const SaveIcon = () => <FaSave />;
 export const CloseIcon = () => <IoMdClose />;
 export const IgnoreCaseIcon = () => <RxLetterCaseLowercase />;
 export const MatchCaseIcon = () => <RxLetterCaseToggle />;
+export const CollapseIcon = () => <MdOutlineKeyboardDoubleArrowUp />;
+export const ExpandIcon = () => <MdOutlineKeyboardDoubleArrowDown />;

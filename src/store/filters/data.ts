@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Filters data structures.
  */
 
@@ -45,6 +45,7 @@ export type TFilter = {
   components: Array<TFilterComponent>;
   colors: TFilterColors;
   priority: number;
+  collapsed: boolean;
 };
 
 export type TFilterTab = {
@@ -97,6 +98,7 @@ export const DefaultFactory = {
       bg: 'rgba(0, 0, 0, 0)',
     },
     priority: 1,
+    collapsed: false,
   }),
 
   makeFilterTab: (overAlternativeId = ''): TFilterTab => ({

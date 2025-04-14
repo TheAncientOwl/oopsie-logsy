@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Handlers index file.
  */
 
@@ -23,6 +23,7 @@ import { invokeGetTabs } from './invokeGetTabs';
 import { invokeSetTabs } from './invokeSetTabs';
 import { loading } from './loading';
 import { muteAllFilters } from './muteAllFilters';
+import { setAllFiltersCollapsed } from './setAllFiltersCollapsed';
 import { setComponentData } from './setComponentData';
 import { setComponentOverAlternative } from './setComponentOverAlternative';
 import { setFilterBg } from './setFilterBg';
@@ -33,6 +34,7 @@ import { setFilterTabName } from './setFilterTabName';
 import { toggleComponentIsEquals } from './toggleComponentIsEquals';
 import { toggleComponentIsRegex } from './toggleComponentIsRegex';
 import { toggleFilterActive } from './toggleFilterActive';
+import { toggleFilterCollapsed } from './toggleFilterCollapsed';
 import { toggleFilterHighlightOnly } from './toggleFilterHighlightOnly';
 import { toggleFilterComponentIgnoreCase } from './toggleFilterIgnoreActive';
 import { unmuteAllFilters } from './unmuteAllFilters';
@@ -51,6 +53,7 @@ export {
   invokeSetTabs,
   loading,
   muteAllFilters,
+  setAllFiltersCollapsed,
   setComponentData,
   setComponentOverAlternative,
   setFilterBg,
@@ -61,7 +64,8 @@ export {
   toggleComponentIsEquals,
   toggleComponentIsRegex,
   toggleFilterActive,
-  toggleFilterHighlightOnly,
+  toggleFilterCollapsed,
   toggleFilterComponentIgnoreCase,
+  toggleFilterHighlightOnly,
   unmuteAllFilters,
 };

@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Filter tab related tools.
  */
 
@@ -18,7 +18,9 @@ import { DoubleCheck } from '@/components/ui/DoubleCheck';
 import {
   ApplyIcon,
   ClearIcon,
+  CollapseIcon,
   DeleteIcon,
+  ExpandIcon,
   NewIcon,
   SoundOffIcon,
   SoundOnIcon,
@@ -36,12 +38,13 @@ import {
 } from '@/store/filters/handlers';
 import { ButtonGroup, HStack, Input, Separator, Span } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
+import { setAllFiltersCollapsed } from '@/store/filters/handlers/setAllFiltersCollapsed';
 
 const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
   const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
   const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
-  const tabName = useMemo(() => {
+  const focusedTab = useMemo(() => {
     const focusedTab = props.filterTabs.find(tab => tab.id === props.focusedTabId);
 
     console.assert(
@@ -49,7 +52,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
       `Failed to find focused tab with id ${props.focusedTabId}`
     );
 
-    return focusedTab?.name;
+    return focusedTab;
   }, [props.focusedTabId, props.filterTabs]);
 
   const border = useColorModeValue('gray.500', 'gray.500');
@@ -83,21 +86,54 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
     [props.setFilterTabName, props.focusedTabId]
   );
 
+  const handleCollapseAllClick = useCallback(() => {
+    props.setAllFiltersCollapsed(props.focusedTabId, true);
+  }, [props.setAllFiltersCollapsed, props.focusedTabId]);
+
+  const handleExpandAllClick = useCallback(() => {
+    props.setAllFiltersCollapsed(props.focusedTabId, false);
+  }, [props.setAllFiltersCollapsed, props.focusedTabId]);
+
   return (
     <>
       <HStack padding='0 0.5em'>
         <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
-          <TooltipIconButton tooltip='Apply filters'>
+          <TooltipIconButton tooltip='Apply filters' disabled>
             <ApplyIcon />
           </TooltipIconButton>
           <TooltipIconButton tooltip='New filter' onClick={handleNewFilterClick}>
             <NewIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Unmute All' onClick={handleUnmuteAllClick}>
+
+          <Separator orientation='vertical' height='7' size='md' />
+
+          <TooltipIconButton
+            tooltip='Unmute All'
+            onClick={handleUnmuteAllClick}
+            disabled={focusedTab?.filters.every(filter => filter.isActive)}
+          >
             <SoundOnIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Mute all' onClick={handleMuteAllClick}>
+          <TooltipIconButton
+            tooltip='Mute all'
+            onClick={handleMuteAllClick}
+            disabled={focusedTab?.filters.every(filter => !filter.isActive)}
+          >
             <SoundOffIcon />
+          </TooltipIconButton>
+          <TooltipIconButton
+            tooltip='Collapse All'
+            onClick={handleCollapseAllClick}
+            disabled={focusedTab?.filters.every(filter => filter.collapsed)}
+          >
+            <CollapseIcon />
+          </TooltipIconButton>
+          <TooltipIconButton
+            tooltip='Expand All'
+            onClick={handleExpandAllClick}
+            disabled={focusedTab?.filters.every(filter => !filter.collapsed)}
+          >
+            <ExpandIcon />
           </TooltipIconButton>
 
           <Separator orientation='vertical' height='7' size='md' />
@@ -124,7 +160,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Tab Name'
-          value={tabName}
+          value={focusedTab?.name}
           onChange={handleNameChange}
         />
       </HStack>
@@ -137,7 +173,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
         onAccept={handleDeleteFilterTabClick}
         onDecline={toggleDeleteDoubleCheck}
       >
-        Are you sure you want to <Span color='red.500'>delete</Span> <b>{tabName}</b>?
+        Are you sure you want to <Span color='red.500'>delete</Span> <b>{focusedTab?.name}</b>?
       </DoubleCheck>
 
       <DoubleCheck
@@ -148,7 +184,8 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
         onAccept={handleClearClick}
         onDecline={toggleClearDoubleCheck}
       >
-        Are you sure you want to <Span color='red.500'>clear all filters</Span> of <b>{tabName}</b>?
+        Are you sure you want to <Span color='red.500'>clear all filters</Span> of{' '}
+        <b>{focusedTab?.name}</b>?
       </DoubleCheck>
     </>
   );
@@ -167,6 +204,7 @@ const mapDispatch = {
   deleteAllFilters: deleteAllFilters.dispatch,
   deleteFilterTab: deleteFilterTab.dispatch,
   setFilterTabName: setFilterTabName.dispatch,
+  setAllFiltersCollapsed: setAllFiltersCollapsed.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

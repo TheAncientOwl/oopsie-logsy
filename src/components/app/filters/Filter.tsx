@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.20
+ * @version 0.21
  * @description Filter component
  */
 
@@ -22,12 +22,12 @@ import {
 import { Tooltip } from '@/components/ui/Tooltip';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { useSwitch } from '@/hooks/useSwitch';
 import { TFilter, TOverAlternative } from '@/store/filters/data';
 import {
   addNewFilterComponent,
   deleteFilter,
   duplicateFilter,
+  toggleFilterCollapsed,
   setFilterName,
   setFilterPriority,
   toggleFilterActive,
@@ -62,8 +62,6 @@ const FilterImpl = (props: FilterProps) => {
 
   const [filterFg, setFilterFg] = useState(props.filter.colors.fg);
   const [filterBg, setFilterBg] = useState(props.filter.colors.bg);
-
-  const [isOpen, toggleIsOpen] = useSwitch(true);
 
   const handleNameChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +101,10 @@ const FilterImpl = (props: FilterProps) => {
     [props.setFilterPriority, props.tabId, props.filter.id]
   );
 
+  const handleFilterCollapseClick = useCallback(() => {
+    props.toggleFilterCollapsed(props.tabId, props.filter.id);
+  }, [props.toggleFilterCollapsed, props.tabId, props.filter.id]);
+
   return (
     <Box
       bg={bg}
@@ -115,10 +117,10 @@ const FilterImpl = (props: FilterProps) => {
       <HStack>
         <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
           <TooltipIconButton
-            tooltip={isOpen ? 'Hide Filter' : 'Show filter'}
-            onClick={toggleIsOpen}
+            tooltip={props.filter.collapsed ? 'Show Filter' : 'Hide filter'}
+            onClick={handleFilterCollapseClick}
           >
-            {isOpen ? <EyeOpenIcon /> : <EyeClosedIcon />}
+            {props.filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
           </TooltipIconButton>
           <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
             <DuplicateIcon />
@@ -168,7 +170,7 @@ const FilterImpl = (props: FilterProps) => {
         />
       </HStack>
 
-      <Collapsible.Root open={isOpen}>
+      <Collapsible.Root open={!props.filter.collapsed}>
         <Collapsible.Content>
           <Stack gap='1em' padding='0.75em 0.5em'>
             <HStack gap='1em'>
@@ -222,6 +224,7 @@ const mapDispatch = {
   addNewFilterComponent: addNewFilterComponent.dispatch,
   duplicateFilter: duplicateFilter.dispatch,
   setFilterPriority: setFilterPriority.dispatch,
+  toggleFilterCollapsed: toggleFilterCollapsed.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

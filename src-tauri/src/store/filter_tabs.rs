@@ -7,7 +7,7 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: FilterTabs data.
 //!
 
@@ -42,6 +42,7 @@ pub struct Filter {
     pub components: Vec<FilterComponent>,
     pub colors: FilterColors,
     pub priority: u64,
+    pub collapsed: bool,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
