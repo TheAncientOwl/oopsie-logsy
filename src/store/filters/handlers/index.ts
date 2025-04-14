@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Handlers index file.
  */
 
@@ -28,6 +28,7 @@ import { setComponentOverAlternative } from './setComponentOverAlternative';
 import { setFilterBg } from './setFilterBg';
 import { setFilterFg } from './setFilterFg';
 import { setFilterName } from './setFilterName';
+import { setFilterPriority } from './setFilterPriority';
 import { setFilterTabName } from './setFilterTabName';
 import { toggleComponentIsEquals } from './toggleComponentIsEquals';
 import { toggleComponentIsRegex } from './toggleComponentIsRegex';
@@ -55,6 +56,7 @@ export {
   setFilterBg,
   setFilterFg,
   setFilterName,
+  setFilterPriority,
   setFilterTabName,
   toggleComponentIsEquals,
   toggleComponentIsRegex,

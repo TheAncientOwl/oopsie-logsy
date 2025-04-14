@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.19
+ * @version 0.20
  * @description Filter component
  */
 
@@ -19,6 +19,7 @@ import {
   EyeOpenIcon,
   NewIcon,
 } from '@/components/ui/Icons';
+import { Tooltip } from '@/components/ui/Tooltip';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
@@ -28,6 +29,7 @@ import {
   deleteFilter,
   duplicateFilter,
   setFilterName,
+  setFilterPriority,
   toggleFilterActive,
   toggleFilterHighlightOnly,
 } from '@/store/filters/handlers';
@@ -38,6 +40,8 @@ import {
   HStack,
   Input,
   ListCollection,
+  NumberInput,
+  NumberInputValueChangeDetails,
   Separator,
   Stack,
 } from '@chakra-ui/react';
@@ -92,6 +96,13 @@ const FilterImpl = (props: FilterProps) => {
     props.toggleFilterHighlightOnly(props.tabId, props.filter.id);
   }, [props.toggleFilterHighlightOnly, props.tabId, props.filter.id]);
 
+  const handleFilterPriorityChange = useCallback(
+    (details: NumberInputValueChangeDetails) => {
+      props.setFilterPriority(props.tabId, props.filter.id, details.valueAsNumber);
+    },
+    [props.setFilterPriority, props.tabId, props.filter.id]
+  );
+
   return (
     <Box
       bg={bg}
@@ -126,6 +137,23 @@ const FilterImpl = (props: FilterProps) => {
           onColorChangeFg={details => setFilterFg(details.valueAsString)}
           onColorChangeBg={details => setFilterBg(details.valueAsString)}
         />
+
+        <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+
+        <Tooltip content='Filter Priority'>
+          <NumberInput.Root
+            size='md'
+            min={0}
+            colorPalette='green'
+            color={filterFg}
+            backgroundColor={filterBg}
+            value={props.filter.priority.toString()}
+            onValueChange={handleFilterPriorityChange}
+          >
+            <NumberInput.Control />
+            <NumberInput.Input maxWidth='125px' borderColor={border} />
+          </NumberInput.Root>
+        </Tooltip>
 
         <Separator borderColor={border} orientation='vertical' height='7' size='md' />
 
@@ -193,6 +221,7 @@ const mapDispatch = {
   setFilterName: setFilterName.dispatch,
   addNewFilterComponent: addNewFilterComponent.dispatch,
   duplicateFilter: duplicateFilter.dispatch,
+  setFilterPriority: setFilterPriority.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);
