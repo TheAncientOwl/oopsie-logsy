@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Filters component
  */
 
@@ -68,7 +68,7 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
           height='60vh' // TODO: make height resizeable by dragging
         >
           <Tabs.Root variant='line' defaultValue={props.focusedTab} value={props.focusedTab}>
-            <HStack mb='0.75em'>
+            <HStack mb='0.75em' position='sticky' top='0' zIndex='10000' bg={bg} pb='5px'>
               <ButtonGroup ml='0.5em' pt='0.25em' colorPalette='green' size='xs' variant='subtle'>
                 <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
                   <NewIcon />
@@ -84,7 +84,7 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
               </ButtonGroup>
 
               <Box overflowX='scroll'>
-                <Tabs.List position='sticky' top='0' bg={bg} zIndex='10000'>
+                <Tabs.List>
                   {props.filterTabs.map(tab => (
                     <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
                   ))}
