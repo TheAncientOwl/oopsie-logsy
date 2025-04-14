@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Handlers index file.
  */
 
@@ -62,6 +62,6 @@ export {
   toggleComponentIsRegex,
   toggleFilterActive,
   toggleFilterHighlightOnly,
-  toggleFilterComponentIgnoreCase as toggleFilterIgnoreCase,
+  toggleFilterComponentIgnoreCase,
   unmuteAllFilters,
 };

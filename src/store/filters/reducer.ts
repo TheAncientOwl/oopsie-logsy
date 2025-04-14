@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filters data reducer.
  */
 
@@ -43,7 +43,7 @@ const reducerMap: ReducerMap<ActionType, IDefaultState> = {
   [ActionType.SetFilterTabName]: handlers.setFilterTabName.reduce,
   [ActionType.SetFilterFg]: handlers.setFilterFg.reduce,
   [ActionType.SetFilterBg]: handlers.setFilterBg.reduce,
-  [ActionType.ToggleFilterComponentIgnoreCase]: handlers.toggleFilterIgnoreCase.reduce,
+  [ActionType.ToggleFilterComponentIgnoreCase]: handlers.toggleFilterComponentIgnoreCase.reduce,
   [ActionType.SetFilterPriority]: handlers.setFilterPriority.reduce,
 };
 

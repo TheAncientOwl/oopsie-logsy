@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filter component.
  */
 
@@ -30,7 +30,7 @@ import {
   setComponentOverAlternative,
   toggleComponentIsEquals,
   toggleComponentIsRegex,
-  toggleFilterIgnoreCase,
+  toggleFilterComponentIgnoreCase,
 } from '@/store/filters/handlers';
 import { ButtonGroup, HStack, Input, ListCollection } from '@chakra-ui/react';
 import React, { useCallback } from 'react';
@@ -54,9 +54,9 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
     props.toggleComponentIsEquals(props.tabId, props.filterId, props.component.id);
   }, [props.toggleComponentIsEquals, props.tabId, props.filterId, props.component.id]);
 
-  const handleToggleFilterIgnoreCaseClick = useCallback(() => {
-    props.toggleFilterIgnoreCase(props.tabId, props.filterId, props.component.id);
-  }, [props.toggleFilterIgnoreCase, props.tabId, props.filterId, props.component.id]);
+  const handletoggleFilterComponentIgnoreCaseClick = useCallback(() => {
+    props.toggleFilterComponentIgnoreCase(props.tabId, props.filterId, props.component.id);
+  }, [props.toggleFilterComponentIgnoreCase, props.tabId, props.filterId, props.component.id]);
 
   const handleDataChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +109,7 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
         </TooltipIconButton>
         <TooltipIconButton
           tooltip={`Toggle Case: (Now ${props.component.ignoreCase ? 'Ignore' : 'Match'})`}
-          onClick={handleToggleFilterIgnoreCaseClick}
+          onClick={handletoggleFilterComponentIgnoreCaseClick}
         >
           {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
         </TooltipIconButton>
@@ -142,7 +142,7 @@ const mapDispatch = {
   toggleComponentIsRegex: toggleComponentIsRegex.dispatch,
   toggleComponentIsEquals: toggleComponentIsEquals.dispatch,
   setComponentData: setComponentData.dispatch,
-  toggleFilterIgnoreCase: toggleFilterIgnoreCase.dispatch,
+  toggleFilterComponentIgnoreCase: toggleFilterComponentIgnoreCase.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);
