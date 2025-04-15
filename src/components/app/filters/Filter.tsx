@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.21
+ * @version 0.22
  * @description Filter component
  */
 
@@ -27,10 +27,10 @@ import {
   addNewFilterComponent,
   deleteFilter,
   duplicateFilter,
-  toggleFilterCollapsed,
   setFilterName,
   setFilterPriority,
   toggleFilterActive,
+  toggleFilterCollapsed,
   toggleFilterHighlightOnly,
 } from '@/store/filters/handlers';
 import {
@@ -147,13 +147,16 @@ const FilterImpl = (props: FilterProps) => {
             size='md'
             min={0}
             colorPalette='green'
-            color={filterFg}
-            backgroundColor={filterBg}
             value={props.filter.priority.toString()}
             onValueChange={handleFilterPriorityChange}
           >
-            <NumberInput.Control />
-            <NumberInput.Input maxWidth='125px' borderColor={border} />
+            <NumberInput.Control bg={bg} />
+            <NumberInput.Input
+              maxWidth='125px'
+              borderColor={border}
+              color={filterFg}
+              backgroundColor={filterBg}
+            />
           </NumberInput.Root>
         </Tooltip>
 
