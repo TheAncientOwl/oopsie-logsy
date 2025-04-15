@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -27,7 +27,7 @@ const swatches: Array<ColorPickerValueChangeDetails> = [
   'red',
   'orange',
   'yellow',
-  'lime',
+  'green',
   'dodgerblue',
   'purple',
   'violet',
@@ -74,7 +74,7 @@ interface UltraColorPickerProps {
 }
 
 export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
-  const [pickerState, setPickerState] = useState(EUltraColorPickerState.Simple);
+  const [pickerState, setPickerState] = useState(EUltraColorPickerState.Presets);
 
   const setSimpleState = useCallback(() => {
     setPickerState(EUltraColorPickerState.Simple);
@@ -120,22 +120,8 @@ export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
             </HStack>
 
             <UltraPickerState
-              label='Simple'
-              icon={StarIcon}
-              open={pickerState === EUltraColorPickerState.Simple}
-              defaultOpen={true}
-              onActivate={setSimpleState}
-            >
-              <ColorPicker.Area mt='10px' cursor='pointer' />
-              <HStack>
-                <ColorPicker.EyeDropper size='xs' variant='outline' />
-                <ColorPicker.Sliders cursor='pointer' />
-              </HStack>
-            </UltraPickerState>
-
-            <UltraPickerState
               label='Presets'
-              icon={StarsFormation}
+              icon={StarIcon}
               open={pickerState === EUltraColorPickerState.Presets}
               defaultOpen={false}
               onActivate={setPresetsState}
@@ -154,6 +140,20 @@ export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
                   </ColorPicker.SwatchTrigger>
                 ))}
               </ColorPicker.SwatchGroup>
+            </UltraPickerState>
+
+            <UltraPickerState
+              label='Simple'
+              icon={StarsFormation}
+              open={pickerState === EUltraColorPickerState.Simple}
+              defaultOpen={true}
+              onActivate={setSimpleState}
+            >
+              <ColorPicker.Area mt='10px' cursor='pointer' />
+              <HStack>
+                <ColorPicker.EyeDropper size='xs' variant='outline' />
+                <ColorPicker.Sliders cursor='pointer' />
+              </HStack>
             </UltraPickerState>
 
             <UltraPickerState
