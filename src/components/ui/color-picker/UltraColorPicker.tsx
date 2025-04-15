@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -23,18 +23,22 @@ import React, { PropsWithChildren, useCallback, useState } from 'react';
 import { StarIcon, StarsFormation, StarsIcon } from '../Icons';
 import { ChannelSliders } from './ChannelSlidersPicker';
 
-interface BoxColorPickerProps {
-  label?: string;
-  defaultValue: string;
-  onValueChange?: (details: ColorPickerValueChangeDetails) => void;
-  onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
-}
+const swatches: Array<ColorPickerValueChangeDetails> = [
+  'red',
+  'orange',
+  'yellow',
+  'lime',
+  'dodgerblue',
+  'purple',
+  'violet',
+  'white',
+  'gray',
+  'black',
+].map(colorString => ({ value: parseColor(colorString), valueAsString: colorString }));
 
-const swatches = ['red', 'orange', 'yellow', 'lime', 'blue', 'indigo', 'violet'];
-
-enum EPickerState {
+enum EUltraColorPickerState {
   Simple,
-  Defaults,
+  Presets,
   Advanced,
 }
 
@@ -46,10 +50,10 @@ interface PickerStateProps extends PropsWithChildren {
   icon: () => React.ReactNode;
 }
 
-const PickerState: React.FC<PickerStateProps> = props => {
+const UltraPickerState: React.FC<PickerStateProps> = props => {
   return (
     <Collapsible.Root defaultOpen={true} open={props.open}>
-      <Collapsible.Trigger cursor='pointer' onClick={props.onActivate}>
+      <Collapsible.Trigger cursor='pointer' onClick={props.onActivate} width='100%'>
         <HStack>
           {props.icon()}
           <Heading size='md' fontWeight={props.open ? 'bold' : 'normal'}>
@@ -62,25 +66,44 @@ const PickerState: React.FC<PickerStateProps> = props => {
   );
 };
 
-export const UltraColorPicker: React.FC<BoxColorPickerProps> = props => {
-  const [pickerState, setPickerState] = useState(EPickerState.Simple);
+interface UltraColorPickerProps {
+  label: string;
+  defaultValue: string;
+  onValueChange: (details: ColorPickerValueChangeDetails) => void;
+  onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
+}
+
+export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
+  const [pickerState, setPickerState] = useState(EUltraColorPickerState.Simple);
 
   const setSimpleState = useCallback(() => {
-    setPickerState(EPickerState.Simple);
+    setPickerState(EUltraColorPickerState.Simple);
   }, [setPickerState]);
 
-  const setDefaultsState = useCallback(() => {
-    setPickerState(EPickerState.Defaults);
+  const setPresetsState = useCallback(() => {
+    setPickerState(EUltraColorPickerState.Presets);
   }, [setPickerState]);
 
   const setAdvancedState = useCallback(() => {
-    setPickerState(EPickerState.Advanced);
+    setPickerState(EUltraColorPickerState.Advanced);
   }, [setPickerState]);
+
+  const handleOnValueChange = useCallback(
+    (details: ColorPickerValueChangeDetails) => {
+      if (pickerState === EUltraColorPickerState.Presets) {
+        props.onValueChange(details);
+        props.onValueChangeEnd(details);
+      } else {
+        props.onValueChange(details);
+      }
+    },
+    [props.onValueChange, props.onValueChangeEnd, pickerState]
+  );
 
   return (
     <ColorPicker.Root
       defaultValue={parseColor(props.defaultValue)}
-      onValueChange={props.onValueChange}
+      onValueChange={handleOnValueChange}
       onValueChangeEnd={props.onValueChangeEnd}
       positioning={{ placement: 'bottom' }}
     >
@@ -96,42 +119,47 @@ export const UltraColorPicker: React.FC<BoxColorPickerProps> = props => {
               <ColorPicker.Input colorPalette='green' />
             </HStack>
 
-            <PickerState
+            <UltraPickerState
               label='Simple'
               icon={StarIcon}
-              open={pickerState === EPickerState.Simple}
+              open={pickerState === EUltraColorPickerState.Simple}
               defaultOpen={true}
               onActivate={setSimpleState}
             >
-              <ColorPicker.Area mt='10px' />
+              <ColorPicker.Area mt='10px' cursor='pointer' />
               <HStack>
                 <ColorPicker.EyeDropper size='xs' variant='outline' />
-                <ColorPicker.Sliders />
+                <ColorPicker.Sliders cursor='pointer' />
               </HStack>
-            </PickerState>
+            </UltraPickerState>
 
-            <PickerState
-              label='Defaults'
+            <UltraPickerState
+              label='Presets'
               icon={StarsFormation}
-              open={pickerState === EPickerState.Defaults}
+              open={pickerState === EUltraColorPickerState.Presets}
               defaultOpen={false}
-              onActivate={setDefaultsState}
+              onActivate={setPresetsState}
             >
               <ColorPicker.SwatchGroup>
                 {swatches.map(item => (
-                  <ColorPicker.SwatchTrigger key={item} mt='10px' value={item} cursor='pointer'>
-                    <ColorPicker.Swatch value={item}>
+                  <ColorPicker.SwatchTrigger
+                    key={item.valueAsString}
+                    mt='10px'
+                    value={item.valueAsString}
+                    cursor='pointer'
+                  >
+                    <ColorPicker.Swatch value={item.valueAsString}>
                       <ColorPicker.SwatchIndicator boxSize='3' bg='white' />
                     </ColorPicker.Swatch>
                   </ColorPicker.SwatchTrigger>
                 ))}
               </ColorPicker.SwatchGroup>
-            </PickerState>
+            </UltraPickerState>
 
-            <PickerState
+            <UltraPickerState
               label='Advanced'
               icon={StarsIcon}
-              open={pickerState === EPickerState.Advanced}
+              open={pickerState === EUltraColorPickerState.Advanced}
               defaultOpen={false}
               onActivate={setAdvancedState}
             >
@@ -139,42 +167,7 @@ export const UltraColorPicker: React.FC<BoxColorPickerProps> = props => {
               <ChannelSliders format='hsla' />
               <ChannelSliders format='hsba' />
               <ChannelSliders format='rgba' />
-            </PickerState>
-
-            {/* <Collapsible.Root defaultOpen={true} open={boxOpen}>
-              <Collapsible.Trigger cursor='pointer' onClick={toggleBoxOpen}>
-                <HStack>
-                  <StarIcon />
-                  <Heading size='md' fontWeight={boxOpen ? 'bold' : 'normal'}>
-                    Simple
-                  </Heading>
-                </HStack>
-              </Collapsible.Trigger>
-              <Collapsible.Content>
-                <ColorPicker.Area mt='10px' />
-                <HStack>
-                  <ColorPicker.EyeDropper size='xs' variant='outline' />
-                  <ColorPicker.Sliders />
-                </HStack>
-              </Collapsible.Content>
-            </Collapsible.Root> */}
-
-            {/* <Collapsible.Root defaultOpen={false} open={!boxOpen}>
-              <Collapsible.Trigger cursor='pointer' onClick={toggleBoxOpen}>
-                <HStack>
-                  <StarsIcon />
-                  <Heading size='md' fontWeight={boxOpen ? 'normal' : 'bold'}>
-                    Advanced
-                  </Heading>
-                </HStack>
-              </Collapsible.Trigger>
-              <Collapsible.Content>
-                <ColorPicker.FormatSelect mt='10px' />
-                <ChannelSliders format='hsla' />
-                <ChannelSliders format='hsba' />
-                <ChannelSliders format='rgba' />
-              </Collapsible.Content>
-            </Collapsible.Root> */}
+            </UltraPickerState>
           </ColorPicker.Content>
         </ColorPicker.Positioner>
       </Portal>

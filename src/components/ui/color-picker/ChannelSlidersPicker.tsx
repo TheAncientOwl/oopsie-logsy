@@ -6,7 +6,7 @@
  *
  * @file ChannelSliders.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ColorPicker with channel sliders.
  */
 
@@ -34,7 +34,7 @@ export const ChannelSliders: React.FC<ChannelSliderProps> = props => {
         {channel => (
           <Stack gap='1' key={channel}>
             <ColorPicker.ChannelText minW='5ch'>{channel}</ColorPicker.ChannelText>
-            <ColorPicker.ChannelSlider channel={channel} />
+            <ColorPicker.ChannelSlider channel={channel} cursor='pointer' />
           </Stack>
         )}
       </For>
