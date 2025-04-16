@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -37,8 +37,8 @@ const swatches: Array<ColorPickerValueChangeDetails> = [
 ].map(colorString => ({ value: parseColor(colorString), valueAsString: colorString }));
 
 enum EUltraColorPickerState {
-  Simple,
   Presets,
+  Simple,
   Advanced,
 }
 
@@ -63,6 +63,50 @@ const UltraPickerState: React.FC<PickerStateProps> = props => {
       </Collapsible.Trigger>
       <Collapsible.Content>{props.children}</Collapsible.Content>
     </Collapsible.Root>
+  );
+};
+
+const PresetsPicker: React.FC = () => {
+  return (
+    <>
+      <ColorPicker.SwatchGroup>
+        {swatches.map(item => (
+          <ColorPicker.SwatchTrigger
+            key={item.valueAsString}
+            mt='10px'
+            value={item.valueAsString}
+            cursor='pointer'
+          >
+            <ColorPicker.Swatch value={item.valueAsString}>
+              <ColorPicker.SwatchIndicator boxSize='3' bg='white' />
+            </ColorPicker.Swatch>
+          </ColorPicker.SwatchTrigger>
+        ))}
+      </ColorPicker.SwatchGroup>
+    </>
+  );
+};
+
+const SimplePicker: React.FC = () => {
+  return (
+    <>
+      <ColorPicker.Area mt='10px' cursor='pointer' />
+      <HStack>
+        <ColorPicker.EyeDropper size='xs' variant='outline' />
+        <ColorPicker.Sliders cursor='pointer' />
+      </HStack>
+    </>
+  );
+};
+
+const SliderPicker: React.FC = () => {
+  return (
+    <>
+      <ColorPicker.FormatSelect mt='10px' />
+      <ChannelSliders format='hsla' />
+      <ChannelSliders format='hsba' />
+      <ChannelSliders format='rgba' />
+    </>
   );
 };
 
@@ -126,20 +170,7 @@ export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
               defaultOpen={false}
               onActivate={setPresetsState}
             >
-              <ColorPicker.SwatchGroup>
-                {swatches.map(item => (
-                  <ColorPicker.SwatchTrigger
-                    key={item.valueAsString}
-                    mt='10px'
-                    value={item.valueAsString}
-                    cursor='pointer'
-                  >
-                    <ColorPicker.Swatch value={item.valueAsString}>
-                      <ColorPicker.SwatchIndicator boxSize='3' bg='white' />
-                    </ColorPicker.Swatch>
-                  </ColorPicker.SwatchTrigger>
-                ))}
-              </ColorPicker.SwatchGroup>
+              <PresetsPicker />
             </UltraPickerState>
 
             <UltraPickerState
@@ -149,11 +180,7 @@ export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
               defaultOpen={true}
               onActivate={setSimpleState}
             >
-              <ColorPicker.Area mt='10px' cursor='pointer' />
-              <HStack>
-                <ColorPicker.EyeDropper size='xs' variant='outline' />
-                <ColorPicker.Sliders cursor='pointer' />
-              </HStack>
+              <SimplePicker />
             </UltraPickerState>
 
             <UltraPickerState
@@ -163,10 +190,7 @@ export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
               defaultOpen={false}
               onActivate={setAdvancedState}
             >
-              <ColorPicker.FormatSelect mt='10px' />
-              <ChannelSliders format='hsla' />
-              <ChannelSliders format='hsba' />
-              <ChannelSliders format='rgba' />
+              <SliderPicker />
             </UltraPickerState>
           </ColorPicker.Content>
         </ColorPicker.Positioner>
