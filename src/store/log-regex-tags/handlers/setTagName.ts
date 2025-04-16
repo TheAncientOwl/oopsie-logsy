@@ -6,7 +6,7 @@
  *
  * @file setTagName.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SetTagName handler.
  */
 
@@ -43,6 +43,7 @@ export const setTagName: IBasicStoreHandler<IDefaultState, SetTagNamePayload, Ac
       ...state,
       tags: newTags,
       canApplyTags: checkCanApply(newTags),
+      tagsChanged: true,
     };
   },
 };

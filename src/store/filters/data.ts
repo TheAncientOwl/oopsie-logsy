@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filters data structures.
  */
 
@@ -19,9 +19,7 @@ export type TOverAlternative = {
   value: string;
 };
 
-export type TOverAlternatives = {
-  data: Array<TOverAlternative>;
-};
+export type TOverAlternatives = Array<TOverAlternative>;
 
 export type TFilterComponent = {
   id: string;
@@ -64,16 +62,15 @@ export interface IDefaultState {
 
 // <helpers>
 export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternatives => {
-  return {
-    data: regexTags.map(tag => ({
-      label: tag.name,
-      value: tag.id,
-    })),
-  };
+  return regexTags.map(tag => ({
+    label: tag.name,
+    value: tag.id,
+  }));
 };
 
 export const checkCanSaveTabs = (tabs: Array<TFilterTab>) => {
   // TODO: do actual checking...
+  console.log(tabs);
   return true;
 };
 

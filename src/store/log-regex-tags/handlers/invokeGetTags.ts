@@ -6,7 +6,7 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description InvokeGetTags handler.
  */
 
@@ -15,6 +15,7 @@ import { ActionType, Dispatch } from '../actions';
 import { DefaultFactory, IDefaultState, TRegexTag } from '../data';
 import { invoke } from '@tauri-apps/api/core';
 import { invokeSetTags } from './invokeSetTags';
+import { makeOverAlternatives } from '@/store/filters/data';
 
 type InvokeGetTagsOkPayload = {
   tags: Array<TRegexTag>;
@@ -68,6 +69,8 @@ export const invokeGetTags: IApiCallStoreHandler<
         loading: false,
         canApplyTags: false,
         tags: payload.tags,
+        overAlternatives: makeOverAlternatives(payload.tags),
+        tagsChanged: false,
       };
     },
 

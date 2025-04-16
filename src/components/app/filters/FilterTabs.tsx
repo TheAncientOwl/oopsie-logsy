@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description Filters component
  */
 
@@ -14,7 +14,6 @@ import { NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
-import { makeOverAlternatives } from '@/store/filters/data';
 import { addNewFilterTab, invokeGetTabs, invokeSetTabs } from '@/store/filters/handlers';
 import {
   Box,
@@ -41,10 +40,10 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
   const bg = useColorModeValue('gray.200', 'gray.900');
   const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
-  const overAlternatives = useMemo(
-    () => createListCollection({ items: makeOverAlternatives(props.logRegexTags).data }),
-    [props.logRegexTags]
-  );
+  const overAlternatives = useMemo(() => {
+    console.infoX('overAlternativesCallback', `changed ${JSON.stringify(props.overAlternatives)}`);
+    return createListCollection({ items: props.overAlternatives });
+  }, [props.overAlternatives]);
 
   const handleSaveClick = useCallback(() => {
     props.invokeSetTabs(props.filterTabs);
@@ -107,9 +106,9 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
 const mapState = (state: RootState) => ({
   filterTabs: state.filters.filterTabs,
   loading: state.filters.loading,
-  logRegexTags: state.logRegexTags.tags,
   focusedTab: state.filters.focusedTabId,
   canSaveTabs: state.filters.canSaveTabs,
+  overAlternatives: state.logRegexTags.overAlternatives,
 });
 
 const mapDispatch = {

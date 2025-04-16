@@ -6,7 +6,7 @@
  *
  * @file removeTag.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description RemoveTag handler.
  */
 
@@ -34,6 +34,7 @@ export const removeTag: IBasicStoreHandler<IDefaultState, RemoveTagPayload, Acti
       ...state,
       tags: newTags,
       canApplyTags: checkCanApply(newTags),
+      tagsChanged: true,
     };
   },
 };
