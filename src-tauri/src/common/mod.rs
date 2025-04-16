@@ -7,13 +7,8 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
-//! **Description**: store mod file.
+//! **Version**: 0.1
+//! **Description**: common mod file.
 //!
 
-pub mod api;
-pub mod current_log_paths;
-pub mod filter_tabs;
-pub mod regex_tags;
-mod store;
-pub mod watcher;
+pub mod scope_log;

@@ -7,10 +7,18 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.6
-//! **Description**: FilterTabs data.
+//! **Version**: 0.7
+//! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
+use once_cell::sync::Lazy;
+use std::sync::Mutex;
+
+use crate::{commands::command_status, common::scope_log::ScopeLog, store::store::Store};
+
+use super::api::event_handler::EventHandler;
+
+// <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct FilterComponent {
     pub id: String,
@@ -55,7 +63,9 @@ pub struct FilterTab {
 pub struct FilterTabsManager {
     data: Vec<FilterTab>,
 }
+// </data>
 
+// <manager>
 impl FilterTabsManager {
     pub fn new() -> Self {
         Self { data: Vec::new() }
@@ -70,3 +80,47 @@ impl FilterTabsManager {
         &self.data
     }
 }
+// </manager>
+
+// <events>
+pub static ON_STORE_SET_TABS: Lazy<Mutex<EventHandler<dyn Fn(&Vec<FilterTab>) + Send + Sync>>> =
+    Lazy::new(|| Mutex::new(EventHandler::new()));
+pub static ON_STORE_GET_TABS: Lazy<Mutex<EventHandler<dyn Fn(&Vec<FilterTab>) + Send + Sync>>> =
+    Lazy::new(|| Mutex::new(EventHandler::new()));
+// </events>
+
+// <commands>
+#[tauri::command]
+pub fn set_filter_tabs(tabs: Vec<FilterTab>) -> Result<u16, String> {
+    let _log = ScopeLog::new(&set_filter_tabs);
+
+    ON_STORE_SET_TABS
+        .lock()
+        .unwrap()
+        .handlers()
+        .iter()
+        .for_each(|handler| handler(&tabs));
+
+    let mut instance = Store::get_instance()?;
+    instance.filter_tabs.set(&tabs);
+
+    Ok(command_status::ok())
+}
+
+#[tauri::command]
+pub fn get_filter_tabs() -> Result<Vec<FilterTab>, String> {
+    let _log = ScopeLog::new(&get_filter_tabs);
+
+    let instance = Store::get_instance()?;
+    let tabs = instance.filter_tabs.get();
+
+    ON_STORE_GET_TABS
+        .lock()
+        .unwrap()
+        .handlers()
+        .iter()
+        .for_each(|handler| handler(&tabs));
+
+    Ok(tabs.clone())
+}
+// </commands>

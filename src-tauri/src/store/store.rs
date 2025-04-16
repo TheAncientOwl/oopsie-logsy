@@ -7,13 +7,13 @@
 //! # `store.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Application data store manager.
 //!
 
 use super::{
     current_log_paths::CurrentLogPathsManager, filter_tabs::FilterTabsManager,
-    log_regex_tags::RegexTagsManager,
+    regex_tags::RegexTagsManager,
 };
 
 pub struct Store {
