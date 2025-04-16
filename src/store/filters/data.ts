@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Filters data structures.
  */
 
@@ -70,7 +70,7 @@ export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternat
 
 export const checkCanSaveTabs = (tabs: Array<TFilterTab>) => {
   // TODO: do actual checking...
-  console.log(tabs);
+  console.logX(checkCanSaveTabs.name, `Checking ${tabs.length} tags for saving`);
   return true;
 };
 

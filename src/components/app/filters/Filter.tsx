@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.22
+ * @version 0.23
  * @description Filter component
  */
 
@@ -45,7 +45,7 @@ import {
   Separator,
   Stack,
 } from '@chakra-ui/react';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
@@ -63,47 +63,38 @@ const FilterImpl = (props: FilterProps) => {
   const [filterFg, setFilterFg] = useState(props.filter.colors.fg);
   const [filterBg, setFilterBg] = useState(props.filter.colors.bg);
 
-  const handleNameChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.setFilterName(props.tabId, props.filter.id, event.target.value);
-    },
-    [props.setFilterName, props.tabId, props.filter.id]
-  );
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.setFilterName(props.tabId, props.filter.id, event.target.value);
+  };
 
-  const handleDeleteClick = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      event.stopPropagation();
-      props.deleteFilter(props.tabId, props.filter.id);
-    },
-    [props.deleteFilter, props.tabId, props.filter.id]
-  );
+  const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.stopPropagation();
+    props.deleteFilter(props.tabId, props.filter.id);
+  };
 
-  const handleDuplicateClick = useCallback(() => {
+  const handleDuplicateClick = () => {
     props.duplicateFilter(props.tabId, props.filter.id);
-  }, [props.duplicateFilter, props.tabId, props.filter.id]);
+  };
 
-  const handleNewComponentClick = useCallback(() => {
+  const handleNewComponentClick = () => {
     props.addNewFilterComponent(props.tabId, props.filter.id);
-  }, [props.addNewFilterComponent, props.tabId, props.filter.id]);
+  };
 
-  const handleFilterToggle = useCallback(() => {
+  const handleFilterToggle = () => {
     props.toggleFilterActive(props.tabId, props.filter.id);
-  }, [props.toggleFilterActive, props.tabId, props.filter.id]);
+  };
 
-  const handleFilterToggleHiglightOnly = useCallback(() => {
+  const handleFilterToggleHiglightOnly = () => {
     props.toggleFilterHighlightOnly(props.tabId, props.filter.id);
-  }, [props.toggleFilterHighlightOnly, props.tabId, props.filter.id]);
+  };
 
-  const handleFilterPriorityChange = useCallback(
-    (details: NumberInputValueChangeDetails) => {
-      props.setFilterPriority(props.tabId, props.filter.id, details.valueAsNumber);
-    },
-    [props.setFilterPriority, props.tabId, props.filter.id]
-  );
+  const handleFilterPriorityChange = (details: NumberInputValueChangeDetails) => {
+    props.setFilterPriority(props.tabId, props.filter.id, details.valueAsNumber);
+  };
 
-  const handleFilterCollapseClick = useCallback(() => {
+  const handleFilterCollapseClick = () => {
     props.toggleFilterCollapsed(props.tabId, props.filter.id);
-  }, [props.toggleFilterCollapsed, props.tabId, props.filter.id]);
+  };
 
   return (
     <Box

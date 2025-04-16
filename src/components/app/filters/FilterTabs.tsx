@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description Filters component
  */
 
@@ -23,7 +23,7 @@ import {
   HStack,
   Tabs,
 } from '@chakra-ui/react';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
@@ -45,9 +45,9 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
     return createListCollection({ items: props.overAlternatives });
   }, [props.overAlternatives]);
 
-  const handleSaveClick = useCallback(() => {
+  const handleSaveClick = () => {
     props.invokeSetTabs(props.filterTabs);
-  }, [props.invokeSetTabs, props.filterTabs]);
+  };
 
   return (
     <Collapsible.Root

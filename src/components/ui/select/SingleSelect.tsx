@@ -6,19 +6,19 @@
  *
  * @file SingleSelect.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description SingleSelect Chakra UI wrapper.
  */
 
+import { useColorModeValue } from '@/hooks/useColorMode';
 import {
   ListCollection,
   Select,
   SelectRootProps,
   SelectValueChangeDetails,
 } from '@chakra-ui/react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { For } from '../utils/For';
-import { useColorModeValue } from '@/hooks/useColorMode';
 
 type TListItem = {
   label: string;
@@ -37,12 +37,9 @@ export const SingleSelect = <T extends TListItem>(props: SingleSelectProps<T>) =
 
   const value = useMemo(() => [props.value], [props.value]);
 
-  const handleValueChange = useCallback(
-    (details: SelectValueChangeDetails<T>) => {
-      props.onChange(details.value[0]);
-    },
-    [props.onChange]
-  );
+  const handleValueChange = (details: SelectValueChangeDetails<T>) => {
+    props.onChange(details.value[0]);
+  };
 
   return (
     <Select.Root

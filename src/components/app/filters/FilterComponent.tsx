@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filter component.
  */
 
@@ -33,7 +33,7 @@ import {
   toggleFilterComponentIgnoreCase,
 } from '@/store/filters/handlers';
 import { ButtonGroup, HStack, Input, ListCollection } from '@chakra-ui/react';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 interface FilterComponentProps extends PropsFromRedux {
@@ -46,40 +46,34 @@ interface FilterComponentProps extends PropsFromRedux {
 const FilterComponentImpl = (props: FilterComponentProps) => {
   const border = useColorModeValue('gray.500', 'gray.500');
 
-  const handleToggleIsRegexClick = useCallback(() => {
+  const handleToggleIsRegexClick = () => {
     props.toggleComponentIsRegex(props.tabId, props.filterId, props.component.id);
-  }, [props.toggleComponentIsRegex, props.tabId, props.filterId, props.component.id]);
+  };
 
-  const handleToggleIsEqualsClick = useCallback(() => {
+  const handleToggleIsEqualsClick = () => {
     props.toggleComponentIsEquals(props.tabId, props.filterId, props.component.id);
-  }, [props.toggleComponentIsEquals, props.tabId, props.filterId, props.component.id]);
+  };
 
-  const handletoggleFilterComponentIgnoreCaseClick = useCallback(() => {
+  const handletoggleFilterComponentIgnoreCaseClick = () => {
     props.toggleFilterComponentIgnoreCase(props.tabId, props.filterId, props.component.id);
-  }, [props.toggleFilterComponentIgnoreCase, props.tabId, props.filterId, props.component.id]);
+  };
 
-  const handleDataChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.setComponentData(props.tabId, props.filterId, props.component.id, event.target.value);
-    },
-    [props.setComponentData, props.tabId, props.filterId, props.component.id]
-  );
+  const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.setComponentData(props.tabId, props.filterId, props.component.id, event.target.value);
+  };
 
-  const handleDeleteClick = useCallback(() => {
+  const handleDeleteClick = () => {
     props.deleteFilterComponent(props.tabId, props.filterId, props.component.id);
-  }, [props.deleteFilterComponent, props.tabId, props.filterId, props.component.id]);
+  };
 
-  const handleChangeOverAlternative = useCallback(
-    (overAlternativeId: string) => {
-      props.setComponentOverAlternative(
-        props.tabId,
-        props.filterId,
-        props.component.id,
-        overAlternativeId
-      );
-    },
-    [props.setComponentOverAlternative]
-  );
+  const handleChangeOverAlternative = (overAlternativeId: string) => {
+    props.setComponentOverAlternative(
+      props.tabId,
+      props.filterId,
+      props.component.id,
+      overAlternativeId
+    );
+  };
 
   return (
     <HStack>

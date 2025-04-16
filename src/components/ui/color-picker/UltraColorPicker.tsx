@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -19,7 +19,7 @@ import {
   parseColor,
   Portal,
 } from '@chakra-ui/react';
-import React, { PropsWithChildren, useCallback, useState } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import { StarIcon, StarsFormation, StarsIcon } from '../Icons';
 import { ChannelSliders } from './ChannelSlidersPicker';
 
@@ -120,29 +120,26 @@ interface UltraColorPickerProps {
 export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
   const [pickerState, setPickerState] = useState(EUltraColorPickerState.Presets);
 
-  const setSimpleState = useCallback(() => {
+  const setSimpleState = () => {
     setPickerState(EUltraColorPickerState.Simple);
-  }, [setPickerState]);
+  };
 
-  const setPresetsState = useCallback(() => {
+  const setPresetsState = () => {
     setPickerState(EUltraColorPickerState.Presets);
-  }, [setPickerState]);
+  };
 
-  const setAdvancedState = useCallback(() => {
+  const setAdvancedState = () => {
     setPickerState(EUltraColorPickerState.Advanced);
-  }, [setPickerState]);
+  };
 
-  const handleOnValueChange = useCallback(
-    (details: ColorPickerValueChangeDetails) => {
-      if (pickerState === EUltraColorPickerState.Presets) {
-        props.onValueChange(details);
-        props.onValueChangeEnd(details);
-      } else {
-        props.onValueChange(details);
-      }
-    },
-    [props.onValueChange, props.onValueChangeEnd, pickerState]
-  );
+  const handleOnValueChange = (details: ColorPickerValueChangeDetails) => {
+    if (pickerState === EUltraColorPickerState.Presets) {
+      props.onValueChange(details);
+      props.onValueChangeEnd(details);
+    } else {
+      props.onValueChange(details);
+    }
+  };
 
   return (
     <ColorPicker.Root

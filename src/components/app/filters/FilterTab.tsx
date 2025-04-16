@@ -6,11 +6,11 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Filter tab.
  */
 
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { TFilterTab, TOverAlternative } from '@/store/filters/data';
 import { focusFilterTab } from '@/store/filters/handlers';
@@ -26,9 +26,9 @@ interface FilterTabHeaderProps extends HeaderPropsFromRedux {
 export const FilterTabHeaderImpl: React.FC<FilterTabHeaderProps> = (
   props: FilterTabHeaderProps
 ) => {
-  const handleFocusClick = useCallback(() => {
+  const handleFocusClick = () => {
     props.focusFilterTab(props.tabId);
-  }, [props.focusFilterTab, props.tabId]);
+  };
 
   return (
     <Tabs.Trigger

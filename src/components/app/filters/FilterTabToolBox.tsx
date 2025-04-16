@@ -6,11 +6,11 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Filter tab related tools.
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 // eslint-disable-next-line import/named
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
@@ -59,46 +59,43 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
 
   const border = useColorModeValue('gray.500', 'gray.500');
 
-  const handleNewFilterClick = useCallback(() => {
+  const handleNewFilterClick = () => {
     props.addNewFilter(props.focusedTabId);
-  }, [props.addNewFilter, props.focusedTabId]);
+  };
 
-  const handleMuteAllClick = useCallback(() => {
+  const handleMuteAllClick = () => {
     props.muteAllFilters(props.focusedTabId);
-  }, [props.muteAllFilters, props.focusedTabId]);
+  };
 
-  const handleUnmuteAllClick = useCallback(() => {
+  const handleUnmuteAllClick = () => {
     props.unmuteAllFilters(props.focusedTabId);
-  }, [props.unmuteAllFilters, props.focusedTabId]);
+  };
 
-  const handleClearClick = useCallback(() => {
+  const handleClearClick = () => {
     props.deleteAllFilters(props.focusedTabId);
     toggleClearDoubleCheck();
-  }, [props.deleteAllFilters, props.focusedTabId]);
+  };
 
-  const handleDeleteFilterTabClick = useCallback(() => {
+  const handleDeleteFilterTabClick = () => {
     props.deleteFilterTab(props.focusedTabId);
     toggleDeleteDoubleCheck();
-  }, [props.deleteFilterTab, props.focusedTabId, toggleDeleteDoubleCheck]);
+  };
 
-  const handleNameChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      props.setFilterTabName(props.focusedTabId, event.target.value);
-    },
-    [props.setFilterTabName, props.focusedTabId]
-  );
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.setFilterTabName(props.focusedTabId, event.target.value);
+  };
 
-  const handleCollapseAllClick = useCallback(() => {
+  const handleCollapseAllClick = () => {
     props.setAllFiltersCollapsed(props.focusedTabId, true);
-  }, [props.setAllFiltersCollapsed, props.focusedTabId]);
+  };
 
-  const handleExpandAllClick = useCallback(() => {
+  const handleExpandAllClick = () => {
     props.setAllFiltersCollapsed(props.focusedTabId, false);
-  }, [props.setAllFiltersCollapsed, props.focusedTabId]);
+  };
 
-  const handleDuplicateTabClick = useCallback(() => {
+  const handleDuplicateTabClick = () => {
     props.duplicateFiltersTab(props.focusedTabId);
-  }, [props.duplicateFiltersTab, props.focusedTabId]);
+  };
 
   return (
     <>
