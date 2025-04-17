@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Filters data structures.
  */
 
@@ -62,10 +62,12 @@ export interface IDefaultState {
 
 // <helpers>
 export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternatives => {
-  return regexTags.map(tag => ({
-    label: tag.name,
-    value: tag.id,
-  }));
+  return regexTags
+    .filter(tag => tag.displayed)
+    .map(tag => ({
+      label: tag.name,
+      value: tag.id,
+    }));
 };
 
 export const checkCanSaveTabs = (tabs: Array<TFilterTab>) => {
