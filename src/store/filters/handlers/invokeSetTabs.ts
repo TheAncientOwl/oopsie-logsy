@@ -6,7 +6,7 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description InvokeSetTabs handler.
  */
 
@@ -59,19 +59,14 @@ export const invokeSetTabs: IApiCallStoreHandler<
       dispatch({ type: ActionType.Loading, payload: {} });
 
       try {
-        console.traceX(
-          `invokeSetTabs::dispatch`,
-          `Sending ${tabs.length} tabs: ${JSON.stringify(tabs)}`
-        );
+        console.traceX(`invokeSetTabs::dispatch`, `Sending ${tabs.length} tabs:`, tabs);
+
+        console.traceX(`invokeSetTabs::dispatch`, `Sending ${filters.length} filters:`, filters);
 
         console.traceX(
           `invokeSetTabs::dispatch`,
-          `Sending ${filters.length} filters: ${JSON.stringify(filters)}`
-        );
-
-        console.traceX(
-          `invokeSetTabs::dispatch`,
-          `Sending ${components.length} components: ${JSON.stringify(components)}`
+          `Sending ${components.length} components:`,
+          components
         );
 
         const response = await invoke('set_filter_tabs', { tabs, filters, components });

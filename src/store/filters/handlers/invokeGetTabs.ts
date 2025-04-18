@@ -6,7 +6,7 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description InvokeGetTabs handler.
  */
 
@@ -50,19 +50,14 @@ export const invokeGetTabs: IApiCallStoreHandler<
         [Array<TFilterTab>, Array<TFilter>, Array<TFilterComponent>]
       >('get_filter_tabs');
       if (tabs.length !== 0) {
-        console.traceX(
-          `invokeGetTabs::dispatch`,
-          `Received ${tabs.length} tabs: ${JSON.stringify(tabs)}`
-        );
+        console.traceX(`invokeGetTabs::dispatch`, `Received ${tabs.length} tabs:`, tabs);
+
+        console.traceX(`invokeGetTabs::dispatch`, `Received ${filters.length} filters:`, filters);
 
         console.traceX(
           `invokeGetTabs::dispatch`,
-          `Received ${filters.length} filters: ${JSON.stringify(filters)}`
-        );
-
-        console.traceX(
-          `invokeGetTabs::dispatch`,
-          `Received ${components.length} components: ${JSON.stringify(components)}`
+          `Received ${components.length} components:`,
+          components
         );
 
         dispatch({ type: ActionType.InvokeGetTabsOK, payload: { tabs, filters, components } });
@@ -89,17 +84,20 @@ export const invokeGetTabs: IApiCallStoreHandler<
     ok: (state, payload) => {
       console.traceX(
         `invokeGetTabs::ok::reduce`,
-        `Setting ${payload.tabs.length} tabs: ${JSON.stringify(payload.tabs)}`
+        `Setting ${payload.tabs.length} tabs:`,
+        payload.tabs
       );
 
       console.traceX(
         `invokeGetTabs::ok::reduce`,
-        `Setting ${payload.filters.length} filters: ${JSON.stringify(payload.filters)}`
+        `Setting ${payload.filters.length} filters:`,
+        payload.filters
       );
 
       console.traceX(
         `invokeGetTabs::ok::reduce`,
-        `Setting ${payload.components.length} components: ${JSON.stringify(payload.components)}`
+        `Setting ${payload.components.length} components:`,
+        payload.components
       );
 
       return {

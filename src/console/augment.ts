@@ -6,7 +6,7 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Extend logging functionality.
  */
 
@@ -17,11 +17,11 @@ const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
   warn: console.warn,
   debug: console.debug,
   info: console.info,
-  trace: console.trace,
+  trace: console.log,
   log: console.log,
 };
 
-const padLeft = (value: number) => value.toString().padStart(2, '0');
+const padLeft = (value: number, digits: number = 2) => value.toString().padStart(digits, '0');
 
 const getCallerLocation = (depth = 3): string => {
   const stack = new Error().stack;
@@ -31,11 +31,17 @@ const getCallerLocation = (depth = 3): string => {
   return callerLine.trim().replace(/^.*?:\/\/localhost:\d+\//, '');
 };
 
-const _log = (level: TLogLevel, levelStyle: string, caller: string, message: string) => {
+const _log = (
+  level: TLogLevel,
+  levelStyle: string,
+  caller: string,
+  message: string,
+  ...data: any[]
+) => {
   const date = new Date();
   const timestamp = `${padLeft(date.getHours())}:${padLeft(date.getMinutes())}:${padLeft(
     date.getSeconds()
-  )}:${date.getMilliseconds()}`;
+  )}:${padLeft(date.getMilliseconds(), 3)}`;
 
   (logFunctions[level] || console.log)(
     `%c| %c${timestamp} %c| %c${getCallerLocation()}%c@%c${caller} %c» \n%c${message}`,
@@ -46,32 +52,33 @@ const _log = (level: TLogLevel, levelStyle: string, caller: string, message: str
     'color: gray',
     `${levelStyle}; font-weight: bold`,
     'color: gray',
-    levelStyle
+    levelStyle,
+    ...data
   );
 };
 
-const trace = (caller: string, message: string) => {
-  _log('trace', 'color: lightgray', caller, message);
+const trace = (caller: string, message: string, ...data: any[]) => {
+  _log('trace', 'color: lightgray', caller, message, ...data);
 };
 
-const log = (caller: string, message: string) => {
-  _log('log', 'color: lightgreen', caller, message);
+const log = (caller: string, message: string, ...data: any[]) => {
+  _log('log', 'color: lightgreen', caller, message, ...data);
 };
 
-const info = (caller: string, message: string) => {
-  _log('info', 'color: darkturquoise', caller, message);
+const info = (caller: string, message: string, ...data: any[]) => {
+  _log('info', 'color: darkturquoise', caller, message, ...data);
 };
 
-const warn = (caller: string, message: string) => {
-  _log('warn', 'color: yellow', caller, message);
+const warn = (caller: string, message: string, ...data: any[]) => {
+  _log('warn', 'color: yellow', caller, message, ...data);
 };
 
-const debug = (caller: string, message: string) => {
-  _log('debug', 'color: olivedrab', caller, message);
+const debug = (caller: string, message: string, ...data: any[]) => {
+  _log('debug', 'color: olivedrab', caller, message, ...data);
 };
 
-const error = (caller: string, message: string) => {
-  _log('error', 'color: red', caller, message);
+const error = (caller: string, message: string, ...data: any[]) => {
+  _log('error', 'color: red', caller, message, ...data);
 };
 
 const assert = (caller: string, condition: boolean, ...data: any[]) => {
