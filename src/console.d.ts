@@ -6,6 +6,7 @@ declare global {
     warnX(caller: string, message: string): void;
     debugX(caller: string, message: string): void;
     errorX(caller: string, message: string): void;
+    assertX(caller: string, condition: boolean, ...data: any[]);
   }
 }
 

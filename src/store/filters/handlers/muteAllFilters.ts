@@ -6,16 +6,17 @@
  *
  * @file muteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description MuteAllFilters handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, getTabById, IDefaultState } from '../data';
 
 type MuteAllFiltersPayload = {
-  targetTabId: string;
+  targetTabId: UUID;
 };
 
 export interface MuteAllFiltersAction {
@@ -25,25 +26,31 @@ export interface MuteAllFiltersAction {
 
 export const muteAllFilters: IBasicStoreHandler<IDefaultState, MuteAllFiltersPayload, ActionType> =
   {
-    dispatch: (targetTabId: string) =>
+    dispatch: (targetTabId: UUID) =>
       basicDispatcher(ActionType.MuteAllFilters, () => ({ targetTabId })),
 
     reduce: (state, payload) => {
       const { targetTabId } = payload;
 
-      const newTabs = state.filterTabs.map(tab =>
-        tab.id !== targetTabId
-          ? tab
+      const filterIdsToMute = getTabById(
+        `muteAllFilters::reduce`,
+        state.tabs,
+        targetTabId
+      ).filterIDs;
+
+      const newFilters = state.filters.map(filter =>
+        filterIdsToMute.find(id => id === filter.id) === undefined
+          ? filter
           : {
-              ...tab,
-              filters: tab.filters.map(filter => ({ ...filter, isActive: false })),
+              ...filter,
+              isActive: false,
             }
       );
 
       return {
         ...state,
-        filterTabs: newTabs,
-        canSaveTabs: checkCanSaveTabs(newTabs),
+        filters: newFilters,
+        canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
       };
     },
   };

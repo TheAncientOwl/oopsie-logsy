@@ -6,19 +6,18 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description SetComponentOverAlternative handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type SetComponentOverAlternativePayload = {
-  targetTabId: string;
-  targetFilterId: string;
-  targetComponentId: string;
-  overAlternativeId: string;
+  targetComponentId: UUID;
+  overAlternativeId: UUID;
 };
 
 export interface SetComponentOverAlternativeAction {
@@ -31,46 +30,28 @@ export const setComponentOverAlternative: IBasicStoreHandler<
   SetComponentOverAlternativePayload,
   ActionType
 > = {
-  dispatch: (
-    targetTabId: string,
-    targetFilterId: string,
-    targetComponentId: string,
-    overAlternativeId: string
-  ) =>
+  dispatch: (targetComponentId: UUID, overAlternativeId: UUID) =>
     basicDispatcher(ActionType.SetFilterComponentOverAlternative, () => ({
-      targetTabId,
-      targetFilterId,
       targetComponentId,
       overAlternativeId,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, targetComponentId, overAlternativeId } = payload;
+    const { targetComponentId, overAlternativeId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newComponents = state.components.map(component =>
+      component.id !== targetComponentId
+        ? component
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    components: filter.components.map(component =>
-                      component.id !== targetComponentId
-                        ? component
-                        : { ...component, overAlternativeId: overAlternativeId }
-                    ),
-                  }
-            ),
+            ...component,
+            overAlternativeId,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
     };
   },
 };

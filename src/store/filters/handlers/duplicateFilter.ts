@@ -6,18 +6,19 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description DuplicateFilter handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState, TFilter } from '../data';
+import { checkCanSaveData, getFilterComponentById, IDefaultState, TFilter } from '../data';
 
 type DuplicateFilterPayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetTabId: UUID;
+  targetFilterId: UUID;
 };
 
 export interface DuplicateFilterAction {
@@ -30,7 +31,7 @@ export const duplicateFilter: IBasicStoreHandler<
   DuplicateFilterPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
+  dispatch: (targetTabId: UUID, targetFilterId: UUID) =>
     basicDispatcher(ActionType.DuplicateFilter, () => ({
       targetTabId,
       targetFilterId,
@@ -39,38 +40,84 @@ export const duplicateFilter: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, targetFilterId } = payload;
 
-    const handleDuplication = (filters: Array<TFilter>): Array<TFilter> => {
-      const newArr = [] as Array<TFilter>;
+    const newComponents = [...state.components];
+    const newFilters: Array<TFilter> = [];
 
-      filters.forEach(filter => {
-        newArr.push(filter);
+    const duplicateFilter = (): UUID => {
+      let dupedFilterId: UUID | undefined = undefined;
+
+      // build new filters
+      state.filters.forEach(filter => {
+        // push original filter
+        newFilters.push(filter);
+
+        // dupe if ID matches
         if (filter.id === targetFilterId) {
-          const newFilter = structuredClone(filter);
-          newFilter.id = uuidv7();
-          newFilter.name = `${newFilter.name}*`;
-          for (let component of newFilter.components) {
-            component.id = uuidv7();
-          }
-          newArr.push(newFilter);
+          const dupedFilter = structuredClone(filter);
+          dupedFilter.id = uuidv7();
+          dupedFilter.name = `${dupedFilter.name}*`;
+
+          dupedFilterId = dupedFilter.id;
+
+          // dupe components
+          const dupedComponentIds: Array<UUID> = [];
+          dupedFilter.componentIDs.forEach(componentId => {
+            const dupedComponent = structuredClone(
+              getFilterComponentById(`duplicateFilter::reduce`, state.components, componentId)
+            );
+            dupedComponent.id = uuidv7();
+
+            // add duped component
+            dupedComponentIds.push(dupedComponent.id);
+            newComponents.push(dupedComponent);
+          });
+          dupedFilter.componentIDs = dupedComponentIds;
+
+          // add duped filter
+          newFilters.push(dupedFilter);
         }
       });
 
-      return newArr;
+      console.assertX(
+        `duplicateFilter::reduce`,
+        dupedFilterId !== undefined,
+        `Filter with ID ${targetFilterId} missing in store while trying to duplicate`
+      );
+
+      return dupedFilterId as unknown as UUID;
     };
 
-    const newTabs = state.filterTabs.map(tab =>
+    const dupedFilterId = duplicateFilter();
+
+    const handleFilterIdDupe = (filterIds: Array<UUID>): Array<UUID> => {
+      const out: Array<UUID> = [];
+
+      filterIds.forEach(id => {
+        out.push(id);
+
+        if (id === targetFilterId) {
+          out.push(dupedFilterId);
+        }
+      });
+
+      return out;
+    };
+
+    const newTabs = state.tabs.map(tab =>
       tab.id !== targetTabId
         ? tab
         : {
             ...tab,
-            filters: handleDuplication(tab.filters),
+            filterIDs: handleFilterIdDupe(tab.filterIDs),
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      filters: newFilters,
+      tabs: newTabs,
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
     };
   },
 };

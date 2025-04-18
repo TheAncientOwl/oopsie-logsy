@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Handlers index file.
  */
 
@@ -37,7 +37,7 @@ import { toggleComponentIsRegex } from './toggleComponentIsRegex';
 import { toggleFilterActive } from './toggleFilterActive';
 import { toggleFilterCollapsed } from './toggleFilterCollapsed';
 import { toggleFilterHighlightOnly } from './toggleFilterHighlightOnly';
-import { toggleFilterComponentIgnoreCase } from './toggleFilterIgnoreActive';
+import { toggleFilterComponentIgnoreCase } from './toggleFilterComponentIgnoreCase';
 import { unmuteAllFilters } from './unmuteAllFilters';
 
 export {

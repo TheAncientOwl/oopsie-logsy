@@ -6,13 +6,12 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Filter tab related tools.
  */
 
 import React, { useMemo } from 'react';
 
-// eslint-disable-next-line import/named
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { DoubleCheck } from '@/components/ui/DoubleCheck';
 import {
@@ -47,15 +46,16 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
   const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
   const focusedTab = useMemo(() => {
-    const focusedTab = props.filterTabs.find(tab => tab.id === props.focusedTabId);
+    const focusedTab = props.tabs.find(tab => tab.id === props.focusedTabId);
 
-    console.assert(
+    console.assertX(
+      FilterTabToolBox.name,
       focusedTab !== undefined,
       `Failed to find focused tab with id ${props.focusedTabId}`
     );
 
     return focusedTab;
-  }, [props.focusedTabId, props.filterTabs]);
+  }, [props.focusedTabId, props.tabs]);
 
   const border = useColorModeValue('gray.500', 'gray.500');
 
@@ -97,6 +97,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
     props.duplicateFiltersTab(props.focusedTabId);
   };
 
+  // TODO: refactor disabled states
   return (
     <>
       <HStack padding='0 0.5em'>
@@ -113,28 +114,28 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
           <TooltipIconButton
             tooltip='Unmute All'
             onClick={handleUnmuteAllClick}
-            disabled={focusedTab?.filters.every(filter => filter.isActive)}
+            // disabled={focusedTab?.filterIDs.every(filter => filter.isActive)}
           >
             <SoundOnIcon />
           </TooltipIconButton>
           <TooltipIconButton
             tooltip='Mute all'
             onClick={handleMuteAllClick}
-            disabled={focusedTab?.filters.every(filter => !filter.isActive)}
+            // disabled={focusedTab?.filterIDs.every(filter => !filter.isActive)}
           >
             <SoundOffIcon />
           </TooltipIconButton>
           <TooltipIconButton
             tooltip='Collapse All'
             onClick={handleCollapseAllClick}
-            disabled={focusedTab?.filters.every(filter => filter.collapsed)}
+            // disabled={focusedTab?.filterIDs.every(filter => filter.collapsed)}
           >
             <CollapseIcon />
           </TooltipIconButton>
           <TooltipIconButton
             tooltip='Expand All'
             onClick={handleExpandAllClick}
-            disabled={focusedTab?.filters.every(filter => !filter.collapsed)}
+            // disabled={focusedTab?.filterIDs.every(filter => !filter.collapsed)}
           >
             <ExpandIcon />
           </TooltipIconButton>
@@ -200,7 +201,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
 // <redux>
 const mapState = (state: RootState) => ({
   focusedTabId: state.filters.focusedTabId,
-  filterTabs: state.filters.filterTabs,
+  tabs: state.filters.tabs,
 });
 
 const mapDispatch = {

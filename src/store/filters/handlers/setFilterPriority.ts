@@ -6,17 +6,17 @@
  *
  * @file setFilterPriority.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description SetFilterPriority handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type SetFilterPriorityPayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetFilterId: UUID;
   priority: number;
 };
 
@@ -30,36 +30,28 @@ export const setFilterPriority: IBasicStoreHandler<
   SetFilterPriorityPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string, priority: number) =>
+  dispatch: (targetFilterId: string, priority: number) =>
     basicDispatcher(ActionType.SetFilterPriority, () => ({
-      targetTabId,
       targetFilterId,
       priority,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, priority } = payload;
+    const { targetFilterId, priority } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    priority: priority,
-                  }
-            ),
+            ...filter,
+            priority,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
     };
   },
 };

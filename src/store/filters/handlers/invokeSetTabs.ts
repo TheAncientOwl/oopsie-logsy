@@ -6,13 +6,13 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description InvokeSetTabs handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { ActionType, Dispatch } from '../actions';
-import { IDefaultState, TFilterTab } from '../data';
+import { IDefaultState, TFilter, TFilterComponent, TFilterTab } from '../data';
 import { invoke } from '@tauri-apps/api/core';
 
 type InvokeSetTabsOkPayload = {};
@@ -37,25 +37,58 @@ export const invokeSetTabs: IApiCallStoreHandler<
   InvokeSetTabsOkPayload,
   InvokeSetTabsNOkPayload
 > = {
-  dispatch: (tabs: Array<TFilterTab>) => async (dispatch: Dispatch) => {
-    dispatch({ type: ActionType.Loading, payload: {} });
+  dispatch:
+    (tabs: Array<TFilterTab>, filters: Array<TFilter>, components: Array<TFilterComponent>) =>
+    async (dispatch: Dispatch) => {
+      console.assertX(
+        `invokeSetTabs::dispatch`,
+        tabs !== undefined,
+        "Received 'undefined' as tabs"
+      );
+      console.assertX(
+        `invokeSetTabs::dispatch`,
+        filters !== undefined,
+        "Received 'undefined' as filters"
+      );
+      console.assertX(
+        `invokeSetTabs::dispatch`,
+        components !== undefined,
+        "Received 'undefined' as components"
+      );
 
-    try {
-      const response = await invoke('set_filter_tabs', { tabs });
-      console.logX(`invokeSetTabs::dispatch`, `rust response: ${response}`);
-      dispatch({ type: ActionType.InvokeSetTabsOK, payload: {} });
-    } catch (error) {
-      console.errorX(`invokeSetTabs::dispatch`, `error sending tabs to rust: ${error}`);
-      dispatch({ type: ActionType.InvokeSetTabsNOK, payload: { error } });
-    }
-  },
+      dispatch({ type: ActionType.Loading, payload: {} });
+
+      try {
+        console.traceX(
+          `invokeSetTabs::dispatch`,
+          `Sending ${tabs.length} tabs: ${JSON.stringify(tabs)}`
+        );
+
+        console.traceX(
+          `invokeSetTabs::dispatch`,
+          `Sending ${filters.length} filters: ${JSON.stringify(filters)}`
+        );
+
+        console.traceX(
+          `invokeSetTabs::dispatch`,
+          `Sending ${components.length} components: ${JSON.stringify(components)}`
+        );
+
+        const response = await invoke('set_filter_tabs', { tabs, filters, components });
+        console.traceX(`invokeSetTabs::dispatch`, `rust response: ${response}`);
+        dispatch({ type: ActionType.InvokeSetTabsOK, payload: {} });
+      } catch (error) {
+        console.errorX(`invokeSetTabs::dispatch`, `error sending tabs to rust: ${error}`);
+        dispatch({ type: ActionType.InvokeSetTabsNOK, payload: { error } });
+      }
+    },
 
   reduce: {
     ok: state => {
       return {
         ...state,
         loading: false,
-        canSaveTabs: false,
+        canSaveData: false,
       };
     },
 

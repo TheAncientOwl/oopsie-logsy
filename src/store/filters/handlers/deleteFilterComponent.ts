@@ -6,18 +6,18 @@
  *
  * @file deleteFilterComponent.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description DeleteFilterComponent.ts.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type DeleteFilterComponentPayload = {
-  targetTabId: string;
-  targetFilterId: string;
-  targetComponentId: string;
+  targetFilterId: UUID;
+  targetComponentId: UUID;
 };
 
 export interface DeleteFilterComponentAction {
@@ -30,38 +30,33 @@ export const deleteFilterComponent: IBasicStoreHandler<
   DeleteFilterComponentPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string, targetComponentId: string) =>
+  dispatch: (targetFilterId: UUID, targetComponentId: UUID) =>
     basicDispatcher(ActionType.DeleteFilterComponent, () => ({
-      targetTabId,
       targetFilterId,
       targetComponentId,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, targetComponentId } = payload;
+    const { targetFilterId, targetComponentId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newComponents = state.components.filter(component => component.id !== targetComponentId);
+
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    components: filter.components.filter(
-                      component => component.id !== targetComponentId
-                    ),
-                  }
+            ...filter,
+            componentIDs: filter.componentIDs.filter(
+              componentId => componentId !== targetComponentId
             ),
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, newComponents),
     };
   },
 };

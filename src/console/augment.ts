@@ -6,7 +6,7 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Extend logging functionality.
  */
 
@@ -38,28 +38,28 @@ const _log = (level: TLogLevel, levelStyle: string, caller: string, message: str
   )}:${date.getMilliseconds()}`;
 
   (logFunctions[level] || console.log)(
-    `%c| %c${timestamp} %c| %c${getCallerLocation()}%c@%c${caller} %c» %c${message}`,
+    `%c| %c${timestamp} %c| %c${getCallerLocation()}%c@%c${caller} %c» \n%c${message}`,
     'color: gray',
     'color: dodgerblue',
     'color: gray',
-    'color: lightslategrey',
-    'color: gray',
     levelStyle,
+    'color: gray',
+    `${levelStyle}; font-weight: bold`,
     'color: gray',
     levelStyle
   );
 };
 
 const trace = (caller: string, message: string) => {
-  _log('trace', 'color: white', caller, message);
+  _log('trace', 'color: lightgray', caller, message);
 };
 
 const log = (caller: string, message: string) => {
-  _log('log', 'color: ghostwhite', caller, message);
+  _log('log', 'color: lightgreen', caller, message);
 };
 
 const info = (caller: string, message: string) => {
-  _log('info', 'color: cornsilk', caller, message);
+  _log('info', 'color: darkturquoise', caller, message);
 };
 
 const warn = (caller: string, message: string) => {
@@ -74,8 +74,14 @@ const error = (caller: string, message: string) => {
   _log('error', 'color: red', caller, message);
 };
 
+const assert = (caller: string, condition: boolean, ...data: any[]) => {
+  if (!condition) {
+    _log('error', 'color: red', caller, `Assertion failed!\n\t${JSON.stringify(data)}`);
+  }
+};
+
 (() => {
-  info('anonymous-lambda', 'augmenting console logging');
+  trace('anonymous-lambda', 'augmenting console logging');
 
   console.traceX = trace;
   console.logX = log;
@@ -83,6 +89,7 @@ const error = (caller: string, message: string) => {
   console.warnX = warn;
   console.debugX = debug;
   console.errorX = error;
+  console.assertX = assert;
 
-  info('anonymous-lambda', 'console logging augmented');
+  trace('anonymous-lambda', 'console logging augmented');
 })();

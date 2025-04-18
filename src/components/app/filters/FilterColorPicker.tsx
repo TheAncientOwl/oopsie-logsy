@@ -6,7 +6,7 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Pick fg/bg colors of logs.
  */
 
@@ -28,11 +28,11 @@ interface ColorPickerProps extends PropsFromRedux {
 
 const FilterColorPickerImpl: React.FC<ColorPickerProps> = props => {
   const handleFgColorPick = (details: ColorPickerValueChangeDetails) => {
-    props.setFilterFg(props.tabId, props.filterId, details.valueAsString);
+    props.setFilterFg(props.filterId, details.valueAsString);
   };
 
   const handleBgColorPick = (details: ColorPickerValueChangeDetails) => {
-    props.setFilterBg(props.tabId, props.filterId, details.valueAsString);
+    props.setFilterBg(props.filterId, details.valueAsString);
   };
 
   return (

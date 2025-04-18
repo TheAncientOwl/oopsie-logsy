@@ -6,17 +6,17 @@
  *
  * @file toggleFilterHighlight.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description ToggleFilterHighlight handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type ToggleFilterHighlightPayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetFilterId: UUID;
 };
 
 export interface ToggleFilterHighlightAction {
@@ -29,35 +29,25 @@ export const toggleFilterHighlightOnly: IBasicStoreHandler<
   ToggleFilterHighlightPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.ToggleFilterHighlightOnly, () => ({
-      targetTabId,
-      targetFilterId,
-    })),
+  dispatch: (targetFilterId: UUID) =>
+    basicDispatcher(ActionType.ToggleFilterHighlightOnly, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId } = payload;
+    const { targetFilterId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    isHighlightOnly: !filter.isHighlightOnly,
-                  }
-            ),
+            ...filter,
+            isHighlightOnly: !filter.isHighlightOnly,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
     };
   },
 };

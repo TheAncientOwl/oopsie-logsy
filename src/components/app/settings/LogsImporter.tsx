@@ -6,7 +6,7 @@
  *
  * @file LogsImporter.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Import logs button
  */
 
@@ -26,7 +26,7 @@ export const LogsImportButton = () => {
     if (selectedFile) {
       try {
         const response = await invoke('set_current_log_paths', { paths: [selectedFile] });
-        console.infoX(
+        console.traceX(
           `${LogsImportButton.name}::${handleImportClick.name}`,
           `rust response: ${response}`
         );

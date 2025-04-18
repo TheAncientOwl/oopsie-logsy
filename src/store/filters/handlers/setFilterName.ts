@@ -6,17 +6,17 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description SetFilterName handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
+import { UUID } from '@/store/common/types';
 
 type SetFilterNamePayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetFilterId: UUID;
   name: string;
 };
 
@@ -26,36 +26,28 @@ export interface SetFilterNameAction {
 }
 
 export const setFilterName: IBasicStoreHandler<IDefaultState, SetFilterNamePayload, ActionType> = {
-  dispatch: (targetTabId: string, targetFilterId: string, name: string) =>
+  dispatch: (targetFilterId: UUID, name: string) =>
     basicDispatcher(ActionType.SetFilterName, () => ({
-      targetTabId,
       targetFilterId,
       name,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, name } = payload;
+    const { targetFilterId, name } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    name,
-                  }
-            ),
+            ...filter,
+            name,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
     };
   },
 };

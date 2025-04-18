@@ -6,18 +6,17 @@
  *
  * @file toggleComponentIsEquals.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description ToggleComponentIsEquals handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type ToggleComponentIsEqualsPayload = {
-  targetTabId: string;
-  targetFilterId: string;
-  targetComponentId: string;
+  targetComponentId: UUID;
 };
 
 export interface ToggleComponentIsEqualsAction {
@@ -30,40 +29,25 @@ export const toggleComponentIsEquals: IBasicStoreHandler<
   ToggleComponentIsEqualsPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string, targetComponentId: string) =>
-    basicDispatcher(ActionType.ToggleFilterComponentIsEquals, () => ({
-      targetTabId,
-      targetFilterId,
-      targetComponentId,
-    })),
+  dispatch: (targetComponentId: UUID) =>
+    basicDispatcher(ActionType.ToggleFilterComponentIsEquals, () => ({ targetComponentId })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, targetComponentId } = payload;
+    const { targetComponentId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newComponents = state.components.map(component =>
+      component.id !== targetComponentId
+        ? component
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    components: filter.components.map(component =>
-                      component.id !== targetComponentId
-                        ? component
-                        : { ...component, isEquals: !component.isEquals }
-                    ),
-                  }
-            ),
+            ...component,
+            isEquals: !component.isEquals,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
     };
   },
 };

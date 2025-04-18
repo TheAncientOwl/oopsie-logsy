@@ -6,17 +6,15 @@
  *
  * @file addNewFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description AddNewFilterTab handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, DefaultFactory, IDefaultState, TFilterTab } from '../data';
+import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
 
-type AddNewFilterTabPayload = {
-  tab: TFilterTab;
-};
+type AddNewFilterTabPayload = {};
 
 export interface AddNewFilterTabAction {
   type: typeof ActionType.AddNewFilterTab;
@@ -28,21 +26,24 @@ export const addNewFilterTab: IBasicStoreHandler<
   AddNewFilterTabPayload,
   ActionType
 > = {
-  dispatch: () =>
-    basicDispatcher(ActionType.AddNewFilterTab, () => ({
-      tab: DefaultFactory.makeFilterTab(),
-    })),
+  dispatch: () => basicDispatcher(ActionType.AddNewFilterTab, () => ({})),
 
-  reduce: (state, payload) => {
-    const { tab } = payload;
+  reduce: state => {
+    const newComponent = DefaultFactory.makeFilterComponent();
+    const newFilter = DefaultFactory.makeFilter([newComponent]);
+    const newTab = DefaultFactory.makeFilterTab([newFilter]);
 
-    const newTabs = [...state.filterTabs, tab];
+    const newComponents = [...state.components, newComponent];
+    const newFilters = [...state.filters, newFilter];
+    const newTabs = [...state.tabs, newTab];
 
     return {
       ...state,
-      filterTabs: newTabs,
-      focusedTabId: tab.id,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      filters: newFilters,
+      tabs: newTabs,
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      focusedTabId: newTab.id,
     };
   },
 };

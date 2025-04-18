@@ -6,18 +6,20 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description InvokeGetTabs handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
-import { ActionType, Dispatch } from '../actions';
-import { DefaultFactory, IDefaultState, TFilterTab } from '../data';
 import { invoke } from '@tauri-apps/api/core';
+import { ActionType, Dispatch } from '../actions';
+import { DefaultFactory, IDefaultState, TFilter, TFilterComponent, TFilterTab } from '../data';
 import { invokeSetTabs } from './invokeSetTabs';
 
 type InvokeGetTabsOkPayload = {
   tabs: Array<TFilterTab>;
+  filters: Array<TFilter>;
+  components: Array<TFilterComponent>;
 };
 
 export interface InvokeGetTabsOkAction {
@@ -44,17 +46,39 @@ export const invokeGetTabs: IApiCallStoreHandler<
     dispatch({ type: ActionType.Loading, payload: {} });
 
     try {
-      const tabs = await invoke<Array<TFilterTab>>('get_filter_tabs');
-      console.infoX(`invokeGetTabs::dispatch`, `received ${tabs.length} tabs`);
+      const [tabs, filters, components] = await invoke<
+        [Array<TFilterTab>, Array<TFilter>, Array<TFilterComponent>]
+      >('get_filter_tabs');
+      if (tabs.length !== 0) {
+        console.traceX(
+          `invokeGetTabs::dispatch`,
+          `Received ${tabs.length} tabs: ${JSON.stringify(tabs)}`
+        );
 
-      const finalTabs = tabs.length === 0 ? [DefaultFactory.makeFilterTab()] : tabs;
+        console.traceX(
+          `invokeGetTabs::dispatch`,
+          `Received ${filters.length} filters: ${JSON.stringify(filters)}`
+        );
 
-      if (tabs.length === 0) {
+        console.traceX(
+          `invokeGetTabs::dispatch`,
+          `Received ${components.length} components: ${JSON.stringify(components)}`
+        );
+
+        dispatch({ type: ActionType.InvokeGetTabsOK, payload: { tabs, filters, components } });
+      } else {
         console.infoX(`invokeGetTabs::dispatch`, `Setting default Tabs`);
-        await invokeSetTabs.dispatch(finalTabs)(dispatch);
-      }
 
-      dispatch({ type: ActionType.InvokeGetTabsOK, payload: { tabs: finalTabs } });
+        const defaultComponents = [DefaultFactory.makeFilterComponent()];
+        const defaultFilters = [DefaultFactory.makeFilter(defaultComponents)];
+        const defaultTabs = [DefaultFactory.makeFilterTab(defaultFilters)];
+
+        await invokeSetTabs.dispatch(defaultTabs, defaultFilters, defaultComponents)(dispatch);
+        dispatch({
+          type: ActionType.InvokeGetTabsOK,
+          payload: { tabs: defaultTabs, filters: defaultFilters, components: defaultComponents },
+        });
+      }
     } catch (error) {
       console.errorX(`invokeGetTabs::dispatch`, `error getting tabs from rust: ${error}`);
       dispatch({ type: ActionType.InvokeGetTabsNOK, payload: { error } });
@@ -63,13 +87,29 @@ export const invokeGetTabs: IApiCallStoreHandler<
 
   reduce: {
     ok: (state, payload) => {
+      console.traceX(
+        `invokeGetTabs::ok::reduce`,
+        `Setting ${payload.tabs.length} tabs: ${JSON.stringify(payload.tabs)}`
+      );
+
+      console.traceX(
+        `invokeGetTabs::ok::reduce`,
+        `Setting ${payload.filters.length} filters: ${JSON.stringify(payload.filters)}`
+      );
+
+      console.traceX(
+        `invokeGetTabs::ok::reduce`,
+        `Setting ${payload.components.length} components: ${JSON.stringify(payload.components)}`
+      );
+
       return {
         ...state,
         loading: false,
-        canApplyTabs: false,
-        filterTabs: payload.tabs,
-        focusedTabId: payload.tabs[0]?.id,
-        canSaveTabs: false,
+        components: payload.components,
+        filters: payload.filters,
+        tabs: payload.tabs,
+        canSaveData: false,
+        focusedTabId: payload.tabs[0].id,
       };
     },
 

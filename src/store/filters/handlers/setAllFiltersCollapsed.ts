@@ -6,16 +6,17 @@
  *
  * @file setAllFiltersCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description setAllFiltersCollapsed handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, getTabById, IDefaultState } from '../data';
 
 type SetAllFiltersCollapsedPayload = {
-  targetTabId: string;
+  targetTabId: UUID;
   collapsed: boolean;
 };
 
@@ -29,7 +30,7 @@ export const setAllFiltersCollapsed: IBasicStoreHandler<
   SetAllFiltersCollapsedPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, collapsed: boolean) =>
+  dispatch: (targetTabId: UUID, collapsed: boolean) =>
     basicDispatcher(ActionType.SetAllFiltersCollapsed, () => ({
       targetTabId,
       collapsed,
@@ -38,19 +39,25 @@ export const setAllFiltersCollapsed: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, collapsed } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const filterIdsToSet = getTabById(
+      `setAllFiltersCollapsed::reduce`,
+      state.tabs,
+      targetTabId
+    ).filterIDs;
+
+    const newFilters = state.filters.map(filter =>
+      filterIdsToSet.find(id => id === filter.id) === undefined
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter => ({ ...filter, collapsed: collapsed })),
+            ...filter,
+            collapsed,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
     };
   },
 };

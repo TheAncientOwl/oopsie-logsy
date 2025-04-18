@@ -6,18 +6,17 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description AddFilterComponent.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, DefaultFactory, IDefaultState, TFilterComponent } from '../data';
+import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
 
 type AddNewFilterComponentPayload = {
-  targetTabId: string;
-  targetFilterId: string;
-  component: TFilterComponent;
+  targetFilterId: UUID;
 };
 
 export interface AddNewFilterComponentAction {
@@ -30,36 +29,29 @@ export const addNewFilterComponent: IBasicStoreHandler<
   AddNewFilterComponentPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.AddNewFilterComponent, () => ({
-      targetTabId,
-      targetFilterId,
-      component: DefaultFactory.makeFilterComponent(),
-    })),
+  dispatch: (targetFilterId: UUID) =>
+    basicDispatcher(ActionType.AddNewFilterComponent, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, component } = payload;
+    const { targetFilterId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newComponent = DefaultFactory.makeFilterComponent();
+    const newComponents = [...state.components, newComponent];
+
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    components: [...filter.components, { ...component }],
-                  }
-            ),
+            ...filter,
+            componentIDs: [...filter.componentIDs, newComponent.id],
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, newComponents),
     };
   },
 };

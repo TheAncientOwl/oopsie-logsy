@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.19
+ * @version 0.20
  * @description Filters component
  */
 
@@ -15,15 +15,8 @@ import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
 import { addNewFilterTab, invokeGetTabs, invokeSetTabs } from '@/store/filters/handlers';
-import {
-  Box,
-  ButtonGroup,
-  Collapsible,
-  createListCollection,
-  HStack,
-  Tabs,
-} from '@chakra-ui/react';
-import React, { useEffect, useMemo } from 'react';
+import { Box, ButtonGroup, Collapsible, HStack, Tabs } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
@@ -40,13 +33,8 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
   const bg = useColorModeValue('gray.200', 'gray.900');
   const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
-  const overAlternatives = useMemo(() => {
-    console.infoX('overAlternativesCallback', `changed ${JSON.stringify(props.overAlternatives)}`);
-    return createListCollection({ items: props.overAlternatives });
-  }, [props.overAlternatives]);
-
   const handleSaveClick = () => {
-    props.invokeSetTabs(props.filterTabs);
+    props.invokeSetTabs(props.tabs, props.filters, props.components);
   };
 
   return (
@@ -83,7 +71,7 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
 
               <Box overflowX='scroll'>
                 <Tabs.List>
-                  {props.filterTabs.map(tab => (
+                  {props.tabs.map(tab => (
                     <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
                   ))}
                 </Tabs.List>
@@ -92,8 +80,8 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
 
             <FilterTabToolBox />
 
-            {props.filterTabs.map(tab => (
-              <FilterTabContent key={tab.id} tab={tab} overAlternatives={overAlternatives} />
+            {props.tabs.map(tab => (
+              <FilterTabContent key={tab.id} tabId={tab.id} filterIds={tab.filterIDs} />
             ))}
           </Tabs.Root>
         </Box>
@@ -104,10 +92,12 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
 
 // <redux>
 const mapState = (state: RootState) => ({
-  filterTabs: state.filters.filterTabs,
+  tabs: state.filters.tabs,
+  filters: state.filters.filters,
+  components: state.filters.components,
   loading: state.filters.loading,
   focusedTab: state.filters.focusedTabId,
-  canSaveTabs: state.filters.canSaveTabs,
+  canSaveTabs: state.filters.canSaveData,
   overAlternatives: state.logRegexTags.overAlternatives,
 });
 

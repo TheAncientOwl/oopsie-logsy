@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.23
+ * @version 0.24
  * @description Filter component
  */
 
@@ -22,7 +22,9 @@ import {
 import { Tooltip } from '@/components/ui/Tooltip';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { TFilter, TOverAlternative } from '@/store/filters/data';
+import { RootState } from '@/store';
+import { UUID } from '@/store/common/types';
+import { getFilterById } from '@/store/filters/data';
 import {
   addNewFilterComponent,
   deleteFilter,
@@ -39,61 +41,64 @@ import {
   Collapsible,
   HStack,
   Input,
-  ListCollection,
   NumberInput,
   NumberInputValueChangeDetails,
   Separator,
   Stack,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
 
 interface FilterProps extends PropsFromRedux {
-  tabId: string;
-  filter: TFilter;
-  overAlternatives: ListCollection<TOverAlternative>;
+  tabId: UUID;
+  filterId: UUID;
 }
 
 const FilterImpl = (props: FilterProps) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.500');
 
-  const [filterFg, setFilterFg] = useState(props.filter.colors.fg);
-  const [filterBg, setFilterBg] = useState(props.filter.colors.bg);
+  const filter = useMemo(
+    () => getFilterById(FilterImpl.name, props.filters, props.filterId),
+    [props.filters, props.filterId]
+  );
+
+  const [filterFg, setFilterFg] = useState(filter.colors.fg);
+  const [filterBg, setFilterBg] = useState(filter.colors.bg);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setFilterName(props.tabId, props.filter.id, event.target.value);
+    props.setFilterName(props.filterId, event.target.value);
   };
 
   const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.stopPropagation();
-    props.deleteFilter(props.tabId, props.filter.id);
+    props.deleteFilter(props.tabId, props.filterId);
   };
 
   const handleDuplicateClick = () => {
-    props.duplicateFilter(props.tabId, props.filter.id);
+    props.duplicateFilter(props.tabId, props.filterId);
   };
 
   const handleNewComponentClick = () => {
-    props.addNewFilterComponent(props.tabId, props.filter.id);
+    props.addNewFilterComponent(props.filterId);
   };
 
   const handleFilterToggle = () => {
-    props.toggleFilterActive(props.tabId, props.filter.id);
+    props.toggleFilterActive(props.filterId);
   };
 
   const handleFilterToggleHiglightOnly = () => {
-    props.toggleFilterHighlightOnly(props.tabId, props.filter.id);
+    props.toggleFilterHighlightOnly(props.filterId);
   };
 
   const handleFilterPriorityChange = (details: NumberInputValueChangeDetails) => {
-    props.setFilterPriority(props.tabId, props.filter.id, details.valueAsNumber);
+    props.setFilterPriority(props.filterId, details.valueAsNumber);
   };
 
   const handleFilterCollapseClick = () => {
-    props.toggleFilterCollapsed(props.tabId, props.filter.id);
+    props.toggleFilterCollapsed(props.filterId);
   };
 
   return (
@@ -108,10 +113,10 @@ const FilterImpl = (props: FilterProps) => {
       <HStack>
         <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
           <TooltipIconButton
-            tooltip={props.filter.collapsed ? 'Show Filter' : 'Hide filter'}
+            tooltip={filter.collapsed ? 'Show Filter' : 'Hide filter'}
             onClick={handleFilterCollapseClick}
           >
-            {props.filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
+            {filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
           </TooltipIconButton>
           <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
             <DuplicateIcon />
@@ -125,8 +130,8 @@ const FilterImpl = (props: FilterProps) => {
 
         <FilterColorPicker
           tabId={props.tabId}
-          filterId={props.filter.id}
-          defaultColors={props.filter.colors}
+          filterId={props.filterId}
+          defaultColors={filter.colors}
           onColorChangeFg={details => setFilterFg(details.valueAsString)}
           onColorChangeBg={details => setFilterBg(details.valueAsString)}
         />
@@ -138,7 +143,7 @@ const FilterImpl = (props: FilterProps) => {
             size='md'
             min={0}
             colorPalette='green'
-            value={props.filter.priority.toString()}
+            value={filter.priority.toString()}
             onValueChange={handleFilterPriorityChange}
           >
             <NumberInput.Control bg={bg} />
@@ -157,14 +162,14 @@ const FilterImpl = (props: FilterProps) => {
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Name'
-          defaultValue={props.filter.name}
+          defaultValue={filter.name}
           onChange={handleNameChange}
           color={filterFg}
           backgroundColor={filterBg}
         />
       </HStack>
 
-      <Collapsible.Root open={!props.filter.collapsed}>
+      <Collapsible.Root open={!filter.collapsed}>
         <Collapsible.Content>
           <Stack gap='1em' padding='0.75em 0.5em'>
             <HStack gap='1em'>
@@ -178,25 +183,24 @@ const FilterImpl = (props: FilterProps) => {
                 <NewIcon />
               </TooltipIconButton>
 
-              <CheckBox checked={props.filter.isActive} onCheckedChange={handleFilterToggle}>
+              <CheckBox checked={filter.isActive} onCheckedChange={handleFilterToggle}>
                 Active
               </CheckBox>
               <CheckBox
-                checked={props.filter.isHighlightOnly}
+                checked={filter.isHighlightOnly}
                 onCheckedChange={handleFilterToggleHiglightOnly}
               >
                 Highlight Only
               </CheckBox>
             </HStack>
 
-            <For each={props.filter.components}>
-              {component => (
+            <For each={filter.componentIDs}>
+              {componentId => (
                 <FilterComponent
-                  key={component.id}
+                  key={componentId}
                   tabId={props.tabId}
-                  filterId={props.filter.id}
-                  component={component}
-                  overAlternatives={props.overAlternatives}
+                  filterId={props.filterId}
+                  componentId={componentId}
                 />
               )}
             </For>
@@ -208,7 +212,9 @@ const FilterImpl = (props: FilterProps) => {
 };
 
 // <redux>
-const mapState = () => ({});
+const mapState = (state: RootState) => ({
+  filters: state.filters.filters,
+});
 
 const mapDispatch = {
   deleteFilter: deleteFilter.dispatch,

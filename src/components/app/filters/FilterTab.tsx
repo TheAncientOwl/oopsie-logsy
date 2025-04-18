@@ -6,15 +6,15 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Filter tab.
  */
 
 import React from 'react';
 
-import { TFilterTab, TOverAlternative } from '@/store/filters/data';
+import { UUID } from '@/store/common/types';
 import { focusFilterTab } from '@/store/filters/handlers';
-import { ListCollection, Stack, Tabs } from '@chakra-ui/react';
+import { Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
@@ -56,21 +56,16 @@ export const FilterTabHeader = connectorHeader(FilterTabHeaderImpl);
 // </redux>
 
 interface FilterContentTabProps {
-  tab: TFilterTab;
-  overAlternatives: ListCollection<TOverAlternative>;
+  tabId: UUID;
+  filterIds: Array<UUID>;
 }
 
 export const FilterTabContent: React.FC<FilterContentTabProps> = (props: FilterContentTabProps) => {
   return (
-    <Tabs.Content value={props.tab.id}>
+    <Tabs.Content value={props.tabId}>
       <Stack gap='0'>
-        {props.tab.filters.map(filter => (
-          <Filter
-            key={filter.id}
-            tabId={props.tab.id}
-            filter={filter}
-            overAlternatives={props.overAlternatives}
-          />
+        {props.filterIds.map(filterId => (
+          <Filter key={filterId} tabId={props.tabId} filterId={filterId} />
         ))}
       </Stack>
     </Tabs.Content>

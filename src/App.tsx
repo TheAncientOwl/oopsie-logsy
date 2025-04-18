@@ -27,7 +27,7 @@ const CONTENT_HEIGHTS = {
 
 export const App = () => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
-  const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(false);
+  const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(true);
 
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [toolbarHeight, setToolbarHeight] = useState(0);

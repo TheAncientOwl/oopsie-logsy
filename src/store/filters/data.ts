@@ -6,11 +6,12 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Filters data structures.
  */
 
 import { v7 as uuidv7 } from 'uuid';
+import { UUID } from '../common/types';
 import { TRegexTag } from '../log-regex-tags/data';
 
 // <types>
@@ -22,7 +23,7 @@ export type TOverAlternative = {
 export type TOverAlternatives = Array<TOverAlternative>;
 
 export type TFilterComponent = {
-  id: string;
+  id: UUID;
   overAlternativeId: string;
   data: string;
   isRegex: boolean;
@@ -36,11 +37,11 @@ export type TFilterColors = {
 };
 
 export type TFilter = {
-  id: string;
+  id: UUID;
   name: string;
   isActive: boolean;
   isHighlightOnly: boolean;
-  components: Array<TFilterComponent>;
+  componentIDs: Array<UUID>;
   colors: TFilterColors;
   priority: number;
   collapsed: boolean;
@@ -49,14 +50,17 @@ export type TFilter = {
 export type TFilterTab = {
   id: string;
   name: string;
-  filters: Array<TFilter>;
+  filterIDs: Array<UUID>;
 };
 
 export interface IDefaultState {
   loading: boolean;
-  filterTabs: Array<TFilterTab>;
   focusedTabId: string;
-  canSaveTabs: boolean;
+  canSaveData: boolean;
+
+  tabs: Array<TFilterTab>;
+  filters: Array<TFilter>;
+  components: Array<TFilterComponent>;
 }
 // </types>
 
@@ -70,9 +74,12 @@ export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternat
     }));
 };
 
-export const checkCanSaveTabs = (tabs: Array<TFilterTab>) => {
+export const checkCanSaveData = (
+  tabs: Array<TFilterTab>,
+  filters: Array<TFilter>,
+  components: Array<TFilterComponent>
+) => {
   // TODO: do actual checking...
-  console.logX(checkCanSaveTabs.name, `Checking ${tabs.length} tags for saving`);
   return true;
 };
 
@@ -86,12 +93,12 @@ export const DefaultFactory = {
     ignoreCase: true,
   }),
 
-  makeFilter: (overAlternativeId = ''): TFilter => ({
+  makeFilter: (components: Array<TFilterComponent>): TFilter => ({
     id: uuidv7(),
     name: 'NewFilter',
     isActive: true,
     isHighlightOnly: false,
-    components: [DefaultFactory.makeFilterComponent(overAlternativeId)],
+    componentIDs: components.map(component => component.id),
     colors: {
       fg: 'rgb(255, 255, 255)',
       bg: 'rgba(0, 0, 0, 0)',
@@ -100,21 +107,56 @@ export const DefaultFactory = {
     collapsed: false,
   }),
 
-  makeFilterTab: (overAlternativeId = ''): TFilterTab => ({
+  makeFilterTab: (filters: Array<TFilter>): TFilterTab => ({
     id: uuidv7(),
     name: 'NewFilterTab',
-    filters: [DefaultFactory.makeFilter(overAlternativeId)],
+    filterIDs: filters.map(filter => filter.id),
   }),
+};
+
+export const getTabById = (caller: string, tabs: Array<TFilterTab>, id: UUID): TFilterTab => {
+  const tab = tabs.find(tab => tab.id === id);
+  console.assertX(caller, tab !== undefined, `Tab with ID ${id} missing in store`);
+  return tab as TFilterTab;
+};
+
+export const getFilterById = (caller: string, filters: Array<TFilter>, id: UUID): TFilter => {
+  const filter = filters.find(filter => filter.id === id);
+  console.assertX(caller, filter !== undefined, `Filter with ID ${id} missing in store`);
+  return filter as TFilter;
+};
+
+export const getFilterComponentById = (
+  caller: string,
+  components: Array<TFilterComponent>,
+  id: UUID
+): TFilterComponent => {
+  const component = components.find(component => component.id === id);
+  console.assertX(
+    caller,
+    component !== undefined,
+    `FilterComponent with ID ${id} missing in store`
+  );
+  return component as TFilterComponent;
 };
 // </helpers>
 
 // <data>
-export const defaultFilterTabs = [DefaultFactory.makeFilterTab()];
+const defaultComponent = DefaultFactory.makeFilterComponent();
+const defaultFilter = DefaultFactory.makeFilter([defaultComponent]);
+const defaultTab = DefaultFactory.makeFilterTab([defaultFilter]);
+
+const defaultComponents = [defaultComponent];
+const defaultFilters = [defaultFilter];
+const defaultTabs = [defaultTab];
 
 export const defaultState: IDefaultState = {
   loading: false,
-  filterTabs: defaultFilterTabs,
-  focusedTabId: defaultFilterTabs[0].id,
-  canSaveTabs: false,
+  focusedTabId: defaultTabs[0].id,
+  canSaveData: false,
+
+  tabs: defaultTabs,
+  filters: defaultFilters,
+  components: defaultComponents,
 };
 // </data>

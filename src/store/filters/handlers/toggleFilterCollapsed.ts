@@ -6,17 +6,17 @@
  *
  * @file toggleFilterCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description toggleFilterCollapsed handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type ToggleFilterCollapsedPayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetFilterId: UUID;
 };
 
 export interface ToggleFilterCollapsedAction {
@@ -29,35 +29,27 @@ export const toggleFilterCollapsed: IBasicStoreHandler<
   ToggleFilterCollapsedPayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
+  dispatch: (targetFilterId: UUID) =>
     basicDispatcher(ActionType.ToggleFilterCollapsed, () => ({
-      targetTabId,
       targetFilterId,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId } = payload;
+    const { targetFilterId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    collapsed: !filter.collapsed,
-                  }
-            ),
+            ...filter,
+            collapsed: !filter.collapsed,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
     };
   },
 };

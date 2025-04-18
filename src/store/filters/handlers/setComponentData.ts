@@ -6,18 +6,17 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description SetComponentData handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
+import { UUID } from '@/store/common/types';
 
 type SetComponentDataPayload = {
-  targetTabId: string;
-  targetFilterId: string;
-  targetComponentId: string;
+  targetComponentId: UUID;
   data: string;
 };
 
@@ -31,44 +30,28 @@ export const setComponentData: IBasicStoreHandler<
   SetComponentDataPayload,
   ActionType
 > = {
-  dispatch: (
-    targetTabId: string,
-    targetFilterId: string,
-    targetComponentId: string,
-    data: string
-  ) =>
+  dispatch: (targetComponentId: UUID, data: string) =>
     basicDispatcher(ActionType.SetFilterComponentData, () => ({
-      targetTabId,
-      targetFilterId,
       targetComponentId,
       data,
     })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId, targetComponentId, data } = payload;
+    const { targetComponentId, data } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newComponents = state.components.map(component =>
+      component.id !== targetComponentId
+        ? component
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    components: filter.components.map(component =>
-                      component.id !== targetComponentId ? component : { ...component, data }
-                    ),
-                  }
-            ),
+            ...component,
+            data,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      components: newComponents,
+      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
     };
   },
 };

@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Filters action types.
  */
 
@@ -36,8 +36,8 @@ import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEqual
 import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
 import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
 import { ToggleFilterCollapsedAction } from './handlers/toggleFilterCollapsed';
+import { ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
 import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
-import { ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterIgnoreActive';
 import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 
 export enum ActionType {

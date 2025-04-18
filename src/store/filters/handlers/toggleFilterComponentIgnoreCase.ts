@@ -4,10 +4,10 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file toggleComponentIsRegex.ts
+ * @file toggleFilterComponentIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.5
- * @description ToggleComponentIsRegex handler.
+ * @version 0.3
+ * @description ToggleFilterComponentIgnoreCase handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
@@ -15,22 +15,22 @@ import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
-type ToggleComponentIsRegexPayload = {
+type ToggleFilterComponentIgnoreCasePayload = {
   targetComponentId: UUID;
 };
 
-export interface ToggleComponentIsRegexAction {
-  type: ActionType.ToggleFilterComponentIsRegex;
-  payload: ToggleComponentIsRegexPayload;
+export interface ToggleFilterComponentIgnoreCaseAction {
+  type: ActionType.ToggleFilterComponentIgnoreCase;
+  payload: ToggleFilterComponentIgnoreCasePayload;
 }
 
-export const toggleComponentIsRegex: IBasicStoreHandler<
+export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
   IDefaultState,
-  ToggleComponentIsRegexPayload,
+  ToggleFilterComponentIgnoreCasePayload,
   ActionType
 > = {
   dispatch: (targetComponentId: UUID) =>
-    basicDispatcher(ActionType.ToggleFilterComponentIsRegex, () => ({ targetComponentId })),
+    basicDispatcher(ActionType.ToggleFilterComponentIgnoreCase, () => ({ targetComponentId })),
 
   reduce: (state, payload) => {
     const { targetComponentId } = payload;
@@ -40,7 +40,7 @@ export const toggleComponentIsRegex: IBasicStoreHandler<
         ? component
         : {
             ...component,
-            isRegex: !component.isRegex,
+            ignoreCase: !component.ignoreCase,
           }
     );
 

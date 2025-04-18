@@ -6,7 +6,7 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description InvokeGetTags handler.
  */
 
@@ -46,7 +46,7 @@ export const invokeGetTags: IApiCallStoreHandler<
 
     try {
       const tags = await invoke<Array<TRegexTag>>('get_regex_tags');
-      console.infoX(`invokeGetTags::dispatch`, `received ${tags.length} tags`);
+      console.traceX(`invokeGetTags::dispatch`, `received ${tags.length} tags`);
 
       const finalTags = tags.length === 0 ? [DefaultFactory.makeTag('Payload')] : tags;
 

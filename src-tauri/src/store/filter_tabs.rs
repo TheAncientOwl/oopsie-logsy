@@ -7,7 +7,7 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
@@ -47,7 +47,8 @@ pub struct Filter {
     pub is_active: bool,
     #[serde(rename = "isHighlightOnly")]
     pub is_highlight_only: bool,
-    pub components: Vec<FilterComponent>,
+    #[serde(rename = "componentIDs")]
+    pub component_ids: Vec<String>,
     pub colors: FilterColors,
     pub priority: u64,
     pub collapsed: bool,
@@ -57,41 +58,73 @@ pub struct Filter {
 pub struct FilterTab {
     pub id: String,
     pub name: String,
-    pub filters: Vec<Filter>,
+    #[serde(rename = "filterIDs")]
+    pub filter_ids: Vec<String>,
 }
 
 pub struct FilterTabsManager {
-    data: Vec<FilterTab>,
+    tabs: Vec<FilterTab>,
+    filters: Vec<Filter>,
+    components: Vec<FilterComponent>,
 }
 // </data>
 
 // <manager>
 impl FilterTabsManager {
     pub fn new() -> Self {
-        Self { data: Vec::new() }
+        Self {
+            tabs: Vec::new(),
+            filters: Vec::new(),
+            components: Vec::new(),
+        }
     }
 
-    pub fn set(&mut self, new_tabs: &Vec<FilterTab>) {
-        self.data.clear();
-        self.data.extend(new_tabs.iter().cloned());
+    pub fn set(
+        &mut self,
+        new_tabs: &Vec<FilterTab>,
+        new_filters: &Vec<Filter>,
+        new_components: &Vec<FilterComponent>,
+    ) {
+        self.tabs.clear();
+        self.tabs.extend(new_tabs.iter().cloned());
+
+        self.filters.clear();
+        self.filters.extend(new_filters.iter().cloned());
+
+        self.components.clear();
+        self.components.extend(new_components.iter().cloned());
     }
 
-    pub fn get(&self) -> &Vec<FilterTab> {
-        &self.data
+    pub fn get_tabs(&self) -> &Vec<FilterTab> {
+        &self.tabs
+    }
+
+    pub fn get_filters(&self) -> &Vec<Filter> {
+        &self.filters
+    }
+
+    pub fn get_components(&self) -> &Vec<FilterComponent> {
+        &self.components
     }
 }
 // </manager>
 
 // <events>
-pub static ON_STORE_SET_TABS: Lazy<Mutex<EventHandler<dyn Fn(&Vec<FilterTab>) + Send + Sync>>> =
-    Lazy::new(|| Mutex::new(EventHandler::new()));
-pub static ON_STORE_GET_TABS: Lazy<Mutex<EventHandler<dyn Fn(&Vec<FilterTab>) + Send + Sync>>> =
-    Lazy::new(|| Mutex::new(EventHandler::new()));
+pub static ON_STORE_SET_TABS: Lazy<
+    Mutex<EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>>,
+> = Lazy::new(|| Mutex::new(EventHandler::new()));
+pub static ON_STORE_GET_TABS: Lazy<
+    Mutex<EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>>,
+> = Lazy::new(|| Mutex::new(EventHandler::new()));
 // </events>
 
 // <commands>
 #[tauri::command]
-pub fn set_filter_tabs(tabs: Vec<FilterTab>) -> Result<u16, String> {
+pub fn set_filter_tabs(
+    tabs: Vec<FilterTab>,
+    filters: Vec<Filter>,
+    components: Vec<FilterComponent>,
+) -> Result<u16, String> {
     let _log = ScopeLog::new(&set_filter_tabs);
 
     ON_STORE_SET_TABS
@@ -99,28 +132,30 @@ pub fn set_filter_tabs(tabs: Vec<FilterTab>) -> Result<u16, String> {
         .unwrap()
         .handlers()
         .iter()
-        .for_each(|handler| handler(&tabs));
+        .for_each(|handler| handler(&tabs, &filters, &components));
 
     let mut instance = Store::get_instance()?;
-    instance.filter_tabs.set(&tabs);
+    instance.filter_tabs.set(&tabs, &filters, &components);
 
     Ok(command_status::ok())
 }
 
 #[tauri::command]
-pub fn get_filter_tabs() -> Result<Vec<FilterTab>, String> {
+pub fn get_filter_tabs() -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
     let _log = ScopeLog::new(&get_filter_tabs);
 
     let instance = Store::get_instance()?;
-    let tabs = instance.filter_tabs.get();
+    let tabs = instance.filter_tabs.get_tabs();
+    let filters = instance.filter_tabs.get_filters();
+    let components = instance.filter_tabs.get_components();
 
     ON_STORE_GET_TABS
         .lock()
         .unwrap()
         .handlers()
         .iter()
-        .for_each(|handler| handler(&tabs));
+        .for_each(|handler| handler(&tabs, &filters, &components));
 
-    Ok(tabs.clone())
+    Ok((tabs.clone(), filters.clone(), components.clone()))
 }
 // </commands>

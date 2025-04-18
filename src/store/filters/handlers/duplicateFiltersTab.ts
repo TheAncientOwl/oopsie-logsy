@@ -6,14 +6,21 @@
  *
  * @file duplicateFiltersTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description DuplicateFiltersTab handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState, TFilterTab } from '../data';
+import {
+  checkCanSaveData,
+  getFilterById,
+  getFilterComponentById,
+  IDefaultState,
+  TFilterTab,
+} from '../data';
+import { UUID } from '@/store/common/types';
 
 type DuplicateFiltersTabPayload = {
   targetTabId: string;
@@ -35,40 +42,71 @@ export const duplicateFiltersTab: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId } = payload;
 
-    let newFocusTabId = state.focusedTabId;
+    const newComponents = [...state.components];
+    const newFilters = [...state.filters];
+    const newTabs: Array<TFilterTab> = [];
 
-    const handleDuplication = (tabs: Array<TFilterTab>): Array<TFilterTab> => {
-      const newArr = [] as Array<TFilterTab>;
+    let newFocusedTabId = state.focusedTabId;
 
-      tabs.forEach(tab => {
-        newArr.push(tab);
-        if (tab.id === targetTabId) {
-          console.infoX(handleDuplication.name, `Original: ${JSON.stringify(tab)}`);
-          const newTab = structuredClone(tab);
-          newTab.name = `${newTab.name}*`;
-          newTab.id = uuidv7();
-          for (let filter of newTab.filters) {
-            filter.id = uuidv7();
-            for (let component of filter.components) {
-              component.id = uuidv7();
-            }
-          }
-          newFocusTabId = newTab.id;
-          newArr.push(newTab);
-          console.infoX(handleDuplication.name, `Duplicated: ${JSON.stringify(newTab)}`);
-        }
-      });
+    // build new tabs
+    state.tabs.forEach(tab => {
+      // push original tab
+      newTabs.push(tab);
 
-      return newArr;
-    };
+      // dupe if ID matches
+      if (tab.id === targetTabId) {
+        const dupedTab = structuredClone(tab);
+        dupedTab.id = uuidv7();
+        dupedTab.name = `${dupedTab.name}*`;
 
-    const newTabs = handleDuplication(state.filterTabs);
+        newFocusedTabId = dupedTab.id;
+
+        // dupe filters
+        const dupedFiltersIds: Array<UUID> = [];
+        dupedTab.filterIDs.forEach(filterId => {
+          const dupedFilter = structuredClone(
+            getFilterById(`duplicateFiltersTab::reduce`, state.filters, filterId)
+          );
+          dupedFilter.id = uuidv7();
+
+          // dupe components
+          const dupedComponentIds: Array<UUID> = [];
+          dupedFilter.componentIDs.forEach(componentId => {
+            const dupedComponent = structuredClone(
+              getFilterComponentById(`duplicateFiltersTab::reduce`, state.components, componentId)
+            );
+            dupedComponent.id = uuidv7();
+
+            // add duped component
+            dupedComponentIds.push(dupedComponent.id);
+            newComponents.push(dupedComponent);
+          });
+          dupedFilter.componentIDs = dupedComponentIds;
+
+          // add duped filter
+          dupedFiltersIds.push(dupedFilter.id);
+          newFilters.push(dupedFilter);
+        });
+        dupedTab.filterIDs = dupedFiltersIds;
+
+        // add duped tab
+        newTabs.push(dupedTab);
+      }
+    });
+
+    console.assertX(
+      `duplicateFiltersTab::reduce`,
+      newFocusedTabId !== state.focusedTabId,
+      `Failed to change focus tab ID when duplicating tab with ID ${targetTabId}`
+    );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
-      focusedTabId: newFocusTabId,
+      components: newComponents,
+      filters: newFilters,
+      tabs: newTabs,
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      focusedTabId: newFocusedTabId,
     };
   },
 };

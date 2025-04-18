@@ -6,17 +6,17 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description ToggleFilterActive handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
-import { checkCanSaveTabs, IDefaultState } from '../data';
+import { checkCanSaveData, IDefaultState } from '../data';
 
 type ToggleFilterActivePayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetFilterId: UUID;
 };
 
 export interface ToggleFilterActiveAction {
@@ -29,35 +29,25 @@ export const toggleFilterActive: IBasicStoreHandler<
   ToggleFilterActivePayload,
   ActionType
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.ToggleFilterActive, () => ({
-      targetTabId,
-      targetFilterId,
-    })),
+  dispatch: (targetFilterId: UUID) =>
+    basicDispatcher(ActionType.ToggleFilterActive, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
-    const { targetTabId, targetFilterId } = payload;
+    const { targetFilterId } = payload;
 
-    const newTabs = state.filterTabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
+    const newFilters = state.filters.map(filter =>
+      filter.id !== targetFilterId
+        ? filter
         : {
-            ...tab,
-            filters: tab.filters.map(filter =>
-              filter.id !== targetFilterId
-                ? filter
-                : {
-                    ...filter,
-                    isActive: !filter.isActive,
-                  }
-            ),
+            ...filter,
+            isActive: !filter.isActive,
           }
     );
 
     return {
       ...state,
-      filterTabs: newTabs,
-      canSaveTabs: checkCanSaveTabs(newTabs),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
     };
   },
 };
