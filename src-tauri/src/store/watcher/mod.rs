@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: logging mod file.
 //!
 
@@ -62,14 +62,15 @@ pub fn on_set_filter_tabs(
         &on_set_filter_tabs,
         "Received {} filters: {}",
         filters.len(),
-        serde_json::to_string(&tabs).unwrap_or_else(|_| "Failed to serialize filters".to_string())
+        serde_json::to_string(&filters)
+            .unwrap_or_else(|_| "Failed to serialize filters".to_string())
     );
 
     log_trace!(
         &on_set_filter_tabs,
         "Received {} components: {}",
         components.len(),
-        serde_json::to_string(&tabs)
+        serde_json::to_string(&components)
             .unwrap_or_else(|_| "Failed to serialize components".to_string())
     );
 }
