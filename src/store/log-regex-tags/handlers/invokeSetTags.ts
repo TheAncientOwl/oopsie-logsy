@@ -6,7 +6,7 @@
  *
  * @file invokeSetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description InvokeSetTags handler.
  */
 
@@ -43,10 +43,10 @@ export const invokeSetTags: IApiCallStoreHandler<
 
     try {
       const response = await invoke('set_regex_tags', { tags });
-      console.traceX(`invokeSetTags::dispatch`, `rust response: ${response}`);
+      console.infoX(invokeSetTags.dispatch.name, `rust response: ${response}`);
       dispatch({ type: ActionType.InvokeSetTagsOK, payload: {} });
     } catch (error) {
-      console.errorX(`invokeGetTags::dispatch`, `error sending tags to rust: ${error}`);
+      console.errorX(invokeSetTags.dispatch.name, `error sending tags to rust: ${error}`);
       dispatch({ type: ActionType.InvokeSetTagsNOK, payload: { error } });
     }
   },
