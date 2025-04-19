@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Filter component.
  */
 
@@ -32,23 +32,18 @@ import {
   toggleFilterComponentIgnoreCase,
 } from '@/store/filters/handlers';
 import { ButtonGroup, HStack, Input } from '@chakra-ui/react';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponentTagSelector } from './FilterComponentTagSelector';
 
-interface FilterComponentProps extends PropsFromRedux {
+interface FilterComponentProps {
   tabId: UUID;
   filterId: UUID;
   componentId: UUID;
 }
 
-const FilterComponentImpl = (props: FilterComponentProps) => {
+const FilterComponentImpl = (props: FilterComponentProps & PropsFromRedux) => {
   const border = useColorModeValue('gray.500', 'gray.500');
-
-  const component = useMemo(
-    () => getFilterComponentById(FilterComponentImpl.name, props.components, props.componentId),
-    [props.components, props.componentId]
-  );
 
   const handleToggleIsRegexClick = () => {
     props.toggleComponentIsRegex(props.componentId);
@@ -86,41 +81,34 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
         tabId={props.tabId}
         filterId={props.filterId}
         componentId={props.componentId}
-        value={component.overAlternativeId}
+        value={props.component.overAlternativeId}
       />
-
-      {/* <SingleSelect
-        root={{ size: 'md', maxWidth: '150px', variant: 'outline' }}
-        collection={props.overAlternatives}
-        value={component.overAlternativeId}
-        onChange={handleChangeOverAlternative}
-      /> */}
 
       <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
         <TooltipIconButton
-          tooltip={component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
+          tooltip={props.component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
           onClick={handleToggleIsRegexClick}
         >
-          {component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
+          {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
         </TooltipIconButton>
         <TooltipIconButton
-          tooltip={`Toggle Case: (Now ${component.ignoreCase ? 'Ignore' : 'Match'})`}
+          tooltip={`Toggle Case: (Now ${props.component.ignoreCase ? 'Ignore' : 'Match'})`}
           onClick={handletoggleFilterComponentIgnoreCaseClick}
         >
-          {component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
+          {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
         </TooltipIconButton>
         <TooltipIconButton
-          tooltip={`Toggle: (Now ${component.isEquals ? '' : 'Not '}Equals)`}
+          tooltip={`Toggle: (Now ${props.component.isEquals ? '' : 'Not '}Equals)`}
           onClick={handleToggleIsEqualsClick}
         >
-          {component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
+          {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
         </TooltipIconButton>
       </ButtonGroup>
 
       <Input
         borderColor={border}
         colorPalette='green'
-        defaultValue={component.data}
+        defaultValue={props.component.data}
         placeholder='Filter'
         onChange={handleDataChange}
       />
@@ -129,8 +117,12 @@ const FilterComponentImpl = (props: FilterComponentProps) => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({
-  components: state.filters.components,
+const mapState = (state: RootState, ownProps: FilterComponentProps) => ({
+  component: getFilterComponentById(
+    `FilterComponent::mapState`,
+    state.filters.components,
+    ownProps.componentId
+  ),
 });
 
 const mapDispatch = {

@@ -6,7 +6,7 @@
  *
  * @file FilterComponentTagSelector.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Tag selector for filter component.
  */
 
@@ -46,7 +46,6 @@ const FilterComponentTagSelectorImpl: React.FC<FilterComponentTagSelectorProps> 
 // <redux>
 const mapState = (state: RootState) => ({
   overAlternatives: state.logRegexTags.overAlternatives,
-  focusedTabId: state.filters.focusedTabId,
 });
 
 const mapDispatch = {

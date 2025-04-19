@@ -10,7 +10,7 @@
  * @description Filter tab related tools.
  */
 
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { DoubleCheck } from '@/components/ui/DoubleCheck';
@@ -42,20 +42,16 @@ import { ButtonGroup, HStack, Input, Separator, Span } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 
 const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
+  console.debugX(FilterTabToolBoxImpl.name, `Render filters toolbox`);
+
   const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
   const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
-  const focusedTab = useMemo(() => {
-    const focusedTab = props.tabs.find(tab => tab.id === props.focusedTabId);
-
-    console.assertX(
-      FilterTabToolBox.name,
-      focusedTab !== undefined,
-      `Failed to find focused tab with id ${props.focusedTabId}`
-    );
-
-    return focusedTab;
-  }, [props.focusedTabId, props.tabs]);
+  console.assertX(
+    FilterTabToolBox.name,
+    props.focusedTab !== undefined,
+    `Failed to find focused tab with id ${props.focusedTabId}`
+  );
 
   const border = useColorModeValue('gray.500', 'gray.500');
 
@@ -167,7 +163,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Tab Name'
-          value={focusedTab?.name}
+          value={props.focusedTab?.name}
           onChange={handleNameChange}
         />
       </HStack>
@@ -180,7 +176,8 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
         onAccept={handleDeleteFilterTabClick}
         onDecline={toggleDeleteDoubleCheck}
       >
-        Are you sure you want to <Span color='red.500'>delete</Span> <b>{focusedTab?.name}</b>?
+        Are you sure you want to <Span color='red.500'>delete</Span> <b>{props.focusedTab?.name}</b>
+        ?
       </DoubleCheck>
 
       <DoubleCheck
@@ -192,7 +189,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
         onDecline={toggleClearDoubleCheck}
       >
         Are you sure you want to <Span color='red.500'>clear all filters</Span> of{' '}
-        <b>{focusedTab?.name}</b>?
+        <b>{props.focusedTab?.name}</b>?
       </DoubleCheck>
     </>
   );
@@ -201,7 +198,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
 // <redux>
 const mapState = (state: RootState) => ({
   focusedTabId: state.filters.focusedTabId,
-  tabs: state.filters.tabs,
+  focusedTab: state.filters.tabs.find(tab => tab.id === state.filters.focusedTabId),
 });
 
 const mapDispatch = {

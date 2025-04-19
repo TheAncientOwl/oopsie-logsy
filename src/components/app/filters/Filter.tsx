@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.25
+ * @version 0.26
  * @description Filter component
  */
 
@@ -46,27 +46,22 @@ import {
   Separator,
   Stack,
 } from '@chakra-ui/react';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
 
-interface FilterProps extends PropsFromRedux {
+interface FilterProps {
   tabId: UUID;
   filterId: UUID;
 }
 
-const FilterImpl = (props: FilterProps) => {
+const FilterImpl = (props: FilterProps & PropsFromRedux) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.500');
 
-  const filter = useMemo(
-    () => getFilterById(FilterImpl.name, props.filters, props.filterId),
-    [props.filters, props.filterId]
-  );
-
-  const [filterFg, setFilterFg] = useState(filter.colors.fg);
-  const [filterBg, setFilterBg] = useState(filter.colors.bg);
+  const [filterFg, setFilterFg] = useState(props.filter.colors.fg);
+  const [filterBg, setFilterBg] = useState(props.filter.colors.bg);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     props.setFilterName(props.filterId, event.target.value);
@@ -113,10 +108,10 @@ const FilterImpl = (props: FilterProps) => {
       <HStack>
         <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
           <TooltipIconButton
-            tooltip={filter.collapsed ? 'Show Filter' : 'Hide filter'}
+            tooltip={props.filter.collapsed ? 'Show Filter' : 'Hide filter'}
             onClick={handleFilterCollapseClick}
           >
-            {filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
+            {props.filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
           </TooltipIconButton>
           <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
             <DuplicateIcon />
@@ -131,7 +126,7 @@ const FilterImpl = (props: FilterProps) => {
         <FilterColorPicker
           tabId={props.tabId}
           filterId={props.filterId}
-          defaultColors={filter.colors}
+          defaultColors={props.filter.colors}
           onColorChangeFg={details => setFilterFg(details.valueAsString)}
           onColorChangeBg={details => setFilterBg(details.valueAsString)}
         />
@@ -143,7 +138,7 @@ const FilterImpl = (props: FilterProps) => {
             size='md'
             min={0}
             colorPalette='green'
-            value={filter.priority.toString()}
+            value={props.filter.priority.toString()}
             onValueChange={handleFilterPriorityChange}
           >
             <NumberInput.Control bg={bg} />
@@ -162,14 +157,14 @@ const FilterImpl = (props: FilterProps) => {
           borderColor={border}
           colorPalette='green'
           placeholder='Filter Name'
-          defaultValue={filter.name}
+          defaultValue={props.filter.name}
           onChange={handleNameChange}
           color={filterFg}
           backgroundColor={filterBg}
         />
       </HStack>
 
-      <Collapsible.Root open={!filter.collapsed}>
+      <Collapsible.Root open={!props.filter.collapsed}>
         <Collapsible.Content>
           <Stack gap='1em' padding='0.75em 0.5em'>
             <HStack gap='1em'>
@@ -183,18 +178,18 @@ const FilterImpl = (props: FilterProps) => {
                 <NewIcon />
               </TooltipIconButton>
 
-              <CheckBox checked={filter.isActive} onCheckedChange={handleFilterToggle}>
+              <CheckBox checked={props.filter.isActive} onCheckedChange={handleFilterToggle}>
                 Active
               </CheckBox>
               <CheckBox
-                checked={filter.isHighlightOnly}
+                checked={props.filter.isHighlightOnly}
                 onCheckedChange={handleFilterToggleHiglightOnly}
               >
                 Highlight Only
               </CheckBox>
             </HStack>
 
-            <For each={filter.componentIDs}>
+            <For each={props.filter.componentIDs}>
               {componentId => (
                 <FilterComponent
                   key={componentId}
@@ -212,8 +207,8 @@ const FilterImpl = (props: FilterProps) => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({
-  filters: state.filters.filters,
+const mapState = (state: RootState, ownProps: FilterProps) => ({
+  filter: getFilterById(`Filter::mapState`, state.filters.filters, ownProps.filterId),
 });
 
 const mapDispatch = {
