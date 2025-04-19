@@ -6,12 +6,12 @@
  *
  * @file toggleFilterComponentIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ToggleFilterComponentIgnoreCase handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -35,14 +35,10 @@ export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetComponentId } = payload;
 
-    const newComponents = state.components.map(component =>
-      component.id !== targetComponentId
-        ? component
-        : {
-            ...component,
-            ignoreCase: !component.ignoreCase,
-          }
-    );
+    const newComponents = modifyWhereId(state.components, targetComponentId, oldComponent => ({
+      ...oldComponent,
+      ignoreCase: !oldComponent.ignoreCase,
+    }));
 
     return {
       ...state,

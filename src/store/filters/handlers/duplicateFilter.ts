@@ -6,13 +6,12 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description DuplicateFilter handler.
  */
 
+import { uuid, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
-import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
 import { checkCanSaveData, getFilterComponentById, IDefaultState, TFilter } from '../data';
 
@@ -54,7 +53,7 @@ export const duplicateFilter: IBasicStoreHandler<
         // dupe if ID matches
         if (filter.id === targetFilterId) {
           const dupedFilter = structuredClone(filter);
-          dupedFilter.id = uuidv7();
+          dupedFilter.id = uuid();
           dupedFilter.name = `${dupedFilter.name}*`;
 
           dupedFilterId = dupedFilter.id;
@@ -65,7 +64,7 @@ export const duplicateFilter: IBasicStoreHandler<
             const dupedComponent = structuredClone(
               getFilterComponentById(`duplicateFilter::reduce`, state.components, componentId)
             );
-            dupedComponent.id = uuidv7();
+            dupedComponent.id = uuid();
 
             // add duped component
             dupedComponentIds.push(dupedComponent.id);
@@ -79,7 +78,7 @@ export const duplicateFilter: IBasicStoreHandler<
       });
 
       console.assertX(
-        `duplicateFilter::reduce`,
+        'reduce',
         dupedFilterId !== undefined,
         `Filter with ID ${targetFilterId} missing in store while trying to duplicate`
       );

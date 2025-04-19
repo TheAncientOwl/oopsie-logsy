@@ -6,12 +6,12 @@
  *
  * @file deleteFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description DeleteFilter handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
+import { contains, UUID } from '@/store/common/identifier';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -56,7 +56,7 @@ export const deleteFilter: IBasicStoreHandler<IDefaultState, DeleteFilterPayload
     });
 
     const newComponents = state.components.filter(
-      component => componentIdsToRemove.find(id => component.id === id) === undefined
+      component => !contains(componentIdsToRemove, component.id)
     );
 
     return {

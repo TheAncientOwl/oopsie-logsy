@@ -6,12 +6,12 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description AddFilterComponent.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
 
@@ -38,14 +38,10 @@ export const addNewFilterComponent: IBasicStoreHandler<
     const newComponent = DefaultFactory.makeFilterComponent();
     const newComponents = [...state.components, newComponent];
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            componentIDs: [...filter.componentIDs, newComponent.id],
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      componentIDs: [...oldFilter.componentIDs, newComponent.id],
+    }));
 
     return {
       ...state,

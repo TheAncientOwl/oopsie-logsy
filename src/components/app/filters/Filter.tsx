@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.24
+ * @version 0.25
  * @description Filter component
  */
 
@@ -23,7 +23,7 @@ import { Tooltip } from '@/components/ui/Tooltip';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
-import { UUID } from '@/store/common/types';
+import { UUID } from '@/store/common/identifier';
 import { getFilterById } from '@/store/filters/data';
 import {
   addNewFilterComponent,

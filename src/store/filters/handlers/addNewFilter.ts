@@ -6,12 +6,12 @@
  *
  * @file addNewFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description AddNewFilter handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
 
@@ -37,14 +37,10 @@ export const addNewFilter: IBasicStoreHandler<IDefaultState, AddNewFilterPayload
     const newFilter = DefaultFactory.makeFilter([newComponent]);
     const newFilters = [...state.filters, newFilter];
 
-    const newTabs = state.tabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
-        : {
-            ...tab,
-            filterIDs: [...tab.filterIDs, newFilter.id],
-          }
-    );
+    const newTabs = modifyWhereId(state.tabs, targetTabId, oldTab => ({
+      ...oldTab,
+      filterIDs: [...oldTab.filterIDs, newFilter.id],
+    }));
 
     return {
       ...state,

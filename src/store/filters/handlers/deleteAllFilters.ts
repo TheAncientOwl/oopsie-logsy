@@ -6,12 +6,12 @@
  *
  * @file deleteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description DeleteAllFilters handler.
  */
 
+import { contains, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, DefaultFactory, getTabById, IDefaultState } from '../data';
 
@@ -44,16 +44,16 @@ export const deleteAllFilters: IBasicStoreHandler<
     const componentIdsToRemove: Array<UUID> = [];
 
     const newFilters = state.filters.filter(filter => {
-      if (filterIdsToRemove.find(id => id === filter.id) === undefined) {
-        return true;
-      } else {
+      if (contains(filterIdsToRemove, filter.id)) {
         filter.componentIDs.forEach(componentId => componentIdsToRemove.push(componentId));
         return false;
+      } else {
+        return true;
       }
     });
 
     const newComponents = state.components.filter(
-      component => componentIdsToRemove.find(id => id === component.id) === undefined
+      component => !contains(componentIdsToRemove, component.id)
     );
 
     const newComponent = DefaultFactory.makeFilterComponent();

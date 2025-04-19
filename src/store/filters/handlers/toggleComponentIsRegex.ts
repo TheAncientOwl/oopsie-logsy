@@ -6,12 +6,12 @@
  *
  * @file toggleComponentIsRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description ToggleComponentIsRegex handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -35,14 +35,10 @@ export const toggleComponentIsRegex: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetComponentId } = payload;
 
-    const newComponents = state.components.map(component =>
-      component.id !== targetComponentId
-        ? component
-        : {
-            ...component,
-            isRegex: !component.isRegex,
-          }
-    );
+    const newComponents = modifyWhereId(state.components, targetComponentId, oldComponent => ({
+      ...oldComponent,
+      isRegex: !oldComponent.isRegex,
+    }));
 
     return {
       ...state,

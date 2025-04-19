@@ -6,12 +6,12 @@
  *
  * @file toggleFilterHighlight.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description ToggleFilterHighlight handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -35,14 +35,10 @@ export const toggleFilterHighlightOnly: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetFilterId } = payload;
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            isHighlightOnly: !filter.isHighlightOnly,
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      isHighlightOnly: !oldFilter.isHighlightOnly,
+    }));
 
     return {
       ...state,

@@ -6,12 +6,12 @@
  *
  * @file toggleFilterCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description toggleFilterCollapsed handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -37,14 +37,10 @@ export const toggleFilterCollapsed: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetFilterId } = payload;
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            collapsed: !filter.collapsed,
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      collapsed: !oldFilter.collapsed,
+    }));
 
     return {
       ...state,

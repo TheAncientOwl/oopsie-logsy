@@ -6,12 +6,12 @@
  *
  * @file deleteFilterComponent.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description DeleteFilterComponent.ts.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
+import { modifyWhereId, remove, removeById, UUID } from '@/store/common/identifier';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -39,18 +39,12 @@ export const deleteFilterComponent: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetFilterId, targetComponentId } = payload;
 
-    const newComponents = state.components.filter(component => component.id !== targetComponentId);
+    const newComponents = removeById(state.components, targetComponentId);
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            componentIDs: filter.componentIDs.filter(
-              componentId => componentId !== targetComponentId
-            ),
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      componentIDs: remove(oldFilter.componentIDs, targetComponentId),
+    }));
 
     return {
       ...state,

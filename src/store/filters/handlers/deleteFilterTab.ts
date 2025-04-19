@@ -6,12 +6,12 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description DeleteFilterTab handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
+import { contains, UUID } from '@/store/common/identifier';
 import { ActionType } from '../actions';
 import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
 
@@ -51,16 +51,24 @@ export const deleteFilterTab: IBasicStoreHandler<
 
     const componentIdsToDelete: Array<UUID> = [];
     const newFilters = state.filters.filter(filter => {
-      if (filterIdsToDelete.find(id => id === filter.id) === undefined) {
-        return true;
-      } else {
+      if (contains(filterIdsToDelete, filter.id)) {
         filter.componentIDs.forEach(componentId => componentIdsToDelete.push(componentId));
         return false;
+      } else {
+        return true;
       }
     });
 
     const newComponents = state.components.filter(
-      component => componentIdsToDelete.find(id => id === component.id) === undefined
+      component => !contains(componentIdsToDelete, component.id)
+    );
+
+    newFocusIndex = Math.min(newFocusIndex, newTabs.length - 1);
+
+    console.traceX(
+      deleteFilterTab.reduce.name,
+      `new focus index: ${newFocusIndex}`,
+      newTabs[newFocusIndex]
     );
 
     if (newTabs.length === 0) {

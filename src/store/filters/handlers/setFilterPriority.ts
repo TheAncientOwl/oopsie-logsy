@@ -6,12 +6,12 @@
  *
  * @file setFilterPriority.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SetFilterPriority handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -39,14 +39,10 @@ export const setFilterPriority: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetFilterId, priority } = payload;
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            priority,
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      priority,
+    }));
 
     return {
       ...state,

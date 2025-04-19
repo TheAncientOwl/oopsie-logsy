@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filter component.
  */
 
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/Icons';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { RootState } from '@/store';
-import { UUID } from '@/store/common/types';
+import { UUID } from '@/store/common/identifier';
 import { getFilterComponentById } from '@/store/filters/data';
 import {
   deleteFilterComponent,

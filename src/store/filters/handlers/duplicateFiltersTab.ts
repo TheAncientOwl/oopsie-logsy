@@ -6,12 +6,12 @@
  *
  * @file duplicateFiltersTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description DuplicateFiltersTab handler.
  */
 
+import { uuid, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { v7 as uuidv7 } from 'uuid';
 import { ActionType } from '../actions';
 import {
   checkCanSaveData,
@@ -20,7 +20,6 @@ import {
   IDefaultState,
   TFilterTab,
 } from '../data';
-import { UUID } from '@/store/common/types';
 
 type DuplicateFiltersTabPayload = {
   targetTabId: string;
@@ -56,7 +55,7 @@ export const duplicateFiltersTab: IBasicStoreHandler<
       // dupe if ID matches
       if (tab.id === targetTabId) {
         const dupedTab = structuredClone(tab);
-        dupedTab.id = uuidv7();
+        dupedTab.id = uuid();
         dupedTab.name = `${dupedTab.name}*`;
 
         newFocusedTabId = dupedTab.id;
@@ -67,7 +66,7 @@ export const duplicateFiltersTab: IBasicStoreHandler<
           const dupedFilter = structuredClone(
             getFilterById(`duplicateFiltersTab::reduce`, state.filters, filterId)
           );
-          dupedFilter.id = uuidv7();
+          dupedFilter.id = uuid();
 
           // dupe components
           const dupedComponentIds: Array<UUID> = [];
@@ -75,7 +74,7 @@ export const duplicateFiltersTab: IBasicStoreHandler<
             const dupedComponent = structuredClone(
               getFilterComponentById(`duplicateFiltersTab::reduce`, state.components, componentId)
             );
-            dupedComponent.id = uuidv7();
+            dupedComponent.id = uuid();
 
             // add duped component
             dupedComponentIds.push(dupedComponent.id);
@@ -95,7 +94,7 @@ export const duplicateFiltersTab: IBasicStoreHandler<
     });
 
     console.assertX(
-      `duplicateFiltersTab::reduce`,
+      duplicateFiltersTab.reduce.name,
       newFocusedTabId !== state.focusedTabId,
       `Failed to change focus tab ID when duplicating tab with ID ${targetTabId}`
     );

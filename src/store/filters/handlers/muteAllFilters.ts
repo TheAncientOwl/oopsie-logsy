@@ -6,12 +6,12 @@
  *
  * @file muteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description MuteAllFilters handler.
  */
 
+import { modifyWhereIdAnyOf, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, getTabById, IDefaultState } from '../data';
 
@@ -38,14 +38,10 @@ export const muteAllFilters: IBasicStoreHandler<IDefaultState, MuteAllFiltersPay
         targetTabId
       ).filterIDs;
 
-      const newFilters = state.filters.map(filter =>
-        filterIdsToMute.find(id => id === filter.id) === undefined
-          ? filter
-          : {
-              ...filter,
-              isActive: false,
-            }
-      );
+      const newFilters = modifyWhereIdAnyOf(state.filters, filterIdsToMute, oldFilter => ({
+        ...oldFilter,
+        isActive: false,
+      }));
 
       return {
         ...state,

@@ -6,12 +6,12 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetComponentOverAlternative handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -39,14 +39,10 @@ export const setComponentOverAlternative: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetComponentId, overAlternativeId } = payload;
 
-    const newComponents = state.components.map(component =>
-      component.id !== targetComponentId
-        ? component
-        : {
-            ...component,
-            overAlternativeId,
-          }
-    );
+    const newComponents = modifyWhereId(state.components, targetComponentId, oldComponent => ({
+      ...oldComponent,
+      overAlternativeId,
+    }));
 
     return {
       ...state,

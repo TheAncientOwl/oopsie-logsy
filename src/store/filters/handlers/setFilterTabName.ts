@@ -6,14 +6,14 @@
  *
  * @file setFilterTabName.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SetFilterTabName handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
-import { UUID } from '@/store/common/types';
 
 type SetFilterTabNamePayload = {
   targetTabId: UUID;
@@ -36,14 +36,7 @@ export const setFilterTabName: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetTabId, name } = payload;
 
-    const newTabs = state.tabs.map(tab =>
-      tab.id !== targetTabId
-        ? tab
-        : {
-            ...tab,
-            name,
-          }
-    );
+    const newTabs = modifyWhereId(state.tabs, targetTabId, oldTab => ({ ...oldTab, name }));
 
     return {
       ...state,

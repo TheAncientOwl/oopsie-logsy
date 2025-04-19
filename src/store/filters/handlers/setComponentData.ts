@@ -6,14 +6,14 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetComponentData handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
-import { UUID } from '@/store/common/types';
 
 type SetComponentDataPayload = {
   targetComponentId: UUID;
@@ -39,14 +39,10 @@ export const setComponentData: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetComponentId, data } = payload;
 
-    const newComponents = state.components.map(component =>
-      component.id !== targetComponentId
-        ? component
-        : {
-            ...component,
-            data,
-          }
-    );
+    const newComponents = modifyWhereId(state.components, targetComponentId, oldComponent => ({
+      ...oldComponent,
+      data,
+    }));
 
     return {
       ...state,

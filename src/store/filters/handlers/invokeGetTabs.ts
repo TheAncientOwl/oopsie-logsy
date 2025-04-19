@@ -6,7 +6,7 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description InvokeGetTabs handler.
  */
 
@@ -50,19 +50,17 @@ export const invokeGetTabs: IApiCallStoreHandler<
         [Array<TFilterTab>, Array<TFilter>, Array<TFilterComponent>]
       >('get_filter_tabs');
       if (tabs.length !== 0) {
-        console.traceX(`invokeGetTabs::dispatch`, `Received ${tabs.length} tabs:`, tabs);
-
-        console.traceX(`invokeGetTabs::dispatch`, `Received ${filters.length} filters:`, filters);
-
+        console.traceX(invokeGetTabs.dispatch.name, `Received ${tabs.length} tabs:`, tabs);
+        console.traceX(invokeGetTabs.dispatch.name, `Received ${filters.length} filters:`, filters);
         console.traceX(
-          `invokeGetTabs::dispatch`,
+          invokeGetTabs.dispatch.name,
           `Received ${components.length} components:`,
           components
         );
 
         dispatch({ type: ActionType.InvokeGetTabsOK, payload: { tabs, filters, components } });
       } else {
-        console.infoX(`invokeGetTabs::dispatch`, `Setting default Tabs`);
+        console.infoX(invokeGetTabs.dispatch.name, `Setting default Tabs`);
 
         const defaultComponents = [DefaultFactory.makeFilterComponent()];
         const defaultFilters = [DefaultFactory.makeFilter(defaultComponents)];
@@ -75,7 +73,7 @@ export const invokeGetTabs: IApiCallStoreHandler<
         });
       }
     } catch (error) {
-      console.errorX(`invokeGetTabs::dispatch`, `error getting tabs from rust: ${error}`);
+      console.errorX(invokeGetTabs.dispatch.name, `error getting tabs from rust: ${error}`);
       dispatch({ type: ActionType.InvokeGetTabsNOK, payload: { error } });
     }
   },
@@ -83,19 +81,17 @@ export const invokeGetTabs: IApiCallStoreHandler<
   reduce: {
     ok: (state, payload) => {
       console.traceX(
-        `invokeGetTabs::ok::reduce`,
+        invokeGetTabs.reduce.ok.name,
         `Setting ${payload.tabs.length} tabs:`,
         payload.tabs
       );
-
       console.traceX(
-        `invokeGetTabs::ok::reduce`,
+        invokeGetTabs.reduce.ok.name,
         `Setting ${payload.filters.length} filters:`,
         payload.filters
       );
-
       console.traceX(
-        `invokeGetTabs::ok::reduce`,
+        invokeGetTabs.reduce.ok.name,
         `Setting ${payload.components.length} components:`,
         payload.components
       );

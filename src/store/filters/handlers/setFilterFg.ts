@@ -6,12 +6,12 @@
  *
  * @file setFilterFg.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SetFilterFg handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -32,17 +32,13 @@ export const setFilterFg: IBasicStoreHandler<IDefaultState, SetFilterFgPayload, 
   reduce: (state, payload) => {
     const { targetFilterId, color } = payload;
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            colors: {
-              ...filter.colors,
-              fg: color,
-            },
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      colors: {
+        ...oldFilter.colors,
+        fg: color,
+      },
+    }));
 
     return {
       ...state,

@@ -6,12 +6,11 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Filters data structures.
  */
 
-import { v7 as uuidv7 } from 'uuid';
-import { UUID } from '../common/types';
+import { uuid, UUID } from '../common/identifier';
 import { TRegexTag } from '../log-regex-tags/data';
 
 // <types>
@@ -85,7 +84,7 @@ export const checkCanSaveData = (
 
 export const DefaultFactory = {
   makeFilterComponent: (overAlternativeId = ''): TFilterComponent => ({
-    id: uuidv7(),
+    id: uuid(),
     overAlternativeId: overAlternativeId,
     data: '',
     isRegex: false,
@@ -94,7 +93,7 @@ export const DefaultFactory = {
   }),
 
   makeFilter: (components: Array<TFilterComponent>): TFilter => ({
-    id: uuidv7(),
+    id: uuid(),
     name: 'NewFilter',
     isActive: true,
     isHighlightOnly: false,
@@ -108,7 +107,7 @@ export const DefaultFactory = {
   }),
 
   makeFilterTab: (filters: Array<TFilter>): TFilterTab => ({
-    id: uuidv7(),
+    id: uuid(),
     name: 'NewFilterTab',
     filterIDs: filters.map(filter => filter.id),
   }),

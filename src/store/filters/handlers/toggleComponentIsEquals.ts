@@ -6,12 +6,12 @@
  *
  * @file toggleComponentIsEquals.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description ToggleComponentIsEquals handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
 
@@ -35,14 +35,10 @@ export const toggleComponentIsEquals: IBasicStoreHandler<
   reduce: (state, payload) => {
     const { targetComponentId } = payload;
 
-    const newComponents = state.components.map(component =>
-      component.id !== targetComponentId
-        ? component
-        : {
-            ...component,
-            isEquals: !component.isEquals,
-          }
-    );
+    const newComponents = modifyWhereId(state.components, targetComponentId, oldComponent => ({
+      ...oldComponent,
+      isEquals: !oldComponent.isEquals,
+    }));
 
     return {
       ...state,

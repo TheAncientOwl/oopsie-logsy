@@ -6,14 +6,14 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetFilterName handler.
  */
 
+import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { ActionType } from '../actions';
 import { checkCanSaveData, IDefaultState } from '../data';
-import { UUID } from '@/store/common/types';
 
 type SetFilterNamePayload = {
   targetFilterId: UUID;
@@ -35,14 +35,10 @@ export const setFilterName: IBasicStoreHandler<IDefaultState, SetFilterNamePaylo
   reduce: (state, payload) => {
     const { targetFilterId, name } = payload;
 
-    const newFilters = state.filters.map(filter =>
-      filter.id !== targetFilterId
-        ? filter
-        : {
-            ...filter,
-            name,
-          }
-    );
+    const newFilters = modifyWhereId(state.filters, targetFilterId, oldFilter => ({
+      ...oldFilter,
+      name,
+    }));
 
     return {
       ...state,

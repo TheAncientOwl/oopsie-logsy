@@ -6,12 +6,12 @@
  *
  * @file setAllFiltersCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description setAllFiltersCollapsed handler.
  */
 
+import { modifyWhereIdAnyOf, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { UUID } from '@/store/common/types';
 import { ActionType } from '../actions';
 import { checkCanSaveData, getTabById, IDefaultState } from '../data';
 
@@ -45,14 +45,10 @@ export const setAllFiltersCollapsed: IBasicStoreHandler<
       targetTabId
     ).filterIDs;
 
-    const newFilters = state.filters.map(filter =>
-      filterIdsToSet.find(id => id === filter.id) === undefined
-        ? filter
-        : {
-            ...filter,
-            collapsed,
-          }
-    );
+    const newFilters = modifyWhereIdAnyOf(state.filters, filterIdsToSet, oldFilter => ({
+      ...oldFilter,
+      collapsed,
+    }));
 
     return {
       ...state,

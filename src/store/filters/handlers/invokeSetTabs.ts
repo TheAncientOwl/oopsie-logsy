@@ -6,7 +6,7 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description InvokeSetTabs handler.
  */
 
@@ -41,17 +41,17 @@ export const invokeSetTabs: IApiCallStoreHandler<
     (tabs: Array<TFilterTab>, filters: Array<TFilter>, components: Array<TFilterComponent>) =>
     async (dispatch: Dispatch) => {
       console.assertX(
-        `invokeSetTabs::dispatch`,
+        invokeSetTabs.dispatch.name,
         tabs !== undefined,
         "Received 'undefined' as tabs"
       );
       console.assertX(
-        `invokeSetTabs::dispatch`,
+        invokeSetTabs.dispatch.name,
         filters !== undefined,
         "Received 'undefined' as filters"
       );
       console.assertX(
-        `invokeSetTabs::dispatch`,
+        invokeSetTabs.dispatch.name,
         components !== undefined,
         "Received 'undefined' as components"
       );
@@ -59,21 +59,19 @@ export const invokeSetTabs: IApiCallStoreHandler<
       dispatch({ type: ActionType.Loading, payload: {} });
 
       try {
-        console.traceX(`invokeSetTabs::dispatch`, `Sending ${tabs.length} tabs:`, tabs);
-
-        console.traceX(`invokeSetTabs::dispatch`, `Sending ${filters.length} filters:`, filters);
-
+        console.traceX(invokeSetTabs.dispatch.name, `Sending ${tabs.length} tabs:`, tabs);
+        console.traceX(invokeSetTabs.dispatch.name, `Sending ${filters.length} filters:`, filters);
         console.traceX(
-          `invokeSetTabs::dispatch`,
+          invokeSetTabs.dispatch.name,
           `Sending ${components.length} components:`,
           components
         );
 
         const response = await invoke('set_filter_tabs', { tabs, filters, components });
-        console.traceX(`invokeSetTabs::dispatch`, `rust response: ${response}`);
+        console.traceX(invokeSetTabs.dispatch.name, `rust response: ${response}`);
         dispatch({ type: ActionType.InvokeSetTabsOK, payload: {} });
       } catch (error) {
-        console.errorX(`invokeSetTabs::dispatch`, `error sending tabs to rust: ${error}`);
+        console.errorX(invokeSetTabs.dispatch.name, `error sending tabs to rust: ${error}`);
         dispatch({ type: ActionType.InvokeSetTabsNOK, payload: { error } });
       }
     },
