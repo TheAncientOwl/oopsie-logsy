@@ -6,11 +6,11 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Extend logging functionality.
  */
 
-type TLogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'log';
+type TLogLevel = 'trace' | 'trace2' | 'info' | 'warn' | 'debug' | 'error' | 'log';
 
 const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
   error: console.error,
@@ -18,6 +18,7 @@ const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
   debug: console.debug,
   info: console.info,
   trace: console.log,
+  trace2: console.trace,
   log: console.log,
 };
 
@@ -44,7 +45,7 @@ const _log = (
   )}:${padLeft(date.getMilliseconds(), 3)}`;
 
   (logFunctions[level] || console.log)(
-    `%c| %c${timestamp} %c| %c${getCallerLocation()}%c@%c${caller} %c» \n%c${message}`,
+    `%c| %c${timestamp} %c| %c${getCallerLocation()}%c@%c${caller} \n%c» %c${message}`,
     'color: gray',
     'color: dodgerblue',
     'color: gray',
@@ -59,6 +60,10 @@ const _log = (
 
 const trace = (caller: string, message: string, ...data: any[]) => {
   _log('trace', 'color: lightgray', caller, message, ...data);
+};
+
+const traceVerbose = (caller: string, message: string, ...data: any[]) => {
+  _log('trace2', 'color: lightgray', caller, message, ...data);
 };
 
 const log = (caller: string, message: string, ...data: any[]) => {
@@ -91,6 +96,7 @@ const assert = (caller: string, condition: boolean, ...data: any[]) => {
   trace('anonymous-lambda', 'augmenting console logging');
 
   console.traceX = trace;
+  console.traceVerboseX = traceVerbose;
   console.logX = log;
   console.infoX = info;
   console.warnX = warn;

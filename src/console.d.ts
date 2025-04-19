@@ -1,6 +1,7 @@
 declare global {
   interface Console {
     traceX(caller: string, message: string, ...data: any[]): void;
+    traceVerboseX(caller: string, message: string, ...data: any[]): void;
     logX(caller: string, message: string, ...data: any[]): void;
     infoX(caller: string, message: string, ...data: any[]): void;
     warnX(caller: string, message: string, ...data: any[]): void;
