@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Filter tab related tools.
  */
 
@@ -42,8 +42,6 @@ import { ButtonGroup, HStack, Input, Separator, Span } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 
 const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
-  console.debugX(FilterTabToolBoxImpl.name, `Render filters toolbox`);
-
   const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
   const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
