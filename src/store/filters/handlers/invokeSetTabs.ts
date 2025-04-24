@@ -6,19 +6,19 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description InvokeSetTabs handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
+import { invoke } from '@tauri-apps/api/core';
 import { EFiltersAction, type TFiltersDispatch } from '../actions';
 import {
-  type TFiltersStoreState,
   type TFilter,
   type TFilterComponent,
+  type TFiltersStoreState,
   type TFilterTab,
 } from '../data';
-import { invoke } from '@tauri-apps/api/core';
 
 type TInvokeSetTabsOkPayload = {};
 

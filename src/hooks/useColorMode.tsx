@@ -6,7 +6,7 @@
  *
  * @file useColorMode.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Color mode hooks
  */
 
@@ -14,11 +14,11 @@ import { useTheme } from 'next-themes';
 
 export type TColorMode = 'light' | 'dark';
 
-export interface TUseColorModeReturn {
+export type TUseColorModeReturn = {
   colorMode: TColorMode;
   setColorMode: (colorMode: TColorMode) => void;
   toggleColorMode: () => void;
-}
+};
 
 export const useColorMode = (): TUseColorModeReturn => {
   const { resolvedTheme, setTheme } = useTheme();

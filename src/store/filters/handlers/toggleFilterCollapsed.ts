@@ -6,11 +6,11 @@
  *
  * @file toggleFilterCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description toggleFilterCollapsed handler.
  */
 
-import { modifyWhereId, UUID } from '@/store/common/identifier';
+import { modifyWhereId, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, type TFiltersStoreState } from '../data';

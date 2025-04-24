@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description App class
  */
 
@@ -15,10 +15,10 @@ import LogView from '@/components/app/log-view';
 import Settings from '@/components/app/settings';
 import ToolBar from '@/components/app/toolbar';
 import { useSwitch } from '@/hooks/useSwitch';
+import { store } from '@/store';
 import { Box } from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { store } from '@/store';
 
 const CONTENT_HEIGHTS = {
   whenFiltersOpen: 55,

@@ -6,11 +6,11 @@
  *
  * @file setAllFiltersCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description setAllFiltersCollapsed handler.
  */
 
-import { modifyWhereIdAnyOf, UUID } from '@/store/common/identifier';
+import { modifyWhereIdAnyOf, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';

@@ -6,18 +6,18 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description DuplicateFilter handler.
  */
 
-import { uuid, UUID } from '@/store/common/identifier';
+import { uuid, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import {
   checkCanSaveData,
   getFilterComponentById,
-  type TFiltersStoreState,
   type TFilter,
+  type TFiltersStoreState,
 } from '../data';
 
 type TDuplicateFilterPayload = {

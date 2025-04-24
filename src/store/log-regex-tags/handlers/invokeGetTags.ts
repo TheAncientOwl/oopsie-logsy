@@ -6,13 +6,13 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description InvokeGetTags handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
-import { type TLogRegexTagsDispatch, ELogRegexTagsAction } from '../actions';
+import { ELogRegexTagsAction, type TLogRegexTagsDispatch } from '../actions';
 import { DefaultFactory, type TLogRegexTagsStoreState, type TRegexTag } from '../data';
 import { invokeSetTags } from './invokeSetTags';
 

@@ -6,12 +6,12 @@
  *
  * @file deleteFilterComponent.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description DeleteFilterComponent.ts.
  */
 
+import { modifyWhereId, remove, removeById, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { modifyWhereId, remove, removeById, UUID } from '@/store/common/identifier';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, type TFiltersStoreState } from '../data';
 

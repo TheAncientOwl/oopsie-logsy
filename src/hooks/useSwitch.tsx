@@ -6,11 +6,11 @@
  *
  * @file useSwitch.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Utility hook to handle switch states
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export const useSwitch = (initialValue: boolean): [boolean, () => void] => {
   const [state, setState] = useState(initialValue);

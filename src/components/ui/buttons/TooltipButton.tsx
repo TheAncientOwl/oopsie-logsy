@@ -6,13 +6,13 @@
  *
  * @file TooltipButton.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ChakraUI button with tooltip property
  */
 
-import { Button } from '@chakra-ui/react';
-import type { ButtonProps } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/Tooltip';
+import type { ButtonProps } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 
 type TTooltipButtonProps = ButtonProps & {
   tooltip: string;

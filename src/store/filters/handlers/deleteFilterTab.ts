@@ -6,12 +6,12 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description DeleteFilterTab handler.
  */
 
+import { contains, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { contains, UUID } from '@/store/common/identifier';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
 

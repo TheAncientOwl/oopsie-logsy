@@ -6,11 +6,11 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description SetComponentOverAlternative handler.
  */
 
-import { modifyWhereId, UUID } from '@/store/common/identifier';
+import { modifyWhereId, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, type TFiltersStoreState } from '../data';

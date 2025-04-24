@@ -6,7 +6,7 @@
  *
  * @file DebugMenu.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Debug tools menu.
  */
 
@@ -15,12 +15,12 @@ import { PiMaskHappy, PiMaskSad } from 'react-icons/pi';
 import { ColorModeButton } from './components/ui/buttons/ColorModeButton';
 import { TooltipIconButton } from './components/ui/buttons/TooltipIconButton';
 
-interface DebugMenuProps {
+type TDebugMenuProps = {
   strictModeOn: boolean;
   onStrictModeToggle: () => void;
-}
+};
 
-export const DebugMenu = ({ strictModeOn, onStrictModeToggle }: DebugMenuProps) => {
+export const DebugMenu = ({ strictModeOn, onStrictModeToggle }: TDebugMenuProps) => {
   return (
     <Box
       style={{

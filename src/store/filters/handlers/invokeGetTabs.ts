@@ -6,7 +6,7 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description InvokeGetTabs handler.
  */
 
@@ -15,9 +15,9 @@ import { invoke } from '@tauri-apps/api/core';
 import { EFiltersAction, type TFiltersDispatch } from '../actions';
 import {
   DefaultFactory,
-  type TFiltersStoreState,
   type TFilter,
   type TFilterComponent,
+  type TFiltersStoreState,
   type TFilterTab,
 } from '../data';
 import { invokeSetTabs } from './invokeSetTabs';

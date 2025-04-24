@@ -6,13 +6,13 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Filter tab.
  */
 
 import React from 'react';
 
-import { UUID } from '@/store/common/identifier';
+import { type UUID } from '@/store/common/identifier';
 import { focusFilterTab } from '@/store/filters/handlers';
 import { Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';

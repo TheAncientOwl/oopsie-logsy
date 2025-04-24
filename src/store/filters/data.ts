@@ -6,11 +6,11 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Filters data structures.
  */
 
-import { uuid, UUID } from '../common/identifier';
+import { uuid, type UUID } from '../common/identifier';
 import { getStaticDefaultTags, type TRegexTag } from '../log-regex-tags/data';
 
 // <types>

@@ -6,11 +6,11 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description ToggleFilterActive handler.
  */
 
-import { modifyWhereId, UUID } from '@/store/common/identifier';
+import { modifyWhereId, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, type TFiltersStoreState } from '../data';
