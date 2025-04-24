@@ -6,7 +6,7 @@
  *
  * @file setFilterFg.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetFilterFg handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetFilterFgAction = {
 export const setFilterFg: IBasicStoreHandler<
   TFiltersStoreState,
   TSetFilterFgPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: UUID, color: string]
 > = {
-  dispatch: (targetFilterId: UUID, color: string) =>
+  dispatch: (targetFilterId, color) =>
     basicDispatcher(EFiltersAction.SetFilterFg, () => ({ targetFilterId, color })),
 
   reduce: (state, payload) => {

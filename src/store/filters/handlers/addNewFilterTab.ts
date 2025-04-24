@@ -6,11 +6,15 @@
  *
  * @file addNewFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description AddNewFilterTab handler.
  */
 
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import {
+  basicDispatcher,
+  IBasicStoreHandler,
+  type TNoDispatcherArgs,
+} from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
 
@@ -24,7 +28,8 @@ export type TAddNewFilterTabAction = {
 export const addNewFilterTab: IBasicStoreHandler<
   TFiltersStoreState,
   TAddNewFilterTabPayload,
-  EFiltersAction
+  EFiltersAction,
+  TNoDispatcherArgs
 > = {
   dispatch: () => basicDispatcher(EFiltersAction.AddNewFilterTab, () => ({})),
 

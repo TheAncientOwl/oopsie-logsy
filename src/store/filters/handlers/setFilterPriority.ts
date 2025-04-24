@@ -6,7 +6,7 @@
  *
  * @file setFilterPriority.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetFilterPriority handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetFilterPriorityAction = {
 export const setFilterPriority: IBasicStoreHandler<
   TFiltersStoreState,
   TSetFilterPriorityPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: string, priority: number]
 > = {
-  dispatch: (targetFilterId: string, priority: number) =>
+  dispatch: (targetFilterId, priority) =>
     basicDispatcher(EFiltersAction.SetFilterPriority, () => ({
       targetFilterId,
       priority,

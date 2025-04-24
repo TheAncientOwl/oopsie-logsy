@@ -6,7 +6,7 @@
  *
  * @file toggleFilterComponentIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description ToggleFilterComponentIgnoreCase handler.
  */
 
@@ -27,9 +27,10 @@ export type ToggleFilterComponentIgnoreCaseAction = {
 export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
   TFiltersStoreState,
   ToggleFilterComponentIgnoreCasePayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetComponentId: UUID]
 > = {
-  dispatch: (targetComponentId: UUID) =>
+  dispatch: targetComponentId =>
     basicDispatcher(EFiltersAction.ToggleFilterComponentIgnoreCase, () => ({
       targetComponentId,
     })),

@@ -6,17 +6,17 @@
  *
  * @file deleteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description DeleteAllFilters handler.
  */
 
-import { contains, UUID } from '@/store/common/identifier';
+import { contains, type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { checkCanSaveData, DefaultFactory, getTabById, type TFiltersStoreState } from '../data';
 
 type TDeleteAllFiltersPayload = {
-  targetTabId: string;
+  targetTabId: UUID;
 };
 
 export type TDeleteAllFiltersAction = {
@@ -27,9 +27,10 @@ export type TDeleteAllFiltersAction = {
 export const deleteAllFilters: IBasicStoreHandler<
   TFiltersStoreState,
   TDeleteAllFiltersPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID]
 > = {
-  dispatch: (targetTabId: string) =>
+  dispatch: targetTabId =>
     basicDispatcher(EFiltersAction.DeleteAllFilters, () => ({ targetTabId })),
 
   reduce: (state, payload) => {

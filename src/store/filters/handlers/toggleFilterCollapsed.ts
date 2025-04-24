@@ -6,7 +6,7 @@
  *
  * @file toggleFilterCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description toggleFilterCollapsed handler.
  */
 
@@ -27,9 +27,10 @@ export type ToggleFilterCollapsedAction = {
 export const toggleFilterCollapsed: IBasicStoreHandler<
   TFiltersStoreState,
   ToggleFilterCollapsedPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: UUID]
 > = {
-  dispatch: (targetFilterId: UUID) =>
+  dispatch: targetFilterId =>
     basicDispatcher(EFiltersAction.ToggleFilterCollapsed, () => ({
       targetFilterId,
     })),

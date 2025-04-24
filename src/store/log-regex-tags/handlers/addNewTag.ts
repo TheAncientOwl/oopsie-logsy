@@ -6,11 +6,15 @@
  *
  * @file addNewTag.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description AddNewTag handler.
  */
 
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import {
+  basicDispatcher,
+  IBasicStoreHandler,
+  type TNoDispatcherArgs,
+} from '@/store/common/storeHandler';
 import { ELogRegexTagsAction } from '../actions';
 import { checkCanApply, DefaultFactory, type TLogRegexTagsStoreState } from '../data';
 
@@ -24,7 +28,8 @@ export type TAddNewTagAction = {
 export const addNewTag: IBasicStoreHandler<
   TLogRegexTagsStoreState,
   TAddNewTagPayload,
-  ELogRegexTagsAction
+  ELogRegexTagsAction,
+  TNoDispatcherArgs
 > = {
   dispatch: () => basicDispatcher(ELogRegexTagsAction.AddNewTag, () => ({})),
 

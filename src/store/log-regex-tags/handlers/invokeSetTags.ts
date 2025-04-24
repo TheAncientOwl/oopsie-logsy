@@ -6,7 +6,7 @@
  *
  * @file invokeSetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description InvokeSetTags handler.
  */
 
@@ -37,9 +37,10 @@ export const invokeSetTags: IApiCallStoreHandler<
   TLogRegexTagsStoreState,
   TLogRegexTagsDispatch,
   TInvokeSetTagsOkPayload,
-  TInvokeSetTagsNOkPayload
+  TInvokeSetTagsNOkPayload,
+  [tags: Array<TRegexTag>]
 > = {
-  dispatch: (tags: Array<TRegexTag>) => async (dispatch: TLogRegexTagsDispatch) => {
+  dispatch: tags => async (dispatch: TLogRegexTagsDispatch) => {
     dispatch({ type: ELogRegexTagsAction.Loading, payload: {} });
 
     try {

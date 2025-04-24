@@ -6,7 +6,7 @@
  *
  * @file deleteFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description DeleteFilter handler.
  */
 
@@ -16,8 +16,8 @@ import { EFiltersAction } from '../actions';
 import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
 type TDeleteFilterPayload = {
-  targetTabId: string;
-  targetFilterId: string;
+  targetTabId: UUID;
+  targetFilterId: UUID;
 };
 
 export type TDeleteFilterAction = {
@@ -28,9 +28,10 @@ export type TDeleteFilterAction = {
 export const deleteFilter: IBasicStoreHandler<
   TFiltersStoreState,
   TDeleteFilterPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID, targetFilterId: UUID]
 > = {
-  dispatch: (targetTabId: string, targetFilterId: string) =>
+  dispatch: (targetTabId, targetFilterId) =>
     basicDispatcher(EFiltersAction.DeleteFilter, () => ({
       targetTabId,
       targetFilterId,

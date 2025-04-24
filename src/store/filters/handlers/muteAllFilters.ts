@@ -6,7 +6,7 @@
  *
  * @file muteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description MuteAllFilters handler.
  */
 
@@ -27,10 +27,10 @@ export type TMuteAllFiltersAction = {
 export const muteAllFilters: IBasicStoreHandler<
   TFiltersStoreState,
   TMuteAllFiltersPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID]
 > = {
-  dispatch: (targetTabId: UUID) =>
-    basicDispatcher(EFiltersAction.MuteAllFilters, () => ({ targetTabId })),
+  dispatch: targetTabId => basicDispatcher(EFiltersAction.MuteAllFilters, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

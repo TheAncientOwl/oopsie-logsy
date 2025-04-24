@@ -6,7 +6,7 @@
  *
  * @file toggleComponentIsRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description ToggleComponentIsRegex handler.
  */
 
@@ -27,9 +27,10 @@ export type ToggleComponentIsRegexAction = {
 export const toggleComponentIsRegex: IBasicStoreHandler<
   TFiltersStoreState,
   ToggleComponentIsRegexPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetComponentId: UUID]
 > = {
-  dispatch: (targetComponentId: UUID) =>
+  dispatch: targetComponentId =>
     basicDispatcher(EFiltersAction.ToggleFilterComponentIsRegex, () => ({ targetComponentId })),
 
   reduce: (state, payload) => {

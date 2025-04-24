@@ -6,7 +6,7 @@
  *
  * @file setAllFiltersCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description setAllFiltersCollapsed handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetAllFiltersCollapsedAction = {
 export const setAllFiltersCollapsed: IBasicStoreHandler<
   TFiltersStoreState,
   TSetAllFiltersCollapsedPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID, collapsed: boolean]
 > = {
-  dispatch: (targetTabId: UUID, collapsed: boolean) =>
+  dispatch: (targetTabId, collapsed) =>
     basicDispatcher(EFiltersAction.SetAllFiltersCollapsed, () => ({
       targetTabId,
       collapsed,

@@ -6,11 +6,11 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description InvokeGetTabs handler.
  */
 
-import { IApiCallStoreHandler } from '@/store/common/storeHandler';
+import { IApiCallStoreHandler, type TNoDispatcherArgs } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { EFiltersAction, type TFiltersDispatch } from '../actions';
 import {
@@ -46,7 +46,8 @@ export const invokeGetTabs: IApiCallStoreHandler<
   TFiltersStoreState,
   TFiltersDispatch,
   TInvokeGetTabsOkPayload,
-  TInvokeGetTabsNOkPayload
+  TInvokeGetTabsNOkPayload,
+  TNoDispatcherArgs
 > = {
   dispatch: () => async (dispatch: TFiltersDispatch) => {
     dispatch({ type: EFiltersAction.Loading, payload: {} });

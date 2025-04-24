@@ -6,7 +6,7 @@
  *
  * @file setTagRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description SetTagRegex handler.
  */
 
@@ -27,9 +27,10 @@ export type TSetTagRegexAction = {
 export const setTagRegex: IBasicStoreHandler<
   TLogRegexTagsStoreState,
   TSetTagRegexPayload,
-  ELogRegexTagsAction
+  ELogRegexTagsAction,
+  [targetId: string, newRegex: string]
 > = {
-  dispatch: (targetId: string, newRegex: string) =>
+  dispatch: (targetId, newRegex) =>
     basicDispatcher(ELogRegexTagsAction.SetTagRegex, () => ({ targetId, newRegex })),
 
   reduce: (state, payload) => {

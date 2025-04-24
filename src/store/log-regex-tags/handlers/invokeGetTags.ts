@@ -6,11 +6,11 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description InvokeGetTags handler.
  */
 
-import { IApiCallStoreHandler } from '@/store/common/storeHandler';
+import { IApiCallStoreHandler, type TNoDispatcherArgs } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { ELogRegexTagsAction, type TLogRegexTagsDispatch } from '../actions';
 import { DefaultFactory, type TLogRegexTagsStoreState, type TRegexTag } from '../data';
@@ -38,7 +38,8 @@ export const invokeGetTags: IApiCallStoreHandler<
   TLogRegexTagsStoreState,
   TLogRegexTagsDispatch,
   TInvokeGetTagsOkPayload,
-  TInvokeGetTagsNOkPayload
+  TInvokeGetTagsNOkPayload,
+  TNoDispatcherArgs
 > = {
   dispatch: () => async (dispatch: TLogRegexTagsDispatch) => {
     dispatch({ type: ELogRegexTagsAction.Loading, payload: {} });

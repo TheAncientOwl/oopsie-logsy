@@ -6,16 +6,17 @@
  *
  * @file focusFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description FocusFilterTab handler.
  */
 
+import { type UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { type TFiltersStoreState } from '../data';
 
 type TFocusFilterTabPayload = {
-  targetId: string;
+  targetId: UUID;
 };
 
 export type TFocusFilterTabAction = {
@@ -26,10 +27,10 @@ export type TFocusFilterTabAction = {
 export const focusFilterTab: IBasicStoreHandler<
   TFiltersStoreState,
   TFocusFilterTabPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetId: UUID]
 > = {
-  dispatch: (targetId: string) =>
-    basicDispatcher(EFiltersAction.FocusFilterTab, () => ({ targetId })),
+  dispatch: targetId => basicDispatcher(EFiltersAction.FocusFilterTab, () => ({ targetId })),
 
   reduce: (state, payload) => {
     const { targetId } = payload;

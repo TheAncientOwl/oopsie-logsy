@@ -6,11 +6,15 @@
  *
  * @file loading.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Loading handler.
  */
 
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
+import {
+  basicDispatcher,
+  IBasicStoreHandler,
+  type TNoDispatcherArgs,
+} from '@/store/common/storeHandler';
 import { EFiltersAction } from '../actions';
 import { type TFiltersStoreState } from '../data';
 
@@ -21,7 +25,12 @@ export type TLoadingAction = {
   payload: TLoadingPayload;
 };
 
-export const loading: IBasicStoreHandler<TFiltersStoreState, TLoadingPayload, EFiltersAction> = {
+export const loading: IBasicStoreHandler<
+  TFiltersStoreState,
+  TLoadingPayload,
+  EFiltersAction,
+  TNoDispatcherArgs
+> = {
   dispatch: () => basicDispatcher(EFiltersAction.Loading, () => ({})),
 
   reduce: state => {

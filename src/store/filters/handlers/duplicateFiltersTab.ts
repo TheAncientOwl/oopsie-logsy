@@ -6,7 +6,7 @@
  *
  * @file duplicateFiltersTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description DuplicateFiltersTab handler.
  */
 
@@ -22,7 +22,7 @@ import {
 } from '../data';
 
 type TDuplicateFiltersTabPayload = {
-  targetTabId: string;
+  targetTabId: UUID;
 };
 
 export type TDuplicateFiltersTabAction = {
@@ -33,9 +33,10 @@ export type TDuplicateFiltersTabAction = {
 export const duplicateFiltersTab: IBasicStoreHandler<
   TFiltersStoreState,
   TDuplicateFiltersTabPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID]
 > = {
-  dispatch: (targetTabId: string) =>
+  dispatch: targetTabId =>
     basicDispatcher(EFiltersAction.DuplicateFiltersTab, () => ({ targetTabId })),
 
   reduce: (state, payload) => {

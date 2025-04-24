@@ -6,7 +6,7 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description SetFilterName handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetFilterNameAction = {
 export const setFilterName: IBasicStoreHandler<
   TFiltersStoreState,
   TSetFilterNamePayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: UUID, name: string]
 > = {
-  dispatch: (targetFilterId: UUID, name: string) =>
+  dispatch: (targetFilterId, name) =>
     basicDispatcher(EFiltersAction.SetFilterName, () => ({
       targetFilterId,
       name,

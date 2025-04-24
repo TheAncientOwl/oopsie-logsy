@@ -6,7 +6,7 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description DuplicateFilter handler.
  */
 
@@ -33,9 +33,10 @@ export type TDuplicateFilterAction = {
 export const duplicateFilter: IBasicStoreHandler<
   TFiltersStoreState,
   TDuplicateFilterPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID, targetFilterId: UUID]
 > = {
-  dispatch: (targetTabId: UUID, targetFilterId: UUID) =>
+  dispatch: (targetTabId, targetFilterId) =>
     basicDispatcher(EFiltersAction.DuplicateFilter, () => ({
       targetTabId,
       targetFilterId,

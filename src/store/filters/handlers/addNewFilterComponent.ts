@@ -6,7 +6,7 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description AddFilterComponent.
  */
 
@@ -27,9 +27,10 @@ export type TAddNewFilterComponentAction = {
 export const addNewFilterComponent: IBasicStoreHandler<
   TFiltersStoreState,
   TAddNewFilterComponentPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: UUID]
 > = {
-  dispatch: (targetFilterId: UUID) =>
+  dispatch: targetFilterId =>
     basicDispatcher(EFiltersAction.AddNewFilterComponent, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {

@@ -6,7 +6,7 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description SetComponentOverAlternative handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetComponentOverAlternativeAction = {
 export const setComponentOverAlternative: IBasicStoreHandler<
   TFiltersStoreState,
   TSetComponentOverAlternativePayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetComponentId: UUID, overAlternativeId: UUID]
 > = {
-  dispatch: (targetComponentId: UUID, overAlternativeId: UUID) =>
+  dispatch: (targetComponentId, overAlternativeId) =>
     basicDispatcher(EFiltersAction.SetFilterComponentOverAlternative, () => ({
       targetComponentId,
       overAlternativeId,

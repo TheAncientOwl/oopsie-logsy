@@ -6,7 +6,7 @@
  *
  * @file setFilterTabName.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetFilterTabName handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetFilterTabNameAction = {
 export const setFilterTabName: IBasicStoreHandler<
   TFiltersStoreState,
   TSetFilterTabNamePayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID, name: string]
 > = {
-  dispatch: (targetTabId: UUID, name: string) =>
+  dispatch: (targetTabId, name) =>
     basicDispatcher(EFiltersAction.SetFilterTabName, () => ({ targetTabId, name })),
 
   reduce: (state, payload) => {

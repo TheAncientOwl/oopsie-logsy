@@ -6,7 +6,7 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description DeleteFilterTab handler.
  */
 
@@ -16,7 +16,7 @@ import { EFiltersAction } from '../actions';
 import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
 
 type TDeleteFilterTabPayload = {
-  targetTabId: string;
+  targetTabId: UUID;
 };
 
 export type TDeleteFilterTabAction = {
@@ -27,10 +27,10 @@ export type TDeleteFilterTabAction = {
 export const deleteFilterTab: IBasicStoreHandler<
   TFiltersStoreState,
   TDeleteFilterTabPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID]
 > = {
-  dispatch: (targetTabId: string) =>
-    basicDispatcher(EFiltersAction.DeleteFilterTab, () => ({ targetTabId })),
+  dispatch: targetTabId => basicDispatcher(EFiltersAction.DeleteFilterTab, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

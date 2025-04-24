@@ -6,7 +6,7 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description ToggleFilterActive handler.
  */
 
@@ -27,9 +27,10 @@ export type ToggleFilterActiveAction = {
 export const toggleFilterActive: IBasicStoreHandler<
   TFiltersStoreState,
   ToggleFilterActivePayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: UUID]
 > = {
-  dispatch: (targetFilterId: UUID) =>
+  dispatch: targetFilterId =>
     basicDispatcher(EFiltersAction.ToggleFilterActive, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {

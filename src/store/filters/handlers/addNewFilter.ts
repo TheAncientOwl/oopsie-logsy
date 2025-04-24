@@ -6,7 +6,7 @@
  *
  * @file addNewFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description AddNewFilter handler.
  */
 
@@ -27,10 +27,10 @@ export type TAddNewFilterAction = {
 export const addNewFilter: IBasicStoreHandler<
   TFiltersStoreState,
   TAddNewFilterPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetTabId: UUID]
 > = {
-  dispatch: (targetTabId: UUID) =>
-    basicDispatcher(EFiltersAction.AddNewFilter, () => ({ targetTabId })),
+  dispatch: targetTabId => basicDispatcher(EFiltersAction.AddNewFilter, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

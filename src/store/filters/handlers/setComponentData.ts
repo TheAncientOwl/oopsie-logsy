@@ -6,7 +6,7 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description SetComponentData handler.
  */
 
@@ -28,9 +28,10 @@ export type TSetComponentDataAction = {
 export const setComponentData: IBasicStoreHandler<
   TFiltersStoreState,
   TSetComponentDataPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetComponentId: UUID, data: string]
 > = {
-  dispatch: (targetComponentId: UUID, data: string) =>
+  dispatch: (targetComponentId, data) =>
     basicDispatcher(EFiltersAction.SetFilterComponentData, () => ({
       targetComponentId,
       data,

@@ -6,7 +6,7 @@
  *
  * @file setTagName.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description SetTagName handler.
  */
 
@@ -27,9 +27,10 @@ export type TSetTagNameAction = {
 export const setTagName: IBasicStoreHandler<
   TLogRegexTagsStoreState,
   TSetTagNamePayload,
-  ELogRegexTagsAction
+  ELogRegexTagsAction,
+  [targetId: string, newName: string]
 > = {
-  dispatch: (targetId: string, newName: string) =>
+  dispatch: (targetId, newName) =>
     basicDispatcher(ELogRegexTagsAction.SetTagName, () => ({ targetId, newName })),
 
   reduce: (state, payload) => {

@@ -6,7 +6,7 @@
  *
  * @file deleteFilterComponent.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.10
  * @description DeleteFilterComponent.ts.
  */
 
@@ -28,9 +28,10 @@ export type TDeleteFilterComponentAction = {
 export const deleteFilterComponent: IBasicStoreHandler<
   TFiltersStoreState,
   TDeleteFilterComponentPayload,
-  EFiltersAction
+  EFiltersAction,
+  [targetFilterId: UUID, targetComponentId: UUID]
 > = {
-  dispatch: (targetFilterId: UUID, targetComponentId: UUID) =>
+  dispatch: (targetFilterId, targetComponentId) =>
     basicDispatcher(EFiltersAction.DeleteFilterComponent, () => ({
       targetFilterId,
       targetComponentId,

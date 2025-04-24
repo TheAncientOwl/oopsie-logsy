@@ -6,7 +6,7 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description InvokeSetTabs handler.
  */
 
@@ -40,50 +40,45 @@ export const invokeSetTabs: IApiCallStoreHandler<
   TFiltersStoreState,
   TFiltersDispatch,
   TInvokeSetTabsOkPayload,
-  TInvokeSetTabsNOkPayload
+  TInvokeSetTabsNOkPayload,
+  [tabs: Array<TFilterTab>, filters: Array<TFilter>, components: Array<TFilterComponent>]
 > = {
-  dispatch:
-    (tabs: Array<TFilterTab>, filters: Array<TFilter>, components: Array<TFilterComponent>) =>
-    async (dispatch: TFiltersDispatch) => {
-      console.assertX(
+  dispatch: (tabs, filters, components) => async (dispatch: TFiltersDispatch) => {
+    console.assertX(
+      invokeSetTabs.dispatch.name,
+      tabs !== undefined,
+      "Received 'undefined' as tabs"
+    );
+    console.assertX(
+      invokeSetTabs.dispatch.name,
+      filters !== undefined,
+      "Received 'undefined' as filters"
+    );
+    console.assertX(
+      invokeSetTabs.dispatch.name,
+      components !== undefined,
+      "Received 'undefined' as components"
+    );
+
+    dispatch({ type: EFiltersAction.Loading, payload: {} });
+
+    try {
+      console.verboseX(invokeSetTabs.dispatch.name, `Sending ${tabs.length} tabs:`, tabs);
+      console.verboseX(invokeSetTabs.dispatch.name, `Sending ${filters.length} filters:`, filters);
+      console.verboseX(
         invokeSetTabs.dispatch.name,
-        tabs !== undefined,
-        "Received 'undefined' as tabs"
-      );
-      console.assertX(
-        invokeSetTabs.dispatch.name,
-        filters !== undefined,
-        "Received 'undefined' as filters"
-      );
-      console.assertX(
-        invokeSetTabs.dispatch.name,
-        components !== undefined,
-        "Received 'undefined' as components"
+        `Sending ${components.length} components:`,
+        components
       );
 
-      dispatch({ type: EFiltersAction.Loading, payload: {} });
-
-      try {
-        console.verboseX(invokeSetTabs.dispatch.name, `Sending ${tabs.length} tabs:`, tabs);
-        console.verboseX(
-          invokeSetTabs.dispatch.name,
-          `Sending ${filters.length} filters:`,
-          filters
-        );
-        console.verboseX(
-          invokeSetTabs.dispatch.name,
-          `Sending ${components.length} components:`,
-          components
-        );
-
-        const response = await invoke('set_filter_tabs', { tabs, filters, components });
-        console.infoX(invokeSetTabs.dispatch.name, `rust response: ${response}`);
-        dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
-      } catch (error) {
-        console.errorX(invokeSetTabs.dispatch.name, `error sending tabs to rust: ${error}`);
-        dispatch({ type: EFiltersAction.InvokeSetTabsNOK, payload: { error } });
-      }
-    },
+      const response = await invoke('set_filter_tabs', { tabs, filters, components });
+      console.infoX(invokeSetTabs.dispatch.name, `rust response: ${response}`);
+      dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
+    } catch (error) {
+      console.errorX(invokeSetTabs.dispatch.name, `error sending tabs to rust: ${error}`);
+      dispatch({ type: EFiltersAction.InvokeSetTabsNOK, payload: { error } });
+    }
+  },
 
   reduce: {
     ok: state => {
