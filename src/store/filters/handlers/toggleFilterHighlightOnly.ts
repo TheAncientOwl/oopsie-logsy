@@ -6,31 +6,31 @@
  *
  * @file toggleFilterHighlight.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description ToggleFilterHighlight handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
 type ToggleFilterHighlightPayload = {
   targetFilterId: UUID;
 };
 
-export interface ToggleFilterHighlightAction {
-  type: ActionType.ToggleFilterHighlightOnly;
+export type ToggleFilterHighlightAction = {
+  type: EFiltersAction.ToggleFilterHighlightOnly;
   payload: ToggleFilterHighlightPayload;
-}
+};
 
 export const toggleFilterHighlightOnly: IBasicStoreHandler<
-  IDefaultState,
+  TFiltersStoreState,
   ToggleFilterHighlightPayload,
-  ActionType
+  EFiltersAction
 > = {
   dispatch: (targetFilterId: UUID) =>
-    basicDispatcher(ActionType.ToggleFilterHighlightOnly, () => ({ targetFilterId })),
+    basicDispatcher(EFiltersAction.ToggleFilterHighlightOnly, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
     const { targetFilterId } = payload;
@@ -43,7 +43,12 @@ export const toggleFilterHighlightOnly: IBasicStoreHandler<
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

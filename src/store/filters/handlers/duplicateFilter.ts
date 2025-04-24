@@ -6,32 +6,37 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description DuplicateFilter handler.
  */
 
 import { uuid, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, getFilterComponentById, IDefaultState, TFilter } from '../data';
+import { EFiltersAction } from '../actions';
+import {
+  checkCanSaveData,
+  getFilterComponentById,
+  type TFiltersStoreState,
+  type TFilter,
+} from '../data';
 
-type DuplicateFilterPayload = {
+type TDuplicateFilterPayload = {
   targetTabId: UUID;
   targetFilterId: UUID;
 };
 
-export interface DuplicateFilterAction {
-  type: ActionType.DuplicateFilter;
-  payload: DuplicateFilterPayload;
-}
+export type TDuplicateFilterAction = {
+  type: EFiltersAction.DuplicateFilter;
+  payload: TDuplicateFilterPayload;
+};
 
 export const duplicateFilter: IBasicStoreHandler<
-  IDefaultState,
-  DuplicateFilterPayload,
-  ActionType
+  TFiltersStoreState,
+  TDuplicateFilterPayload,
+  EFiltersAction
 > = {
   dispatch: (targetTabId: UUID, targetFilterId: UUID) =>
-    basicDispatcher(ActionType.DuplicateFilter, () => ({
+    basicDispatcher(EFiltersAction.DuplicateFilter, () => ({
       targetTabId,
       targetFilterId,
     })),
@@ -116,7 +121,7 @@ export const duplicateFilter: IBasicStoreHandler<
       components: newComponents,
       filters: newFilters,
       tabs: newTabs,
-      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents, state.overAlternatives),
     };
   },
 };

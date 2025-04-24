@@ -17,13 +17,13 @@ import { ButtonGroup, Flex, Input } from '@chakra-ui/react';
 import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
 import { GiSettingsKnobs } from 'react-icons/gi';
 
-interface ToolBarProps {
+type TToolBarProps = {
   onSettingsOpen: () => void;
   onFiltersToggle: () => void;
   _ref: React.RefObject<HTMLDivElement>;
-}
+};
 
-export const ToolBar = ({ onSettingsOpen, onFiltersToggle, _ref }: ToolBarProps) => {
+export const ToolBar = ({ onSettingsOpen, onFiltersToggle, _ref }: TToolBarProps) => {
   const bg = useColorModeValue('white', 'black');
 
   return (

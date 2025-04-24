@@ -6,7 +6,7 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Pick fg/bg colors of logs.
  */
 
@@ -18,15 +18,15 @@ import { setFilterBg, setFilterFg } from '@/store/filters/handlers';
 import { ColorPickerValueChangeDetails, HStack } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 
-interface ColorPickerProps extends PropsFromRedux {
+type TColorPickerProps = TPropsFromRedux & {
   tabId: string;
   filterId: string;
   defaultColors: TFilterColors;
   onColorChangeFg: (details: ColorPickerValueChangeDetails) => void;
   onColorChangeBg: (details: ColorPickerValueChangeDetails) => void;
-}
+};
 
-const FilterColorPickerImpl: React.FC<ColorPickerProps> = props => {
+const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
   const handleFgColorPick = (details: ColorPickerValueChangeDetails) => {
     props.setFilterFg(props.filterId, details.valueAsString);
   };
@@ -62,7 +62,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const FilterColorPicker = connector(FilterColorPickerImpl);
 // </redux>

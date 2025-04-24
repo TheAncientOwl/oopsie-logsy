@@ -21,14 +21,14 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-interface BoxColorPickerProps {
+type TBoxColorPickerProps = {
   label?: string;
   defaultValue: string;
   onValueChange?: (details: ColorPickerValueChangeDetails) => void;
   onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
-}
+};
 
-export const ColorPicker: React.FC<BoxColorPickerProps> = props => {
+export const ColorPicker: React.FC<TBoxColorPickerProps> = props => {
   return (
     <ChakraColorPicker.Root
       defaultValue={parseColor(props.defaultValue)}

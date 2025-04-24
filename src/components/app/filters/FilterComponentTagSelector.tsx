@@ -6,34 +6,41 @@
  *
  * @file FilterComponentTagSelector.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Tag selector for filter component.
  */
 
 import React, { useMemo } from 'react';
 
 import { SingleSelect } from '@/components/ui/select/SingleSelect';
-import { RootState } from '@/store';
+import { type TRootState } from '@/store';
 import { setComponentOverAlternative } from '@/store/filters/handlers';
 import { createListCollection } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 
-interface FilterComponentTagSelectorProps extends PropsFromRedux {
+type TFilterComponentTagSelectorProps = TPropsFromRedux & {
   tabId: string;
   filterId: string;
   componentId: string;
   value: string;
-}
+};
 
-const FilterComponentTagSelectorImpl: React.FC<FilterComponentTagSelectorProps> = props => {
+const FilterComponentTagSelectorImpl: React.FC<TFilterComponentTagSelectorProps> = props => {
   const overAlternatives = useMemo(
     () => createListCollection({ items: props.overAlternatives }),
     [props.overAlternatives]
   );
 
+  const valid = overAlternatives.items.some(item => item.value === props.value);
+
   return (
     <SingleSelect
-      root={{ size: 'md', maxWidth: '150px', variant: 'outline' }}
+      root={{
+        size: 'md',
+        maxWidth: '150px',
+        variant: 'outline',
+        color: valid ? '' : 'red',
+      }}
       collection={overAlternatives}
       value={props.value}
       onChange={(overAlternativeId: string) => {
@@ -44,8 +51,8 @@ const FilterComponentTagSelectorImpl: React.FC<FilterComponentTagSelectorProps> 
 };
 
 // <redux>
-const mapState = (state: RootState) => ({
-  overAlternatives: state.logRegexTags.overAlternatives,
+const mapState = (state: TRootState) => ({
+  overAlternatives: state.filters.overAlternatives,
 });
 
 const mapDispatch = {
@@ -53,7 +60,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const FilterComponentTagSelector = connector(FilterComponentTagSelectorImpl);
 // </redux>

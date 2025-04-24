@@ -6,47 +6,51 @@
  *
  * @file muteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description MuteAllFilters handler.
  */
 
 import { modifyWhereIdAnyOf, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, getTabById, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';
 
-type MuteAllFiltersPayload = {
+type TMuteAllFiltersPayload = {
   targetTabId: UUID;
 };
 
-export interface MuteAllFiltersAction {
-  type: ActionType.MuteAllFilters;
-  payload: MuteAllFiltersPayload;
-}
+export type TMuteAllFiltersAction = {
+  type: EFiltersAction.MuteAllFilters;
+  payload: TMuteAllFiltersPayload;
+};
 
-export const muteAllFilters: IBasicStoreHandler<IDefaultState, MuteAllFiltersPayload, ActionType> =
-  {
-    dispatch: (targetTabId: UUID) =>
-      basicDispatcher(ActionType.MuteAllFilters, () => ({ targetTabId })),
+export const muteAllFilters: IBasicStoreHandler<
+  TFiltersStoreState,
+  TMuteAllFiltersPayload,
+  EFiltersAction
+> = {
+  dispatch: (targetTabId: UUID) =>
+    basicDispatcher(EFiltersAction.MuteAllFilters, () => ({ targetTabId })),
 
-    reduce: (state, payload) => {
-      const { targetTabId } = payload;
+  reduce: (state, payload) => {
+    const { targetTabId } = payload;
 
-      const filterIdsToMute = getTabById(
-        `muteAllFilters::reduce`,
+    const filterIdsToMute = getTabById(`muteAllFilters::reduce`, state.tabs, targetTabId).filterIDs;
+
+    const newFilters = modifyWhereIdAnyOf(state.filters, filterIdsToMute, oldFilter => ({
+      ...oldFilter,
+      isActive: false,
+    }));
+
+    return {
+      ...state,
+      filters: newFilters,
+      canSaveData: checkCanSaveData(
         state.tabs,
-        targetTabId
-      ).filterIDs;
-
-      const newFilters = modifyWhereIdAnyOf(state.filters, filterIdsToMute, oldFilter => ({
-        ...oldFilter,
-        isActive: false,
-      }));
-
-      return {
-        ...state,
-        filters: newFilters,
-        canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
-      };
-    },
-  };
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
+    };
+  },
+};

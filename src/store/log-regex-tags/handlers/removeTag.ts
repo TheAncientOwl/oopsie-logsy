@@ -6,25 +6,30 @@
  *
  * @file removeTag.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description RemoveTag handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanApply, IDefaultState } from '../data';
+import { ELogRegexTagsAction } from '../actions';
+import { checkCanApply, type TLogRegexTagsStoreState } from '../data';
 
-type RemoveTagPayload = {
+type TRemoveTagPayload = {
   targetId: string;
 };
 
-export interface RemoveTagAction {
-  type: ActionType.RemoveTag;
-  payload: RemoveTagPayload;
-}
+export type TRemoveTagAction = {
+  type: ELogRegexTagsAction.RemoveTag;
+  payload: TRemoveTagPayload;
+};
 
-export const removeTag: IBasicStoreHandler<IDefaultState, RemoveTagPayload, ActionType> = {
-  dispatch: (targetId: string) => basicDispatcher(ActionType.RemoveTag, () => ({ targetId })),
+export const removeTag: IBasicStoreHandler<
+  TLogRegexTagsStoreState,
+  TRemoveTagPayload,
+  ELogRegexTagsAction
+> = {
+  dispatch: (targetId: string) =>
+    basicDispatcher(ELogRegexTagsAction.RemoveTag, () => ({ targetId })),
 
   reduce: (state, payload) => {
     const { targetId } = payload;

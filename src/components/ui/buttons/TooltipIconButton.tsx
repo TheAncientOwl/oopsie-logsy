@@ -10,13 +10,13 @@
  * @description ChakraUI icon button with tooltip property
  */
 
-import { IconButton } from '@chakra-ui/react';
-import type { IconButtonProps } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/Tooltip';
+import type { IconButtonProps } from '@chakra-ui/react';
+import { IconButton } from '@chakra-ui/react';
 
-export interface TooltipIconButtonProps extends IconButtonProps {
+export type TooltipIconButtonProps = IconButtonProps & {
   tooltip?: string;
-}
+};
 
 export const TooltipIconButton = (props: TooltipIconButtonProps) => {
   return (

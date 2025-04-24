@@ -14,13 +14,13 @@ import { useTheme } from 'next-themes';
 
 export type TColorMode = 'light' | 'dark';
 
-export interface IUseColorModeReturn {
+export interface TUseColorModeReturn {
   colorMode: TColorMode;
   setColorMode: (colorMode: TColorMode) => void;
   toggleColorMode: () => void;
 }
 
-export const useColorMode = (): IUseColorModeReturn => {
+export const useColorMode = (): TUseColorModeReturn => {
   const { resolvedTheme, setTheme } = useTheme();
   const toggleColorMode = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');

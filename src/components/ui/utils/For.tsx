@@ -12,12 +12,12 @@
 
 import React from 'react';
 
-interface ForProps<T> {
+type TForProps<T> = {
   each: Array<T>;
   children: (obj: T, index: number) => React.ReactNode;
-}
+};
 
-export const For = <T,>({ each, children }: ForProps<T>) => {
+export const For = <T,>({ each, children }: TForProps<T>) => {
   return (
     <>
       {each.map((item, index) => (

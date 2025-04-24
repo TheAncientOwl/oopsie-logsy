@@ -6,28 +6,32 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetFilterName handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type SetFilterNamePayload = {
+type TSetFilterNamePayload = {
   targetFilterId: UUID;
   name: string;
 };
 
-export interface SetFilterNameAction {
-  type: ActionType.SetFilterName;
-  payload: SetFilterNamePayload;
-}
+export type TSetFilterNameAction = {
+  type: EFiltersAction.SetFilterName;
+  payload: TSetFilterNamePayload;
+};
 
-export const setFilterName: IBasicStoreHandler<IDefaultState, SetFilterNamePayload, ActionType> = {
+export const setFilterName: IBasicStoreHandler<
+  TFiltersStoreState,
+  TSetFilterNamePayload,
+  EFiltersAction
+> = {
   dispatch: (targetFilterId: UUID, name: string) =>
-    basicDispatcher(ActionType.SetFilterName, () => ({
+    basicDispatcher(EFiltersAction.SetFilterName, () => ({
       targetFilterId,
       name,
     })),
@@ -43,7 +47,12 @@ export const setFilterName: IBasicStoreHandler<IDefaultState, SetFilterNamePaylo
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

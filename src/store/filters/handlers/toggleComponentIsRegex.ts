@@ -6,31 +6,31 @@
  *
  * @file toggleComponentIsRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description ToggleComponentIsRegex handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
 type ToggleComponentIsRegexPayload = {
   targetComponentId: UUID;
 };
 
-export interface ToggleComponentIsRegexAction {
-  type: ActionType.ToggleFilterComponentIsRegex;
+export type ToggleComponentIsRegexAction = {
+  type: EFiltersAction.ToggleFilterComponentIsRegex;
   payload: ToggleComponentIsRegexPayload;
-}
+};
 
 export const toggleComponentIsRegex: IBasicStoreHandler<
-  IDefaultState,
+  TFiltersStoreState,
   ToggleComponentIsRegexPayload,
-  ActionType
+  EFiltersAction
 > = {
   dispatch: (targetComponentId: UUID) =>
-    basicDispatcher(ActionType.ToggleFilterComponentIsRegex, () => ({ targetComponentId })),
+    basicDispatcher(EFiltersAction.ToggleFilterComponentIsRegex, () => ({ targetComponentId })),
 
   reduce: (state, payload) => {
     const { targetComponentId } = payload;
@@ -43,7 +43,12 @@ export const toggleComponentIsRegex: IBasicStoreHandler<
     return {
       ...state,
       components: newComponents,
-      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        state.filters,
+        newComponents,
+        state.overAlternatives
+      ),
     };
   },
 };

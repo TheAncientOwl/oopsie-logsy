@@ -6,40 +6,45 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description InvokeSetTabs handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
-import { ActionType, Dispatch } from '../actions';
-import { IDefaultState, TFilter, TFilterComponent, TFilterTab } from '../data';
+import { EFiltersAction, type TFiltersDispatch } from '../actions';
+import {
+  type TFiltersStoreState,
+  type TFilter,
+  type TFilterComponent,
+  type TFilterTab,
+} from '../data';
 import { invoke } from '@tauri-apps/api/core';
 
-type InvokeSetTabsOkPayload = {};
+type TInvokeSetTabsOkPayload = {};
 
-export interface InvokeSetTabsOkAction {
-  type: typeof ActionType.InvokeSetTabsOK;
-  payload: InvokeSetTabsOkPayload;
-}
+export type TInvokeSetTabsOkAction = {
+  type: typeof EFiltersAction.InvokeSetTabsOK;
+  payload: TInvokeSetTabsOkPayload;
+};
 
-type InvokeSetTabsNOkPayload = {
+type TInvokeSetTabsNOkPayload = {
   error: unknown;
 };
 
-export interface InvokeSetTabsNOkAction {
-  type: typeof ActionType.InvokeSetTabsNOK;
-  payload: InvokeSetTabsNOkPayload;
-}
+export type TInvokeSetTabsNOkAction = {
+  type: typeof EFiltersAction.InvokeSetTabsNOK;
+  payload: TInvokeSetTabsNOkPayload;
+};
 
 export const invokeSetTabs: IApiCallStoreHandler<
-  IDefaultState,
-  Dispatch,
-  InvokeSetTabsOkPayload,
-  InvokeSetTabsNOkPayload
+  TFiltersStoreState,
+  TFiltersDispatch,
+  TInvokeSetTabsOkPayload,
+  TInvokeSetTabsNOkPayload
 > = {
   dispatch:
     (tabs: Array<TFilterTab>, filters: Array<TFilter>, components: Array<TFilterComponent>) =>
-    async (dispatch: Dispatch) => {
+    async (dispatch: TFiltersDispatch) => {
       console.assertX(
         invokeSetTabs.dispatch.name,
         tabs !== undefined,
@@ -56,7 +61,7 @@ export const invokeSetTabs: IApiCallStoreHandler<
         "Received 'undefined' as components"
       );
 
-      dispatch({ type: ActionType.Loading, payload: {} });
+      dispatch({ type: EFiltersAction.Loading, payload: {} });
 
       try {
         console.verboseX(invokeSetTabs.dispatch.name, `Sending ${tabs.length} tabs:`, tabs);
@@ -73,10 +78,10 @@ export const invokeSetTabs: IApiCallStoreHandler<
 
         const response = await invoke('set_filter_tabs', { tabs, filters, components });
         console.infoX(invokeSetTabs.dispatch.name, `rust response: ${response}`);
-        dispatch({ type: ActionType.InvokeSetTabsOK, payload: {} });
+        dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
       } catch (error) {
         console.errorX(invokeSetTabs.dispatch.name, `error sending tabs to rust: ${error}`);
-        dispatch({ type: ActionType.InvokeSetTabsNOK, payload: { error } });
+        dispatch({ type: EFiltersAction.InvokeSetTabsNOK, payload: { error } });
       }
     },
 

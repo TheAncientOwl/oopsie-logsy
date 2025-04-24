@@ -6,32 +6,32 @@
  *
  * @file setFilterPriority.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SetFilterPriority handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type SetFilterPriorityPayload = {
+type TSetFilterPriorityPayload = {
   targetFilterId: UUID;
   priority: number;
 };
 
-export interface SetFilterPriorityAction {
-  type: ActionType.SetFilterPriority;
-  payload: SetFilterPriorityPayload;
-}
+export type TSetFilterPriorityAction = {
+  type: EFiltersAction.SetFilterPriority;
+  payload: TSetFilterPriorityPayload;
+};
 
 export const setFilterPriority: IBasicStoreHandler<
-  IDefaultState,
-  SetFilterPriorityPayload,
-  ActionType
+  TFiltersStoreState,
+  TSetFilterPriorityPayload,
+  EFiltersAction
 > = {
   dispatch: (targetFilterId: string, priority: number) =>
-    basicDispatcher(ActionType.SetFilterPriority, () => ({
+    basicDispatcher(EFiltersAction.SetFilterPriority, () => ({
       targetFilterId,
       priority,
     })),
@@ -47,7 +47,12 @@ export const setFilterPriority: IBasicStoreHandler<
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

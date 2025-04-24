@@ -6,28 +6,32 @@
  *
  * @file deleteFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description DeleteFilter handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { contains, UUID } from '@/store/common/identifier';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type DeleteFilterPayload = {
+type TDeleteFilterPayload = {
   targetTabId: string;
   targetFilterId: string;
 };
 
-export interface DeleteFilterAction {
-  type: typeof ActionType.DeleteFilter;
-  payload: DeleteFilterPayload;
-}
+export type TDeleteFilterAction = {
+  type: typeof EFiltersAction.DeleteFilter;
+  payload: TDeleteFilterPayload;
+};
 
-export const deleteFilter: IBasicStoreHandler<IDefaultState, DeleteFilterPayload, ActionType> = {
+export const deleteFilter: IBasicStoreHandler<
+  TFiltersStoreState,
+  TDeleteFilterPayload,
+  EFiltersAction
+> = {
   dispatch: (targetTabId: string, targetFilterId: string) =>
-    basicDispatcher(ActionType.DeleteFilter, () => ({
+    basicDispatcher(EFiltersAction.DeleteFilter, () => ({
       targetTabId,
       targetFilterId,
     })),
@@ -64,7 +68,7 @@ export const deleteFilter: IBasicStoreHandler<IDefaultState, DeleteFilterPayload
       components: newComponents,
       filters: newFilters,
       tabs: newTabs,
-      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents, state.overAlternatives),
     };
   },
 };

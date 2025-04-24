@@ -6,43 +6,42 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description InvokeGetTags handler.
  */
 
 import { IApiCallStoreHandler } from '@/store/common/storeHandler';
-import { ActionType, Dispatch } from '../actions';
-import { DefaultFactory, IDefaultState, TRegexTag } from '../data';
 import { invoke } from '@tauri-apps/api/core';
+import { type TLogRegexTagsDispatch, ELogRegexTagsAction } from '../actions';
+import { DefaultFactory, type TLogRegexTagsStoreState, type TRegexTag } from '../data';
 import { invokeSetTags } from './invokeSetTags';
-import { makeOverAlternatives } from '@/store/filters/data';
 
-type InvokeGetTagsOkPayload = {
+export type TInvokeGetTagsOkPayload = {
   tags: Array<TRegexTag>;
 };
 
-export interface InvokeGetTagsOkAction {
-  type: typeof ActionType.InvokeGetTagsOK;
-  payload: InvokeGetTagsOkPayload;
-}
+export type TInvokeGetTagsOkAction = {
+  type: typeof ELogRegexTagsAction.InvokeGetTagsOK;
+  payload: TInvokeGetTagsOkPayload;
+};
 
-type InvokeGetTagsNOkPayload = {
+type TInvokeGetTagsNOkPayload = {
   error: unknown;
 };
 
-export interface InvokeGetTagsNOkAction {
-  type: typeof ActionType.InvokeGetTagsNOK;
-  payload: InvokeGetTagsNOkPayload;
-}
+export type TInvokeGetTagsNOkAction = {
+  type: typeof ELogRegexTagsAction.InvokeGetTagsNOK;
+  payload: TInvokeGetTagsNOkPayload;
+};
 
 export const invokeGetTags: IApiCallStoreHandler<
-  IDefaultState,
-  Dispatch,
-  InvokeGetTagsOkPayload,
-  InvokeGetTagsNOkPayload
+  TLogRegexTagsStoreState,
+  TLogRegexTagsDispatch,
+  TInvokeGetTagsOkPayload,
+  TInvokeGetTagsNOkPayload
 > = {
-  dispatch: () => async (dispatch: Dispatch) => {
-    dispatch({ type: ActionType.Loading, payload: {} });
+  dispatch: () => async (dispatch: TLogRegexTagsDispatch) => {
+    dispatch({ type: ELogRegexTagsAction.Loading, payload: {} });
 
     try {
       const tags = await invoke<Array<TRegexTag>>('get_regex_tags');
@@ -55,10 +54,10 @@ export const invokeGetTags: IApiCallStoreHandler<
         await invokeSetTags.dispatch(finalTags)(dispatch);
       }
 
-      dispatch({ type: ActionType.InvokeGetTagsOK, payload: { tags: finalTags } });
+      dispatch({ type: ELogRegexTagsAction.InvokeGetTagsOK, payload: { tags: finalTags } });
     } catch (error) {
       console.errorX(invokeGetTags.dispatch.name, `error getting tags from rust: ${error}`);
-      dispatch({ type: ActionType.InvokeGetTagsNOK, payload: { error } });
+      dispatch({ type: ELogRegexTagsAction.InvokeGetTagsNOK, payload: { error } });
     }
   },
 
@@ -69,7 +68,7 @@ export const invokeGetTags: IApiCallStoreHandler<
         loading: false,
         canApplyTags: false,
         tags: payload.tags,
-        overAlternatives: makeOverAlternatives(payload.tags),
+        // overAlternatives: makeOverAlternatives(payload.tags),
         tagsChanged: false,
       };
     },

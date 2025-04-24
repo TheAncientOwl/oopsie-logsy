@@ -6,14 +6,14 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.20
+ * @version 0.21
  * @description Filters component
  */
 
 import { NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { RootState } from '@/store';
+import { type TRootState } from '@/store';
 import { addNewFilterTab, invokeGetTabs, invokeSetTabs } from '@/store/filters/handlers';
 import { Box, ButtonGroup, Collapsible, HStack, Tabs } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
@@ -21,11 +21,11 @@ import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
 
-interface FiltersProps extends PropsFromRedux {
+type TFiltersProps = TPropsFromRedux & {
   filtersOpen: boolean;
-}
+};
 
-const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
+const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
   useEffect(() => {
     props.invokeGetTabs();
   }, []);
@@ -91,14 +91,14 @@ const FilterTabsImpl: React.FC<FiltersProps> = (props: FiltersProps) => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({
+const mapState = (state: TRootState) => ({
   tabs: state.filters.tabs,
   filters: state.filters.filters,
   components: state.filters.components,
   loading: state.filters.loading,
   focusedTab: state.filters.focusedTabId,
   canSaveTabs: state.filters.canSaveData,
-  overAlternatives: state.logRegexTags.overAlternatives,
+  overAlternatives: state.filters.overAlternatives,
 });
 
 const mapDispatch = {
@@ -108,7 +108,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const FilterTabs = connector(FilterTabsImpl);
 // </redux>

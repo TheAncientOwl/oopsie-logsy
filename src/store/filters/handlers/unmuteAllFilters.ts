@@ -6,31 +6,31 @@
  *
  * @file unmuteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description UnmuteAllFilters handler.
  */
 
 import { modifyWhereIdAnyOf, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, getTabById, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';
 
-type UnmuteAllFiltersPayload = {
+type TUnmuteAllFiltersPayload = {
   targetTabId: UUID;
 };
 
-export interface UnmuteAllFiltersAction {
-  type: ActionType.UnmuteAllFilters;
-  payload: UnmuteAllFiltersPayload;
-}
+export type TUnmuteAllFiltersAction = {
+  type: EFiltersAction.UnmuteAllFilters;
+  payload: TUnmuteAllFiltersPayload;
+};
 
 export const unmuteAllFilters: IBasicStoreHandler<
-  IDefaultState,
-  UnmuteAllFiltersPayload,
-  ActionType
+  TFiltersStoreState,
+  TUnmuteAllFiltersPayload,
+  EFiltersAction
 > = {
   dispatch: (targetTabId: UUID) =>
-    basicDispatcher(ActionType.UnmuteAllFilters, () => ({ targetTabId })),
+    basicDispatcher(EFiltersAction.UnmuteAllFilters, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;
@@ -49,7 +49,12 @@ export const unmuteAllFilters: IBasicStoreHandler<
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

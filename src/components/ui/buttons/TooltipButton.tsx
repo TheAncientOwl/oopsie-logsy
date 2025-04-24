@@ -14,11 +14,11 @@ import { Button } from '@chakra-ui/react';
 import type { ButtonProps } from '@chakra-ui/react';
 import { Tooltip } from '@/components/ui/Tooltip';
 
-export interface TooltipButtonProps extends ButtonProps {
+type TTooltipButtonProps = ButtonProps & {
   tooltip: string;
-}
+};
 
-export const TooltipButton = (props: TooltipButtonProps) => {
+export const TooltipButton = (props: TTooltipButtonProps) => {
   return (
     <Tooltip content={props.tooltip}>
       <Button {...props} />

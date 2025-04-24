@@ -6,41 +6,47 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Filters action types.
  */
 
 import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
 
-import { AddNewFilterAction } from './handlers/addNewFilter';
-import { AddNewFilterComponentAction } from './handlers/addNewFilterComponent';
-import { AddNewFilterTabAction } from './handlers/addNewFilterTab';
-import { DeleteAllFiltersAction } from './handlers/deleteAllFilters';
-import { DeleteFilterAction } from './handlers/deleteFilter';
-import { DeleteFilterComponentAction } from './handlers/deleteFilterComponent';
-import { DeleteFilterTabAction } from './handlers/deleteFilterTab';
-import { DuplicateFilterAction } from './handlers/duplicateFilter';
-import { DuplicateFiltersTabAction } from './handlers/duplicateFiltersTab';
-import { FocusFilterTabAction } from './handlers/focusFilterTab';
-import { InvokeGetTabsNOkAction, InvokeGetTabsOkAction } from './handlers/invokeGetTabs';
-import { InvokeSetTabsNOkAction, InvokeSetTabsOkAction } from './handlers/invokeSetTabs';
-import { LoadingAction } from './handlers/loading';
-import { MuteAllFiltersAction } from './handlers/muteAllFilters';
-import { SetAllFiltersCollapsedAction } from './handlers/setAllFiltersCollapsed';
-import { SetComponentDataAction } from './handlers/setComponentData';
-import { SetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
-import { SetFilterNameAction } from './handlers/setFilterName';
-import { SetFilterPriorityAction } from './handlers/setFilterPriority';
-import { SetFilterTabNameAction } from './handlers/setFilterTabName';
-import { ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
-import { ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
-import { ToggleFilterActiveAction } from './handlers/toggleFilterActive';
-import { ToggleFilterCollapsedAction } from './handlers/toggleFilterCollapsed';
-import { ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
-import { ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
-import { UnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
+import { type TAddNewFilterAction } from './handlers/addNewFilter';
+import { type TAddNewFilterComponentAction } from './handlers/addNewFilterComponent';
+import { type TAddNewFilterTabAction } from './handlers/addNewFilterTab';
+import { type TDeleteAllFiltersAction } from './handlers/deleteAllFilters';
+import { type TDeleteFilterAction } from './handlers/deleteFilter';
+import { type TDeleteFilterComponentAction } from './handlers/deleteFilterComponent';
+import { type TDeleteFilterTabAction } from './handlers/deleteFilterTab';
+import { type TDuplicateFilterAction } from './handlers/duplicateFilter';
+import { type TDuplicateFiltersTabAction } from './handlers/duplicateFiltersTab';
+import { type TFocusFilterTabAction } from './handlers/focusFilterTab';
+import {
+  type TInvokeGetTabsNOkAction,
+  type TInvokeGetTabsOkAction,
+} from './handlers/invokeGetTabs';
+import {
+  type TInvokeSetTabsNOkAction,
+  type TInvokeSetTabsOkAction,
+} from './handlers/invokeSetTabs';
+import { type TLoadingAction } from './handlers/loading';
+import { type TMuteAllFiltersAction } from './handlers/muteAllFilters';
+import { type TSetAllFiltersCollapsedAction } from './handlers/setAllFiltersCollapsed';
+import { type TSetComponentDataAction } from './handlers/setComponentData';
+import { type TSetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
+import { type TSetFilterNameAction } from './handlers/setFilterName';
+import { type TSetFilterPriorityAction } from './handlers/setFilterPriority';
+import { type TSetFilterTabNameAction } from './handlers/setFilterTabName';
+import { type ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
+import { type ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
+import { type ToggleFilterActiveAction } from './handlers/toggleFilterActive';
+import { type ToggleFilterCollapsedAction } from './handlers/toggleFilterCollapsed';
+import { type ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
+import { type ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
+import { type TUnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 
-export enum ActionType {
+export enum EFiltersAction {
   Loading = 'Filters__Loading',
 
   InvokeSetTabsOK = 'Filters__InvokeSetTabsOK',
@@ -78,36 +84,36 @@ export enum ActionType {
   ToggleFilterComponentIgnoreCase = 'Filters__ToggleFilterComponentIgnoreCase',
 }
 
-export type DispatchTypes =
+export type TFiltersDispatchTypes =
   | UnknownAction
-  | LoadingAction
-  | AddNewFilterTabAction
-  | DeleteFilterTabAction
-  | FocusFilterTabAction
-  | AddNewFilterAction
-  | DeleteFilterAction
-  | DuplicateFilterAction
+  | TLoadingAction
+  | TAddNewFilterTabAction
+  | TDeleteFilterTabAction
+  | TFocusFilterTabAction
+  | TAddNewFilterAction
+  | TDeleteFilterAction
+  | TDuplicateFilterAction
   | ToggleFilterActiveAction
   | ToggleFilterHighlightAction
-  | SetFilterNameAction
-  | AddNewFilterComponentAction
-  | DeleteFilterComponentAction
-  | SetComponentOverAlternativeAction
+  | TSetFilterNameAction
+  | TAddNewFilterComponentAction
+  | TDeleteFilterComponentAction
+  | TSetComponentOverAlternativeAction
   | ToggleComponentIsRegexAction
   | ToggleComponentIsEqualsAction
-  | SetComponentDataAction
-  | MuteAllFiltersAction
-  | UnmuteAllFiltersAction
-  | DeleteAllFiltersAction
-  | InvokeGetTabsOkAction
-  | InvokeGetTabsNOkAction
-  | InvokeSetTabsOkAction
-  | InvokeSetTabsNOkAction
-  | SetFilterTabNameAction
+  | TSetComponentDataAction
+  | TMuteAllFiltersAction
+  | TUnmuteAllFiltersAction
+  | TDeleteAllFiltersAction
+  | TInvokeGetTabsOkAction
+  | TInvokeGetTabsNOkAction
+  | TInvokeSetTabsOkAction
+  | TInvokeSetTabsNOkAction
+  | TSetFilterTabNameAction
   | ToggleFilterComponentIgnoreCaseAction
-  | SetFilterPriorityAction
+  | TSetFilterPriorityAction
   | ToggleFilterCollapsedAction
-  | SetAllFiltersCollapsedAction
-  | DuplicateFiltersTabAction;
+  | TSetAllFiltersCollapsedAction
+  | TDuplicateFiltersTabAction;
 
-export type Dispatch = ReduxDispatch<DispatchTypes>;
+export type TFiltersDispatch = ReduxDispatch<TFiltersDispatchTypes>;

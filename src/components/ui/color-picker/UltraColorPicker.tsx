@@ -42,15 +42,15 @@ enum EUltraColorPickerState {
   Advanced,
 }
 
-interface PickerStateProps extends PropsWithChildren {
+type TPickerStateProps = PropsWithChildren & {
   open: boolean;
   defaultOpen: boolean;
   onActivate: () => void;
   label: string;
   icon: () => React.ReactNode;
-}
+};
 
-const UltraPickerState: React.FC<PickerStateProps> = props => {
+const UltraPickerState: React.FC<TPickerStateProps> = props => {
   return (
     <Collapsible.Root defaultOpen={true} open={props.open}>
       <Collapsible.Trigger cursor='pointer' onClick={props.onActivate} width='100%'>
@@ -110,14 +110,14 @@ const SliderPicker: React.FC = () => {
   );
 };
 
-interface UltraColorPickerProps {
+type TUltraColorPickerProps = {
   label: string;
   defaultValue: string;
   onValueChange: (details: ColorPickerValueChangeDetails) => void;
   onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
-}
+};
 
-export const UltraColorPicker: React.FC<UltraColorPickerProps> = props => {
+export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
   const [pickerState, setPickerState] = useState(EUltraColorPickerState.Presets);
 
   const setSimpleState = () => {

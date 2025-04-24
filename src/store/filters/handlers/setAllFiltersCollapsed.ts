@@ -6,32 +6,32 @@
  *
  * @file setAllFiltersCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description setAllFiltersCollapsed handler.
  */
 
 import { modifyWhereIdAnyOf, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, getTabById, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';
 
-type SetAllFiltersCollapsedPayload = {
+type TSetAllFiltersCollapsedPayload = {
   targetTabId: UUID;
   collapsed: boolean;
 };
 
-export interface SetAllFiltersCollapsedAction {
-  type: ActionType.SetAllFiltersCollapsed;
-  payload: SetAllFiltersCollapsedPayload;
-}
+export type TSetAllFiltersCollapsedAction = {
+  type: EFiltersAction.SetAllFiltersCollapsed;
+  payload: TSetAllFiltersCollapsedPayload;
+};
 
 export const setAllFiltersCollapsed: IBasicStoreHandler<
-  IDefaultState,
-  SetAllFiltersCollapsedPayload,
-  ActionType
+  TFiltersStoreState,
+  TSetAllFiltersCollapsedPayload,
+  EFiltersAction
 > = {
   dispatch: (targetTabId: UUID, collapsed: boolean) =>
-    basicDispatcher(ActionType.SetAllFiltersCollapsed, () => ({
+    basicDispatcher(EFiltersAction.SetAllFiltersCollapsed, () => ({
       targetTabId,
       collapsed,
     })),
@@ -53,7 +53,12 @@ export const setAllFiltersCollapsed: IBasicStoreHandler<
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

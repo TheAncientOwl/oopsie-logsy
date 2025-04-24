@@ -21,11 +21,11 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-interface ChannelSliderProps {
+type TChannelSliderProps = {
   format: ColorPicker.ColorFormat;
-}
+};
 
-export const ChannelSliders: React.FC<ChannelSliderProps> = props => {
+export const ChannelSliders: React.FC<TChannelSliderProps> = props => {
   const channels = getColorChannels(props.format);
 
   return (
@@ -42,13 +42,13 @@ export const ChannelSliders: React.FC<ChannelSliderProps> = props => {
   );
 };
 
-interface ChannelSliderPickerProps {
+type TChannelSliderPickerProps = {
   defaultValue: string;
   onValueChange?: (details: ColorPickerValueChangeDetails) => void;
   onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
-}
+};
 
-export const ChannelSlidersPicker: React.FC<ChannelSliderPickerProps> = props => {
+export const ChannelSlidersPicker: React.FC<TChannelSliderPickerProps> = props => {
   return (
     <ColorPicker.Root
       defaultValue={parseColor(props.defaultValue)}

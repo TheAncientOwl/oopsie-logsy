@@ -6,32 +6,32 @@
  *
  * @file deleteFilterComponent.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description DeleteFilterComponent.ts.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { modifyWhereId, remove, removeById, UUID } from '@/store/common/identifier';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type DeleteFilterComponentPayload = {
+type TDeleteFilterComponentPayload = {
   targetFilterId: UUID;
   targetComponentId: UUID;
 };
 
-export interface DeleteFilterComponentAction {
-  type: ActionType.DeleteFilterComponent;
-  payload: DeleteFilterComponentPayload;
-}
+export type TDeleteFilterComponentAction = {
+  type: EFiltersAction.DeleteFilterComponent;
+  payload: TDeleteFilterComponentPayload;
+};
 
 export const deleteFilterComponent: IBasicStoreHandler<
-  IDefaultState,
-  DeleteFilterComponentPayload,
-  ActionType
+  TFiltersStoreState,
+  TDeleteFilterComponentPayload,
+  EFiltersAction
 > = {
   dispatch: (targetFilterId: UUID, targetComponentId: UUID) =>
-    basicDispatcher(ActionType.DeleteFilterComponent, () => ({
+    basicDispatcher(EFiltersAction.DeleteFilterComponent, () => ({
       targetFilterId,
       targetComponentId,
     })),
@@ -50,7 +50,7 @@ export const deleteFilterComponent: IBasicStoreHandler<
       ...state,
       components: newComponents,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, newComponents),
+      canSaveData: checkCanSaveData(state.tabs, newFilters, newComponents, state.overAlternatives),
     };
   },
 };

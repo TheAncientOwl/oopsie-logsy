@@ -6,32 +6,32 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetComponentData handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type SetComponentDataPayload = {
+type TSetComponentDataPayload = {
   targetComponentId: UUID;
   data: string;
 };
 
-export interface SetComponentDataAction {
-  type: ActionType.SetFilterComponentData;
-  payload: SetComponentDataPayload;
-}
+export type TSetComponentDataAction = {
+  type: EFiltersAction.SetFilterComponentData;
+  payload: TSetComponentDataPayload;
+};
 
 export const setComponentData: IBasicStoreHandler<
-  IDefaultState,
-  SetComponentDataPayload,
-  ActionType
+  TFiltersStoreState,
+  TSetComponentDataPayload,
+  EFiltersAction
 > = {
   dispatch: (targetComponentId: UUID, data: string) =>
-    basicDispatcher(ActionType.SetFilterComponentData, () => ({
+    basicDispatcher(EFiltersAction.SetFilterComponentData, () => ({
       targetComponentId,
       data,
     })),
@@ -47,7 +47,12 @@ export const setComponentData: IBasicStoreHandler<
     return {
       ...state,
       components: newComponents,
-      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        state.filters,
+        newComponents,
+        state.overAlternatives
+      ),
     };
   },
 };

@@ -12,11 +12,11 @@
 
 import { Table } from '@chakra-ui/react';
 
-interface LogViewProps {
+type TLogViewProps = {
   offsetTop: string;
-}
+};
 
-export const LogView = ({ offsetTop }: LogViewProps) => {
+export const LogView = ({ offsetTop }: TLogViewProps) => {
   const items = [
     {
       id: 1,

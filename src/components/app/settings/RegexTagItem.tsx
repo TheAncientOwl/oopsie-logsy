@@ -6,12 +6,14 @@
  *
  * @file RegexTagItem.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description LogRegexConfigurator regex tag item.
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { DoubleCheck } from '@/components/ui/DoubleCheck';
 import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/Icons';
+import { useSwitch } from '@/hooks/useSwitch';
 import { TRegexTag } from '@/store/log-regex-tags/data';
 import {
   removeTag,
@@ -19,56 +21,94 @@ import {
   setTagRegex,
   toggleTagDisplay,
 } from '@/store/log-regex-tags/handlers';
-import { HStack, Input } from '@chakra-ui/react';
+import { HStack, Input, Span } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-interface RegexTagItemProps extends PropsFromRedux {
+type TRegexTagItemProps = TPropsFromRedux & {
   tag: TRegexTag;
-}
+};
 
-const RegexTagItemImpl: React.FC<RegexTagItemProps> = props => {
-  const handleDelete = () => {
-    props.removeTag(props.tag.id);
-  };
+const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
+  const [deleteDoubleCheckOpen, toggleDeleteDoubleCheck] = useSwitch(false);
+  const [tdDoubleCheckOpen, toggleTDDoubleCheck] = useSwitch(false);
 
-  const handleDisplayToggle = () => {
+  const toggleDisplay = () => {
     props.toggleTagDisplay(props.tag.id);
   };
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setTagName(props.tag.id, event.target.value);
-  };
-
-  const handleRegexChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setTagRegex(props.tag.id, event.target.value);
-  };
-
   return (
-    <HStack>
-      <TooltipIconButton
-        onClick={handleDelete}
-        tooltip='Delete tag'
-        colorPalette='red'
-        variant='subtle'
+    <>
+      <HStack>
+        <TooltipIconButton
+          onClick={toggleDeleteDoubleCheck}
+          tooltip='Delete tag'
+          colorPalette='red'
+          variant='subtle'
+        >
+          <DeleteIcon />
+        </TooltipIconButton>
+        <TooltipIconButton
+          onClick={() => {
+            if (props.tag.displayed) {
+              toggleTDDoubleCheck();
+            } else {
+              toggleDisplay();
+            }
+          }}
+          tooltip={props.tag.displayed ? 'Hide tag in log view' : 'Show tag in log view'}
+          colorPalette='green'
+          variant='subtle'
+        >
+          {props.tag.displayed ? <EyeOpenIcon /> : <EyeClosedIcon />}
+        </TooltipIconButton>
+        <Input
+          defaultValue={props.tag.name}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            props.setTagName(props.tag.id, event.target.value);
+          }}
+        />
+        <Input
+          defaultValue={props.tag.regex}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            props.setTagRegex(props.tag.id, event.target.value);
+          }}
+          colorPalette={props.tag.regex.length > 0 ? 'current' : 'red'}
+        />
+      </HStack>
+
+      <DoubleCheck
+        isShown={deleteDoubleCheckOpen}
+        label='Delete Regex Tag'
+        acceptLabel='Yes, Delete'
+        declineLabel='No, Cancel'
+        onAccept={() => {
+          props.removeTag(props.tag.id);
+          toggleDeleteDoubleCheck();
+        }}
+        onDecline={toggleDeleteDoubleCheck}
       >
-        <DeleteIcon />
-      </TooltipIconButton>
-      <TooltipIconButton
-        onClick={handleDisplayToggle}
-        tooltip={props.tag.displayed ? 'Hide tag in log view' : 'Show tag in log view'}
-        colorPalette='green'
-        variant='subtle'
+        Are you sure you want to <Span color='red.500'>delete</Span> <b>{props.tag.name}</b>?<br />
+        This action will <Span color='red.500'>invalidate all filters</Span> until manually updated
+        <Span color='yellow.500'> when regex applied</Span>.
+      </DoubleCheck>
+
+      <DoubleCheck
+        isShown={tdDoubleCheckOpen}
+        label='Hide Regex Tag'
+        acceptLabel='Yes, Hide'
+        declineLabel='No, Cancel'
+        onAccept={() => {
+          toggleDisplay();
+          toggleTDDoubleCheck();
+        }}
+        onDecline={toggleTDDoubleCheck}
       >
-        {props.tag.displayed ? <EyeOpenIcon /> : <EyeClosedIcon />}
-      </TooltipIconButton>
-      <Input defaultValue={props.tag.name} onChange={handleNameChange} />
-      <Input
-        defaultValue={props.tag.regex}
-        onChange={handleRegexChange}
-        colorPalette={props.tag.regex.length > 0 ? 'current' : 'red'}
-      />
-    </HStack>
+        Are you sure you want to <Span color='red.500'>hide</Span> <b>{props.tag.name}</b>?<br />
+        This action will <Span color='red.500'>invalidate all filters</Span> until manually updated
+        <Span color='yellow.500'> when regex applied</Span>.
+      </DoubleCheck>
+    </>
   );
 };
 
@@ -83,7 +123,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const RegexTagItem = connector(RegexTagItemImpl);
 // </redux>

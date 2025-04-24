@@ -6,30 +6,31 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description LogRegexTags data reducer.
  */
 
-import { makeReducer, ReducerMap } from '../common/reducer';
-import { ActionType, DispatchTypes } from './actions';
-import { defaultState, IDefaultState } from './data';
+import { makeReducer, type TReducerMap } from '../common/reducer';
+import { ELogRegexTagsAction, type TLogRegexTagsDispatchTypes } from './actions';
+import { defaultState, type TLogRegexTagsStoreState } from './data';
 
 import * as handlers from './handlers';
 
-const reducerMap: ReducerMap<ActionType, IDefaultState> = {
-  [ActionType.Loading]: handlers.loading.reduce,
-  [ActionType.InvokeGetTagsOK]: handlers.invokeGetTags.reduce.ok,
-  [ActionType.InvokeGetTagsNOK]: handlers.invokeGetTags.reduce.nok,
-  [ActionType.InvokeSetTagsOK]: handlers.invokeSetTags.reduce.ok,
-  [ActionType.InvokeSetTagsNOK]: handlers.invokeSetTags.reduce.nok,
-  [ActionType.AddNewTag]: handlers.addNewTag.reduce,
-  [ActionType.RemoveTag]: handlers.removeTag.reduce,
-  [ActionType.ToggleTagDisplay]: handlers.toggleTagDisplay.reduce,
-  [ActionType.SetTagName]: handlers.setTagName.reduce,
-  [ActionType.SetTagRegex]: handlers.setTagRegex.reduce,
+const reducerMap: TReducerMap<ELogRegexTagsAction, TLogRegexTagsStoreState> = {
+  [ELogRegexTagsAction.Loading]: handlers.loading.reduce,
+  [ELogRegexTagsAction.InvokeGetTagsOK]: handlers.invokeGetTags.reduce.ok,
+  [ELogRegexTagsAction.InvokeGetTagsNOK]: handlers.invokeGetTags.reduce.nok,
+  [ELogRegexTagsAction.InvokeSetTagsOK]: handlers.invokeSetTags.reduce.ok,
+  [ELogRegexTagsAction.InvokeSetTagsNOK]: handlers.invokeSetTags.reduce.nok,
+  [ELogRegexTagsAction.AddNewTag]: handlers.addNewTag.reduce,
+  [ELogRegexTagsAction.RemoveTag]: handlers.removeTag.reduce,
+  [ELogRegexTagsAction.ToggleTagDisplay]: handlers.toggleTagDisplay.reduce,
+  [ELogRegexTagsAction.SetTagName]: handlers.setTagName.reduce,
+  [ELogRegexTagsAction.SetTagRegex]: handlers.setTagRegex.reduce,
 };
 
-export const logRegexTagsReducer = makeReducer<IDefaultState, ActionType, DispatchTypes>(
-  defaultState,
-  reducerMap
-);
+export const logRegexTagsReducer = makeReducer<
+  TLogRegexTagsStoreState,
+  ELogRegexTagsAction,
+  TLogRegexTagsDispatchTypes
+>(defaultState, reducerMap);

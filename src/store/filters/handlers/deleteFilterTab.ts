@@ -6,31 +6,31 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description DeleteFilterTab handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
 import { contains, UUID } from '@/store/common/identifier';
-import { ActionType } from '../actions';
-import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
 
-type DeleteFilterTabPayload = {
+type TDeleteFilterTabPayload = {
   targetTabId: string;
 };
 
-export interface DeleteFilterTabAction {
-  type: typeof ActionType.DeleteFilterTab;
-  payload: DeleteFilterTabPayload;
-}
+export type TDeleteFilterTabAction = {
+  type: typeof EFiltersAction.DeleteFilterTab;
+  payload: TDeleteFilterTabPayload;
+};
 
 export const deleteFilterTab: IBasicStoreHandler<
-  IDefaultState,
-  DeleteFilterTabPayload,
-  ActionType
+  TFiltersStoreState,
+  TDeleteFilterTabPayload,
+  EFiltersAction
 > = {
   dispatch: (targetTabId: string) =>
-    basicDispatcher(ActionType.DeleteFilterTab, () => ({ targetTabId })),
+    basicDispatcher(EFiltersAction.DeleteFilterTab, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;
@@ -86,7 +86,12 @@ export const deleteFilterTab: IBasicStoreHandler<
         components: defaultComponents,
         filters: defaultFilters,
         tabs: defaultTabs,
-        canSaveData: checkCanSaveData(defaultTabs, defaultFilters, defaultComponents),
+        canSaveData: checkCanSaveData(
+          defaultTabs,
+          defaultFilters,
+          defaultComponents,
+          state.overAlternatives
+        ),
         focusedTabId: defaultTab.id,
       };
     } else {
@@ -95,7 +100,7 @@ export const deleteFilterTab: IBasicStoreHandler<
         components: newComponents,
         filters: newFilters,
         tabs: newTabs,
-        canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+        canSaveData: checkCanSaveData(newTabs, newFilters, newComponents, state.overAlternatives),
         focusedTabId: newTabs[newFocusIndex].id,
       };
     }

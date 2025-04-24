@@ -6,14 +6,14 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Configure log line regex for parsing
  */
 
 import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { For } from '@/components/ui/utils/For';
-import { RootState } from '@/store';
+import { type TRootState } from '@/store';
 import { TRegexTag } from '@/store/log-regex-tags/data';
 import { addNewTag, invokeGetTags, invokeSetTags } from '@/store/log-regex-tags/handlers';
 import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
@@ -35,7 +35,7 @@ export const LogRegexConfiguratorTrigger = () => {
   );
 };
 
-const LogRegexConfiguratorContentImpl: React.FC<PropsFromRedux> = props => {
+const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
   useEffect(() => {
     props.invokeGetTags();
   }, []);
@@ -77,7 +77,7 @@ const LogRegexConfiguratorContentImpl: React.FC<PropsFromRedux> = props => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({
+const mapState = (state: TRootState) => ({
   tags: state.logRegexTags.tags,
   canApply: state.logRegexTags.canApplyTags,
   loading: state.logRegexTags.loading,
@@ -90,7 +90,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const LogRegexConfiguratorContent = connector(LogRegexConfiguratorContentImpl);
 // </redux>

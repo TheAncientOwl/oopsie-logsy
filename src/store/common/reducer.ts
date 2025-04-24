@@ -10,21 +10,21 @@
  * @description Common reducer utilities.
  */
 
-export type ReducerMap<ActionType extends string, IDefaultState> = Partial<
-  Record<ActionType, (state: IDefaultState, payload: any) => IDefaultState>
+export type TReducerMap<EActionType extends string, TStoreState> = Partial<
+  Record<EActionType, (state: TStoreState, payload: any) => TStoreState>
 >;
 
-type DispatchType<ActionType = any, Payload = any> = {
-  type: ActionType;
-  payload?: Payload;
+type TDispatchType<EActionType = any, TPayload = any> = {
+  type: EActionType;
+  payload?: TPayload;
 };
 
 export const makeReducer =
-  <IDefaultState, ActionType extends string, DispatchTypes extends DispatchType<any, any>>(
-    _state: IDefaultState,
-    _reducerMap: ReducerMap<ActionType, IDefaultState>
+  <TStoreState, EActionType extends string, TDispatchTypes extends TDispatchType<any, any>>(
+    _state: TStoreState,
+    _reducerMap: TReducerMap<EActionType, TStoreState>
   ) =>
-  (state: IDefaultState = _state, action: DispatchTypes): IDefaultState => {
-    const reducerFn = _reducerMap[action.type as ActionType];
+  (state: TStoreState = _state, action: TDispatchTypes): TStoreState => {
+    const reducerFn = _reducerMap[action.type as EActionType];
     return reducerFn ? reducerFn(state, (action as any).payload) : state;
   };

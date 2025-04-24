@@ -11,9 +11,10 @@
  */
 
 import { ThemeProvider, type ThemeProviderProps } from 'next-themes';
+import React from 'react';
 
-export interface ColorModeProviderProps extends ThemeProviderProps {}
+export type ColorModeProviderProps = ThemeProviderProps;
 
-export function ColorModeProvider(props: ColorModeProviderProps) {
+export const ColorModeProvider: React.FC<ColorModeProviderProps> = props => {
   return <ThemeProvider attribute='class' disableTransitionOnChange {...props} />;
-}
+};

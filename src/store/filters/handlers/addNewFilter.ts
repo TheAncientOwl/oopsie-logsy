@@ -6,27 +6,31 @@
  *
  * @file addNewFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description AddNewFilter handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
 
-type AddNewFilterPayload = {
+type TAddNewFilterPayload = {
   targetTabId: UUID;
 };
 
-export interface AddNewFilterAction {
-  type: typeof ActionType.AddNewFilter;
-  payload: AddNewFilterPayload;
-}
+export type TAddNewFilterAction = {
+  type: typeof EFiltersAction.AddNewFilter;
+  payload: TAddNewFilterPayload;
+};
 
-export const addNewFilter: IBasicStoreHandler<IDefaultState, AddNewFilterPayload, ActionType> = {
+export const addNewFilter: IBasicStoreHandler<
+  TFiltersStoreState,
+  TAddNewFilterPayload,
+  EFiltersAction
+> = {
   dispatch: (targetTabId: UUID) =>
-    basicDispatcher(ActionType.AddNewFilter, () => ({ targetTabId })),
+    basicDispatcher(EFiltersAction.AddNewFilter, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;
@@ -47,7 +51,7 @@ export const addNewFilter: IBasicStoreHandler<IDefaultState, AddNewFilterPayload
       components: newComponents,
       filters: newFilters,
       tabs: newTabs,
-      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents, state.overAlternatives),
     };
   },
 };

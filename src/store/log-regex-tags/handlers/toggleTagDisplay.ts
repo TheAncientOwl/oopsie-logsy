@@ -6,30 +6,30 @@
  *
  * @file toggleTagDisplay.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description ToggleTagDisplay handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanApply, IDefaultState } from '../data';
+import { ELogRegexTagsAction } from '../actions';
+import { checkCanApply, type TLogRegexTagsStoreState } from '../data';
 
 type ToggleTagDisplayPayload = {
   targetId: string;
 };
 
-export interface ToggleTagDisplayAction {
-  type: ActionType.ToggleTagDisplay;
+export type ToggleTagDisplayAction = {
+  type: ELogRegexTagsAction.ToggleTagDisplay;
   payload: ToggleTagDisplayPayload;
-}
+};
 
 export const toggleTagDisplay: IBasicStoreHandler<
-  IDefaultState,
+  TLogRegexTagsStoreState,
   ToggleTagDisplayPayload,
-  ActionType
+  ELogRegexTagsAction
 > = {
   dispatch: (targetId: string) =>
-    basicDispatcher(ActionType.ToggleTagDisplay, () => ({ targetId })),
+    basicDispatcher(ELogRegexTagsAction.ToggleTagDisplay, () => ({ targetId })),
 
   reduce: (state, payload) => {
     const { targetId } = payload;

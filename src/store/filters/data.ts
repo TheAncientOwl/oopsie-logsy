@@ -6,12 +6,12 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filters data structures.
  */
 
 import { uuid, UUID } from '../common/identifier';
-import { TRegexTag } from '../log-regex-tags/data';
+import { getStaticDefaultTags, type TRegexTag } from '../log-regex-tags/data';
 
 // <types>
 export type TOverAlternative = {
@@ -52,7 +52,7 @@ export type TFilterTab = {
   filterIDs: Array<UUID>;
 };
 
-export interface IDefaultState {
+export type TFiltersStoreState = {
   loading: boolean;
   focusedTabId: string;
   canSaveData: boolean;
@@ -60,7 +60,8 @@ export interface IDefaultState {
   tabs: Array<TFilterTab>;
   filters: Array<TFilter>;
   components: Array<TFilterComponent>;
-}
+  overAlternatives: TOverAlternatives;
+};
 // </types>
 
 // <helpers>
@@ -76,14 +77,15 @@ export const makeOverAlternatives = (regexTags: Array<TRegexTag>): TOverAlternat
 export const checkCanSaveData = (
   tabs: Array<TFilterTab>,
   filters: Array<TFilter>,
-  components: Array<TFilterComponent>
+  components: Array<TFilterComponent>,
+  overAlternatives: TOverAlternatives
 ) => {
-  // TODO: do actual checking...
-  return true;
+  const overAlternativesSet = new Set(overAlternatives.map(alternative => alternative.value));
+  return components.every(component => overAlternativesSet.has(component.overAlternativeId));
 };
 
 export const DefaultFactory = {
-  makeFilterComponent: (overAlternativeId = ''): TFilterComponent => ({
+  makeFilterComponent: (overAlternativeId = 'Choose Tag'): TFilterComponent => ({
     id: uuid(),
     overAlternativeId: overAlternativeId,
     data: '',
@@ -149,7 +151,7 @@ const defaultComponents = [defaultComponent];
 const defaultFilters = [defaultFilter];
 const defaultTabs = [defaultTab];
 
-export const defaultState: IDefaultState = {
+export const defaultState: TFiltersStoreState = {
   loading: false,
   focusedTabId: defaultTabs[0].id,
   canSaveData: false,
@@ -157,5 +159,6 @@ export const defaultState: IDefaultState = {
   tabs: defaultTabs,
   filters: defaultFilters,
   components: defaultComponents,
+  overAlternatives: makeOverAlternatives(getStaticDefaultTags()),
 };
 // </data>

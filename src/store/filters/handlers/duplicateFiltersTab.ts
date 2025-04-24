@@ -6,37 +6,37 @@
  *
  * @file duplicateFiltersTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description DuplicateFiltersTab handler.
  */
 
 import { uuid, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
+import { EFiltersAction } from '../actions';
 import {
   checkCanSaveData,
   getFilterById,
   getFilterComponentById,
-  IDefaultState,
-  TFilterTab,
+  type TFiltersStoreState,
+  type TFilterTab,
 } from '../data';
 
-type DuplicateFiltersTabPayload = {
+type TDuplicateFiltersTabPayload = {
   targetTabId: string;
 };
 
-export interface DuplicateFiltersTabAction {
-  type: ActionType.DuplicateFiltersTab;
-  payload: DuplicateFiltersTabPayload;
-}
+export type TDuplicateFiltersTabAction = {
+  type: EFiltersAction.DuplicateFiltersTab;
+  payload: TDuplicateFiltersTabPayload;
+};
 
 export const duplicateFiltersTab: IBasicStoreHandler<
-  IDefaultState,
-  DuplicateFiltersTabPayload,
-  ActionType
+  TFiltersStoreState,
+  TDuplicateFiltersTabPayload,
+  EFiltersAction
 > = {
   dispatch: (targetTabId: string) =>
-    basicDispatcher(ActionType.DuplicateFiltersTab, () => ({ targetTabId })),
+    basicDispatcher(EFiltersAction.DuplicateFiltersTab, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;
@@ -104,7 +104,7 @@ export const duplicateFiltersTab: IBasicStoreHandler<
       components: newComponents,
       filters: newFilters,
       tabs: newTabs,
-      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents, state.overAlternatives),
       focusedTabId: newFocusedTabId,
     };
   },

@@ -6,22 +6,28 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description LogRegexTags action types.
  */
 
 import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
 
-import { AddNewTagAction } from './handlers/addNewTag';
-import { InvokeGetTagsNOkAction, InvokeGetTagsOkAction } from './handlers/invokeGetTags';
-import { InvokeSetTagsNOkAction, InvokeSetTagsOkAction } from './handlers/invokeSetTags';
-import { LoadingAction } from './handlers/loading';
-import { RemoveTagAction } from './handlers/removeTag';
-import { SetTagNameAction } from './handlers/setTagName';
-import { SetTagRegexAction } from './handlers/setTagRegex';
-import { ToggleTagDisplayAction } from './handlers/toggleTagDisplay';
+import { type TAddNewTagAction } from './handlers/addNewTag';
+import {
+  type TInvokeGetTagsNOkAction,
+  type TInvokeGetTagsOkAction,
+} from './handlers/invokeGetTags';
+import {
+  type TInvokeSetTagsNOkAction,
+  type TInvokeSetTagsOkAction,
+} from './handlers/invokeSetTags';
+import { type TLoadingAction } from './handlers/loading';
+import { type TRemoveTagAction } from './handlers/removeTag';
+import { type TSetTagNameAction } from './handlers/setTagName';
+import { type TSetTagRegexAction } from './handlers/setTagRegex';
+import { type ToggleTagDisplayAction } from './handlers/toggleTagDisplay';
 
-export enum ActionType {
+export enum ELogRegexTagsAction {
   Loading = 'LogRegexTags__Loading',
   InvokeGetTagsOK = 'LogRegexTags__InvokeGetTagsOK',
   InvokeGetTagsNOK = 'LogRegexTags__InvokeGetTagsNOK',
@@ -34,17 +40,17 @@ export enum ActionType {
   SetTagRegex = 'LogRegexTags__SetTagRegex',
 }
 
-export type DispatchTypes =
+export type TLogRegexTagsDispatchTypes =
   | UnknownAction
-  | LoadingAction
-  | InvokeGetTagsOkAction
-  | InvokeGetTagsNOkAction
-  | InvokeSetTagsOkAction
-  | InvokeSetTagsNOkAction
-  | AddNewTagAction
-  | RemoveTagAction
+  | TLoadingAction
+  | TInvokeGetTagsOkAction
+  | TInvokeGetTagsNOkAction
+  | TInvokeSetTagsOkAction
+  | TInvokeSetTagsNOkAction
+  | TAddNewTagAction
+  | TRemoveTagAction
   | ToggleTagDisplayAction
-  | SetTagNameAction
-  | SetTagRegexAction;
+  | TSetTagNameAction
+  | TSetTagRegexAction;
 
-export type Dispatch = ReduxDispatch<DispatchTypes>;
+export type TLogRegexTagsDispatch = ReduxDispatch<TLogRegexTagsDispatchTypes>;

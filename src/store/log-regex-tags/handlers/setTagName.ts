@@ -6,27 +6,31 @@
  *
  * @file setTagName.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SetTagName handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanApply, IDefaultState } from '../data';
+import { ELogRegexTagsAction } from '../actions';
+import { checkCanApply, type TLogRegexTagsStoreState } from '../data';
 
-type SetTagNamePayload = {
+type TSetTagNamePayload = {
   targetId: string;
   newName: string;
 };
 
-export interface SetTagNameAction {
-  type: ActionType.SetTagName;
-  payload: SetTagNamePayload;
-}
+export type TSetTagNameAction = {
+  type: ELogRegexTagsAction.SetTagName;
+  payload: TSetTagNamePayload;
+};
 
-export const setTagName: IBasicStoreHandler<IDefaultState, SetTagNamePayload, ActionType> = {
+export const setTagName: IBasicStoreHandler<
+  TLogRegexTagsStoreState,
+  TSetTagNamePayload,
+  ELogRegexTagsAction
+> = {
   dispatch: (targetId: string, newName: string) =>
-    basicDispatcher(ActionType.SetTagName, () => ({ targetId, newName })),
+    basicDispatcher(ELogRegexTagsAction.SetTagName, () => ({ targetId, newName })),
 
   reduce: (state, payload) => {
     const { targetId, newName } = payload;

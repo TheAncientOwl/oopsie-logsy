@@ -6,27 +6,27 @@
  *
  * @file addNewFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description AddNewFilterTab handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, DefaultFactory, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
 
-type AddNewFilterTabPayload = {};
+type TAddNewFilterTabPayload = {};
 
-export interface AddNewFilterTabAction {
-  type: typeof ActionType.AddNewFilterTab;
-  payload: AddNewFilterTabPayload;
-}
+export type TAddNewFilterTabAction = {
+  type: typeof EFiltersAction.AddNewFilterTab;
+  payload: TAddNewFilterTabPayload;
+};
 
 export const addNewFilterTab: IBasicStoreHandler<
-  IDefaultState,
-  AddNewFilterTabPayload,
-  ActionType
+  TFiltersStoreState,
+  TAddNewFilterTabPayload,
+  EFiltersAction
 > = {
-  dispatch: () => basicDispatcher(ActionType.AddNewFilterTab, () => ({})),
+  dispatch: () => basicDispatcher(EFiltersAction.AddNewFilterTab, () => ({})),
 
   reduce: state => {
     const newComponent = DefaultFactory.makeFilterComponent();
@@ -42,7 +42,7 @@ export const addNewFilterTab: IBasicStoreHandler<
       components: newComponents,
       filters: newFilters,
       tabs: newTabs,
-      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents),
+      canSaveData: checkCanSaveData(newTabs, newFilters, newComponents, state.overAlternatives),
       focusedTabId: newTab.id,
     };
   },

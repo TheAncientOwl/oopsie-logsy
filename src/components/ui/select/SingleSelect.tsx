@@ -25,14 +25,14 @@ type TListItem = {
   value: string;
 };
 
-interface SingleSelectProps<T extends TListItem> {
+type TSingleSelectProps<T extends TListItem> = {
   root?: Partial<SelectRootProps<T>>;
   collection: ListCollection<T>;
   value: string;
   onChange: (newValue: string) => void;
-}
+};
 
-export const SingleSelect = <T extends TListItem>(props: SingleSelectProps<T>) => {
+export const SingleSelect = <T extends TListItem>(props: TSingleSelectProps<T>) => {
   const border = useColorModeValue('gray.500', 'gray.500');
 
   const value = useMemo(() => [props.value], [props.value]);

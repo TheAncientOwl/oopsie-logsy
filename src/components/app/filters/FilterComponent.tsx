@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Filter component.
  */
 
@@ -21,7 +21,7 @@ import {
   RegexOnIcon,
 } from '@/components/ui/Icons';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { RootState } from '@/store';
+import { type TRootState } from '@/store';
 import { UUID } from '@/store/common/identifier';
 import { getFilterComponentById } from '@/store/filters/data';
 import {
@@ -36,13 +36,13 @@ import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponentTagSelector } from './FilterComponentTagSelector';
 
-interface FilterComponentProps {
+type TFilterComponentProps = {
   tabId: UUID;
   filterId: UUID;
   componentId: UUID;
-}
+};
 
-const FilterComponentImpl = (props: FilterComponentProps & PropsFromRedux) => {
+const FilterComponentImpl = (props: TFilterComponentProps & TPropsFromRedux) => {
   const border = useColorModeValue('gray.500', 'gray.500');
 
   const handleToggleIsRegexClick = () => {
@@ -117,7 +117,7 @@ const FilterComponentImpl = (props: FilterComponentProps & PropsFromRedux) => {
 };
 
 // <redux>
-const mapState = (state: RootState, ownProps: FilterComponentProps) => ({
+const mapState = (state: TRootState, ownProps: TFilterComponentProps) => ({
   component: getFilterComponentById(
     `FilterComponent::mapState`,
     state.filters.components,
@@ -134,7 +134,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const FilterComponent = connector(FilterComponentImpl);
 // </redux>

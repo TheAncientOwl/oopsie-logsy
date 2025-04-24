@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filter tab.
  */
 
@@ -18,13 +18,13 @@ import { Stack, Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
-interface FilterTabHeaderProps extends HeaderPropsFromRedux {
+type TFilterTabHeaderProps = THeaderPropsFromRedux & {
   tabId: string;
   name: string;
-}
+};
 
-export const FilterTabHeaderImpl: React.FC<FilterTabHeaderProps> = (
-  props: FilterTabHeaderProps
+export const FilterTabHeaderImpl: React.FC<TFilterTabHeaderProps> = (
+  props: TFilterTabHeaderProps
 ) => {
   const handleFocusClick = () => {
     props.focusFilterTab(props.tabId);
@@ -50,17 +50,19 @@ const mapDispatchHeader = {
 };
 
 const connectorHeader = connect(mapStateHeader, mapDispatchHeader);
-type HeaderPropsFromRedux = ConnectedProps<typeof connectorHeader>;
+type THeaderPropsFromRedux = ConnectedProps<typeof connectorHeader>;
 
 export const FilterTabHeader = connectorHeader(FilterTabHeaderImpl);
 // </redux>
 
-interface FilterContentTabProps {
+type TFilterContentTabProps = {
   tabId: UUID;
   filterIds: Array<UUID>;
-}
+};
 
-export const FilterTabContent: React.FC<FilterContentTabProps> = (props: FilterContentTabProps) => {
+export const FilterTabContent: React.FC<TFilterContentTabProps> = (
+  props: TFilterContentTabProps
+) => {
   return (
     <Tabs.Content value={props.tabId}>
       <Stack gap='0'>

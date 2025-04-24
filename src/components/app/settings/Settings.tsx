@@ -18,12 +18,12 @@ import { Box, Collapsible, Heading, HStack, Tabs } from '@chakra-ui/react';
 import { LogRegexConfiguratorContent, LogRegexConfiguratorTrigger } from './LogRegexConfigurator';
 import { LogsImportButton } from './LogsImporter';
 
-interface SettingsProps {
+type TSettingsProps = {
   menuOpen: boolean;
   onMenuClose: () => void;
-}
+};
 
-export const Settings = ({ menuOpen, onMenuClose }: SettingsProps) => {
+export const Settings = ({ menuOpen, onMenuClose }: TSettingsProps) => {
   const bg = useColorModeValue('white', 'gray.900');
   const border = useColorModeValue('gray.700', 'gray.500');
 

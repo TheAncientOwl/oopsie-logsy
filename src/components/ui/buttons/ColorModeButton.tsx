@@ -15,9 +15,9 @@ import { ColorModeIcon } from '@/components/ui/Icons';
 import { useColorMode } from '@/hooks/useColorMode';
 import { ClientOnly, Skeleton, type IconButtonProps } from '@chakra-ui/react';
 
-interface ColorModeButtonProps extends Omit<IconButtonProps, 'aria-label'> {}
+type TColorModeButtonProps = Omit<IconButtonProps, 'aria-label'>;
 
-export const ColorModeButton = (props: ColorModeButtonProps) => {
+export const ColorModeButton = (props: TColorModeButtonProps) => {
   const { toggleColorMode, colorMode } = useColorMode();
 
   return (

@@ -6,28 +6,32 @@
  *
  * @file setFilterFg.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SetFilterFg handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type SetFilterFgPayload = {
+type TSetFilterFgPayload = {
   targetFilterId: UUID;
   color: string;
 };
 
-export interface SetFilterFgAction {
-  type: ActionType.SetFilterFg;
-  payload: SetFilterFgPayload;
-}
+export type TSetFilterFgAction = {
+  type: EFiltersAction.SetFilterFg;
+  payload: TSetFilterFgPayload;
+};
 
-export const setFilterFg: IBasicStoreHandler<IDefaultState, SetFilterFgPayload, ActionType> = {
+export const setFilterFg: IBasicStoreHandler<
+  TFiltersStoreState,
+  TSetFilterFgPayload,
+  EFiltersAction
+> = {
   dispatch: (targetFilterId: UUID, color: string) =>
-    basicDispatcher(ActionType.SetFilterFg, () => ({ targetFilterId, color })),
+    basicDispatcher(EFiltersAction.SetFilterFg, () => ({ targetFilterId, color })),
 
   reduce: (state, payload) => {
     const { targetFilterId, color } = payload;
@@ -43,7 +47,12 @@ export const setFilterFg: IBasicStoreHandler<IDefaultState, SetFilterFgPayload, 
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

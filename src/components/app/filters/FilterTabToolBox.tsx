@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Filter tab related tools.
  */
 
@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/Icons';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { useSwitch } from '@/hooks/useSwitch';
-import { RootState } from '@/store';
+import { type TRootState } from '@/store';
 import {
   addNewFilter,
   deleteAllFilters,
@@ -41,7 +41,7 @@ import { setAllFiltersCollapsed } from '@/store/filters/handlers/setAllFiltersCo
 import { ButtonGroup, HStack, Input, Separator, Span } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 
-const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
+const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
   const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
   const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
@@ -194,7 +194,7 @@ const FilterTabToolBoxImpl: React.FC<PropsFromRedux> = props => {
 };
 
 // <redux>
-const mapState = (state: RootState) => ({
+const mapState = (state: TRootState) => ({
   focusedTabId: state.filters.focusedTabId,
   focusedTab: state.filters.tabs.find(tab => tab.id === state.filters.focusedTabId),
 });
@@ -211,7 +211,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const FilterTabToolBox = connector(FilterTabToolBoxImpl);
 // </redux>

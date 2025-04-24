@@ -13,9 +13,9 @@
 import { Checkbox as ChakraCheckbox, CheckboxRootProps } from '@chakra-ui/react';
 import React, { PropsWithChildren } from 'react';
 
-interface CheckBoxProps extends PropsWithChildren, CheckboxRootProps {}
+type TCheckBoxProps = PropsWithChildren & CheckboxRootProps;
 
-export const CheckBox: React.FC<CheckBoxProps> = props => {
+export const CheckBox: React.FC<TCheckBoxProps> = props => {
   return (
     <ChakraCheckbox.Root cursor='pointer' variant='subtle' colorPalette='green' {...props}>
       <ChakraCheckbox.HiddenInput />

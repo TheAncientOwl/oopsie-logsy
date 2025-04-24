@@ -6,12 +6,11 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description LogRegexTags data.
  */
 
 import { v7 as uuidv7 } from 'uuid';
-import { makeOverAlternatives, TOverAlternatives } from '../filters/data';
 
 // <types>
 export type TRegexTag = {
@@ -21,13 +20,12 @@ export type TRegexTag = {
   name: string;
 };
 
-export interface IDefaultState {
+export type TLogRegexTagsStoreState = {
   tags: Array<TRegexTag>;
   loading: boolean;
   canApplyTags: boolean;
-  overAlternatives: TOverAlternatives;
   tagsChanged: boolean;
-}
+};
 // </types>
 
 // <helpers>
@@ -46,13 +44,20 @@ export const DefaultFactory = {
   }),
 };
 
-const defaultTags = [DefaultFactory.makeTag('Payload')];
+getStaticDefaultTags._defaultTags = undefined as TRegexTag[] | undefined;
 
-export const defaultState: IDefaultState = {
-  tags: defaultTags,
+export function getStaticDefaultTags(): TRegexTag[] {
+  if (!getStaticDefaultTags._defaultTags) {
+    console.traceX(getStaticDefaultTags.name, 'Generating default tags');
+    getStaticDefaultTags._defaultTags = [DefaultFactory.makeTag('Payload')];
+  }
+  return getStaticDefaultTags._defaultTags;
+}
+
+export const defaultState: TLogRegexTagsStoreState = {
+  tags: getStaticDefaultTags(),
   loading: false,
   canApplyTags: false,
-  overAlternatives: makeOverAlternatives(defaultTags),
   tagsChanged: false,
 };
 // </data>

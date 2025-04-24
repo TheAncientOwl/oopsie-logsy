@@ -6,23 +6,27 @@
  *
  * @file addNewTag.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description AddNewTag handler.
  */
 
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanApply, DefaultFactory, IDefaultState } from '../data';
+import { ELogRegexTagsAction } from '../actions';
+import { checkCanApply, DefaultFactory, type TLogRegexTagsStoreState } from '../data';
 
-type AddNewTagPayload = {};
+type TAddNewTagPayload = {};
 
-export interface AddNewTagAction {
-  type: ActionType.AddNewTag;
-  payload: AddNewTagPayload;
-}
+export type TAddNewTagAction = {
+  type: ELogRegexTagsAction.AddNewTag;
+  payload: TAddNewTagPayload;
+};
 
-export const addNewTag: IBasicStoreHandler<IDefaultState, AddNewTagPayload, ActionType> = {
-  dispatch: () => basicDispatcher(ActionType.AddNewTag, () => ({})),
+export const addNewTag: IBasicStoreHandler<
+  TLogRegexTagsStoreState,
+  TAddNewTagPayload,
+  ELogRegexTagsAction
+> = {
+  dispatch: () => basicDispatcher(ELogRegexTagsAction.AddNewTag, () => ({})),
 
   reduce: state => {
     const newTags = [...state.tags, DefaultFactory.makeTag()];

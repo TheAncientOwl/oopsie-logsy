@@ -6,31 +6,31 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description ToggleFilterActive handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
 type ToggleFilterActivePayload = {
   targetFilterId: UUID;
 };
 
-export interface ToggleFilterActiveAction {
-  type: ActionType.ToggleFilterActive;
+export type ToggleFilterActiveAction = {
+  type: EFiltersAction.ToggleFilterActive;
   payload: ToggleFilterActivePayload;
-}
+};
 
 export const toggleFilterActive: IBasicStoreHandler<
-  IDefaultState,
+  TFiltersStoreState,
   ToggleFilterActivePayload,
-  ActionType
+  EFiltersAction
 > = {
   dispatch: (targetFilterId: UUID) =>
-    basicDispatcher(ActionType.ToggleFilterActive, () => ({ targetFilterId })),
+    basicDispatcher(EFiltersAction.ToggleFilterActive, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
     const { targetFilterId } = payload;
@@ -43,7 +43,12 @@ export const toggleFilterActive: IBasicStoreHandler<
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

@@ -6,7 +6,7 @@
  *
  * @file DoubleCheck.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Self explanatory.
  */
 
@@ -15,7 +15,7 @@ import React, { PropsWithChildren } from 'react';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { Box, BoxProps, Button, ButtonGroup, Stack } from '@chakra-ui/react';
 
-interface DoubleCheckProps extends PropsWithChildren {
+type TDoubleCheckProps = PropsWithChildren & {
   isShown: boolean;
   label: React.ReactNode;
   acceptLabel: string;
@@ -23,13 +23,14 @@ interface DoubleCheckProps extends PropsWithChildren {
   onAccept: () => void;
   onDecline: () => void;
   contentProps?: BoxProps;
-}
+};
 
-export const DoubleCheck: React.FC<DoubleCheckProps> = props => {
+export const DoubleCheck: React.FC<TDoubleCheckProps> = props => {
   const backgroundColor = useColorModeValue('gray.500', 'gray.800');
 
   return (
     <Stack
+      display={props.isShown ? 'flex' : 'none'}
       visibility={props.isShown ? 'visible' : 'hidden'}
       position='fixed'
       zIndex='1000000'

@@ -6,20 +6,19 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Extend logging functionality.
  */
 
-type TLogLevel = 'trace' | 'trace2' | 'info' | 'warn' | 'debug' | 'error' | 'verbose';
+type TLogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'verbose';
 
 const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
   error: console.error,
   warn: console.warn,
-  debug: console.debug,
+  debug: console.warn,
   info: console.info,
-  trace: console.log,
+  trace: console.trace,
   verbose: console.log,
-  trace2: console.trace,
 };
 
 const padLeft = (value: number, digits: number = 2) => value.toString().padStart(digits, '0');
@@ -38,6 +37,10 @@ const extractFileName = (input: string): string => {
   return fileWithExt?.replace(/\.ts$/, '') ?? '';
 };
 
+const formatLevel = (level: TLogLevel) => {
+  return level !== 'trace' ? `%c ${level} %c |` : `%c%c`;
+};
+
 const _log = (
   level: TLogLevel,
   levelStyle: string,
@@ -53,9 +56,9 @@ const _log = (
   const callerLocation = getCallerLocation();
 
   (logFunctions[level] || console.log)(
-    `%c| %c${timestamp} %c| %c${level} %c| %c${extractFileName(
+    `%c| %c${timestamp} %c| ${formatLevel(level)} %c${extractFileName(
       callerLocation
-    )}::${caller}%c@%c${callerLocation} \n%c» %c${message}`,
+    )}::${caller}%c @ %c${callerLocation} %c»\n| %c${message}`,
     'color: gray',
     'color: dodgerblue',
     'color: gray',
@@ -71,11 +74,7 @@ const _log = (
 };
 
 const trace = (caller: string, message: string, ...data: any[]) => {
-  _log('trace', 'color: lightgray', caller, message, ...data);
-};
-
-const traceVerbose = (caller: string, message: string, ...data: any[]) => {
-  _log('trace2', 'color: lightgray', caller, message, ...data);
+  _log('trace', 'color: white', caller, message, ...data);
 };
 
 const info = (caller: string, message: string, ...data: any[]) => {
@@ -87,7 +86,7 @@ const warn = (caller: string, message: string, ...data: any[]) => {
 };
 
 const debug = (caller: string, message: string, ...data: any[]) => {
-  _log('debug', 'color: greenyellow', caller, message, ...data);
+  _log('debug', 'color: lightgreen', caller, message, ...data);
 };
 
 const error = (caller: string, message: string, ...data: any[]) => {
@@ -95,7 +94,7 @@ const error = (caller: string, message: string, ...data: any[]) => {
 };
 
 const verbose = (caller: string, message: string, ...data: any[]) => {
-  _log('verbose', 'color: olivedrab', caller, message, ...data);
+  _log('verbose', 'color: gray', caller, message, ...data);
 };
 
 const assert = (caller: string, condition: boolean, ...data: any[]) => {
@@ -105,10 +104,9 @@ const assert = (caller: string, condition: boolean, ...data: any[]) => {
 };
 
 (() => {
-  trace('anonymous-lambda', 'augmenting console logging');
+  trace('setup', 'augmenting console logging');
 
   console.traceX = trace;
-  console.traceVerboseX = traceVerbose;
   console.infoX = info;
   console.warnX = warn;
   console.debugX = debug;
@@ -116,5 +114,5 @@ const assert = (caller: string, condition: boolean, ...data: any[]) => {
   console.assertX = assert;
   console.verboseX = verbose;
 
-  trace('anonymous-lambda', 'console logging augmented');
+  trace('setup', 'console logging augmented');
 })();

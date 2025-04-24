@@ -6,31 +6,31 @@
  *
  * @file toggleFilterCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description toggleFilterCollapsed handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
 type ToggleFilterCollapsedPayload = {
   targetFilterId: UUID;
 };
 
-export interface ToggleFilterCollapsedAction {
-  type: ActionType.ToggleFilterCollapsed;
+export type ToggleFilterCollapsedAction = {
+  type: EFiltersAction.ToggleFilterCollapsed;
   payload: ToggleFilterCollapsedPayload;
-}
+};
 
 export const toggleFilterCollapsed: IBasicStoreHandler<
-  IDefaultState,
+  TFiltersStoreState,
   ToggleFilterCollapsedPayload,
-  ActionType
+  EFiltersAction
 > = {
   dispatch: (targetFilterId: UUID) =>
-    basicDispatcher(ActionType.ToggleFilterCollapsed, () => ({
+    basicDispatcher(EFiltersAction.ToggleFilterCollapsed, () => ({
       targetFilterId,
     })),
 
@@ -45,7 +45,12 @@ export const toggleFilterCollapsed: IBasicStoreHandler<
     return {
       ...state,
       filters: newFilters,
-      canSaveData: checkCanSaveData(state.tabs, newFilters, state.components),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        newFilters,
+        state.components,
+        state.overAlternatives
+      ),
     };
   },
 };

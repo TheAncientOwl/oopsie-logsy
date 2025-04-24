@@ -16,7 +16,7 @@ export { uuid };
 
 export type UUID = string;
 
-export type Identifiable = {
+export type TIdentifiable = {
   id: UUID;
 };
 
@@ -24,11 +24,11 @@ export const contains = (arr: Array<UUID>, target: UUID): boolean => {
   return arr.find(obj => obj === target) !== undefined;
 };
 
-export const containsById = <T extends Identifiable>(arr: Array<T>, targetId: UUID): boolean => {
+export const containsById = <T extends TIdentifiable>(arr: Array<T>, targetId: UUID): boolean => {
   return arr.find(obj => obj.id === targetId) !== undefined;
 };
 
-export const modifyWhereId = <T extends Identifiable>(
+export const modifyWhereId = <T extends TIdentifiable>(
   arr: Array<T>,
   targetId: UUID,
   modify: (old: T) => T
@@ -36,7 +36,7 @@ export const modifyWhereId = <T extends Identifiable>(
   return arr.map(obj => (obj.id !== targetId ? obj : modify(obj)));
 };
 
-export const modifyWhereIdAnyOf = <T extends Identifiable>(
+export const modifyWhereIdAnyOf = <T extends TIdentifiable>(
   arr: Array<T>,
   targetIds: Array<UUID>,
   modify: (old: T) => T
@@ -48,6 +48,6 @@ export const remove = (arr: Array<UUID>, target: UUID): Array<UUID> => {
   return arr.filter(obj => obj !== target);
 };
 
-export const removeById = <T extends Identifiable>(arr: Array<T>, targetId: UUID): Array<T> => {
+export const removeById = <T extends TIdentifiable>(arr: Array<T>, targetId: UUID): Array<T> => {
   return arr.filter(obj => obj.id !== targetId);
 };

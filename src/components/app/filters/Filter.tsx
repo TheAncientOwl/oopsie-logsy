@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.26
+ * @version 0.27
  * @description Filter component
  */
 
@@ -22,7 +22,7 @@ import {
 import { Tooltip } from '@/components/ui/Tooltip';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
-import { RootState } from '@/store';
+import { type TRootState } from '@/store';
 import { UUID } from '@/store/common/identifier';
 import { getFilterById } from '@/store/filters/data';
 import {
@@ -51,12 +51,12 @@ import { connect, ConnectedProps } from 'react-redux';
 import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
 
-interface FilterProps {
+type TFilterProps = {
   tabId: UUID;
   filterId: UUID;
-}
+};
 
-const FilterImpl = (props: FilterProps & PropsFromRedux) => {
+const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
   const bg = useColorModeValue('gray.300', 'gray.800');
   const border = useColorModeValue('gray.500', 'gray.500');
 
@@ -207,7 +207,7 @@ const FilterImpl = (props: FilterProps & PropsFromRedux) => {
 };
 
 // <redux>
-const mapState = (state: RootState, ownProps: FilterProps) => ({
+const mapState = (state: TRootState, ownProps: TFilterProps) => ({
   filter: getFilterById(`Filter::mapState`, state.filters.filters, ownProps.filterId),
 });
 
@@ -223,7 +223,7 @@ const mapDispatch = {
 };
 
 const connector = connect(mapState, mapDispatch);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const Filter = connector(FilterImpl);
 // </redux>

@@ -6,31 +6,33 @@
  *
  * @file toggleFilterComponentIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description ToggleFilterComponentIgnoreCase handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
 type ToggleFilterComponentIgnoreCasePayload = {
   targetComponentId: UUID;
 };
 
-export interface ToggleFilterComponentIgnoreCaseAction {
-  type: ActionType.ToggleFilterComponentIgnoreCase;
+export type ToggleFilterComponentIgnoreCaseAction = {
+  type: EFiltersAction.ToggleFilterComponentIgnoreCase;
   payload: ToggleFilterComponentIgnoreCasePayload;
-}
+};
 
 export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
-  IDefaultState,
+  TFiltersStoreState,
   ToggleFilterComponentIgnoreCasePayload,
-  ActionType
+  EFiltersAction
 > = {
   dispatch: (targetComponentId: UUID) =>
-    basicDispatcher(ActionType.ToggleFilterComponentIgnoreCase, () => ({ targetComponentId })),
+    basicDispatcher(EFiltersAction.ToggleFilterComponentIgnoreCase, () => ({
+      targetComponentId,
+    })),
 
   reduce: (state, payload) => {
     const { targetComponentId } = payload;
@@ -43,7 +45,12 @@ export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
     return {
       ...state,
       components: newComponents,
-      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        state.filters,
+        newComponents,
+        state.overAlternatives
+      ),
     };
   },
 };

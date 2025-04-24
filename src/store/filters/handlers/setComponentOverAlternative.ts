@@ -6,32 +6,32 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetComponentOverAlternative handler.
  */
 
 import { modifyWhereId, UUID } from '@/store/common/identifier';
 import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ActionType } from '../actions';
-import { checkCanSaveData, IDefaultState } from '../data';
+import { EFiltersAction } from '../actions';
+import { checkCanSaveData, type TFiltersStoreState } from '../data';
 
-type SetComponentOverAlternativePayload = {
+type TSetComponentOverAlternativePayload = {
   targetComponentId: UUID;
   overAlternativeId: UUID;
 };
 
-export interface SetComponentOverAlternativeAction {
-  type: ActionType.SetFilterComponentOverAlternative;
-  payload: SetComponentOverAlternativePayload;
-}
+export type TSetComponentOverAlternativeAction = {
+  type: EFiltersAction.SetFilterComponentOverAlternative;
+  payload: TSetComponentOverAlternativePayload;
+};
 
 export const setComponentOverAlternative: IBasicStoreHandler<
-  IDefaultState,
-  SetComponentOverAlternativePayload,
-  ActionType
+  TFiltersStoreState,
+  TSetComponentOverAlternativePayload,
+  EFiltersAction
 > = {
   dispatch: (targetComponentId: UUID, overAlternativeId: UUID) =>
-    basicDispatcher(ActionType.SetFilterComponentOverAlternative, () => ({
+    basicDispatcher(EFiltersAction.SetFilterComponentOverAlternative, () => ({
       targetComponentId,
       overAlternativeId,
     })),
@@ -47,7 +47,12 @@ export const setComponentOverAlternative: IBasicStoreHandler<
     return {
       ...state,
       components: newComponents,
-      canSaveData: checkCanSaveData(state.tabs, state.filters, newComponents),
+      canSaveData: checkCanSaveData(
+        state.tabs,
+        state.filters,
+        newComponents,
+        state.overAlternatives
+      ),
     };
   },
 };
