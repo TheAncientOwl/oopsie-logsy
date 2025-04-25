@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description LogRegexTags action types.
  */
 
@@ -23,6 +23,7 @@ import {
 } from './handlers/invokeSetTags';
 import { type TLoadingAction } from './handlers/loading';
 import { type TRemoveTagAction } from './handlers/removeTag';
+import { type TReorderTagsAction } from './handlers/reorderTags';
 import { type TSetTagNameAction } from './handlers/setTagName';
 import { type TSetTagRegexAction } from './handlers/setTagRegex';
 import { type ToggleTagDisplayAction } from './handlers/toggleTagDisplay';
@@ -38,6 +39,7 @@ export enum ELogRegexTagsAction {
   ToggleTagDisplay = 'LogRegexTags__ToggleTagDisplay',
   SetTagName = 'LogRegexTags__SetTagName',
   SetTagRegex = 'LogRegexTags__SetTagRegex',
+  ReorderRegexTags = 'LogRegexTags__Reorder',
 }
 
 export type TLogRegexTagsDispatchTypes =
@@ -51,6 +53,7 @@ export type TLogRegexTagsDispatchTypes =
   | TRemoveTagAction
   | ToggleTagDisplayAction
   | TSetTagNameAction
-  | TSetTagRegexAction;
+  | TSetTagRegexAction
+  | TReorderTagsAction;
 
 export type TLogRegexTagsDispatch = ReduxDispatch<TLogRegexTagsDispatchTypes>;

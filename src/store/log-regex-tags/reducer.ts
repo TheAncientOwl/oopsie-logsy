@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description LogRegexTags data reducer.
  */
 
@@ -27,6 +27,7 @@ const reducerMap: TReducerMap<ELogRegexTagsAction, TLogRegexTagsStoreState> = {
   [ELogRegexTagsAction.ToggleTagDisplay]: handlers.toggleTagDisplay.reduce,
   [ELogRegexTagsAction.SetTagName]: handlers.setTagName.reduce,
   [ELogRegexTagsAction.SetTagRegex]: handlers.setTagRegex.reduce,
+  [ELogRegexTagsAction.ReorderRegexTags]: handlers.reorderTags.reduce,
 };
 
 export const logRegexTagsReducer = makeReducer<

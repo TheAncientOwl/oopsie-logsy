@@ -6,7 +6,7 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description InvokeGetTags handler.
  */
 
@@ -69,8 +69,6 @@ export const invokeGetTags: IApiCallStoreHandler<
         loading: false,
         canApplyTags: false,
         tags: payload.tags,
-        // overAlternatives: makeOverAlternatives(payload.tags),
-        tagsChanged: false,
       };
     },
 

@@ -6,70 +6,70 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Filter tab.
  */
 
 import React from 'react';
 
+import { DraggableList } from '@/components/ui/lists/DraggableList';
+import { For } from '@/components/ui/utils/For';
 import { type UUID } from '@/store/common/identifier';
-import { focusFilterTab } from '@/store/filters/handlers';
-import { Stack, Tabs } from '@chakra-ui/react';
+import { reorderFilters } from '@/store/filters/handlers';
+import { Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
 
-type TFilterTabHeaderProps = THeaderPropsFromRedux & {
-  tabId: string;
+type TFilterTabHeaderProps = {
+  tabId: UUID;
   name: string;
 };
 
-export const FilterTabHeaderImpl: React.FC<TFilterTabHeaderProps> = (
-  props: TFilterTabHeaderProps
-) => {
-  const handleFocusClick = () => {
-    props.focusFilterTab(props.tabId);
-  };
-
+export const FilterTabHeader: React.FC<TFilterTabHeaderProps> = props => {
   return (
-    <Tabs.Trigger
-      minWidth={`${props.name.length}ch`}
-      colorPalette='green'
-      value={props.tabId}
-      onClick={handleFocusClick}
-    >
-      {props.name}
-    </Tabs.Trigger>
+    <DraggableList.Item id={props.tabId} allDraggable>
+      <Tabs.Trigger minWidth={`${props.name.length}ch`} colorPalette='green' value={props.tabId}>
+        {props.name}
+      </Tabs.Trigger>
+    </DraggableList.Item>
   );
 };
-
-// <redux>
-const mapStateHeader = () => ({});
-
-const mapDispatchHeader = {
-  focusFilterTab: focusFilterTab.dispatch,
-};
-
-const connectorHeader = connect(mapStateHeader, mapDispatchHeader);
-type THeaderPropsFromRedux = ConnectedProps<typeof connectorHeader>;
-
-export const FilterTabHeader = connectorHeader(FilterTabHeaderImpl);
-// </redux>
 
 type TFilterContentTabProps = {
   tabId: UUID;
   filterIds: Array<UUID>;
 };
 
-export const FilterTabContent: React.FC<TFilterContentTabProps> = (
-  props: TFilterContentTabProps
-) => {
+export const FilterTabContentImpl: React.FC<
+  TFilterContentTabProps & TContentPropsFromRedux
+> = props => {
   return (
     <Tabs.Content value={props.tabId}>
-      <Stack gap='0'>
-        {props.filterIds.map(filterId => (
-          <Filter key={filterId} tabId={props.tabId} filterId={filterId} />
-        ))}
-      </Stack>
+      <DraggableList.Container
+        items={props.filterIds}
+        direction='vertical'
+        onDragEnd={(activeId, overId) => {
+          console.infoX(FilterTabContentImpl.name, 'Should reorder');
+          props.reorderFilters(props.tabId, activeId, overId);
+        }}
+      >
+        <For each={props.filterIds}>
+          {filterId => <Filter key={filterId} tabId={props.tabId} filterId={filterId} />}
+        </For>
+      </DraggableList.Container>
     </Tabs.Content>
   );
 };
+
+// <redux>
+const mapStateContent = () => ({});
+
+const mapDispatchContent = {
+  reorderFilters: reorderFilters.dispatch,
+};
+
+const connectorContent = connect(mapStateContent, mapDispatchContent);
+type TContentPropsFromRedux = ConnectedProps<typeof connectorContent>;
+
+export const FilterTabContent = connectorContent(FilterTabContentImpl);
+// </redux>

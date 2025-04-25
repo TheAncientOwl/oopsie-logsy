@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.21
+ * @version 0.22
  * @description Filters component
  */
 
@@ -14,12 +14,19 @@ import { NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { type TRootState } from '@/store';
-import { addNewFilterTab, invokeGetTabs, invokeSetTabs } from '@/store/filters/handlers';
+import {
+  addNewFilterTab,
+  focusFilterTab,
+  invokeGetTabs,
+  invokeSetTabs,
+  reorderTabs,
+} from '@/store/filters/handlers';
 import { Box, ButtonGroup, Collapsible, HStack, Tabs } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 
 type TFiltersProps = TPropsFromRedux & {
   filtersOpen: boolean;
@@ -70,11 +77,23 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
               </ButtonGroup>
 
               <Box overflowX='scroll'>
-                <Tabs.List>
-                  {props.tabs.map(tab => (
-                    <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
-                  ))}
-                </Tabs.List>
+                <DraggableList.Container
+                  items={props.tabs}
+                  direction='horizontal'
+                  onDragEnd={(activeId, overId) => {
+                    console.infoX(FilterTabsImpl.name, 'Reordering', { activeId }, { overId });
+                    props.reorderTabs(activeId, overId);
+                  }}
+                  onDragButNotMoved={activeId => {
+                    props.focusFilterTab(activeId);
+                  }}
+                >
+                  <Tabs.List>
+                    {props.tabs.map(tab => (
+                      <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
+                    ))}
+                  </Tabs.List>
+                </DraggableList.Container>
               </Box>
             </HStack>
 
@@ -105,6 +124,8 @@ const mapDispatch = {
   addNewFilterTab: addNewFilterTab.dispatch,
   invokeGetTabs: invokeGetTabs.dispatch,
   invokeSetTabs: invokeSetTabs.dispatch,
+  reorderTabs: reorderTabs.dispatch,
+  focusFilterTab: focusFilterTab.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

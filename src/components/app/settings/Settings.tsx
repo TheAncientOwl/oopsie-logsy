@@ -6,7 +6,7 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description App settings
  */
 
@@ -15,8 +15,11 @@ import { ColorModeButton } from '@/components/ui/buttons/ColorModeButton';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { Box, Collapsible, Heading, HStack, Tabs } from '@chakra-ui/react';
-import { LogRegexConfiguratorContent, LogRegexConfiguratorTrigger } from './LogRegexConfigurator';
-import { LogsImportButton } from './LogsImporter';
+import {
+  LogRegexConfiguratorContent,
+  LogRegexConfiguratorTrigger,
+} from './log-regex-configurator/LogRegexConfigurator';
+import { LogsImportButton } from './logs-importer/LogsImporter';
 
 type TSettingsProps = {
   menuOpen: boolean;

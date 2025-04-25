@@ -6,7 +6,7 @@
  *
  * @file addNewTag.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description AddNewTag handler.
  */
 
@@ -40,7 +40,6 @@ export const addNewTag: IBasicStoreHandler<
       ...state,
       tags: newTags,
       canApplyTags: checkCanApply(newTags),
-      tagsChanged: true,
     };
   },
 };

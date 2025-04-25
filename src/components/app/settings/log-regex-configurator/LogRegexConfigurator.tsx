@@ -6,16 +6,22 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Configure log line regex for parsing
  */
 
 import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { For } from '@/components/ui/utils/For';
 import { type TRootState } from '@/store';
-import { TRegexTag } from '@/store/log-regex-tags/data';
-import { addNewTag, invokeGetTags, invokeSetTags } from '@/store/log-regex-tags/handlers';
+import { type TRegexTag } from '@/store/log-regex-tags/data';
+import {
+  addNewTag,
+  invokeGetTags,
+  invokeSetTags,
+  reorderTags,
+} from '@/store/log-regex-tags/handlers';
 import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { GrConfigure } from 'react-icons/gr';
@@ -39,6 +45,7 @@ const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
   useEffect(() => {
     props.invokeGetTags();
   }, []);
+
   return (
     <Stack>
       <HStack>
@@ -69,9 +76,18 @@ const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
         </ButtonGroup>
         <Input disabled cursor='default' value='Tag Name' />
         <Input disabled cursor='default' value='Tag Regex' />
+        <DraggableList.ItemHandle disabled />
       </HStack>
 
-      <For each={props.tags}>{tag => <RegexTagItem key={tag.id} tag={tag} />}</For>
+      <DraggableList.Container
+        items={props.tags}
+        direction='vertical'
+        onDragEnd={(activeId, overId) => {
+          props.reorderTags(activeId, overId);
+        }}
+      >
+        <For each={props.tags}>{tag => <RegexTagItem key={tag.id} tag={tag} />}</For>
+      </DraggableList.Container>
     </Stack>
   );
 };
@@ -87,6 +103,7 @@ const mapDispatch = {
   invokeGetTags: invokeGetTags.dispatch,
   invokeSetTags: invokeSetTags.dispatch,
   addNewTag: addNewTag.dispatch,
+  reorderTags: reorderTags.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

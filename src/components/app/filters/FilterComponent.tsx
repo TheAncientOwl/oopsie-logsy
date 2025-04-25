@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Filter component.
  */
 
@@ -35,6 +35,7 @@ import { ButtonGroup, HStack, Input } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponentTagSelector } from './FilterComponentTagSelector';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 
 type TFilterComponentProps = {
   tabId: UUID;
@@ -66,53 +67,57 @@ const FilterComponentImpl = (props: TFilterComponentProps & TPropsFromRedux) => 
   };
 
   return (
-    <HStack>
-      <TooltipIconButton
-        size='sm'
-        colorPalette='red'
-        variant='subtle'
-        tooltip='Delete component'
-        onClick={handleDeleteClick}
-      >
-        <DeleteIcon />
-      </TooltipIconButton>
-
-      <FilterComponentTagSelector
-        tabId={props.tabId}
-        filterId={props.filterId}
-        componentId={props.componentId}
-        value={props.component.overAlternativeId}
-      />
-
-      <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
+    <DraggableList.Item id={props.componentId}>
+      <HStack>
         <TooltipIconButton
-          tooltip={props.component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
-          onClick={handleToggleIsRegexClick}
+          size='sm'
+          colorPalette='red'
+          variant='subtle'
+          tooltip='Delete component'
+          onClick={handleDeleteClick}
         >
-          {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
+          <DeleteIcon />
         </TooltipIconButton>
-        <TooltipIconButton
-          tooltip={`Toggle Case: (Now ${props.component.ignoreCase ? 'Ignore' : 'Match'})`}
-          onClick={handletoggleFilterComponentIgnoreCaseClick}
-        >
-          {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
-        </TooltipIconButton>
-        <TooltipIconButton
-          tooltip={`Toggle: (Now ${props.component.isEquals ? '' : 'Not '}Equals)`}
-          onClick={handleToggleIsEqualsClick}
-        >
-          {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
-        </TooltipIconButton>
-      </ButtonGroup>
 
-      <Input
-        borderColor={border}
-        colorPalette='green'
-        defaultValue={props.component.data}
-        placeholder='Filter'
-        onChange={handleDataChange}
-      />
-    </HStack>
+        <FilterComponentTagSelector
+          tabId={props.tabId}
+          filterId={props.filterId}
+          componentId={props.componentId}
+          value={props.component.overAlternativeId}
+        />
+
+        <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
+          <TooltipIconButton
+            tooltip={props.component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
+            onClick={handleToggleIsRegexClick}
+          >
+            {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
+          </TooltipIconButton>
+          <TooltipIconButton
+            tooltip={`Toggle Case: (Now ${props.component.ignoreCase ? 'Ignore' : 'Match'})`}
+            onClick={handletoggleFilterComponentIgnoreCaseClick}
+          >
+            {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
+          </TooltipIconButton>
+          <TooltipIconButton
+            tooltip={`Toggle: (Now ${props.component.isEquals ? '' : 'Not '}Equals)`}
+            onClick={handleToggleIsEqualsClick}
+          >
+            {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
+          </TooltipIconButton>
+        </ButtonGroup>
+
+        <Input
+          borderColor={border}
+          colorPalette='green'
+          defaultValue={props.component.data}
+          placeholder='Filter'
+          onChange={handleDataChange}
+        />
+
+        <DraggableList.ItemHandle />
+      </HStack>
+    </DraggableList.Item>
   );
 };
 

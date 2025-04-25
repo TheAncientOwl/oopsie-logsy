@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Handlers index file.
  */
 
@@ -15,6 +15,7 @@ import { invokeGetTags } from './invokeGetTags';
 import { invokeSetTags } from './invokeSetTags';
 import { loading } from './loading';
 import { removeTag } from './removeTag';
+import { reorderTags } from './reorderTags';
 import { setTagName } from './setTagName';
 import { setTagRegex } from './setTagRegex';
 import { toggleTagDisplay } from './toggleTagDisplay';
@@ -25,6 +26,7 @@ export {
   invokeSetTags,
   loading,
   removeTag,
+  reorderTags,
   setTagName,
   setTagRegex,
   toggleTagDisplay,

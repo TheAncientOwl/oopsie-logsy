@@ -6,7 +6,7 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Icons used along the app design
  */
 
@@ -31,6 +31,7 @@ import { IoMdClose } from 'react-icons/io';
 import { LuMoon, LuSun } from 'react-icons/lu';
 import {
   MdDelete,
+  MdDragIndicator,
   MdOutlineKeyboardDoubleArrowDown,
   MdOutlineKeyboardDoubleArrowUp,
 } from 'react-icons/md';
@@ -69,3 +70,5 @@ export const ExpandIcon = () => <MdOutlineKeyboardDoubleArrowDown />;
 export const StarsIcon = () => <BsStars />;
 export const StarIcon = () => <FaStar />;
 export const StarsFormation = () => <GiStarFormation />;
+// TODO: refactor the other icons like DragIcon
+export const DragIcon = MdDragIndicator;

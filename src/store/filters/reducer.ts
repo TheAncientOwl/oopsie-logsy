@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description Filters data reducer.
  */
 
@@ -52,6 +52,9 @@ const reducerMap: TReducerMap<TCompoundActionType, TFiltersStoreState> = {
   [EFiltersAction.ToggleFilterCollapsed]: handlers.toggleFilterCollapsed.reduce,
   [EFiltersAction.SetAllFiltersCollapsed]: handlers.setAllFiltersCollapsed.reduce,
   [EFiltersAction.DuplicateFiltersTab]: handlers.duplicateFiltersTab.reduce,
+  [EFiltersAction.ReorderFilters]: handlers.reorderFilters.reduce,
+  [EFiltersAction.ReorderFilterComponents]: handlers.reorderFilterComponents.reduce,
+  [EFiltersAction.ReorderFilterTabs]: handlers.reorderTabs.reduce,
 
   [ELogRegexTagsAction.InvokeGetTagsOK]: listeners.onLogRegexTagsGet.reduce,
   [ELogRegexTagsAction.InvokeSetTagsOK]: listeners.onLogRegexTagsSet.reduce,

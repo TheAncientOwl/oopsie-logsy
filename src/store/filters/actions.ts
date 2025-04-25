@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description Filters action types.
  */
 
@@ -45,6 +45,9 @@ import { type ToggleFilterCollapsedAction } from './handlers/toggleFilterCollaps
 import { type ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
 import { type ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
 import { type TUnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
+import { type TReorderFiltersAction } from './handlers/reorderFilters';
+import { type TReorderFilterComponentsAction } from './handlers/reorderFilterComponents';
+import { TReorderTabsAction } from './handlers/reorderTabs';
 
 export enum EFiltersAction {
   Loading = 'Filters__Loading',
@@ -59,6 +62,7 @@ export enum EFiltersAction {
   FocusFilterTab = 'Filters__FocusFilterTab',
   SetFilterTabName = 'Filters__SetFilterTabName',
   DuplicateFiltersTab = 'Filters__DuplicateFiltersTab',
+  ReorderFilterTabs = 'Filters__ReorderFilterTabs',
 
   AddNewFilter = 'Filters__AddNewFilter',
   DeleteFilter = 'Filters__DeleteFilter',
@@ -74,6 +78,7 @@ export enum EFiltersAction {
   SetFilterPriority = 'Filters__SetFilterPriority',
   ToggleFilterCollapsed = 'Filters__ToggleFilterCollapsed',
   SetAllFiltersCollapsed = 'Filters__SetAllFiltersCollapsed',
+  ReorderFilters = 'Filters__Reorder',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
@@ -82,6 +87,7 @@ export enum EFiltersAction {
   ToggleFilterComponentIsEquals = 'Filters__ToggleFilterComponentIsEquals',
   SetFilterComponentData = 'Filters__SetFilterComponentData',
   ToggleFilterComponentIgnoreCase = 'Filters__ToggleFilterComponentIgnoreCase',
+  ReorderFilterComponents = 'Filters__ReorderFilterComponents',
 }
 
 export type TFiltersDispatchTypes =
@@ -114,6 +120,9 @@ export type TFiltersDispatchTypes =
   | TSetFilterPriorityAction
   | ToggleFilterCollapsedAction
   | TSetAllFiltersCollapsedAction
-  | TDuplicateFiltersTabAction;
+  | TDuplicateFiltersTabAction
+  | TReorderFiltersAction
+  | TReorderFilterComponentsAction
+  | TReorderTabsAction;
 
 export type TFiltersDispatch = ReduxDispatch<TFiltersDispatchTypes>;

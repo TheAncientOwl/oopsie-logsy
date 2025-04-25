@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.28
+ * @version 0.29
  * @description Filter component
  */
 
@@ -29,6 +29,7 @@ import {
   addNewFilterComponent,
   deleteFilter,
   duplicateFilter,
+  reorderFilterComponents,
   setFilterName,
   setFilterPriority,
   toggleFilterActive,
@@ -50,6 +51,7 @@ import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 
 type TFilterProps = {
   tabId: UUID;
@@ -97,112 +99,129 @@ const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
   };
 
   return (
-    <Box
-      bg={bg}
-      border='2px solid'
-      borderTop='1px solid'
-      borderBottom='1px solid'
-      borderColor={border}
-      padding='0.5em 0.75em'
-    >
-      <HStack>
-        <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
-          <TooltipIconButton
-            tooltip={props.filter.collapsed ? 'Show Filter' : 'Hide filter'}
-            onClick={handleFilterCollapseClick}
-          >
-            {props.filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
-          </TooltipIconButton>
-          <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
-            <DuplicateIcon />
-          </TooltipIconButton>
-          <TooltipIconButton colorPalette='red' tooltip='Delete filter' onClick={handleDeleteClick}>
-            <DeleteIcon />
-          </TooltipIconButton>
-        </ButtonGroup>
+    <DraggableList.Item id={props.filterId}>
+      <Box
+        bg={bg}
+        border='2px solid'
+        borderTop='1px solid'
+        borderBottom='1px solid'
+        borderColor={border}
+        padding='0.5em 0.75em'
+      >
+        <HStack>
+          <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
+            <TooltipIconButton
+              tooltip={props.filter.collapsed ? 'Show Filter' : 'Hide filter'}
+              onClick={handleFilterCollapseClick}
+            >
+              {props.filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
+            </TooltipIconButton>
+            <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
+              <DuplicateIcon />
+            </TooltipIconButton>
+            <TooltipIconButton
+              colorPalette='red'
+              tooltip='Delete filter'
+              onClick={handleDeleteClick}
+            >
+              <DeleteIcon />
+            </TooltipIconButton>
+          </ButtonGroup>
 
-        <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+          <Separator borderColor={border} orientation='vertical' height='7' size='md' />
 
-        <FilterColorPicker
-          tabId={props.tabId}
-          filterId={props.filterId}
-          defaultColors={props.filter.colors}
-          onColorChangeFg={details => setFilterFg(details.valueAsString)}
-          onColorChangeBg={details => setFilterBg(details.valueAsString)}
-        />
+          <FilterColorPicker
+            tabId={props.tabId}
+            filterId={props.filterId}
+            defaultColors={props.filter.colors}
+            onColorChangeFg={details => setFilterFg(details.valueAsString)}
+            onColorChangeBg={details => setFilterBg(details.valueAsString)}
+          />
 
-        <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+          <Separator borderColor={border} orientation='vertical' height='7' size='md' />
 
-        <Tooltip content='Filter Priority'>
-          <NumberInput.Root
-            size='md'
-            min={0}
+          <Tooltip content='Filter Priority'>
+            <NumberInput.Root
+              size='md'
+              min={0}
+              colorPalette='green'
+              value={props.filter.priority.toString()}
+              onValueChange={handleFilterPriorityChange}
+            >
+              <NumberInput.Control bg={bg} />
+              <NumberInput.Input
+                maxWidth='125px'
+                borderColor={border}
+                color={filterFg}
+                backgroundColor={filterBg}
+              />
+            </NumberInput.Root>
+          </Tooltip>
+
+          <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+
+          <Input
+            borderColor={border}
             colorPalette='green'
-            value={props.filter.priority.toString()}
-            onValueChange={handleFilterPriorityChange}
-          >
-            <NumberInput.Control bg={bg} />
-            <NumberInput.Input
-              maxWidth='125px'
-              borderColor={border}
-              color={filterFg}
-              backgroundColor={filterBg}
-            />
-          </NumberInput.Root>
-        </Tooltip>
+            placeholder='Filter Name'
+            defaultValue={props.filter.name}
+            onChange={handleNameChange}
+            color={filterFg}
+            backgroundColor={filterBg}
+          />
 
-        <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+          <DraggableList.ItemHandle />
+        </HStack>
 
-        <Input
-          borderColor={border}
-          colorPalette='green'
-          placeholder='Filter Name'
-          defaultValue={props.filter.name}
-          onChange={handleNameChange}
-          color={filterFg}
-          backgroundColor={filterBg}
-        />
-      </HStack>
+        <Collapsible.Root open={!props.filter.collapsed}>
+          <Collapsible.Content>
+            <Stack gap='1em' padding='0.75em 0.5em'>
+              <HStack gap='1em'>
+                <TooltipIconButton
+                  tooltip='Add component'
+                  size='xs'
+                  colorPalette='green'
+                  variant='subtle'
+                  onClick={handleNewComponentClick}
+                >
+                  <NewIcon />
+                </TooltipIconButton>
 
-      <Collapsible.Root open={!props.filter.collapsed}>
-        <Collapsible.Content>
-          <Stack gap='1em' padding='0.75em 0.5em'>
-            <HStack gap='1em'>
-              <TooltipIconButton
-                tooltip='Add component'
-                size='xs'
-                colorPalette='green'
-                variant='subtle'
-                onClick={handleNewComponentClick}
+                <CheckBox checked={props.filter.isActive} onCheckedChange={handleFilterToggle}>
+                  Active
+                </CheckBox>
+                <CheckBox
+                  checked={props.filter.isHighlightOnly}
+                  onCheckedChange={handleFilterToggleHiglightOnly}
+                >
+                  Highlight Only
+                </CheckBox>
+              </HStack>
+
+              <DraggableList.Container
+                items={props.filter.componentIDs}
+                direction='vertical'
+                onDragEnd={(activeId, overId) => {
+                  // console.infoX(FilterImpl.name,  'IDs', { activeId }, { overId });
+                  props.reorderFilterComponents(props.filterId, activeId, overId);
+                }}
               >
-                <NewIcon />
-              </TooltipIconButton>
-
-              <CheckBox checked={props.filter.isActive} onCheckedChange={handleFilterToggle}>
-                Active
-              </CheckBox>
-              <CheckBox
-                checked={props.filter.isHighlightOnly}
-                onCheckedChange={handleFilterToggleHiglightOnly}
-              >
-                Highlight Only
-              </CheckBox>
-            </HStack>
-
-            <For each={props.filter.componentIDs}>
-              {componentId => (
-                <FilterComponent
-                  key={componentId}
-                  tabId={props.tabId}
-                  filterId={props.filterId}
-                  componentId={componentId}
-                />
-              )}
-            </For>
-          </Stack>
-        </Collapsible.Content>
-      </Collapsible.Root>
-    </Box>
+                <For each={props.filter.componentIDs}>
+                  {componentId => (
+                    <FilterComponent
+                      key={componentId}
+                      tabId={props.tabId}
+                      filterId={props.filterId}
+                      componentId={componentId}
+                    />
+                  )}
+                </For>
+              </DraggableList.Container>
+            </Stack>
+          </Collapsible.Content>
+        </Collapsible.Root>
+      </Box>
+    </DraggableList.Item>
   );
 };
 
@@ -220,6 +239,7 @@ const mapDispatch = {
   duplicateFilter: duplicateFilter.dispatch,
   setFilterPriority: setFilterPriority.dispatch,
   toggleFilterCollapsed: toggleFilterCollapsed.dispatch,
+  reorderFilterComponents: reorderFilterComponents.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

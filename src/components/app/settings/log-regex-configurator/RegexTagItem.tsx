@@ -6,13 +6,14 @@
  *
  * @file RegexTagItem.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description LogRegexConfigurator regex tag item.
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { DoubleCheck } from '@/components/ui/DoubleCheck';
 import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/Icons';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { useSwitch } from '@/hooks/useSwitch';
 import { TRegexTag } from '@/store/log-regex-tags/data';
 import {
@@ -38,7 +39,7 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
   };
 
   return (
-    <>
+    <DraggableList.Item id={props.tag.id}>
       <HStack>
         <TooltipIconButton
           onClick={toggleDeleteDoubleCheck}
@@ -75,6 +76,8 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
           }}
           colorPalette={props.tag.regex.length > 0 ? 'current' : 'red'}
         />
+
+        <DraggableList.ItemHandle />
       </HStack>
 
       <DoubleCheck
@@ -108,7 +111,7 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
         This action will <Span color='red.500'>invalidate all filters</Span> until manually updated
         <Span color='yellow.500'> when regex applied</Span>.
       </DoubleCheck>
-    </>
+    </DraggableList.Item>
   );
 };
 

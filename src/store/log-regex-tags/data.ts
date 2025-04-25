@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description LogRegexTags data.
  */
 
@@ -24,7 +24,6 @@ export type TLogRegexTagsStoreState = {
   tags: Array<TRegexTag>;
   loading: boolean;
   canApplyTags: boolean;
-  tagsChanged: boolean;
 };
 // </types>
 
@@ -58,6 +57,5 @@ export const defaultState: TLogRegexTagsStoreState = {
   tags: getStaticDefaultTags(),
   loading: false,
   canApplyTags: false,
-  tagsChanged: false,
 };
 // </data>

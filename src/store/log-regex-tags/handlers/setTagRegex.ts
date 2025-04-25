@@ -6,7 +6,7 @@
  *
  * @file setTagRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description SetTagRegex handler.
  */
 
@@ -48,7 +48,6 @@ export const setTagRegex: IBasicStoreHandler<
       ...state,
       tags: newTags,
       canApplyTags: checkCanApply(newTags),
-      tagsChanged: true,
     };
   },
 };

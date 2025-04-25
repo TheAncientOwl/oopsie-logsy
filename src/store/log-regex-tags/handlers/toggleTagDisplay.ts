@@ -6,7 +6,7 @@
  *
  * @file toggleTagDisplay.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description ToggleTagDisplay handler.
  */
 
@@ -41,7 +41,6 @@ export const toggleTagDisplay: IBasicStoreHandler<
       ...state,
       tags: newTags,
       canApplyTags: checkCanApply(newTags),
-      tagsChanged: true,
     };
   },
 };

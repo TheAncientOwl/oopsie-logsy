@@ -6,7 +6,7 @@
  *
  * @file invokeSetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description InvokeSetTags handler.
  */
 
@@ -59,8 +59,6 @@ export const invokeSetTags: IApiCallStoreHandler<
         ...state,
         loading: false,
         canApplyTags: false,
-        // overAlternatives: state.tags ? makeOverAlternatives(state.tags) : state.overAlternatives,
-        tagsChanged: false,
       };
     },
 
