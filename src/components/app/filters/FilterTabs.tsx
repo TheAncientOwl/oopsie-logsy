@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.23
+ * @version 0.24
  * @description Filters component
  */
 
@@ -34,14 +34,14 @@ type TFiltersProps = TPropsFromRedux & {
 
 const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
   useEffect(() => {
-    props.invokeGetTabs();
+    props.invokeGetTabs(props.overAlternatives);
   }, []);
 
   const bg = useColorModeValue('gray.200', 'gray.900');
   const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
   const handleSaveClick = () => {
-    props.invokeSetTabs(props.tabs, props.filters, props.components);
+    props.invokeSetTabs(props.tabs, props.filters, props.components, props.overAlternatives);
   };
 
   return (

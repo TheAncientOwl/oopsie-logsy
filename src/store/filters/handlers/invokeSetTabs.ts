@@ -6,7 +6,7 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description InvokeSetTabs handler.
  */
 
@@ -14,6 +14,8 @@ import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { EFiltersAction, type TFiltersDispatch } from '../actions';
 import {
+  checkCanSaveData,
+  TOverAlternatives,
   type TFilter,
   type TFilterComponent,
   type TFiltersStoreState,
@@ -41,9 +43,14 @@ export const invokeSetTabs: IApiCallStoreHandler<
   TFiltersDispatch,
   TInvokeSetTabsOkPayload,
   TInvokeSetTabsNOkPayload,
-  [tabs: Array<TFilterTab>, filters: Array<TFilter>, components: Array<TFilterComponent>]
+  [
+    tabs: Array<TFilterTab>,
+    filters: Array<TFilter>,
+    components: Array<TFilterComponent>,
+    overAlternatives: TOverAlternatives,
+  ]
 > = {
-  dispatch: (tabs, filters, components) => async (dispatch: TFiltersDispatch) => {
+  dispatch: (tabs, filters, components, overAlternatives) => async (dispatch: TFiltersDispatch) => {
     console.assertX(
       invokeSetTabs.dispatch.name,
       tabs !== undefined,
@@ -71,9 +78,19 @@ export const invokeSetTabs: IApiCallStoreHandler<
         components
       );
 
-      const response = await invoke('set_filter_tabs', { tabs, filters, components });
-      console.info(invokeSetTabs.dispatch, `rust response: ${response}`);
-      dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
+      if (checkCanSaveData(tabs, filters, components, overAlternatives)) {
+        console.info(invokeSetTabs.dispatch, 'Saving tabs data...');
+        const response = await invoke('set_filter_tabs', { tabs, filters, components });
+        console.info(invokeSetTabs.dispatch, `rust response: ${response}`);
+        dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
+      } else {
+        console.info(invokeSetTabs.dispatch, 'Cannot save tabs data', {
+          tabs,
+          filters,
+          components,
+          overAlternatives,
+        });
+      }
     } catch (error) {
       console.error(invokeSetTabs.dispatch, `error sending tabs to rust: ${error}`);
       dispatch({ type: EFiltersAction.InvokeSetTabsNOK, payload: { error } });

@@ -6,15 +6,16 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description InvokeGetTabs handler.
  */
 
-import { IApiCallStoreHandler, type TNoDispatcherArgs } from '@/store/common/storeHandler';
+import { IApiCallStoreHandler } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { EFiltersAction, type TFiltersDispatch } from '../actions';
 import {
   DefaultFactory,
+  TOverAlternatives,
   type TFilter,
   type TFilterComponent,
   type TFiltersStoreState,
@@ -47,9 +48,9 @@ export const invokeGetTabs: IApiCallStoreHandler<
   TFiltersDispatch,
   TInvokeGetTabsOkPayload,
   TInvokeGetTabsNOkPayload,
-  TNoDispatcherArgs
+  [overAlternatives: TOverAlternatives]
 > = {
-  dispatch: () => async (dispatch: TFiltersDispatch) => {
+  dispatch: overAlternatives => async (dispatch: TFiltersDispatch) => {
     dispatch({ type: EFiltersAction.Loading, payload: {} });
 
     try {
@@ -77,7 +78,12 @@ export const invokeGetTabs: IApiCallStoreHandler<
         const defaultFilters = [DefaultFactory.makeFilter(defaultComponents)];
         const defaultTabs = [DefaultFactory.makeFilterTab(defaultFilters)];
 
-        await invokeSetTabs.dispatch(defaultTabs, defaultFilters, defaultComponents)(dispatch);
+        await invokeSetTabs.dispatch(
+          defaultTabs,
+          defaultFilters,
+          defaultComponents,
+          overAlternatives
+        )(dispatch);
         dispatch({
           type: EFiltersAction.InvokeGetTabsOK,
           payload: { tabs: defaultTabs, filters: defaultFilters, components: defaultComponents },
