@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Filters data structures.
  */
 
@@ -61,6 +61,8 @@ export type TFiltersStoreState = {
   filters: Array<TFilter>;
   components: Array<TFilterComponent>;
   overAlternatives: TOverAlternatives;
+
+  beforeDragNotCollapsed: Array<UUID>;
 };
 // </types>
 
@@ -160,5 +162,7 @@ export const defaultState: TFiltersStoreState = {
   filters: defaultFilters,
   components: defaultComponents,
   overAlternatives: makeOverAlternatives(getStaticDefaultTags()),
+
+  beforeDragNotCollapsed: [],
 };
 // </data>

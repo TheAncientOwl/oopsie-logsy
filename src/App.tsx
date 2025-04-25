@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description App class
  */
 
@@ -27,7 +27,7 @@ const CONTENT_HEIGHTS = {
 
 export const App = () => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
-  const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(false);
+  const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(true);
 
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [toolbarHeight, setToolbarHeight] = useState(0);

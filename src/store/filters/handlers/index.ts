@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Handlers index file.
  */
 
@@ -24,6 +24,7 @@ import { invokeGetTabs } from './invokeGetTabs';
 import { invokeSetTabs } from './invokeSetTabs';
 import { loading } from './loading';
 import { muteAllFilters } from './muteAllFilters';
+import { prepareFiltersForDrag } from './prepareFiltersForDrag';
 import { reorderFilterComponents } from './reorderFilterComponents';
 import { reorderFilters } from './reorderFilters';
 import { reorderTabs } from './reorderTabs';
@@ -58,6 +59,7 @@ export {
   invokeSetTabs,
   loading,
   muteAllFilters,
+  prepareFiltersForDrag,
   reorderFilterComponents,
   reorderFilters,
   reorderTabs,

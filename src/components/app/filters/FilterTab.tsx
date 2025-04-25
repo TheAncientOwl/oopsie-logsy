@@ -6,7 +6,7 @@
  *
  * @file FilterTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Filter tab.
  */
 
@@ -15,7 +15,7 @@ import React from 'react';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { For } from '@/components/ui/utils/For';
 import { type UUID } from '@/store/common/identifier';
-import { reorderFilters } from '@/store/filters/handlers';
+import { prepareFiltersForDrag, reorderFilters } from '@/store/filters/handlers';
 import { Tabs } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Filter } from './Filter';
@@ -49,8 +49,13 @@ export const FilterTabContentImpl: React.FC<
         items={props.filterIds}
         direction='vertical'
         onDragEnd={(activeId, overId) => {
-          console.infoX(FilterTabContentImpl.name, 'Should reorder');
           props.reorderFilters(props.tabId, activeId, overId);
+        }}
+        onDragButNotMoved={activeId => {
+          props.reorderFilters(props.tabId, activeId, activeId);
+        }}
+        onDragStart={() => {
+          props.prepareFiltersForDrag(props.tabId);
         }}
       >
         <For each={props.filterIds}>
@@ -66,6 +71,7 @@ const mapStateContent = () => ({});
 
 const mapDispatchContent = {
   reorderFilters: reorderFilters.dispatch,
+  prepareFiltersForDrag: prepareFiltersForDrag.dispatch,
 };
 
 const connectorContent = connect(mapStateContent, mapDispatchContent);

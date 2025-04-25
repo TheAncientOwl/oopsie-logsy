@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description Filters action types.
  */
 
@@ -32,6 +32,10 @@ import {
 } from './handlers/invokeSetTabs';
 import { type TLoadingAction } from './handlers/loading';
 import { type TMuteAllFiltersAction } from './handlers/muteAllFilters';
+import { TPrepareFiltersForDragAction } from './handlers/prepareFiltersForDrag';
+import { type TReorderFilterComponentsAction } from './handlers/reorderFilterComponents';
+import { type TReorderFiltersAction } from './handlers/reorderFilters';
+import { TReorderTabsAction } from './handlers/reorderTabs';
 import { type TSetAllFiltersCollapsedAction } from './handlers/setAllFiltersCollapsed';
 import { type TSetComponentDataAction } from './handlers/setComponentData';
 import { type TSetComponentOverAlternativeAction } from './handlers/setComponentOverAlternative';
@@ -45,9 +49,6 @@ import { type ToggleFilterCollapsedAction } from './handlers/toggleFilterCollaps
 import { type ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
 import { type ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
 import { type TUnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
-import { type TReorderFiltersAction } from './handlers/reorderFilters';
-import { type TReorderFilterComponentsAction } from './handlers/reorderFilterComponents';
-import { TReorderTabsAction } from './handlers/reorderTabs';
 
 export enum EFiltersAction {
   Loading = 'Filters__Loading',
@@ -79,6 +80,7 @@ export enum EFiltersAction {
   ToggleFilterCollapsed = 'Filters__ToggleFilterCollapsed',
   SetAllFiltersCollapsed = 'Filters__SetAllFiltersCollapsed',
   ReorderFilters = 'Filters__Reorder',
+  PrepareFiltersForDrag = 'Filters__PrepareFiltersForDrag',
 
   AddNewFilterComponent = 'Filters__AddNewFilterComponent',
   DeleteFilterComponent = 'Filters__DeleteFilterComponent',
@@ -123,6 +125,8 @@ export type TFiltersDispatchTypes =
   | TDuplicateFiltersTabAction
   | TReorderFiltersAction
   | TReorderFilterComponentsAction
-  | TReorderTabsAction;
+  | TReorderTabsAction
+  | TPrepareFiltersForDragAction
+  | TPrepareFiltersForDragAction;
 
 export type TFiltersDispatch = ReduxDispatch<TFiltersDispatchTypes>;

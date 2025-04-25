@@ -6,13 +6,19 @@
  *
  * @file DraggableList.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Draggable list.
  */
 
 import { type UUID } from '@/store/common/identifier';
 import { Box, Icon } from '@chakra-ui/react';
-import { closestCorners, DndContext, DragEndEvent, UniqueIdentifier } from '@dnd-kit/core';
+import {
+  closestCorners,
+  DndContext,
+  DragEndEvent,
+  DragStartEvent,
+  UniqueIdentifier,
+} from '@dnd-kit/core';
 import {
   arrayMove,
   horizontalListSortingStrategy,
@@ -93,6 +99,7 @@ type TDraggableListProps<TItem extends TUniqueIdentifiable> = PropsWithChildren 
   direction: TDraggableListDirection;
   onDragEnd: (activeId: UUID, overId: UUID) => void;
   onDragButNotMoved?: (activeId: UUID) => void;
+  onDragStart?: (event: DragStartEvent) => void;
 };
 
 const DraggableListImpl = <TItem extends TUniqueIdentifiable>(
@@ -106,13 +113,19 @@ const DraggableListImpl = <TItem extends TUniqueIdentifiable>(
         } else {
           props.onDragButNotMoved?.(event.active.id as UUID);
         }
+      } else if (event.active) {
+        props.onDragButNotMoved?.(event.active.id as UUID);
       }
     },
     [props.onDragEnd, props.onDragButNotMoved]
   );
 
   return (
-    <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
+    <DndContext
+      onDragStart={props.onDragStart}
+      onDragEnd={handleDragEnd}
+      collisionDetection={closestCorners}
+    >
       <SortableContext
         items={props.items}
         strategy={

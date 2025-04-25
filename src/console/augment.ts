@@ -6,7 +6,7 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Extend logging functionality.
  */
 
@@ -41,13 +41,7 @@ const formatLevel = (level: TLogLevel) => {
   return level !== 'trace' ? `%c ${level} %c |` : `%c%c`;
 };
 
-const _log = (
-  level: TLogLevel,
-  levelStyle: string,
-  caller: string,
-  message: string,
-  ...data: any[]
-) => {
+const _log = (level: TLogLevel, levelStyle: string, caller: Nameable, ...data: any[]) => {
   const date = new Date();
   const timestamp = `${padLeft(date.getHours())}:${padLeft(date.getMinutes())}:${padLeft(
     date.getSeconds()
@@ -55,10 +49,12 @@ const _log = (
 
   const callerLocation = getCallerLocation();
 
+  const hasStringMessage = data.length > 0 && typeof data[0] === 'string';
+
   (logFunctions[level] || console.log)(
     `%c| %c${timestamp} %c| ${formatLevel(level)} %c${extractFileName(
       callerLocation
-    )}::${caller}%c @ %c${callerLocation} %c»\n| %c${message}`,
+    )}::${typeof caller === 'string' ? caller : caller.name}%c @ %c${callerLocation} %c»\n| %c${hasStringMessage ? data[0] : ''}`,
     'color: gray',
     'color: dodgerblue',
     'color: gray',
@@ -69,35 +65,35 @@ const _log = (
     levelStyle,
     'color: gray',
     levelStyle,
-    ...data
+    ...(hasStringMessage ? data.slice(1, data.length) : data)
   );
 };
 
-const trace = (caller: string, message: string, ...data: any[]) => {
-  _log('trace', 'color: white', caller, message, ...data);
+const trace = (caller: Nameable, ...data: any[]) => {
+  _log('trace', 'color: white', caller, ...data);
 };
 
-const info = (caller: string, message: string, ...data: any[]) => {
-  _log('info', 'color: deepskyblue', caller, message, ...data);
+const info = (caller: Nameable, ...data: any[]) => {
+  _log('info', 'color: deepskyblue', caller, ...data);
 };
 
-const warn = (caller: string, message: string, ...data: any[]) => {
-  _log('warn', 'color: yellow', caller, message, ...data);
+const warn = (caller: Nameable, ...data: any[]) => {
+  _log('warn', 'color: yellow', caller, ...data);
 };
 
-const debug = (caller: string, message: string, ...data: any[]) => {
-  _log('debug', 'color: lightgreen', caller, message, ...data);
+const debug = (caller: Nameable, ...data: any[]) => {
+  _log('debug', 'color: gold', caller, ...data);
 };
 
-const error = (caller: string, message: string, ...data: any[]) => {
-  _log('error', 'color: red', caller, message, ...data);
+const error = (caller: Nameable, ...data: any[]) => {
+  _log('error', 'color: red', caller, ...data);
 };
 
-const verbose = (caller: string, message: string, ...data: any[]) => {
-  _log('verbose', 'color: gray', caller, message, ...data);
+const verbose = (caller: Nameable, ...data: any[]) => {
+  _log('verbose', 'color: gray', caller, ...data);
 };
 
-const assert = (caller: string, condition: boolean, ...data: any[]) => {
+const assert = (caller: Nameable, condition: boolean, ...data: any[]) => {
   if (!condition) {
     _log('error', 'color: red', caller, `Assertion failed!\n\t${JSON.stringify(data)}`);
   }

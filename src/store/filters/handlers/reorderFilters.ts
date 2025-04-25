@@ -6,7 +6,7 @@
  *
  * @file reorderFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ReoderdFilters handler.
  */
 
@@ -48,15 +48,31 @@ export const reorderFilters: IBasicStoreHandler<
       filterIDs: DraggableList.reorderIds(oldTab.filterIDs, activeId, overId),
     }));
 
+    const redoFiltersCollapse = () => {
+      if (state.beforeDragNotCollapsed.length > 0) {
+        return state.filters.map(filter => {
+          if (state.beforeDragNotCollapsed.find(id => id === filter.id) !== undefined) {
+            return {
+              ...filter,
+              collapsed: false,
+            };
+          } else {
+            return filter;
+          }
+        });
+      } else {
+        return state.filters;
+      }
+    };
+
+    const newFilters = redoFiltersCollapse();
+
     return {
       ...state,
       tabs: newTabs,
-      canSaveData: checkCanSaveData(
-        newTabs,
-        state.filters,
-        state.components,
-        state.overAlternatives
-      ),
+      filters: newFilters,
+      canSaveData: checkCanSaveData(newTabs, newFilters, state.components, state.overAlternatives),
+      beforeDragNotCollapsed: [],
     };
   },
 };
