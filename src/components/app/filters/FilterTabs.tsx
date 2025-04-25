@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.22
+ * @version 0.23
  * @description Filters component
  */
 
@@ -81,7 +81,6 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
                   items={props.tabs}
                   direction='horizontal'
                   onDragEnd={(activeId, overId) => {
-                    console.infoX(FilterTabsImpl.name, 'Reordering', { activeId }, { overId });
                     props.reorderTabs(activeId, overId);
                   }}
                   onDragButNotMoved={activeId => {

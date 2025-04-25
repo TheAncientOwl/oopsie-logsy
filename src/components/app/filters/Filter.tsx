@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.29
+ * @version 0.30
  * @description Filter component
  */
 
@@ -202,7 +202,6 @@ const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
                 items={props.filter.componentIDs}
                 direction='vertical'
                 onDragEnd={(activeId, overId) => {
-                  // console.infoX(FilterImpl.name,  'IDs', { activeId }, { overId });
                   props.reorderFilterComponents(props.filterId, activeId, overId);
                 }}
               >

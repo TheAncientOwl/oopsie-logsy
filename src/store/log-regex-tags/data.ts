@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description LogRegexTags data.
  */
 
@@ -47,7 +47,7 @@ getStaticDefaultTags._defaultTags = undefined as TRegexTag[] | undefined;
 
 export function getStaticDefaultTags(): TRegexTag[] {
   if (!getStaticDefaultTags._defaultTags) {
-    console.traceX(getStaticDefaultTags.name, 'Generating default tags');
+    console.trace(getStaticDefaultTags, 'Generating default tags');
     getStaticDefaultTags._defaultTags = [DefaultFactory.makeTag('Payload')];
   }
   return getStaticDefaultTags._defaultTags;

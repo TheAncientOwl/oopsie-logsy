@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description .
  */
 
@@ -17,10 +17,10 @@ import { logRegexTagsReducer } from './log-regex-tags/reducer';
 import { configureStore, Middleware } from '@reduxjs/toolkit';
 
 const storeWatcher: Middleware = storeAPI => next => action => {
-  console.traceX(storeWatcher.name, 'Dispatching:', action);
-  console.verboseX(storeWatcher.name, 'Prev state:', storeAPI.getState());
+  console.trace(storeWatcher, 'Dispatching:', action);
+  console.verbose(storeWatcher, 'Prev state:', storeAPI.getState());
   const result = next(action);
-  console.verboseX(storeWatcher.name, 'Next state:', storeAPI.getState());
+  console.verbose(storeWatcher, 'Next state:', storeAPI.getState());
   return result;
 };
 

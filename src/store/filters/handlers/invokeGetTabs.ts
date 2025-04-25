@@ -6,7 +6,7 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description InvokeGetTabs handler.
  */
 
@@ -58,14 +58,10 @@ export const invokeGetTabs: IApiCallStoreHandler<
           'get_filter_tabs'
         );
       if (tabs.length !== 0) {
-        console.verboseX(invokeGetTabs.dispatch.name, `Received ${tabs.length} tabs:`, tabs);
-        console.verboseX(
-          invokeGetTabs.dispatch.name,
-          `Received ${filters.length} filters:`,
-          filters
-        );
-        console.verboseX(
-          invokeGetTabs.dispatch.name,
+        console.verbose(invokeGetTabs.dispatch, `Received ${tabs.length} tabs:`, tabs);
+        console.verbose(invokeGetTabs.dispatch, `Received ${filters.length} filters:`, filters);
+        console.verbose(
+          invokeGetTabs.dispatch,
           `Received ${components.length} components:`,
           components
         );
@@ -75,7 +71,7 @@ export const invokeGetTabs: IApiCallStoreHandler<
           payload: { tabs, filters, components },
         });
       } else {
-        console.infoX(invokeGetTabs.dispatch.name, `Setting default Tabs`);
+        console.info(invokeGetTabs.dispatch, `Setting default Tabs`);
 
         const defaultComponents = [DefaultFactory.makeFilterComponent()];
         const defaultFilters = [DefaultFactory.makeFilter(defaultComponents)];
@@ -88,7 +84,7 @@ export const invokeGetTabs: IApiCallStoreHandler<
         });
       }
     } catch (error) {
-      console.errorX(invokeGetTabs.dispatch.name, `error getting tabs from rust: ${error}`);
+      console.error(invokeGetTabs.dispatch, `error getting tabs from rust: ${error}`);
       dispatch({ type: EFiltersAction.InvokeGetTabsNOK, payload: { error } });
     }
   },

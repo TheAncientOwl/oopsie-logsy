@@ -6,7 +6,7 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description DeleteFilterTab handler.
  */
 
@@ -65,8 +65,8 @@ export const deleteFilterTab: IBasicStoreHandler<
 
     newFocusIndex = Math.min(newFocusIndex, newTabs.length - 1);
 
-    console.infoX(
-      deleteFilterTab.reduce.name,
+    console.info(
+      deleteFilterTab.reduce,
       `new focus index: ${newFocusIndex}`,
       newTabs[newFocusIndex]
     );

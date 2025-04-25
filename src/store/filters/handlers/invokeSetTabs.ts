@@ -6,7 +6,7 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description InvokeSetTabs handler.
  */
 
@@ -63,19 +63,19 @@ export const invokeSetTabs: IApiCallStoreHandler<
     dispatch({ type: EFiltersAction.Loading, payload: {} });
 
     try {
-      console.verboseX(invokeSetTabs.dispatch.name, `Sending ${tabs.length} tabs:`, tabs);
-      console.verboseX(invokeSetTabs.dispatch.name, `Sending ${filters.length} filters:`, filters);
-      console.verboseX(
-        invokeSetTabs.dispatch.name,
+      console.verbose(invokeSetTabs.dispatch, `Sending ${tabs.length} tabs:`, tabs);
+      console.verbose(invokeSetTabs.dispatch, `Sending ${filters.length} filters:`, filters);
+      console.verbose(
+        invokeSetTabs.dispatch,
         `Sending ${components.length} components:`,
         components
       );
 
       const response = await invoke('set_filter_tabs', { tabs, filters, components });
-      console.infoX(invokeSetTabs.dispatch.name, `rust response: ${response}`);
+      console.info(invokeSetTabs.dispatch, `rust response: ${response}`);
       dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
     } catch (error) {
-      console.errorX(invokeSetTabs.dispatch.name, `error sending tabs to rust: ${error}`);
+      console.error(invokeSetTabs.dispatch, `error sending tabs to rust: ${error}`);
       dispatch({ type: EFiltersAction.InvokeSetTabsNOK, payload: { error } });
     }
   },

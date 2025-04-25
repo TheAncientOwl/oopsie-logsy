@@ -1,12 +1,12 @@
 declare global {
   type Nameable = string | { name: string };
   interface Console {
-    traceX(caller: Nameable, ...data: any[]): void;
-    verboseX(caller: Nameable, ...data: any[]): void;
-    infoX(caller: Nameable, ...data: any[]): void;
-    warnX(caller: Nameable, ...data: any[]): void;
-    debugX(caller: Nameable, ...data: any[]): void;
-    errorX(caller: Nameable, ...data: any[]): void;
+    trace(caller: Nameable, ...data: any[]): void;
+    verbose(caller: Nameable, ...data: any[]): void;
+    info(caller: Nameable, ...data: any[]): void;
+    warn(caller: Nameable, ...data: any[]): void;
+    debug(caller: Nameable, ...data: any[]): void;
+    error(caller: Nameable, ...data: any[]): void;
     assertX(caller: Nameable, condition: boolean, ...data: any[]);
   }
 }

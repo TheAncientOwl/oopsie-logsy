@@ -6,7 +6,7 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description InvokeGetTags handler.
  */
 
@@ -46,18 +46,18 @@ export const invokeGetTags: IApiCallStoreHandler<
 
     try {
       const tags = await invoke<Array<TRegexTag>>('get_regex_tags');
-      console.infoX(invokeGetTags.dispatch.name, `received ${tags.length} tags`);
+      console.info(invokeGetTags.dispatch, `received ${tags.length} tags`);
 
       const finalTags = tags.length === 0 ? [DefaultFactory.makeTag('Payload')] : tags;
 
       if (tags.length === 0) {
-        console.infoX(invokeGetTags.dispatch.name, `Setting default tags`);
+        console.info(invokeGetTags.dispatch, `Setting default tags`);
         await invokeSetTags.dispatch(finalTags)(dispatch);
       }
 
       dispatch({ type: ELogRegexTagsAction.InvokeGetTagsOK, payload: { tags: finalTags } });
     } catch (error) {
-      console.errorX(invokeGetTags.dispatch.name, `error getting tags from rust: ${error}`);
+      console.error(invokeGetTags.dispatch, `error getting tags from rust: ${error}`);
       dispatch({ type: ELogRegexTagsAction.InvokeGetTagsNOK, payload: { error } });
     }
   },

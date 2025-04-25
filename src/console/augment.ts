@@ -6,19 +6,25 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Extend logging functionality.
  */
 
 type TLogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'verbose';
 
+const cerror = console.error;
+const cwarn = console.warn;
+const cinfo = console.info;
+const ctrace = console.trace;
+const clog = console.log;
+
 const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
-  error: console.error,
-  warn: console.warn,
-  debug: console.warn,
-  info: console.info,
-  trace: console.trace,
-  verbose: console.log,
+  error: cerror,
+  warn: cwarn,
+  debug: cwarn,
+  info: cinfo,
+  trace: ctrace,
+  verbose: clog,
 };
 
 const padLeft = (value: number, digits: number = 2) => value.toString().padStart(digits, '0');
@@ -54,7 +60,7 @@ const _log = (level: TLogLevel, levelStyle: string, caller: Nameable, ...data: a
   (logFunctions[level] || console.log)(
     `%c| %c${timestamp} %c| ${formatLevel(level)} %c${extractFileName(
       callerLocation
-    )}::${typeof caller === 'string' ? caller : caller.name}%c @ %c${callerLocation} %c»\n| %c${hasStringMessage ? data[0] : ''}`,
+    )}::${typeof caller === 'string' ? caller : caller.name}%c @ %c${callerLocation} %c${data.length > 0 ? '»\n|' : ''} %c${hasStringMessage ? data[0] : ''}`,
     'color: gray',
     'color: dodgerblue',
     'color: gray',
@@ -102,13 +108,13 @@ const assert = (caller: Nameable, condition: boolean, ...data: any[]) => {
 (() => {
   trace('setup', 'augmenting console logging');
 
-  console.traceX = trace;
-  console.infoX = info;
-  console.warnX = warn;
-  console.debugX = debug;
-  console.errorX = error;
+  console.trace = trace;
+  console.info = info;
+  console.warn = warn;
+  console.debug = debug;
+  console.error = error;
   console.assertX = assert;
-  console.verboseX = verbose;
+  console.verbose = verbose;
 
   trace('setup', 'console logging augmented');
 })();
