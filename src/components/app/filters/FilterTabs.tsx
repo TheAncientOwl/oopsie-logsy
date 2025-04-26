@@ -6,12 +6,13 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.25
+ * @version 0.26
  * @description Filters component
  */
 
 import { NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { type TRootState } from '@/store';
 import {
@@ -26,10 +27,10 @@ import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
-import { DraggableList } from '@/components/ui/lists/DraggableList';
 
 type TFiltersProps = TPropsFromRedux & {
   filtersOpen: boolean;
+  onHeightChange: (newHeight: number) => void;
 };
 
 const DRAG_HANDLE_HEIGHT = '3px';
@@ -58,6 +59,7 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
       const newHeight = startHeight + (startY - moveEvent.clientY);
       if (newHeight >= 200 && newHeight <= window.innerHeight * 0.9) {
         boxRef.current.style.height = `${newHeight}px`;
+        props.onHeightChange(newHeight);
       }
     };
 

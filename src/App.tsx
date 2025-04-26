@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description App class
  */
 
@@ -17,7 +17,7 @@ import ToolBar from '@/components/app/toolbar';
 import { useSwitch } from '@/hooks/useSwitch';
 import { store } from '@/store';
 import { Box } from '@chakra-ui/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
 const CONTENT_HEIGHTS = {
@@ -39,52 +39,28 @@ export const App = () => {
     }
   }, []);
 
-  const resizeIntervalRef = useRef<number | null>(null);
-
-  const handleFiltersToggle = useCallback(() => {
-    if (resizeIntervalRef.current) {
-      clearInterval(resizeIntervalRef.current);
-      resizeIntervalRef.current = null;
-    }
-
-    const targetHeight = filtersMenuOpen
-      ? CONTENT_HEIGHTS.whenFiltersClosed
-      : CONTENT_HEIGHTS.whenFiltersOpen;
-
-    const difference = CONTENT_HEIGHTS.whenFiltersClosed - CONTENT_HEIGHTS.whenFiltersOpen;
-    const step = difference / (filtersMenuOpen ? 1 : 4);
-
-    let currentHeight = parseFloat(contentHeight);
-    resizeIntervalRef.current = setInterval(() => {
-      currentHeight += filtersMenuOpen ? step : -step;
-      currentHeight = Math.max(
-        CONTENT_HEIGHTS.whenFiltersOpen,
-        Math.min(CONTENT_HEIGHTS.whenFiltersClosed, currentHeight)
-      );
-
-      setContentHeight(`${currentHeight}vh`);
-
-      if (currentHeight === targetHeight) {
-        clearInterval(resizeIntervalRef.current!);
-        resizeIntervalRef.current = null;
-      }
-    }, 100);
-
-    toggleFiltersMenu();
-  }, [filtersMenuOpen, toggleFiltersMenu, contentHeight, setContentHeight]);
-
   return (
     <ReduxProvider store={store}>
       <Box height={contentHeight} overflow='scroll'>
         <ToolBar
           _ref={toolbarRef}
           onSettingsOpen={toggleSettingsMenu}
-          onFiltersToggle={handleFiltersToggle}
+          onFiltersToggle={() => {
+            if (filtersMenuOpen) {
+              setContentHeight(`100vh`);
+            }
+            toggleFiltersMenu();
+          }}
         />
         <LogView offsetTop={`${toolbarHeight}px`} />
       </Box>
       <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
-      <FilterTabs filtersOpen={filtersMenuOpen} />
+      <FilterTabs
+        onHeightChange={newHeight => {
+          setContentHeight(`${window.innerHeight - newHeight}px`);
+        }}
+        filtersOpen={filtersMenuOpen}
+      />
     </ReduxProvider>
   );
 };
