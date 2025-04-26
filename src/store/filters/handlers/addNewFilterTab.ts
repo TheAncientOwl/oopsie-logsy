@@ -6,32 +6,34 @@
  *
  * @file addNewFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description AddNewFilterTab handler.
  */
 
 import {
   basicDispatcher,
-  IBasicStoreHandler,
+  type TStoreAction,
+  type IBasicStoreHandler,
   type TNoDispatcherArgs,
 } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
+import { EActionType } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TStoreState } from '../data';
 
-type TAddNewFilterTabPayload = {};
+const action = EActionType.AddNewFilterTab;
 
-export type TAddNewFilterTabAction = {
-  type: typeof EFiltersAction.AddNewFilterTab;
-  payload: TAddNewFilterTabPayload;
-};
+type TPayload = {};
+
+export type TAddNewFilterTabAction = TStoreAction<typeof action, TPayload>;
 
 export const addNewFilterTab: IBasicStoreHandler<
-  TFiltersStoreState,
-  TAddNewFilterTabPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   TNoDispatcherArgs
 > = {
-  dispatch: () => basicDispatcher(EFiltersAction.AddNewFilterTab, () => ({})),
+  action,
+
+  dispatch: () => basicDispatcher(action, () => ({})),
 
   reduce: state => {
     const newComponent = DefaultFactory.makeFilterComponent();

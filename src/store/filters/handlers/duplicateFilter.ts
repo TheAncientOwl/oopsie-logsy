@@ -6,38 +6,38 @@
  *
  * @file duplicateFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description DuplicateFilter handler.
  */
 
 import { uuid, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
 import {
-  checkCanSaveData,
-  getFilterComponentById,
-  type TFilter,
-  type TFiltersStoreState,
-} from '../data';
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, getFilterComponentById, type TFilter, type TStoreState } from '../data';
 
-type TDuplicateFilterPayload = {
+const action = EActionType.DuplicateFilter;
+
+type TPayload = {
   targetTabId: UUID;
   targetFilterId: UUID;
 };
 
-export type TDuplicateFilterAction = {
-  type: EFiltersAction.DuplicateFilter;
-  payload: TDuplicateFilterPayload;
-};
+export type TDuplicateFilterAction = TStoreAction<typeof action, TPayload>;
 
 export const duplicateFilter: IBasicStoreHandler<
-  TFiltersStoreState,
-  TDuplicateFilterPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID, targetFilterId: UUID]
 > = {
+  action,
+
   dispatch: (targetTabId, targetFilterId) =>
-    basicDispatcher(EFiltersAction.DuplicateFilter, () => ({
+    basicDispatcher(action, () => ({
       targetTabId,
       targetFilterId,
     })),

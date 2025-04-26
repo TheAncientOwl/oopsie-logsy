@@ -6,34 +6,36 @@
  *
  * @file toggleFilterComponentIgnoreCase.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description ToggleFilterComponentIgnoreCase handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type ToggleFilterComponentIgnoreCasePayload = {
+const action = EActionType.ToggleFilterComponentIgnoreCase;
+
+type TPayload = {
   targetComponentId: UUID;
 };
 
-export type ToggleFilterComponentIgnoreCaseAction = {
-  type: EFiltersAction.ToggleFilterComponentIgnoreCase;
-  payload: ToggleFilterComponentIgnoreCasePayload;
-};
+export type TToggleFilterComponentIgnoreCaseAction = TStoreAction<typeof action, TPayload>;
 
 export const toggleFilterComponentIgnoreCase: IBasicStoreHandler<
-  TFiltersStoreState,
-  ToggleFilterComponentIgnoreCasePayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetComponentId: UUID]
 > = {
-  dispatch: targetComponentId =>
-    basicDispatcher(EFiltersAction.ToggleFilterComponentIgnoreCase, () => ({
-      targetComponentId,
-    })),
+  action,
+
+  dispatch: targetComponentId => basicDispatcher(action, () => ({ targetComponentId })),
 
   reduce: (state, payload) => {
     const { targetComponentId } = payload;

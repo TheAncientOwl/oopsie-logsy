@@ -6,33 +6,38 @@
  *
  * @file setComponentOverAlternative.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description SetComponentOverAlternative handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TSetComponentOverAlternativePayload = {
+const action = EActionType.SetFilterComponentOverAlternative;
+
+type TPayload = {
   targetComponentId: UUID;
   overAlternativeId: UUID;
 };
 
-export type TSetComponentOverAlternativeAction = {
-  type: EFiltersAction.SetFilterComponentOverAlternative;
-  payload: TSetComponentOverAlternativePayload;
-};
+export type TSetComponentOverAlternativeAction = TStoreAction<typeof action, TPayload>;
 
 export const setComponentOverAlternative: IBasicStoreHandler<
-  TFiltersStoreState,
-  TSetComponentOverAlternativePayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetComponentId: UUID, overAlternativeId: UUID]
 > = {
+  action,
+
   dispatch: (targetComponentId, overAlternativeId) =>
-    basicDispatcher(EFiltersAction.SetFilterComponentOverAlternative, () => ({
+    basicDispatcher(action, () => ({
       targetComponentId,
       overAlternativeId,
     })),

@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Handlers index file.
  */
 
@@ -44,10 +44,48 @@ import { toggleFilterComponentIgnoreCase } from './toggleFilterComponentIgnoreCa
 import { toggleFilterHighlightOnly } from './toggleFilterHighlightOnly';
 import { unmuteAllFilters } from './unmuteAllFilters';
 
+const basicHandlers = [
+  addNewFilter,
+  addNewFilterComponent,
+  addNewFilterTab,
+  deleteAllFilters,
+  deleteFilter,
+  deleteFilterComponent,
+  deleteFilterTab,
+  duplicateFilter,
+  duplicateFiltersTab,
+  focusFilterTab,
+  loading,
+  muteAllFilters,
+  prepareFiltersForDrag,
+  reorderFilterComponents,
+  reorderFilters,
+  reorderTabs,
+  setAllFiltersCollapsed,
+  setComponentData,
+  setComponentOverAlternative,
+  setFilterBg,
+  setFilterFg,
+  setFilterName,
+  setFilterPriority,
+  setFilterTabName,
+  toggleComponentIsEquals,
+  toggleComponentIsRegex,
+  toggleFilterActive,
+  toggleFilterCollapsed,
+  toggleFilterComponentIgnoreCase,
+  toggleFilterHighlightOnly,
+  unmuteAllFilters,
+];
+
+const apiCallHandlers = [invokeGetTabs, invokeSetTabs];
+
 export {
   addNewFilter,
   addNewFilterComponent,
   addNewFilterTab,
+  apiCallHandlers,
+  basicHandlers,
   deleteAllFilters,
   deleteFilter,
   deleteFilterComponent,

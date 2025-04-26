@@ -6,38 +6,42 @@
  *
  * @file duplicateFiltersTab.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description DuplicateFiltersTab handler.
  */
 
 import { uuid, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
+import {
+  basicDispatcher,
+  type TStoreAction,
+  type IBasicStoreHandler,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
 import {
   checkCanSaveData,
   getFilterById,
   getFilterComponentById,
-  type TFiltersStoreState,
+  type TStoreState,
   type TFilterTab,
 } from '../data';
 
-type TDuplicateFiltersTabPayload = {
+const action = EActionType.DuplicateFiltersTab;
+
+type TPayload = {
   targetTabId: UUID;
 };
 
-export type TDuplicateFiltersTabAction = {
-  type: EFiltersAction.DuplicateFiltersTab;
-  payload: TDuplicateFiltersTabPayload;
-};
+export type TDuplicateFiltersTabAction = TStoreAction<typeof action, TPayload>;
 
 export const duplicateFiltersTab: IBasicStoreHandler<
-  TFiltersStoreState,
-  TDuplicateFiltersTabPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID]
 > = {
-  dispatch: targetTabId =>
-    basicDispatcher(EFiltersAction.DuplicateFiltersTab, () => ({ targetTabId })),
+  action,
+
+  dispatch: targetTabId => basicDispatcher(action, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

@@ -6,32 +6,29 @@
  *
  * @file loading.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Loading handler.
  */
 
 import {
   basicDispatcher,
-  IBasicStoreHandler,
+  type TStoreAction,
+  type IBasicStoreHandler,
   type TNoDispatcherArgs,
 } from '@/store/common/storeHandler';
-import { ELogRegexTagsAction } from '../actions';
-import { type TLogRegexTagsStoreState } from '../data';
+import { EActionType } from '../actions';
+import { type TStoreState } from '../data';
 
-type TLoadingPayload = {};
+const action = EActionType.Loading;
 
-export type TLoadingAction = {
-  type: typeof ELogRegexTagsAction.Loading;
-  payload: TLoadingPayload;
-};
+type TPayload = {};
 
-export const loading: IBasicStoreHandler<
-  TLogRegexTagsStoreState,
-  TLoadingPayload,
-  ELogRegexTagsAction,
-  TNoDispatcherArgs
-> = {
-  dispatch: () => basicDispatcher(ELogRegexTagsAction.Loading, () => ({})),
+export type TLoadingAction = TStoreAction<typeof action, TPayload>;
+
+export const loading: IBasicStoreHandler<TStoreState, EActionType, TPayload, TNoDispatcherArgs> = {
+  action,
+
+  dispatch: () => basicDispatcher(action, () => ({})),
 
   reduce: state => {
     return {

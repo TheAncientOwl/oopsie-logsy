@@ -6,32 +6,23 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description LogRegexTags data reducer.
  */
 
-import { makeReducer, type TReducerMap } from '../common/reducer';
-import { ELogRegexTagsAction, type TLogRegexTagsDispatchTypes } from './actions';
-import { defaultState, type TLogRegexTagsStoreState } from './data';
+import { makeReducer, makeReducerMap } from '../common/reducer';
+import { EActionType, type TDispatchTypes } from './actions';
+import { defaultState, type TStoreState } from './data';
 
-import * as handlers from './handlers';
+import { apiCallHandlers, basicHandlers } from './handlers';
 
-const reducerMap: TReducerMap<ELogRegexTagsAction, TLogRegexTagsStoreState> = {
-  [ELogRegexTagsAction.Loading]: handlers.loading.reduce,
-  [ELogRegexTagsAction.InvokeGetTagsOK]: handlers.invokeGetTags.reduce.ok,
-  [ELogRegexTagsAction.InvokeGetTagsNOK]: handlers.invokeGetTags.reduce.nok,
-  [ELogRegexTagsAction.InvokeSetTagsOK]: handlers.invokeSetTags.reduce.ok,
-  [ELogRegexTagsAction.InvokeSetTagsNOK]: handlers.invokeSetTags.reduce.nok,
-  [ELogRegexTagsAction.AddNewTag]: handlers.addNewTag.reduce,
-  [ELogRegexTagsAction.RemoveTag]: handlers.removeTag.reduce,
-  [ELogRegexTagsAction.ToggleTagDisplay]: handlers.toggleTagDisplay.reduce,
-  [ELogRegexTagsAction.SetTagName]: handlers.setTagName.reduce,
-  [ELogRegexTagsAction.SetTagRegex]: handlers.setTagRegex.reduce,
-  [ELogRegexTagsAction.ReorderRegexTags]: handlers.reorderTags.reduce,
-};
+const reducerMap = makeReducerMap<EActionType, TStoreState>(
+  basicHandlers,
+  apiCallHandlers,
+  undefined
+);
 
-export const logRegexTagsReducer = makeReducer<
-  TLogRegexTagsStoreState,
-  ELogRegexTagsAction,
-  TLogRegexTagsDispatchTypes
->(defaultState, reducerMap);
+export const logRegexTagsReducer = makeReducer<TStoreState, EActionType, TDispatchTypes>(
+  defaultState,
+  reducerMap
+);

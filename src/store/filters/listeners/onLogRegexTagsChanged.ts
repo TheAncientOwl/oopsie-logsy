@@ -6,20 +6,21 @@
  *
  * @file onLogRegexTagsChanged.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Update over alternatives when tags are changed.
  */
 
 import { IStoreChangeListener } from '@/store/common/storeHandler';
 import { TRegexTag } from '@/store/log-regex-tags/data';
-import { type TInvokeGetTagsOkPayload } from '@/store/log-regex-tags/handlers/invokeGetTags';
-import { type TInvokeSetTagsOkPayload } from '@/store/log-regex-tags/handlers/invokeSetTags';
-import { checkCanSaveData, makeOverAlternatives, type TFiltersStoreState } from '../data';
+import { type TPayloadOk as TInvokeGetTagsPayloadOk } from '@/store/log-regex-tags/handlers/invokeGetTags';
+import { type TPayloadOk as TInvokeSetTagsPayloadOk } from '@/store/log-regex-tags/handlers/invokeSetTags';
+import { checkCanSaveData, makeOverAlternatives, type TStoreState } from '../data';
+import { EActionType as EActionType } from '@/store/log-regex-tags/actions';
 
 const handle = <PayloadWithTags extends { tags: TRegexTag[] }>(
-  state: TFiltersStoreState,
+  state: TStoreState,
   payload: PayloadWithTags
-): TFiltersStoreState => {
+): TStoreState => {
   const { tags } = payload;
 
   const newOverAlternatives = makeOverAlternatives(tags);
@@ -31,12 +32,20 @@ const handle = <PayloadWithTags extends { tags: TRegexTag[] }>(
   };
 };
 
-export const onLogRegexTagsGet: IStoreChangeListener<TFiltersStoreState, TInvokeGetTagsOkPayload> =
-  {
-    reduce: (state, payload) => handle(state, payload),
-  };
+export const onLogRegexTagsGet: IStoreChangeListener<
+  TStoreState,
+  TInvokeGetTagsPayloadOk,
+  EActionType
+> = {
+  action: EActionType.InvokeGetTagsOK,
+  reduce: (state, payload) => handle(state, payload),
+};
 
-export const onLogRegexTagsSet: IStoreChangeListener<TFiltersStoreState, TInvokeSetTagsOkPayload> =
-  {
-    reduce: (state, payload) => handle(state, payload),
-  };
+export const onLogRegexTagsSet: IStoreChangeListener<
+  TStoreState,
+  TInvokeSetTagsPayloadOk,
+  EActionType
+> = {
+  action: EActionType.InvokeSetTagsOK,
+  reduce: (state, payload) => handle(state, payload),
+};

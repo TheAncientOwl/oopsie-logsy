@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Filters data structures.
  */
 
@@ -52,7 +52,7 @@ export type TFilterTab = {
   filterIDs: Array<UUID>;
 };
 
-export type TFiltersStoreState = {
+export type TStoreState = {
   loading: boolean;
   focusedTabId: string;
   canSaveData: boolean;
@@ -153,7 +153,7 @@ const defaultComponents = [defaultComponent];
 const defaultFilters = [defaultFilter];
 const defaultTabs = [defaultTab];
 
-export const defaultState: TFiltersStoreState = {
+export const defaultState: TStoreState = {
   loading: false,
   focusedTabId: defaultTabs[0].id,
   canSaveData: false,

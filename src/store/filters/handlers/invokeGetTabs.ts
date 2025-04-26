@@ -6,52 +6,51 @@
  *
  * @file invokeGetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description InvokeGetTabs handler.
  */
 
-import { IApiCallStoreHandler } from '@/store/common/storeHandler';
+import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
-import { EFiltersAction, type TFiltersDispatch } from '../actions';
+import { EActionType, type TDispatch } from '../actions';
 import {
   DefaultFactory,
-  TOverAlternatives,
   type TFilter,
   type TFilterComponent,
-  type TFiltersStoreState,
+  type TStoreState,
   type TFilterTab,
+  type TOverAlternatives,
 } from '../data';
 import { invokeSetTabs } from './invokeSetTabs';
 
-type TInvokeGetTabsOkPayload = {
+const action = {
+  ok: EActionType.InvokeGetTabsOK,
+  nok: EActionType.InvokeGetTabsNOK,
+};
+
+type TPayloadOk = {
   tabs: Array<TFilterTab>;
   filters: Array<TFilter>;
   components: Array<TFilterComponent>;
 };
 
-export type TInvokeGetTabsOkAction = {
-  type: typeof EFiltersAction.InvokeGetTabsOK;
-  payload: TInvokeGetTabsOkPayload;
-};
-
-type TInvokeGetTabsNOkPayload = {
+type TPayloadNOk = {
   error: unknown;
 };
 
-export type TInvokeGetTabsNOkAction = {
-  type: typeof EFiltersAction.InvokeGetTabsNOK;
-  payload: TInvokeGetTabsNOkPayload;
-};
+export type TInvokeGetTabsOkAction = TStoreAction<typeof action.ok, TPayloadOk>;
+export type TInvokeGetTabsNOkAction = TStoreAction<typeof action.nok, TPayloadNOk>;
 
 export const invokeGetTabs: IApiCallStoreHandler<
-  TFiltersStoreState,
-  TFiltersDispatch,
-  TInvokeGetTabsOkPayload,
-  TInvokeGetTabsNOkPayload,
+  TStoreState,
+  TDispatch,
+  EActionType,
+  TPayloadOk,
+  TPayloadNOk,
   [overAlternatives: TOverAlternatives]
 > = {
-  dispatch: overAlternatives => async (dispatch: TFiltersDispatch) => {
-    dispatch({ type: EFiltersAction.Loading, payload: {} });
+  dispatch: overAlternatives => async (dispatch: TDispatch) => {
+    dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
       const [tabs, filters, components] =
@@ -68,7 +67,7 @@ export const invokeGetTabs: IApiCallStoreHandler<
         );
 
         dispatch({
-          type: EFiltersAction.InvokeGetTabsOK,
+          type: EActionType.InvokeGetTabsOK,
           payload: { tabs, filters, components },
         });
       } else {
@@ -85,13 +84,13 @@ export const invokeGetTabs: IApiCallStoreHandler<
           overAlternatives
         )(dispatch);
         dispatch({
-          type: EFiltersAction.InvokeGetTabsOK,
+          type: EActionType.InvokeGetTabsOK,
           payload: { tabs: defaultTabs, filters: defaultFilters, components: defaultComponents },
         });
       }
     } catch (error) {
       console.error(invokeGetTabs.dispatch, `error getting tabs from rust: ${error}`);
-      dispatch({ type: EFiltersAction.InvokeGetTabsNOK, payload: { error } });
+      dispatch({ type: EActionType.InvokeGetTabsNOK, payload: { error } });
     }
   },
 
@@ -115,4 +114,6 @@ export const invokeGetTabs: IApiCallStoreHandler<
       };
     },
   },
+
+  action,
 };

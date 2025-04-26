@@ -6,31 +6,36 @@
  *
  * @file deleteFilterTab.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description DeleteFilterTab handler.
  */
 
 import { contains, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TStoreState } from '../data';
 
-type TDeleteFilterTabPayload = {
+const action = EActionType.DeleteFilterTab;
+
+type TPayload = {
   targetTabId: UUID;
 };
 
-export type TDeleteFilterTabAction = {
-  type: typeof EFiltersAction.DeleteFilterTab;
-  payload: TDeleteFilterTabPayload;
-};
+export type TDeleteFilterTabAction = TStoreAction<typeof action, TPayload>;
 
 export const deleteFilterTab: IBasicStoreHandler<
-  TFiltersStoreState,
-  TDeleteFilterTabPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID]
 > = {
-  dispatch: targetTabId => basicDispatcher(EFiltersAction.DeleteFilterTab, () => ({ targetTabId })),
+  action,
+
+  dispatch: targetTabId => basicDispatcher(action, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

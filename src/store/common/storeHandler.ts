@@ -6,10 +6,11 @@
  *
  * @file dispatchers.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Dispatcher helpers.
  */
 
+// <helpers>
 type TPayloadMaker<Payload> = () => Payload;
 
 export const basicDispatcher =
@@ -17,6 +18,13 @@ export const basicDispatcher =
   (dispatch: (action: { type: ActionType; payload: Payload }) => void) => {
     dispatch({ type, payload: makePayload() });
   };
+
+export type TStoreAction<EType, TPayload> = {
+  type: EType;
+  payload: TPayload;
+};
+
+// </helpers>
 
 // <dispatchers>
 type TSingleDispatcher<EActionType, TPayload, TDispatcherArgs extends any[]> = (
@@ -62,23 +70,28 @@ export interface IStoreHandler<
 > extends IStoreDispatcher<Dispatcher, TDispatcherArgs>,
     IStoreReducer<Reducer> {}
 
-export interface IStoreChangeListener<TStoreState, TPayload>
-  extends IStoreReducer<TReducer<TStoreState, TPayload>> {}
+export interface IStoreChangeListener<TStoreState, TPayload, EActionType>
+  extends IStoreReducer<TReducer<TStoreState, TPayload>> {
+  action: EActionType;
+}
 
 export interface IBasicStoreHandler<
   TStoreState,
-  TPayload,
   EActionType,
+  TPayload,
   TDispatcherArgs extends any[],
 > extends IStoreHandler<
     TReducer<TStoreState, TPayload>,
     TSingleDispatcher<EActionType, TPayload, TDispatcherArgs>,
     TDispatcherArgs
-  > {}
+  > {
+  action: EActionType;
+}
 
 export interface IApiCallStoreHandler<
   TStoreState,
   TDispatch,
+  EActionType,
   TPayloadOK,
   TPayloadNOK,
   TDispatcherArgs extends any[],
@@ -86,5 +99,10 @@ export interface IApiCallStoreHandler<
     TResponseReducer<TStoreState, TPayloadOK, TPayloadNOK>,
     TAsyncMultiDispatcher<TDispatch, TDispatcherArgs>,
     TDispatcherArgs
-  > {}
+  > {
+  action: {
+    ok: EActionType;
+    nok: EActionType;
+  };
+}
 // </handlers>

@@ -6,32 +6,36 @@
  *
  * @file toggleFilterHighlight.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description ToggleFilterHighlight handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type ToggleFilterHighlightPayload = {
+const action = EActionType.ToggleFilterHighlightOnly;
+
+type TToggleFilterHighlightPayload = {
   targetFilterId: UUID;
 };
 
-export type ToggleFilterHighlightAction = {
-  type: EFiltersAction.ToggleFilterHighlightOnly;
-  payload: ToggleFilterHighlightPayload;
-};
+export type TPayload = TStoreAction<typeof action, TToggleFilterHighlightPayload>;
 
 export const toggleFilterHighlightOnly: IBasicStoreHandler<
-  TFiltersStoreState,
-  ToggleFilterHighlightPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TToggleFilterHighlightPayload,
   [targetFilterId: UUID]
 > = {
-  dispatch: targetFilterId =>
-    basicDispatcher(EFiltersAction.ToggleFilterHighlightOnly, () => ({ targetFilterId })),
+  action,
+
+  dispatch: targetFilterId => basicDispatcher(action, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
     const { targetFilterId } = payload;

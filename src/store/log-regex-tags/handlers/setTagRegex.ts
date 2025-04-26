@@ -6,32 +6,37 @@
  *
  * @file setTagRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetTagRegex handler.
  */
 
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ELogRegexTagsAction } from '../actions';
-import { checkCanApply, type TLogRegexTagsStoreState } from '../data';
+import { type UUID } from '@/store/common/identifier';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanApply, type TStoreState } from '../data';
 
-type TSetTagRegexPayload = {
-  targetId: string;
-  newRegex: string;
+const action = EActionType.SetTagRegex;
+
+type TPayload = {
+  targetId: UUID;
+  newRegex: UUID;
 };
 
-export type TSetTagRegexAction = {
-  type: ELogRegexTagsAction.SetTagRegex;
-  payload: TSetTagRegexPayload;
-};
+export type TSetTagRegexAction = TStoreAction<typeof action, TPayload>;
 
 export const setTagRegex: IBasicStoreHandler<
-  TLogRegexTagsStoreState,
-  TSetTagRegexPayload,
-  ELogRegexTagsAction,
-  [targetId: string, newRegex: string]
+  TStoreState,
+  EActionType,
+  TPayload,
+  [targetId: UUID, newRegex: UUID]
 > = {
-  dispatch: (targetId, newRegex) =>
-    basicDispatcher(ELogRegexTagsAction.SetTagRegex, () => ({ targetId, newRegex })),
+  action,
+
+  dispatch: (targetId, newRegex) => basicDispatcher(action, () => ({ targetId, newRegex })),
 
   reduce: (state, payload) => {
     const { targetId, newRegex } = payload;

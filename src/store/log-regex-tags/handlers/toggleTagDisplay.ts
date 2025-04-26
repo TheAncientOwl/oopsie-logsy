@@ -6,30 +6,36 @@
  *
  * @file toggleTagDisplay.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description ToggleTagDisplay handler.
  */
 
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ELogRegexTagsAction } from '../actions';
-import { checkCanApply, type TLogRegexTagsStoreState } from '../data';
+import { type UUID } from '@/store/common/identifier';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanApply, type TStoreState } from '../data';
 
-type ToggleTagDisplayPayload = {
-  targetId: string;
+const action = EActionType.TToggleTagDisplay;
+
+type TPayload = {
+  targetId: UUID;
 };
 
-export type ToggleTagDisplayAction = {
-  type: ELogRegexTagsAction.ToggleTagDisplay;
-  payload: ToggleTagDisplayPayload;
-};
+export type ToggleTagDisplayAction = TStoreAction<typeof action, TPayload>;
 
 export const toggleTagDisplay: IBasicStoreHandler<
-  TLogRegexTagsStoreState,
-  ToggleTagDisplayPayload,
-  ELogRegexTagsAction,
-  [targetId: string]
+  TStoreState,
+  EActionType,
+  TPayload,
+  [targetId: UUID]
 > = {
-  dispatch: targetId => basicDispatcher(ELogRegexTagsAction.ToggleTagDisplay, () => ({ targetId })),
+  action,
+
+  dispatch: targetId => basicDispatcher(action, () => ({ targetId })),
 
   reduce: (state, payload) => {
     const { targetId } = payload;

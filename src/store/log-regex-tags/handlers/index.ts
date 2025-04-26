@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Handlers index file.
  */
 
@@ -20,7 +20,21 @@ import { setTagName } from './setTagName';
 import { setTagRegex } from './setTagRegex';
 import { toggleTagDisplay } from './toggleTagDisplay';
 
+const basicHandlers = [
+  addNewTag,
+  loading,
+  removeTag,
+  reorderTags,
+  setTagName,
+  setTagRegex,
+  toggleTagDisplay,
+];
+
+const apiCallHandlers = [invokeGetTags, invokeSetTags];
+
 export {
+  basicHandlers,
+  apiCallHandlers,
   addNewTag,
   invokeGetTags,
   invokeSetTags,

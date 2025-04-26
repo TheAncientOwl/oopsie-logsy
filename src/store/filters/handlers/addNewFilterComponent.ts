@@ -6,32 +6,37 @@
  *
  * @file addNewFilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description AddFilterComponent.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type TStoreAction,
+  type IBasicStoreHandler,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TStoreState } from '../data';
 
-type TAddNewFilterComponentPayload = {
+const action = EActionType.AddNewFilterComponent;
+
+type TPayload = {
   targetFilterId: UUID;
 };
 
-export type TAddNewFilterComponentAction = {
-  type: EFiltersAction.AddNewFilterComponent;
-  payload: TAddNewFilterComponentPayload;
-};
+export type TAddNewFilterComponentAction = TStoreAction<typeof action, TPayload>;
 
 export const addNewFilterComponent: IBasicStoreHandler<
-  TFiltersStoreState,
-  TAddNewFilterComponentPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID]
 > = {
+  action,
+
   dispatch: targetFilterId =>
-    basicDispatcher(EFiltersAction.AddNewFilterComponent, () => ({ targetFilterId })),
+    basicDispatcher(addNewFilterComponent.action, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
     const { targetFilterId } = payload;

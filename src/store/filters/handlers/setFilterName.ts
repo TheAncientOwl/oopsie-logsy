@@ -6,33 +6,38 @@
  *
  * @file setFilterName.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description SetFilterName handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TSetFilterNamePayload = {
+const action = EActionType.SetFilterName;
+
+type TPayload = {
   targetFilterId: UUID;
   name: string;
 };
 
-export type TSetFilterNameAction = {
-  type: EFiltersAction.SetFilterName;
-  payload: TSetFilterNamePayload;
-};
+export type TSetFilterNameAction = TStoreAction<typeof action, TPayload>;
 
 export const setFilterName: IBasicStoreHandler<
-  TFiltersStoreState,
-  TSetFilterNamePayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID, name: string]
 > = {
+  action,
+
   dispatch: (targetFilterId, name) =>
-    basicDispatcher(EFiltersAction.SetFilterName, () => ({
+    basicDispatcher(action, () => ({
       targetFilterId,
       name,
     })),

@@ -6,32 +6,37 @@
  *
  * @file prepareFiltersForDrag.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description PrepareFiltersForDrag handler.
  */
 
 import { modifyWhereIdAnyOf, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type TStoreAction,
+  type IBasicStoreHandler,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, getTabById, type TStoreState } from '../data';
 
-type TPrepareFiltersForDragPayload = {
+const action = EActionType.PrepareFiltersForDrag;
+
+type TPayload = {
   targetTabId: UUID;
 };
 
-export type TPrepareFiltersForDragAction = {
-  type: EFiltersAction.PrepareFiltersForDrag;
-  payload: TPrepareFiltersForDragPayload;
-};
+export type TPrepareFiltersForDragAction = TStoreAction<typeof action, TPayload>;
 
 export const prepareFiltersForDrag: IBasicStoreHandler<
-  TFiltersStoreState,
-  TPrepareFiltersForDragPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID]
 > = {
+  action,
+
   dispatch: targetTabId =>
-    basicDispatcher(EFiltersAction.PrepareFiltersForDrag, () => ({
+    basicDispatcher(action, () => ({
       targetTabId,
     })),
 

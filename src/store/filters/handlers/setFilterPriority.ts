@@ -6,33 +6,38 @@
  *
  * @file setFilterPriority.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetFilterPriority handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TSetFilterPriorityPayload = {
+const action = EActionType.SetFilterPriority;
+
+type TPayload = {
   targetFilterId: UUID;
   priority: number;
 };
 
-export type TSetFilterPriorityAction = {
-  type: EFiltersAction.SetFilterPriority;
-  payload: TSetFilterPriorityPayload;
-};
+export type TSetFilterPriorityAction = TStoreAction<typeof action, TPayload>;
 
 export const setFilterPriority: IBasicStoreHandler<
-  TFiltersStoreState,
-  TSetFilterPriorityPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: string, priority: number]
 > = {
+  action,
+
   dispatch: (targetFilterId, priority) =>
-    basicDispatcher(EFiltersAction.SetFilterPriority, () => ({
+    basicDispatcher(action, () => ({
       targetFilterId,
       priority,
     })),

@@ -6,40 +6,38 @@
  *
  * @file addNewTag.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description AddNewTag handler.
  */
 
 import {
   basicDispatcher,
-  IBasicStoreHandler,
+  type IBasicStoreHandler,
+  type TStoreAction,
   type TNoDispatcherArgs,
 } from '@/store/common/storeHandler';
-import { ELogRegexTagsAction } from '../actions';
-import { checkCanApply, DefaultFactory, type TLogRegexTagsStoreState } from '../data';
+import { EActionType } from '../actions';
+import { checkCanApply, DefaultFactory, type TStoreState } from '../data';
 
-type TAddNewTagPayload = {};
+const action = EActionType.AddNewTag;
 
-export type TAddNewTagAction = {
-  type: ELogRegexTagsAction.AddNewTag;
-  payload: TAddNewTagPayload;
-};
+type TPayload = {};
 
-export const addNewTag: IBasicStoreHandler<
-  TLogRegexTagsStoreState,
-  TAddNewTagPayload,
-  ELogRegexTagsAction,
-  TNoDispatcherArgs
-> = {
-  dispatch: () => basicDispatcher(ELogRegexTagsAction.AddNewTag, () => ({})),
+export type TAddNewTagAction = TStoreAction<typeof action, TPayload>;
 
-  reduce: state => {
-    const newTags = [...state.tags, DefaultFactory.makeTag()];
+export const addNewTag: IBasicStoreHandler<TStoreState, EActionType, TPayload, TNoDispatcherArgs> =
+  {
+    action,
 
-    return {
-      ...state,
-      tags: newTags,
-      canApplyTags: checkCanApply(newTags),
-    };
-  },
-};
+    dispatch: () => basicDispatcher(action, () => ({})),
+
+    reduce: state => {
+      const newTags = [...state.tags, DefaultFactory.makeTag()];
+
+      return {
+        ...state,
+        tags: newTags,
+        canApplyTags: checkCanApply(newTags),
+      };
+    },
+  };

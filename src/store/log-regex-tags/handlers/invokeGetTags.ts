@@ -6,43 +6,46 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description InvokeGetTags handler.
  */
 
-import { IApiCallStoreHandler, type TNoDispatcherArgs } from '@/store/common/storeHandler';
+import {
+  type IApiCallStoreHandler,
+  type TNoDispatcherArgs,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
-import { ELogRegexTagsAction, type TLogRegexTagsDispatch } from '../actions';
-import { DefaultFactory, type TLogRegexTagsStoreState, type TRegexTag } from '../data';
+import { EActionType, type TDispatch } from '../actions';
+import { DefaultFactory, type TStoreState, type TRegexTag } from '../data';
 import { invokeSetTags } from './invokeSetTags';
 
-export type TInvokeGetTagsOkPayload = {
+const action = {
+  ok: EActionType.InvokeGetTagsOK,
+  nok: EActionType.InvokeGetTagsNOK,
+};
+
+export type TPayloadOk = {
   tags: Array<TRegexTag>;
 };
 
-export type TInvokeGetTagsOkAction = {
-  type: typeof ELogRegexTagsAction.InvokeGetTagsOK;
-  payload: TInvokeGetTagsOkPayload;
-};
-
-type TInvokeGetTagsNOkPayload = {
+type TPayloadNOk = {
   error: unknown;
 };
 
-export type TInvokeGetTagsNOkAction = {
-  type: typeof ELogRegexTagsAction.InvokeGetTagsNOK;
-  payload: TInvokeGetTagsNOkPayload;
-};
+export type TInvokeGetTagsOkAction = TStoreAction<typeof action.ok, TPayloadOk>;
+export type TInvokeGetTagsNOkAction = TStoreAction<typeof action.nok, TPayloadNOk>;
 
 export const invokeGetTags: IApiCallStoreHandler<
-  TLogRegexTagsStoreState,
-  TLogRegexTagsDispatch,
-  TInvokeGetTagsOkPayload,
-  TInvokeGetTagsNOkPayload,
+  TStoreState,
+  TDispatch,
+  EActionType,
+  TPayloadOk,
+  TPayloadNOk,
   TNoDispatcherArgs
 > = {
-  dispatch: () => async (dispatch: TLogRegexTagsDispatch) => {
-    dispatch({ type: ELogRegexTagsAction.Loading, payload: {} });
+  dispatch: () => async (dispatch: TDispatch) => {
+    dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
       const tags = await invoke<Array<TRegexTag>>('get_regex_tags');
@@ -55,10 +58,10 @@ export const invokeGetTags: IApiCallStoreHandler<
         await invokeSetTags.dispatch(finalTags)(dispatch);
       }
 
-      dispatch({ type: ELogRegexTagsAction.InvokeGetTagsOK, payload: { tags: finalTags } });
+      dispatch({ type: EActionType.InvokeGetTagsOK, payload: { tags: finalTags } });
     } catch (error) {
       console.error(invokeGetTags.dispatch, `error getting tags from rust: ${error}`);
-      dispatch({ type: ELogRegexTagsAction.InvokeGetTagsNOK, payload: { error } });
+      dispatch({ type: EActionType.InvokeGetTagsNOK, payload: { error } });
     }
   },
 
@@ -79,4 +82,6 @@ export const invokeGetTags: IApiCallStoreHandler<
       };
     },
   },
+
+  action,
 };

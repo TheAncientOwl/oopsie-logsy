@@ -6,35 +6,40 @@
  *
  * @file reorderFilterComponents.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ReorderFilterComponents handler.
  */
 
-import { modifyWhereId, UUID } from '@/store/common/identifier';
-import { EFiltersAction } from '../actions';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { checkCanSaveData, TFiltersStoreState } from '../data';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
+import { modifyWhereId, type UUID } from '@/store/common/identifier';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TReorderFilterComponentsPayload = {
+const action = EActionType.ReorderFilterComponents;
+
+type TPayload = {
   targetFilterId: UUID;
   activeId: UUID;
   overId: UUID;
 };
 
-export type TReorderFilterComponentsAction = {
-  type: EFiltersAction.ReorderFilterComponents;
-  payload: TReorderFilterComponentsPayload;
-};
+export type TReorderFilterComponentsAction = TStoreAction<typeof action, TPayload>;
 
 export const reorderFilterComponents: IBasicStoreHandler<
-  TFiltersStoreState,
-  TReorderFilterComponentsPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID, activeId: UUID, overId: UUID]
 > = {
+  action,
+
   dispatch: (targetFilterId, activeId, overId) =>
-    basicDispatcher(EFiltersAction.ReorderFilterComponents, () => ({
+    basicDispatcher(action, () => ({
       targetFilterId,
       activeId,
       overId,

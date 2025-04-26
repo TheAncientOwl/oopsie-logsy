@@ -6,39 +6,40 @@
  *
  * @file removeTag.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description RemoveTag handler.
  */
 
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { ELogRegexTagsAction } from '../actions';
-import { checkCanApply, type TLogRegexTagsStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanApply, type TStoreState } from '../data';
 
-type TRemoveTagPayload = {
+const action = EActionType.RemoveTag;
+
+type TPayload = {
   targetId: string;
 };
 
-export type TRemoveTagAction = {
-  type: ELogRegexTagsAction.RemoveTag;
-  payload: TRemoveTagPayload;
-};
+export type TRemoveTagAction = TStoreAction<typeof action, TPayload>;
 
-export const removeTag: IBasicStoreHandler<
-  TLogRegexTagsStoreState,
-  TRemoveTagPayload,
-  ELogRegexTagsAction,
-  [targetId: string]
-> = {
-  dispatch: targetId => basicDispatcher(ELogRegexTagsAction.RemoveTag, () => ({ targetId })),
+export const removeTag: IBasicStoreHandler<TStoreState, EActionType, TPayload, [targetId: string]> =
+  {
+    action,
 
-  reduce: (state, payload) => {
-    const { targetId } = payload;
-    const newTags = state.tags.filter(obj => obj.id !== targetId);
+    dispatch: targetId => basicDispatcher(action, () => ({ targetId })),
 
-    return {
-      ...state,
-      tags: newTags,
-      canApplyTags: checkCanApply(newTags),
-    };
-  },
-};
+    reduce: (state, payload) => {
+      const { targetId } = payload;
+      const newTags = state.tags.filter(obj => obj.id !== targetId);
+
+      return {
+        ...state,
+        tags: newTags,
+        canApplyTags: checkCanApply(newTags),
+      };
+    },
+  };

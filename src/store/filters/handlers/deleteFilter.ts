@@ -6,33 +6,38 @@
  *
  * @file deleteFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description DeleteFilter handler.
  */
 
 import { contains, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TDeleteFilterPayload = {
+const action = EActionType.DeleteFilter;
+
+type TPayload = {
   targetTabId: UUID;
   targetFilterId: UUID;
 };
 
-export type TDeleteFilterAction = {
-  type: typeof EFiltersAction.DeleteFilter;
-  payload: TDeleteFilterPayload;
-};
+export type TDeleteFilterAction = TStoreAction<typeof action, TPayload>;
 
 export const deleteFilter: IBasicStoreHandler<
-  TFiltersStoreState,
-  TDeleteFilterPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID, targetFilterId: UUID]
 > = {
+  action,
+
   dispatch: (targetTabId, targetFilterId) =>
-    basicDispatcher(EFiltersAction.DeleteFilter, () => ({
+    basicDispatcher(action, () => ({
       targetTabId,
       targetFilterId,
     })),

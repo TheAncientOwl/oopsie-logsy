@@ -6,32 +6,36 @@
  *
  * @file unmuteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description UnmuteAllFilters handler.
  */
 
 import { modifyWhereIdAnyOf, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, getTabById, type TStoreState } from '../data';
 
-type TUnmuteAllFiltersPayload = {
+const action = EActionType.UnmuteAllFilters;
+
+type TPayload = {
   targetTabId: UUID;
 };
 
-export type TUnmuteAllFiltersAction = {
-  type: EFiltersAction.UnmuteAllFilters;
-  payload: TUnmuteAllFiltersPayload;
-};
+export type TUnmuteAllFiltersAction = TStoreAction<typeof action, TPayload>;
 
 export const unmuteAllFilters: IBasicStoreHandler<
-  TFiltersStoreState,
-  TUnmuteAllFiltersPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID]
 > = {
-  dispatch: targetTabId =>
-    basicDispatcher(EFiltersAction.UnmuteAllFilters, () => ({ targetTabId })),
+  action,
+
+  dispatch: targetTabId => basicDispatcher(action, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

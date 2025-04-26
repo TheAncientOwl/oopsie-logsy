@@ -6,34 +6,39 @@
  *
  * @file reorderTags.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ReorderTags handler.
  */
 
-import { ELogRegexTagsAction } from '../actions';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { TLogRegexTagsStoreState } from '../data';
-import { UUID } from '@/store/common/identifier';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
+import { type UUID } from '@/store/common/identifier';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { TStoreState } from '../data';
 
-type TReorderTagsPayload = {
+const action = EActionType.ReorderRegexTags;
+
+type TPayload = {
   activeId: UUID;
   overId: UUID;
 };
 
-export type TReorderTagsAction = {
-  type: ELogRegexTagsAction.ReorderRegexTags;
-  payload: TReorderTagsPayload;
-};
+export type TReorderTagsAction = TStoreAction<typeof action, TPayload>;
 
 export const reorderTags: IBasicStoreHandler<
-  TLogRegexTagsStoreState,
-  TReorderTagsPayload,
-  ELogRegexTagsAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [activeId: UUID, overId: UUID]
 > = {
+  action,
+
   dispatch: (activeId, overId) =>
-    basicDispatcher(ELogRegexTagsAction.ReorderRegexTags, () => ({
+    basicDispatcher(action, () => ({
       activeId,
       overId,
     })),

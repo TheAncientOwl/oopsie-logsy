@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.19
+ * @version 0.20
  * @description Filters action types.
  */
 
@@ -42,15 +42,15 @@ import { type TSetComponentOverAlternativeAction } from './handlers/setComponent
 import { type TSetFilterNameAction } from './handlers/setFilterName';
 import { type TSetFilterPriorityAction } from './handlers/setFilterPriority';
 import { type TSetFilterTabNameAction } from './handlers/setFilterTabName';
-import { type ToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
-import { type ToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
-import { type ToggleFilterActiveAction } from './handlers/toggleFilterActive';
-import { type ToggleFilterCollapsedAction } from './handlers/toggleFilterCollapsed';
-import { type ToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
-import { type ToggleFilterHighlightAction } from './handlers/toggleFilterHighlightOnly';
+import { type TToggleComponentIsEqualsAction } from './handlers/toggleComponentIsEquals';
+import { type TToggleComponentIsRegexAction } from './handlers/toggleComponentIsRegex';
+import { type TToggleFilterActiveAction } from './handlers/toggleFilterActive';
+import { type TToggleFilterCollapsedAction } from './handlers/toggleFilterCollapsed';
+import { type TToggleFilterComponentIgnoreCaseAction } from './handlers/toggleFilterComponentIgnoreCase';
+import { type TPayload } from './handlers/toggleFilterHighlightOnly';
 import { type TUnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 
-export enum EFiltersAction {
+export enum EActionType {
   Loading = 'Filters__Loading',
 
   InvokeSetTabsOK = 'Filters__InvokeSetTabsOK',
@@ -92,7 +92,7 @@ export enum EFiltersAction {
   ReorderFilterComponents = 'Filters__ReorderFilterComponents',
 }
 
-export type TFiltersDispatchTypes =
+export type TDispatchTypes =
   | UnknownAction
   | TLoadingAction
   | TAddNewFilterTabAction
@@ -101,14 +101,14 @@ export type TFiltersDispatchTypes =
   | TAddNewFilterAction
   | TDeleteFilterAction
   | TDuplicateFilterAction
-  | ToggleFilterActiveAction
-  | ToggleFilterHighlightAction
+  | TToggleFilterActiveAction
+  | TPayload
   | TSetFilterNameAction
   | TAddNewFilterComponentAction
   | TDeleteFilterComponentAction
   | TSetComponentOverAlternativeAction
-  | ToggleComponentIsRegexAction
-  | ToggleComponentIsEqualsAction
+  | TToggleComponentIsRegexAction
+  | TToggleComponentIsEqualsAction
   | TSetComponentDataAction
   | TMuteAllFiltersAction
   | TUnmuteAllFiltersAction
@@ -118,9 +118,9 @@ export type TFiltersDispatchTypes =
   | TInvokeSetTabsOkAction
   | TInvokeSetTabsNOkAction
   | TSetFilterTabNameAction
-  | ToggleFilterComponentIgnoreCaseAction
+  | TToggleFilterComponentIgnoreCaseAction
   | TSetFilterPriorityAction
-  | ToggleFilterCollapsedAction
+  | TToggleFilterCollapsedAction
   | TSetAllFiltersCollapsedAction
   | TDuplicateFiltersTabAction
   | TReorderFiltersAction
@@ -129,4 +129,4 @@ export type TFiltersDispatchTypes =
   | TPrepareFiltersForDragAction
   | TPrepareFiltersForDragAction;
 
-export type TFiltersDispatch = ReduxDispatch<TFiltersDispatchTypes>;
+export type TDispatch = ReduxDispatch<TDispatchTypes>;

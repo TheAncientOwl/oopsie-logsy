@@ -6,31 +6,36 @@
  *
  * @file muteAllFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description MuteAllFilters handler.
  */
 
 import { modifyWhereIdAnyOf, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, getTabById, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, getTabById, type TStoreState } from '../data';
 
-type TMuteAllFiltersPayload = {
+const action = EActionType.MuteAllFilters;
+
+type TPayload = {
   targetTabId: UUID;
 };
 
-export type TMuteAllFiltersAction = {
-  type: EFiltersAction.MuteAllFilters;
-  payload: TMuteAllFiltersPayload;
-};
+export type TMuteAllFiltersAction = TStoreAction<typeof action, TPayload>;
 
 export const muteAllFilters: IBasicStoreHandler<
-  TFiltersStoreState,
-  TMuteAllFiltersPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID]
 > = {
-  dispatch: targetTabId => basicDispatcher(EFiltersAction.MuteAllFilters, () => ({ targetTabId })),
+  action,
+
+  dispatch: targetTabId => basicDispatcher(action, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

@@ -6,32 +6,36 @@
  *
  * @file toggleFilterActive.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description ToggleFilterActive handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type ToggleFilterActivePayload = {
+const action = EActionType.ToggleFilterActive;
+
+type TPayload = {
   targetFilterId: UUID;
 };
 
-export type ToggleFilterActiveAction = {
-  type: EFiltersAction.ToggleFilterActive;
-  payload: ToggleFilterActivePayload;
-};
+export type TToggleFilterActiveAction = TStoreAction<typeof action, TPayload>;
 
 export const toggleFilterActive: IBasicStoreHandler<
-  TFiltersStoreState,
-  ToggleFilterActivePayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID]
 > = {
-  dispatch: targetFilterId =>
-    basicDispatcher(EFiltersAction.ToggleFilterActive, () => ({ targetFilterId })),
+  action,
+
+  dispatch: targetFilterId => basicDispatcher(action, () => ({ targetFilterId })),
 
   reduce: (state, payload) => {
     const { targetFilterId } = payload;

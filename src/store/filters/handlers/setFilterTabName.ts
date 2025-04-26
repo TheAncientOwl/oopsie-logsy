@@ -6,33 +6,37 @@
  *
  * @file setFilterTabName.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetFilterTabName handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TSetFilterTabNamePayload = {
+const action = EActionType.SetFilterTabName;
+
+type TPayload = {
   targetTabId: UUID;
   name: string;
 };
 
-export type TSetFilterTabNameAction = {
-  type: EFiltersAction.SetFilterTabName;
-  payload: TSetFilterTabNamePayload;
-};
+export type TSetFilterTabNameAction = TStoreAction<typeof action, TPayload>;
 
 export const setFilterTabName: IBasicStoreHandler<
-  TFiltersStoreState,
-  TSetFilterTabNamePayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID, name: string]
 > = {
-  dispatch: (targetTabId, name) =>
-    basicDispatcher(EFiltersAction.SetFilterTabName, () => ({ targetTabId, name })),
+  action,
+
+  dispatch: (targetTabId, name) => basicDispatcher(action, () => ({ targetTabId, name })),
 
   reduce: (state, payload) => {
     const { targetTabId, name } = payload;

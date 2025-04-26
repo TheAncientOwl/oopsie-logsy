@@ -6,34 +6,39 @@
  *
  * @file reorderTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ReorderTabs handler.
  */
 
 import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, TStoreState } from '../data';
 
-type TReorderTabsPayload = {
+const action = EActionType.ReorderFilterTabs;
+
+type TPayload = {
   activeId: UUID;
   overId: UUID;
 };
 
-export type TReorderTabsAction = {
-  type: EFiltersAction.ReorderFilterTabs;
-  payload: TReorderTabsPayload;
-};
+export type TReorderTabsAction = TStoreAction<typeof action, TPayload>;
 
 export const reorderTabs: IBasicStoreHandler<
-  TFiltersStoreState,
-  TReorderTabsPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [activeId: UUID, overId: UUID]
 > = {
+  action,
+
   dispatch: (activeId, overId) =>
-    basicDispatcher(EFiltersAction.ReorderFilterTabs, () => ({
+    basicDispatcher(action, () => ({
       activeId,
       overId,
     })),

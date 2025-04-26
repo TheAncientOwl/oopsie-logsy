@@ -6,33 +6,38 @@
  *
  * @file deleteFilterComponent.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description DeleteFilterComponent.ts.
  */
 
 import { modifyWhereId, remove, removeById, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TDeleteFilterComponentPayload = {
+const action = EActionType.DeleteFilterComponent;
+
+type TPayload = {
   targetFilterId: UUID;
   targetComponentId: UUID;
 };
 
-export type TDeleteFilterComponentAction = {
-  type: EFiltersAction.DeleteFilterComponent;
-  payload: TDeleteFilterComponentPayload;
-};
+export type TDeleteFilterComponentAction = TStoreAction<typeof action, TPayload>;
 
 export const deleteFilterComponent: IBasicStoreHandler<
-  TFiltersStoreState,
-  TDeleteFilterComponentPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID, targetComponentId: UUID]
 > = {
+  action,
+
   dispatch: (targetFilterId, targetComponentId) =>
-    basicDispatcher(EFiltersAction.DeleteFilterComponent, () => ({
+    basicDispatcher(action, () => ({
       targetFilterId,
       targetComponentId,
     })),

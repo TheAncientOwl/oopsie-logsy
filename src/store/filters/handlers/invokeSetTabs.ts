@@ -6,43 +6,42 @@
  *
  * @file invokeSetTabs.ts
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description InvokeSetTabs handler.
  */
 
-import { IApiCallStoreHandler } from '@/store/common/storeHandler';
+import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
-import { EFiltersAction, type TFiltersDispatch } from '../actions';
+import { EActionType, type TDispatch } from '../actions';
 import {
   checkCanSaveData,
-  TOverAlternatives,
   type TFilter,
   type TFilterComponent,
-  type TFiltersStoreState,
+  type TStoreState,
   type TFilterTab,
+  type TOverAlternatives,
 } from '../data';
 
-type TInvokeSetTabsOkPayload = {};
-
-export type TInvokeSetTabsOkAction = {
-  type: typeof EFiltersAction.InvokeSetTabsOK;
-  payload: TInvokeSetTabsOkPayload;
+const action = {
+  ok: EActionType.InvokeSetTabsOK,
+  nok: EActionType.InvokeSetTabsNOK,
 };
 
-type TInvokeSetTabsNOkPayload = {
+type TPayloadOk = {};
+
+type TPayloadNok = {
   error: unknown;
 };
 
-export type TInvokeSetTabsNOkAction = {
-  type: typeof EFiltersAction.InvokeSetTabsNOK;
-  payload: TInvokeSetTabsNOkPayload;
-};
+export type TInvokeSetTabsOkAction = TStoreAction<typeof action.ok, TPayloadOk>;
+export type TInvokeSetTabsNOkAction = TStoreAction<typeof action.nok, TPayloadNok>;
 
 export const invokeSetTabs: IApiCallStoreHandler<
-  TFiltersStoreState,
-  TFiltersDispatch,
-  TInvokeSetTabsOkPayload,
-  TInvokeSetTabsNOkPayload,
+  TStoreState,
+  TDispatch,
+  EActionType,
+  TPayloadOk,
+  TPayloadNok,
   [
     tabs: Array<TFilterTab>,
     filters: Array<TFilter>,
@@ -50,7 +49,7 @@ export const invokeSetTabs: IApiCallStoreHandler<
     overAlternatives: TOverAlternatives,
   ]
 > = {
-  dispatch: (tabs, filters, components, overAlternatives) => async (dispatch: TFiltersDispatch) => {
+  dispatch: (tabs, filters, components, overAlternatives) => async (dispatch: TDispatch) => {
     console.assertX(
       invokeSetTabs.dispatch.name,
       tabs !== undefined,
@@ -67,7 +66,7 @@ export const invokeSetTabs: IApiCallStoreHandler<
       "Received 'undefined' as components"
     );
 
-    dispatch({ type: EFiltersAction.Loading, payload: {} });
+    dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
       console.verbose(invokeSetTabs.dispatch, `Sending ${tabs.length} tabs:`, tabs);
@@ -82,7 +81,7 @@ export const invokeSetTabs: IApiCallStoreHandler<
         console.info(invokeSetTabs.dispatch, 'Saving tabs data...');
         const response = await invoke('set_filter_tabs', { tabs, filters, components });
         console.info(invokeSetTabs.dispatch, `rust response: ${response}`);
-        dispatch({ type: EFiltersAction.InvokeSetTabsOK, payload: {} });
+        dispatch({ type: EActionType.InvokeSetTabsOK, payload: {} });
       } else {
         console.info(invokeSetTabs.dispatch, 'Cannot save tabs data', {
           tabs,
@@ -93,7 +92,7 @@ export const invokeSetTabs: IApiCallStoreHandler<
       }
     } catch (error) {
       console.error(invokeSetTabs.dispatch, `error sending tabs to rust: ${error}`);
-      dispatch({ type: EFiltersAction.InvokeSetTabsNOK, payload: { error } });
+      dispatch({ type: EActionType.InvokeSetTabsNOK, payload: { error } });
     }
   },
 
@@ -113,4 +112,6 @@ export const invokeSetTabs: IApiCallStoreHandler<
       };
     },
   },
+
+  action,
 };

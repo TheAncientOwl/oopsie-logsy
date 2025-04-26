@@ -6,32 +6,37 @@
  *
  * @file toggleFilterCollapsed.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description toggleFilterCollapsed handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type TStoreAction,
+  type IBasicStoreHandler,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type ToggleFilterCollapsedPayload = {
+const action = EActionType.ToggleFilterCollapsed;
+
+type TPayload = {
   targetFilterId: UUID;
 };
 
-export type ToggleFilterCollapsedAction = {
-  type: EFiltersAction.ToggleFilterCollapsed;
-  payload: ToggleFilterCollapsedPayload;
-};
+export type TToggleFilterCollapsedAction = TStoreAction<typeof action, TPayload>;
 
 export const toggleFilterCollapsed: IBasicStoreHandler<
-  TFiltersStoreState,
-  ToggleFilterCollapsedPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID]
 > = {
+  action,
+
   dispatch: targetFilterId =>
-    basicDispatcher(EFiltersAction.ToggleFilterCollapsed, () => ({
+    basicDispatcher(action, () => ({
       targetFilterId,
     })),
 

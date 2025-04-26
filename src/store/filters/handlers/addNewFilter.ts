@@ -6,31 +6,36 @@
  *
  * @file addNewFilter.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description AddNewFilter handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, DefaultFactory, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, DefaultFactory, type TStoreState } from '../data';
 
-type TAddNewFilterPayload = {
+const action = EActionType.AddNewFilter;
+
+type TPayload = {
   targetTabId: UUID;
 };
 
-export type TAddNewFilterAction = {
-  type: typeof EFiltersAction.AddNewFilter;
-  payload: TAddNewFilterPayload;
-};
+export type TAddNewFilterAction = TStoreAction<typeof action, TPayload>;
 
 export const addNewFilter: IBasicStoreHandler<
-  TFiltersStoreState,
-  TAddNewFilterPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetTabId: UUID]
 > = {
-  dispatch: targetTabId => basicDispatcher(EFiltersAction.AddNewFilter, () => ({ targetTabId })),
+  action,
+
+  dispatch: targetTabId => basicDispatcher(action, () => ({ targetTabId })),
 
   reduce: (state, payload) => {
     const { targetTabId } = payload;

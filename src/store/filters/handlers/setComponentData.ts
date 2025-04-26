@@ -6,33 +6,38 @@
  *
  * @file setComponentData.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description SetComponentData handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TSetComponentDataPayload = {
+const action = EActionType.SetFilterComponentData;
+
+type TPayload = {
   targetComponentId: UUID;
   data: string;
 };
 
-export type TSetComponentDataAction = {
-  type: EFiltersAction.SetFilterComponentData;
-  payload: TSetComponentDataPayload;
-};
+export type TSetComponentDataAction = TStoreAction<typeof action, TPayload>;
 
 export const setComponentData: IBasicStoreHandler<
-  TFiltersStoreState,
-  TSetComponentDataPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetComponentId: UUID, data: string]
 > = {
+  action,
+
   dispatch: (targetComponentId, data) =>
-    basicDispatcher(EFiltersAction.SetFilterComponentData, () => ({
+    basicDispatcher(action, () => ({
       targetComponentId,
       data,
     })),

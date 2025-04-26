@@ -6,10 +6,12 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Listeners index file.
  */
 
 import { onLogRegexTagsGet, onLogRegexTagsSet } from './onLogRegexTagsChanged';
 
-export { onLogRegexTagsGet, onLogRegexTagsSet };
+const listeners = [onLogRegexTagsSet, onLogRegexTagsGet];
+
+export { listeners, onLogRegexTagsGet, onLogRegexTagsSet };

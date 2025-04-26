@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description LogRegexTags action types.
  */
 
@@ -28,7 +28,7 @@ import { type TSetTagNameAction } from './handlers/setTagName';
 import { type TSetTagRegexAction } from './handlers/setTagRegex';
 import { type ToggleTagDisplayAction } from './handlers/toggleTagDisplay';
 
-export enum ELogRegexTagsAction {
+export enum EActionType {
   Loading = 'LogRegexTags__Loading',
   InvokeGetTagsOK = 'LogRegexTags__InvokeGetTagsOK',
   InvokeGetTagsNOK = 'LogRegexTags__InvokeGetTagsNOK',
@@ -36,13 +36,13 @@ export enum ELogRegexTagsAction {
   InvokeSetTagsNOK = 'LogRegexTags__InvokeSetTagsNOK',
   AddNewTag = 'LogRegexTags__AddNewTag',
   RemoveTag = 'LogRegexTags__RemoveTag',
-  ToggleTagDisplay = 'LogRegexTags__ToggleTagDisplay',
+  TToggleTagDisplay = 'LogRegexTags__ToggleTagDisplay',
   SetTagName = 'LogRegexTags__SetTagName',
   SetTagRegex = 'LogRegexTags__SetTagRegex',
   ReorderRegexTags = 'LogRegexTags__Reorder',
 }
 
-export type TLogRegexTagsDispatchTypes =
+export type TDispatchTypes =
   | UnknownAction
   | TLoadingAction
   | TInvokeGetTagsOkAction
@@ -56,4 +56,4 @@ export type TLogRegexTagsDispatchTypes =
   | TSetTagRegexAction
   | TReorderTagsAction;
 
-export type TLogRegexTagsDispatch = ReduxDispatch<TLogRegexTagsDispatchTypes>;
+export type TDispatch = ReduxDispatch<TDispatchTypes>;

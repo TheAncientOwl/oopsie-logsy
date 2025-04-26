@@ -6,32 +6,36 @@
  *
  * @file toggleComponentIsRegex.ts
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description ToggleComponentIsRegex handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type ToggleComponentIsRegexPayload = {
+const action = EActionType.ToggleFilterComponentIsRegex;
+
+type TPayload = {
   targetComponentId: UUID;
 };
 
-export type ToggleComponentIsRegexAction = {
-  type: EFiltersAction.ToggleFilterComponentIsRegex;
-  payload: ToggleComponentIsRegexPayload;
-};
+export type TToggleComponentIsRegexAction = TStoreAction<typeof action, TPayload>;
 
 export const toggleComponentIsRegex: IBasicStoreHandler<
-  TFiltersStoreState,
-  ToggleComponentIsRegexPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetComponentId: UUID]
 > = {
-  dispatch: targetComponentId =>
-    basicDispatcher(EFiltersAction.ToggleFilterComponentIsRegex, () => ({ targetComponentId })),
+  action,
+
+  dispatch: targetComponentId => basicDispatcher(action, () => ({ targetComponentId })),
 
   reduce: (state, payload) => {
     const { targetComponentId } = payload;

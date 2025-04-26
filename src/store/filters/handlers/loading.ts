@@ -6,32 +6,29 @@
  *
  * @file loading.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Loading handler.
  */
 
 import {
   basicDispatcher,
-  IBasicStoreHandler,
+  type IBasicStoreHandler,
+  type TStoreAction,
   type TNoDispatcherArgs,
 } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { type TFiltersStoreState } from '../data';
+import { EActionType } from '../actions';
+import { type TStoreState } from '../data';
 
-type TLoadingPayload = {};
+const action = EActionType.Loading;
 
-export type TLoadingAction = {
-  type: typeof EFiltersAction.Loading;
-  payload: TLoadingPayload;
-};
+type TPayload = {};
 
-export const loading: IBasicStoreHandler<
-  TFiltersStoreState,
-  TLoadingPayload,
-  EFiltersAction,
-  TNoDispatcherArgs
-> = {
-  dispatch: () => basicDispatcher(EFiltersAction.Loading, () => ({})),
+export type TLoadingAction = TStoreAction<typeof action, TPayload>;
+
+export const loading: IBasicStoreHandler<TStoreState, EActionType, TPayload, TNoDispatcherArgs> = {
+  action,
+
+  dispatch: () => basicDispatcher(action, () => ({})),
 
   reduce: state => {
     return {

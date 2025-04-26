@@ -6,33 +6,37 @@
  *
  * @file setFilterBg.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description SetFilterBg handler.
  */
 
 import { modifyWhereId, type UUID } from '@/store/common/identifier';
-import { basicDispatcher, IBasicStoreHandler } from '@/store/common/storeHandler';
-import { EFiltersAction } from '../actions';
-import { checkCanSaveData, type TFiltersStoreState } from '../data';
+import {
+  basicDispatcher,
+  type IBasicStoreHandler,
+  type TStoreAction,
+} from '@/store/common/storeHandler';
+import { EActionType } from '../actions';
+import { checkCanSaveData, type TStoreState } from '../data';
 
-type TSetFilterBgPayload = {
+const action = EActionType.SetFilterBg;
+
+type TPayload = {
   targetFilterId: UUID;
   color: string;
 };
 
-export type TSetFilterBgAction = {
-  type: EFiltersAction.SetFilterBg;
-  payload: TSetFilterBgPayload;
-};
+export type TSetFilterBgAction = TStoreAction<typeof action, TPayload>;
 
 export const setFilterBg: IBasicStoreHandler<
-  TFiltersStoreState,
-  TSetFilterBgPayload,
-  EFiltersAction,
+  TStoreState,
+  EActionType,
+  TPayload,
   [targetFilterId: UUID, color: string]
 > = {
-  dispatch: (targetFilterId, color) =>
-    basicDispatcher(EFiltersAction.SetFilterBg, () => ({ targetFilterId, color })),
+  action,
+
+  dispatch: (targetFilterId, color) => basicDispatcher(action, () => ({ targetFilterId, color })),
 
   reduce: (state, payload) => {
     const { targetFilterId, color } = payload;
