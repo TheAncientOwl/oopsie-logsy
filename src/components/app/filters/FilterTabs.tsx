@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.27
+ * @version 0.28
  * @description Filters component
  */
 
@@ -109,7 +109,7 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
               resize: 'none',
               minHeight: '200px',
               maxHeight: '90vh',
-              height: '40vh',
+              height: '45vh',
               marginTop: DRAG_HANDLE_HEIGHT,
               zIndex: 9999,
               borderRadius: '2px',
