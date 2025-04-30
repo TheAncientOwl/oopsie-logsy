@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -16,10 +16,12 @@ import {
   ColorPickerValueChangeDetails,
   Heading,
   HStack,
+  Icon,
   parseColor,
   Portal,
 } from '@chakra-ui/react';
 import React, { PropsWithChildren, useState } from 'react';
+import { IconType } from 'react-icons';
 import { StarIcon, StarsFormation, StarsIcon } from '../Icons';
 import { ChannelSliders } from './ChannelSlidersPicker';
 
@@ -47,7 +49,7 @@ type TPickerStateProps = PropsWithChildren & {
   defaultOpen: boolean;
   onActivate: () => void;
   label: string;
-  icon: () => React.ReactNode;
+  icon: IconType;
 };
 
 const UltraPickerState: React.FC<TPickerStateProps> = props => {
@@ -55,7 +57,7 @@ const UltraPickerState: React.FC<TPickerStateProps> = props => {
     <Collapsible.Root defaultOpen={true} open={props.open}>
       <Collapsible.Trigger cursor='pointer' onClick={props.onActivate} width='100%'>
         <HStack>
-          {props.icon()}
+          <Icon as={props.icon} />
           <Heading size='md' fontWeight={props.open ? 'bold' : 'normal'}>
             {props.label}
           </Heading>
