@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.28
+ * @version 0.29
  * @description Filters component
  */
 
@@ -22,8 +22,8 @@ import {
   invokeSetTabs,
   reorderTabs,
 } from '@/store/filters/handlers';
-import { Box, ButtonGroup, Collapsible, HStack, Tabs } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import { Box, ButtonGroup, Collapsible, HStack, Stack, Tabs } from '@chakra-ui/react';
+import React, { useEffect, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
@@ -36,12 +36,11 @@ type TFiltersProps = TPropsFromRedux & {
 const DRAG_HANDLE_HEIGHT = '3px';
 
 const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
-  const boxRef = React.useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     props.invokeGetTabs(props.overAlternatives);
   }, []);
 
+  const tabsRef = useRef<HTMLDivElement>(null);
   const bg = useColorModeValue('gray.200', 'gray.900');
   const boxBorder = useColorModeValue('gray.700', 'gray.500');
 
@@ -52,13 +51,13 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
   const startResizing = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     const startY = e.clientY;
-    const startHeight = boxRef.current?.offsetHeight || 0;
+    const startHeight = tabsRef.current?.offsetHeight || 0;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      if (!boxRef.current) return;
+      if (!tabsRef.current) return;
       const newHeight = startHeight + (startY - moveEvent.clientY);
       if (newHeight >= 200 && newHeight <= window.innerHeight * 0.9) {
-        boxRef.current.style.height = `${newHeight}px`;
+        tabsRef.current.style.height = `${newHeight}px`;
         props.onHeightChange(newHeight);
       }
     };
@@ -83,88 +82,66 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
       resize='vertical'
     >
       <Collapsible.Content>
-        <div style={{ position: 'relative' }}>
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: DRAG_HANDLE_HEIGHT,
-              backgroundColor: 'grey',
-              cursor: 'row-resize',
-              zIndex: 10000,
-            }}
-            onMouseDown={startResizing}
-          />
+        <Tabs.Root
+          variant='line'
+          defaultValue={props.focusedTab}
+          value={props.focusedTab}
+          ref={tabsRef}
+          bgColor={bg}
+          overflowY='scroll'
+          height='400px'
+          minH='200px'
+          maxH='90vh'
+        >
+          <Stack gap='0.5em' top='0' position='sticky' bgColor={bg} pb='0.5em' zIndex={15000}>
+            <Box
+              height={DRAG_HANDLE_HEIGHT}
+              bgColor={boxBorder}
+              cursor='row-resize'
+              onMouseDown={startResizing}
+            />
 
-          <Box
-            ref={boxRef}
-            as='div'
-            bg={bg}
-            borderTop='1px solid'
-            borderColor={boxBorder}
-            overflow='auto'
-            style={{
-              resize: 'none',
-              minHeight: '200px',
-              maxHeight: '90vh',
-              height: '45vh',
-              marginTop: DRAG_HANDLE_HEIGHT,
-              zIndex: 9999,
-              borderRadius: '2px',
-            }}
-          >
-            <Tabs.Root variant='line' defaultValue={props.focusedTab} value={props.focusedTab}>
-              <HStack
-                mb='0.75em'
-                position='sticky'
-                top={DRAG_HANDLE_HEIGHT}
-                zIndex='10000'
-                bg={bg}
-                pb='5px'
-              >
-                <ButtonGroup ml='0.5em' pt='0.25em' colorPalette='green' size='xs' variant='subtle'>
-                  <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
-                    <NewIcon />
-                  </TooltipIconButton>
-                  <TooltipIconButton
-                    disabled={!props.canSaveTabs}
-                    tooltip='Save tabs'
-                    onClick={handleSaveClick}
-                  >
-                    <SaveIcon />
-                  </TooltipIconButton>
-                </ButtonGroup>
+            <HStack>
+              <ButtonGroup ml='0.5em' pt='0.25em' colorPalette='green' size='xs' variant='subtle'>
+                <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
+                  <NewIcon />
+                </TooltipIconButton>
+                <TooltipIconButton
+                  disabled={!props.canSaveTabs}
+                  tooltip='Save tabs'
+                  onClick={handleSaveClick}
+                >
+                  <SaveIcon />
+                </TooltipIconButton>
+              </ButtonGroup>
 
-                <Box overflowX='scroll'>
-                  <DraggableList.Container
-                    items={props.tabs}
-                    direction='horizontal'
-                    onDragEnd={(activeId, overId) => {
-                      props.reorderTabs(activeId, overId);
-                    }}
-                    onDragButNotMoved={activeId => {
-                      props.focusFilterTab(activeId);
-                    }}
-                  >
-                    <Tabs.List>
-                      {props.tabs.map(tab => (
-                        <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
-                      ))}
-                    </Tabs.List>
-                  </DraggableList.Container>
-                </Box>
-              </HStack>
+              <Box overflowX='scroll'>
+                <DraggableList.Container
+                  items={props.tabs}
+                  direction='horizontal'
+                  onDragEnd={(activeId, overId) => {
+                    props.reorderTabs(activeId, overId);
+                  }}
+                  onDragButNotMoved={activeId => {
+                    props.focusFilterTab(activeId);
+                  }}
+                >
+                  <Tabs.List>
+                    {props.tabs.map(tab => (
+                      <FilterTabHeader key={tab.id} tabId={tab.id} name={tab.name} />
+                    ))}
+                  </Tabs.List>
+                </DraggableList.Container>
+              </Box>
+            </HStack>
 
-              <FilterTabToolBox />
+            <FilterTabToolBox />
+          </Stack>
 
-              {props.tabs.map(tab => (
-                <FilterTabContent key={tab.id} tabId={tab.id} filterIds={tab.filterIDs} />
-              ))}
-            </Tabs.Root>
-          </Box>
-        </div>
+          {props.tabs.map(tab => (
+            <FilterTabContent key={tab.id} tabId={tab.id} filterIds={tab.filterIDs} />
+          ))}
+        </Tabs.Root>
       </Collapsible.Content>
     </Collapsible.Root>
   );
