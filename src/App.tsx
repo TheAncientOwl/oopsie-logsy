@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description App class
  */
 
@@ -20,18 +20,13 @@ import { Box } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
-const CONTENT_HEIGHTS = {
-  whenFiltersOpen: 55,
-  whenFiltersClosed: 100,
-};
-
 export const App = () => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
   const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(true);
 
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [toolbarHeight, setToolbarHeight] = useState(0);
-  const [contentHeight, setContentHeight] = useState(`${CONTENT_HEIGHTS.whenFiltersClosed}vh`);
+  const [contentHeight, setContentHeight] = useState(`100vh`);
 
   useEffect(() => {
     if (toolbarRef.current) {

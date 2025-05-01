@@ -6,7 +6,7 @@
  *
  * @file Filter.tsx
  * @author Alexandru Delegeanu
- * @version 0.30
+ * @version 0.31
  * @description Filter component
  */
 
@@ -19,7 +19,8 @@ import {
   EyeOpenIcon,
   NewIcon,
 } from '@/components/ui/Icons';
-import { Tooltip } from '@/components/ui/Tooltip';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
+import { Tooltip } from '@/components/ui/tooltip';
 import { For } from '@/components/ui/utils/For';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { type TRootState } from '@/store';
@@ -51,84 +52,60 @@ import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterColorPicker } from './FilterColorPicker';
 import { FilterComponent } from './FilterComponent';
-import { DraggableList } from '@/components/ui/lists/DraggableList';
 
 type TFilterProps = {
   tabId: UUID;
   filterId: UUID;
 };
 
-const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
-  const bg = useColorModeValue('gray.300', 'gray.800');
-  const border = useColorModeValue('gray.500', 'gray.500');
+const FilterImpl: React.FC<TFilterProps & TPropsFromRedux> = props => {
+  const bgColor = useColorModeValue('gray.300', 'gray.800');
+  const borderColor = useColorModeValue('gray.500', 'gray.500');
 
   const [filterFg, setFilterFg] = useState(props.filter.colors.fg);
   const [filterBg, setFilterBg] = useState(props.filter.colors.bg);
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setFilterName(props.filterId, event.target.value);
-  };
-
-  const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.stopPropagation();
-    props.deleteFilter(props.tabId, props.filterId);
-  };
-
-  const handleDuplicateClick = () => {
-    props.duplicateFilter(props.tabId, props.filterId);
-  };
-
-  const handleNewComponentClick = () => {
-    props.addNewFilterComponent(props.filterId);
-  };
-
-  const handleFilterToggle = () => {
-    props.toggleFilterActive(props.filterId);
-  };
-
-  const handleFilterToggleHiglightOnly = () => {
-    props.toggleFilterHighlightOnly(props.filterId);
-  };
-
-  const handleFilterPriorityChange = (details: NumberInputValueChangeDetails) => {
-    props.setFilterPriority(props.filterId, details.valueAsNumber);
-  };
-
-  const handleFilterCollapseClick = () => {
-    props.toggleFilterCollapsed(props.filterId);
-  };
-
   return (
     <DraggableList.Item id={props.filterId}>
       <Box
-        bg={bg}
+        bgColor={bgColor}
         border='2px solid'
         borderTop='1px solid'
         borderBottom='1px solid'
-        borderColor={border}
+        borderColor={borderColor}
         padding='0.5em 0.75em'
       >
         <HStack>
           <ButtonGroup colorPalette='green' size='sm' variant='subtle'>
             <TooltipIconButton
               tooltip={props.filter.collapsed ? 'Show Filter' : 'Hide filter'}
-              onClick={handleFilterCollapseClick}
+              onClick={() => {
+                props.toggleFilterCollapsed(props.filterId);
+              }}
             >
               {props.filter.collapsed ? <EyeClosedIcon /> : <EyeOpenIcon />}
             </TooltipIconButton>
-            <TooltipIconButton tooltip='Duplicate filter' onClick={handleDuplicateClick}>
+            <TooltipIconButton
+              tooltip='Duplicate filter'
+              onClick={() => {
+                props.duplicateFilter(props.tabId, props.filterId);
+              }}
+            >
               <DuplicateIcon />
             </TooltipIconButton>
             <TooltipIconButton
               colorPalette='red'
               tooltip='Delete filter'
-              onClick={handleDeleteClick}
+              onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                event.stopPropagation();
+                props.deleteFilter(props.tabId, props.filterId);
+              }}
             >
               <DeleteIcon />
             </TooltipIconButton>
           </ButtonGroup>
 
-          <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+          <Separator borderColor={borderColor} orientation='vertical' height='7' size='md' />
 
           <FilterColorPicker
             tabId={props.tabId}
@@ -138,7 +115,7 @@ const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
             onColorChangeBg={details => setFilterBg(details.valueAsString)}
           />
 
-          <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+          <Separator borderColor={borderColor} orientation='vertical' height='7' size='md' />
 
           <Tooltip content='Filter Priority'>
             <NumberInput.Root
@@ -146,26 +123,30 @@ const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
               min={0}
               colorPalette='green'
               value={props.filter.priority.toString()}
-              onValueChange={handleFilterPriorityChange}
+              onValueChange={(details: NumberInputValueChangeDetails) => {
+                props.setFilterPriority(props.filterId, details.valueAsNumber);
+              }}
             >
-              <NumberInput.Control bg={bg} />
+              <NumberInput.Control bgColor={bgColor} />
               <NumberInput.Input
                 maxWidth='125px'
-                borderColor={border}
+                borderColor={borderColor}
                 color={filterFg}
                 backgroundColor={filterBg}
               />
             </NumberInput.Root>
           </Tooltip>
 
-          <Separator borderColor={border} orientation='vertical' height='7' size='md' />
+          <Separator borderColor={borderColor} orientation='vertical' height='7' size='md' />
 
           <Input
-            borderColor={border}
+            borderColor={borderColor}
             colorPalette='green'
             placeholder='Filter Name'
             defaultValue={props.filter.name}
-            onChange={handleNameChange}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              props.setFilterName(props.filterId, event.target.value);
+            }}
             color={filterFg}
             backgroundColor={filterBg}
           />
@@ -182,17 +163,26 @@ const FilterImpl = (props: TFilterProps & TPropsFromRedux) => {
                   size='xs'
                   colorPalette='green'
                   variant='subtle'
-                  onClick={handleNewComponentClick}
+                  onClick={() => {
+                    props.addNewFilterComponent(props.filterId);
+                  }}
                 >
                   <NewIcon />
                 </TooltipIconButton>
 
-                <CheckBox checked={props.filter.isActive} onCheckedChange={handleFilterToggle}>
+                <CheckBox
+                  checked={props.filter.isActive}
+                  onCheckedChange={() => {
+                    props.toggleFilterActive(props.filterId);
+                  }}
+                >
                   Active
                 </CheckBox>
                 <CheckBox
                   checked={props.filter.isHighlightOnly}
-                  onCheckedChange={handleFilterToggleHiglightOnly}
+                  onCheckedChange={() => {
+                    props.toggleFilterHighlightOnly(props.filterId);
+                  }}
                 >
                   Highlight Only
                 </CheckBox>

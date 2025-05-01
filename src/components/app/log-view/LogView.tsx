@@ -6,17 +6,18 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Display logs in table format
  */
 
 import { Table } from '@chakra-ui/react';
+import React from 'react';
 
 type TLogViewProps = {
   offsetTop: string;
 };
 
-export const LogView = ({ offsetTop }: TLogViewProps) => {
+export const LogView: React.FC<TLogViewProps> = props => {
   const items = [
     {
       id: 1,
@@ -197,7 +198,7 @@ export const LogView = ({ offsetTop }: TLogViewProps) => {
 
   return (
     <Table.Root size='sm' striped>
-      <Table.Header position='sticky' top={offsetTop} zIndex='1'>
+      <Table.Header position='sticky' top={props.offsetTop} zIndex='1'>
         <Table.Row>
           <Table.ColumnHeader>Idx</Table.ColumnHeader>
           <Table.ColumnHeader>Timestamp</Table.ColumnHeader>

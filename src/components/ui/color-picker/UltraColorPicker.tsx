@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -80,7 +80,7 @@ const PresetsPicker: React.FC = () => {
             cursor='pointer'
           >
             <ColorPicker.Swatch value={item.valueAsString}>
-              <ColorPicker.SwatchIndicator boxSize='3' bg='white' />
+              <ColorPicker.SwatchIndicator boxSize='3' bgColor='white' />
             </ColorPicker.Swatch>
           </ColorPicker.SwatchTrigger>
         ))}

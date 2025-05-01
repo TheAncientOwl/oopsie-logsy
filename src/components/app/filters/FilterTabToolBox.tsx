@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Filter tab related tools.
  */
 
@@ -42,54 +42,16 @@ import { ButtonGroup, HStack, Input, Separator, Span } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
 
 const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
-  const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
-  const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
-
   console.assertX(
     FilterTabToolBox.name,
     props.focusedTab !== undefined,
     `Failed to find focused tab with id ${props.focusedTabId}`
   );
 
-  const border = useColorModeValue('gray.500', 'gray.500');
+  const borderColor = useColorModeValue('gray.500', 'gray.500');
 
-  const handleNewFilterClick = () => {
-    props.addNewFilter(props.focusedTabId);
-  };
-
-  const handleMuteAllClick = () => {
-    props.muteAllFilters(props.focusedTabId);
-  };
-
-  const handleUnmuteAllClick = () => {
-    props.unmuteAllFilters(props.focusedTabId);
-  };
-
-  const handleClearClick = () => {
-    props.deleteAllFilters(props.focusedTabId);
-    toggleClearDoubleCheck();
-  };
-
-  const handleDeleteFilterTabClick = () => {
-    props.deleteFilterTab(props.focusedTabId);
-    toggleDeleteDoubleCheck();
-  };
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setFilterTabName(props.focusedTabId, event.target.value);
-  };
-
-  const handleCollapseAllClick = () => {
-    props.setAllFiltersCollapsed(props.focusedTabId, true);
-  };
-
-  const handleExpandAllClick = () => {
-    props.setAllFiltersCollapsed(props.focusedTabId, false);
-  };
-
-  const handleDuplicateTabClick = () => {
-    props.duplicateFiltersTab(props.focusedTabId);
-  };
+  const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
+  const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
   // TODO: refactor disabled states
   return (
@@ -99,7 +61,12 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
           <TooltipIconButton tooltip='Apply filters' disabled>
             <ApplyIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='New filter' onClick={handleNewFilterClick}>
+          <TooltipIconButton
+            tooltip='New filter'
+            onClick={() => {
+              props.addNewFilter(props.focusedTabId);
+            }}
+          >
             <NewIcon />
           </TooltipIconButton>
 
@@ -107,28 +74,36 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
 
           <TooltipIconButton
             tooltip='Unmute All'
-            onClick={handleUnmuteAllClick}
+            onClick={() => {
+              props.unmuteAllFilters(props.focusedTabId);
+            }}
             // disabled={focusedTab?.filterIDs.every(filter => filter.isActive)}
           >
             <SoundOnIcon />
           </TooltipIconButton>
           <TooltipIconButton
             tooltip='Mute all'
-            onClick={handleMuteAllClick}
+            onClick={() => {
+              props.muteAllFilters(props.focusedTabId);
+            }}
             // disabled={focusedTab?.filterIDs.every(filter => !filter.isActive)}
           >
             <SoundOffIcon />
           </TooltipIconButton>
           <TooltipIconButton
             tooltip='Collapse All'
-            onClick={handleCollapseAllClick}
+            onClick={() => {
+              props.setAllFiltersCollapsed(props.focusedTabId, true);
+            }}
             // disabled={focusedTab?.filterIDs.every(filter => filter.collapsed)}
           >
             <CollapseIcon />
           </TooltipIconButton>
           <TooltipIconButton
             tooltip='Expand All'
-            onClick={handleExpandAllClick}
+            onClick={() => {
+              props.setAllFiltersCollapsed(props.focusedTabId, false);
+            }}
             // disabled={focusedTab?.filterIDs.every(filter => !filter.collapsed)}
           >
             <ExpandIcon />
@@ -136,7 +111,12 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
 
           <Separator orientation='vertical' height='7' size='md' />
 
-          <TooltipIconButton tooltip='Duplicate Tab' onClick={handleDuplicateTabClick}>
+          <TooltipIconButton
+            tooltip='Duplicate Tab'
+            onClick={() => {
+              props.duplicateFiltersTab(props.focusedTabId);
+            }}
+          >
             <DuplicateIcon />
           </TooltipIconButton>
           <TooltipIconButton
@@ -158,11 +138,13 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
         </ButtonGroup>
 
         <Input
-          borderColor={border}
+          borderColor={borderColor}
           colorPalette='green'
           placeholder='Filter Tab Name'
           value={props.focusedTab?.name}
-          onChange={handleNameChange}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            props.setFilterTabName(props.focusedTabId, event.target.value);
+          }}
         />
       </HStack>
 
@@ -171,7 +153,10 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
         label='Delete tab'
         acceptLabel='Yes, Delete'
         declineLabel='No, Cancel'
-        onAccept={handleDeleteFilterTabClick}
+        onAccept={() => {
+          props.deleteFilterTab(props.focusedTabId);
+          toggleDeleteDoubleCheck();
+        }}
         onDecline={toggleDeleteDoubleCheck}
       >
         Are you sure you want to <Span color='red.500'>delete</Span> <b>{props.focusedTab?.name}</b>
@@ -183,7 +168,10 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
         label='Clear All Filters'
         acceptLabel='Yes, Clear'
         declineLabel='No, Cancel'
-        onAccept={handleClearClick}
+        onAccept={() => {
+          props.deleteAllFilters(props.focusedTabId);
+          toggleClearDoubleCheck();
+        }}
         onDecline={toggleClearDoubleCheck}
       >
         Are you sure you want to <Span color='red.500'>clear all filters</Span> of{' '}

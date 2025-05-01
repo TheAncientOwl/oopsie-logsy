@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.29
+ * @version 0.30
  * @description Filters component
  */
 
@@ -28,25 +28,21 @@ import { connect, ConnectedProps } from 'react-redux';
 import { FilterTabContent, FilterTabHeader } from './FilterTab';
 import { FilterTabToolBox } from './FilterTabToolBox';
 
-type TFiltersProps = TPropsFromRedux & {
+type TFiltersProps = {
   filtersOpen: boolean;
   onHeightChange: (newHeight: number) => void;
 };
 
 const DRAG_HANDLE_HEIGHT = '3px';
 
-const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
+const FilterTabsImpl: React.FC<TFiltersProps & TPropsFromRedux> = props => {
   useEffect(() => {
     props.invokeGetTabs(props.overAlternatives);
   }, []);
 
   const tabsRef = useRef<HTMLDivElement>(null);
   const bg = useColorModeValue('gray.200', 'gray.900');
-  const boxBorder = useColorModeValue('gray.700', 'gray.500');
-
-  const handleSaveClick = () => {
-    props.invokeSetTabs(props.tabs, props.filters, props.components, props.overAlternatives);
-  };
+  const boxBorderColor = useColorModeValue('gray.700', 'gray.500');
 
   const startResizing = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -96,7 +92,7 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
           <Stack gap='0.5em' top='0' position='sticky' bgColor={bg} pb='0.5em' zIndex={15000}>
             <Box
               height={DRAG_HANDLE_HEIGHT}
-              bgColor={boxBorder}
+              bgColor={boxBorderColor}
               cursor='row-resize'
               onMouseDown={startResizing}
             />
@@ -109,7 +105,14 @@ const FilterTabsImpl: React.FC<TFiltersProps> = (props: TFiltersProps) => {
                 <TooltipIconButton
                   disabled={!props.canSaveTabs}
                   tooltip='Save tabs'
-                  onClick={handleSaveClick}
+                  onClick={() => {
+                    props.invokeSetTabs(
+                      props.tabs,
+                      props.filters,
+                      props.components,
+                      props.overAlternatives
+                    );
+                  }}
                 >
                   <SaveIcon />
                 </TooltipIconButton>

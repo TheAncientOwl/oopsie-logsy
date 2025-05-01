@@ -6,7 +6,7 @@
  *
  * @file SingleSelect.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description SingleSelect Chakra UI wrapper.
  */
 
@@ -33,13 +33,9 @@ type TSingleSelectProps<T extends TListItem> = {
 };
 
 export const SingleSelect = <T extends TListItem>(props: TSingleSelectProps<T>) => {
-  const border = useColorModeValue('gray.500', 'gray.500');
+  const borderColor = useColorModeValue('gray.500', 'gray.500');
 
   const value = useMemo(() => [props.value], [props.value]);
-
-  const handleValueChange = (details: SelectValueChangeDetails<T>) => {
-    props.onChange(details.value[0]);
-  };
 
   return (
     <Select.Root
@@ -47,12 +43,14 @@ export const SingleSelect = <T extends TListItem>(props: TSingleSelectProps<T>) 
       collection={props.collection}
       multiple={false}
       value={value}
-      onValueChange={handleValueChange}
+      onValueChange={(details: SelectValueChangeDetails<T>) => {
+        props.onChange(details.value[0]);
+      }}
     >
       <Select.HiddenSelect />
 
       <Select.Control>
-        <Select.Trigger cursor='pointer' borderColor={border}>
+        <Select.Trigger cursor='pointer' borderColor={borderColor}>
           <Select.ValueText placeholder={props.value} />
         </Select.Trigger>
       </Select.Control>

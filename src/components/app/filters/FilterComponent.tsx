@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Filter component.
  */
 
@@ -20,6 +20,7 @@ import {
   RegexOffIcon,
   RegexOnIcon,
 } from '@/components/ui/Icons';
+import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { useColorModeValue } from '@/hooks/useColorMode';
 import { type TRootState } from '@/store';
 import { type UUID } from '@/store/common/identifier';
@@ -35,7 +36,6 @@ import { ButtonGroup, HStack, Input } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { FilterComponentTagSelector } from './FilterComponentTagSelector';
-import { DraggableList } from '@/components/ui/lists/DraggableList';
 
 type TFilterComponentProps = {
   tabId: UUID;
@@ -43,28 +43,8 @@ type TFilterComponentProps = {
   componentId: UUID;
 };
 
-const FilterComponentImpl = (props: TFilterComponentProps & TPropsFromRedux) => {
-  const border = useColorModeValue('gray.500', 'gray.500');
-
-  const handleToggleIsRegexClick = () => {
-    props.toggleComponentIsRegex(props.componentId);
-  };
-
-  const handleToggleIsEqualsClick = () => {
-    props.toggleComponentIsEquals(props.componentId);
-  };
-
-  const handletoggleFilterComponentIgnoreCaseClick = () => {
-    props.toggleFilterComponentIgnoreCase(props.componentId);
-  };
-
-  const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setComponentData(props.componentId, event.target.value);
-  };
-
-  const handleDeleteClick = () => {
-    props.deleteFilterComponent(props.filterId, props.componentId);
-  };
+const FilterComponentImpl: React.FC<TFilterComponentProps & TPropsFromRedux> = props => {
+  const borderColor = useColorModeValue('gray.500', 'gray.500');
 
   return (
     <DraggableList.Item id={props.componentId}>
@@ -74,7 +54,9 @@ const FilterComponentImpl = (props: TFilterComponentProps & TPropsFromRedux) => 
           colorPalette='red'
           variant='subtle'
           tooltip='Delete component'
-          onClick={handleDeleteClick}
+          onClick={() => {
+            props.deleteFilterComponent(props.filterId, props.componentId);
+          }}
         >
           <DeleteIcon />
         </TooltipIconButton>
@@ -89,30 +71,40 @@ const FilterComponentImpl = (props: TFilterComponentProps & TPropsFromRedux) => 
         <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
           <TooltipIconButton
             tooltip={props.component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
-            onClick={handleToggleIsRegexClick}
+            onClick={() => {
+              props.toggleComponentIsRegex(props.componentId);
+            }}
           >
             {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
           </TooltipIconButton>
+
           <TooltipIconButton
             tooltip={`Toggle Case: (Now ${props.component.ignoreCase ? 'Ignore' : 'Match'})`}
-            onClick={handletoggleFilterComponentIgnoreCaseClick}
+            onClick={() => {
+              props.toggleFilterComponentIgnoreCase(props.componentId);
+            }}
           >
             {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
           </TooltipIconButton>
+
           <TooltipIconButton
             tooltip={`Toggle: (Now ${props.component.isEquals ? '' : 'Not '}Equals)`}
-            onClick={handleToggleIsEqualsClick}
+            onClick={() => {
+              props.toggleComponentIsEquals(props.componentId);
+            }}
           >
             {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
           </TooltipIconButton>
         </ButtonGroup>
 
         <Input
-          borderColor={border}
+          borderColor={borderColor}
           colorPalette='green'
           defaultValue={props.component.data}
           placeholder='Filter'
-          onChange={handleDataChange}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            props.setComponentData(props.componentId, event.target.value);
+          }}
         />
 
         <DraggableList.ItemHandle />

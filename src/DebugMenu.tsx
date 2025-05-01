@@ -6,7 +6,7 @@
  *
  * @file DebugMenu.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Debug tools menu.
  */
 
@@ -20,24 +20,16 @@ type TDebugMenuProps = {
   onStrictModeToggle: () => void;
 };
 
-export const DebugMenu = ({ strictModeOn, onStrictModeToggle }: TDebugMenuProps) => {
+export const DebugMenu: React.FC<TDebugMenuProps> = props => {
   return (
-    <Box
-      style={{
-        position: 'fixed',
-        top: '10px',
-        right: '10px',
-        zIndex: 8888,
-        display: 'flex',
-      }}
-    >
+    <Box position='fixed' top='10px' right='10px' zIndex='8888' display='flex'>
       <ButtonGroup size='xs'>
         <TooltipIconButton
-          tooltip={strictModeOn ? 'Toggle strict mode off' : 'Toggle strict mode on'}
-          onClick={onStrictModeToggle}
-          colorPalette={strictModeOn ? 'green' : 'orange'}
+          tooltip={props.strictModeOn ? 'Toggle strict mode off' : 'Toggle strict mode on'}
+          onClick={props.onStrictModeToggle}
+          colorPalette={props.strictModeOn ? 'green' : 'orange'}
         >
-          {strictModeOn ? <PiMaskHappy /> : <PiMaskSad />}
+          {props.strictModeOn ? <PiMaskHappy /> : <PiMaskSad />}
         </TooltipIconButton>
         <ColorModeButton />
       </ButtonGroup>

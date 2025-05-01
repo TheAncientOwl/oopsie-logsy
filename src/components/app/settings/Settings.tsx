@@ -6,7 +6,7 @@
  *
  * @file Settings.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description App settings
  */
 
@@ -20,23 +20,24 @@ import {
   LogRegexConfiguratorTrigger,
 } from './log-regex-configurator/LogRegexConfigurator';
 import { LogsImportButton } from './logs-importer/LogsImporter';
+import React from 'react';
 
 type TSettingsProps = {
   menuOpen: boolean;
   onMenuClose: () => void;
 };
 
-export const Settings = ({ menuOpen, onMenuClose }: TSettingsProps) => {
-  const bg = useColorModeValue('white', 'gray.900');
-  const border = useColorModeValue('gray.700', 'gray.500');
+export const Settings: React.FC<TSettingsProps> = props => {
+  const bgColor = useColorModeValue('white', 'gray.900');
+  const borderColor = useColorModeValue('gray.700', 'gray.500');
 
   return (
-    <Collapsible.Root open={menuOpen} position='fixed' top='0' left='0' zIndex={10000}>
+    <Collapsible.Root open={props.menuOpen} position='fixed' top='0' left='0' zIndex={10000}>
       <Collapsible.Content>
         <Box
-          bg={bg}
+          bgColor={bgColor}
           border='1px solid'
-          borderColor={border}
+          borderColor={borderColor}
           height='100vh'
           width='min(700px,100vw)'
           padding={'0.5em'}
@@ -48,7 +49,7 @@ export const Settings = ({ menuOpen, onMenuClose }: TSettingsProps) => {
               colorPalette='blue'
               variant='outline'
               size='md'
-              onClick={onMenuClose}
+              onClick={props.onMenuClose}
             >
               <SettingsIcon />
             </TooltipIconButton>

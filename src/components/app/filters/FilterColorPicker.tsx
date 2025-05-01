@@ -6,7 +6,7 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Pick fg/bg colors of logs.
  */
 
@@ -27,26 +27,22 @@ type TColorPickerProps = TPropsFromRedux & {
 };
 
 const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
-  const handleFgColorPick = (details: ColorPickerValueChangeDetails) => {
-    props.setFilterFg(props.filterId, details.valueAsString);
-  };
-
-  const handleBgColorPick = (details: ColorPickerValueChangeDetails) => {
-    props.setFilterBg(props.filterId, details.valueAsString);
-  };
-
   return (
     <HStack>
       <UltraColorPicker
         label='Foreground'
         defaultValue={props.defaultColors.fg}
-        onValueChangeEnd={handleFgColorPick}
+        onValueChangeEnd={(details: ColorPickerValueChangeDetails) => {
+          props.setFilterFg(props.filterId, details.valueAsString);
+        }}
         onValueChange={props.onColorChangeFg}
       />
       <UltraColorPicker
         label='Background'
         defaultValue={props.defaultColors.bg}
-        onValueChangeEnd={handleBgColorPick}
+        onValueChangeEnd={(details: ColorPickerValueChangeDetails) => {
+          props.setFilterBg(props.filterId, details.valueAsString);
+        }}
         onValueChange={props.onColorChangeBg}
       />
     </HStack>

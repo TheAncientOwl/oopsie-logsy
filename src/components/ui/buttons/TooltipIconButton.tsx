@@ -6,19 +6,20 @@
  *
  * @file TooltipIconButton.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ChakraUI icon button with tooltip property
  */
 
-import { Tooltip } from '@/components/ui/Tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import type { IconButtonProps } from '@chakra-ui/react';
 import { IconButton } from '@chakra-ui/react';
+import React from 'react';
 
-export type TooltipIconButtonProps = IconButtonProps & {
+type TTooltipIconButtonProps = {
   tooltip?: string;
 };
 
-export const TooltipIconButton = (props: TooltipIconButtonProps) => {
+export const TooltipIconButton: React.FC<TTooltipIconButtonProps & IconButtonProps> = props => {
   return (
     <Tooltip content={props.tooltip}>
       <IconButton {...props} />
