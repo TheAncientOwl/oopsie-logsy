@@ -6,11 +6,11 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description LogRegexTags data.
  */
 
-import { v7 as uuidv7 } from 'uuid';
+import { uuid } from '@/store/common/identifier';
 
 // <types>
 export type TRegexTag = {
@@ -36,7 +36,7 @@ export const checkCanApply = (tags: Array<TRegexTag>) => {
 // <data>
 export const DefaultFactory = {
   makeTag: (name: string = 'NewTag') => ({
-    id: uuidv7(),
+    id: uuid(),
     displayed: true,
     regex: '.*',
     name: name,

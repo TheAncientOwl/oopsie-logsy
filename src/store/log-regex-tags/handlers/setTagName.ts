@@ -6,10 +6,11 @@
  *
  * @file setTagName.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description SetTagName handler.
  */
 
+import { type UUID } from '@/store/common/identifier';
 import {
   basicDispatcher,
   type IBasicStoreHandler,
@@ -21,7 +22,7 @@ import { checkCanApply, type TStoreState } from '../data';
 const action = EActionType.SetTagName;
 
 type TPayload = {
-  targetId: string;
+  targetId: UUID;
   newName: string;
 };
 
@@ -31,7 +32,7 @@ export const setTagName: IBasicStoreHandler<
   TStoreState,
   EActionType,
   TPayload,
-  [targetId: string, newName: string]
+  [targetId: UUID, newName: string]
 > = {
   action,
 

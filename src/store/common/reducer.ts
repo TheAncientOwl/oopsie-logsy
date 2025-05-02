@@ -6,7 +6,7 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Common reducer utilities.
  */
 
@@ -16,27 +16,37 @@ export type TReducerMap<EActionType extends string, TStoreState> = Partial<
   Record<EActionType, (state: TStoreState, payload: any) => TStoreState>
 >;
 
+export const NoBasicHandlers = undefined;
+export const NoApiCallHandlers = undefined;
+export const NoStoreChangeListeners = undefined;
+
 export const makeReducerMap = <EActionType extends string, TStoreState>(
-  basicHandlers: undefined | Array<IBasicStoreHandler<TStoreState, EActionType, any, any[]>>,
-  apiCallHandlers?: undefined | Array<IApiCallStoreHandler<any, any, EActionType, any, any, any>>,
-  storeChangeListeners?: undefined | Array<IStoreChangeListener<TStoreState, any, EActionType>>
+  basicHandlers:
+    | typeof NoBasicHandlers
+    | Array<IBasicStoreHandler<TStoreState, EActionType, any, any[]>>,
+  apiCallHandlers?:
+    | typeof NoApiCallHandlers
+    | Array<IApiCallStoreHandler<any, any, EActionType, any, any, any>>,
+  storeChangeListeners?:
+    | typeof NoStoreChangeListeners
+    | Array<IStoreChangeListener<TStoreState, any, EActionType>>
 ): TReducerMap<EActionType, TStoreState> => {
   const map: TReducerMap<EActionType, TStoreState> = {};
 
-  if (basicHandlers !== undefined) {
+  if (basicHandlers !== NoBasicHandlers) {
     for (const handler of basicHandlers) {
       map[handler.action] = handler.reduce;
     }
   }
 
-  if (apiCallHandlers !== undefined) {
+  if (apiCallHandlers !== NoApiCallHandlers) {
     for (const handler of apiCallHandlers) {
       map[handler.action.ok] = handler.reduce.ok;
       map[handler.action.nok] = handler.reduce.nok;
     }
   }
 
-  if (storeChangeListeners !== undefined) {
+  if (storeChangeListeners !== NoStoreChangeListeners) {
     for (const listener of storeChangeListeners) {
       map[listener.action] = listener.reduce;
     }

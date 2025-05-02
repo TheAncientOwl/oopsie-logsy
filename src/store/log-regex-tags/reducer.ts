@@ -6,11 +6,11 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description LogRegexTags data reducer.
  */
 
-import { makeReducer, makeReducerMap } from '../common/reducer';
+import { makeReducer, makeReducerMap, NoStoreChangeListeners } from '../common/reducer';
 import { EActionType, type TDispatchTypes } from './actions';
 import { defaultState, type TStoreState } from './data';
 
@@ -19,7 +19,7 @@ import { apiCallHandlers, basicHandlers } from './handlers';
 const reducerMap = makeReducerMap<EActionType, TStoreState>(
   basicHandlers,
   apiCallHandlers,
-  undefined
+  NoStoreChangeListeners
 );
 
 export const logRegexTagsReducer = makeReducer<TStoreState, EActionType, TDispatchTypes>(
