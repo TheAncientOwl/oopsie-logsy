@@ -6,7 +6,7 @@
  *
  * @file FilterComponent.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Filter component.
  */
 
@@ -19,9 +19,8 @@ import {
   NotEqualsIcon,
   RegexOffIcon,
   RegexOnIcon,
-} from '@/components/ui/Icons';
+} from '@/components/ui/icons';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
-import { useColorModeValue } from '@/hooks/useColorMode';
 import { type TRootState } from '@/store';
 import { type UUID } from '@/store/common/identifier';
 import { getFilterComponentById } from '@/store/filters/data';
@@ -44,19 +43,17 @@ type TFilterComponentProps = {
 };
 
 const FilterComponentImpl: React.FC<TFilterComponentProps & TPropsFromRedux> = props => {
-  const borderColor = useColorModeValue('gray.500', 'gray.500');
-
   return (
     <DraggableList.Item id={props.componentId}>
       <HStack>
         <TooltipIconButton
           size='sm'
-          colorPalette='red'
-          variant='subtle'
           tooltip='Delete component'
           onClick={() => {
             props.deleteFilterComponent(props.filterId, props.componentId);
           }}
+          variant={props.theme.buttons.delete.variant}
+          colorPalette={props.theme.buttons.delete.colorPalette}
         >
           <DeleteIcon />
         </TooltipIconButton>
@@ -68,12 +65,14 @@ const FilterComponentImpl: React.FC<TFilterComponentProps & TPropsFromRedux> = p
           value={props.component.overAlternativeId}
         />
 
-        <ButtonGroup size='xs' colorPalette='green' variant='subtle'>
+        <ButtonGroup size='xs'>
           <TooltipIconButton
             tooltip={props.component.isRegex ? 'Toggle Regex: (Now On)' : 'Toggle Regex: (Now Off)'}
             onClick={() => {
               props.toggleComponentIsRegex(props.componentId);
             }}
+            variant={props.theme.buttons.regex.variant}
+            colorPalette={props.theme.buttons.regex.colorPalette}
           >
             {props.component.isRegex ? <RegexOnIcon /> : <RegexOffIcon />}
           </TooltipIconButton>
@@ -83,6 +82,8 @@ const FilterComponentImpl: React.FC<TFilterComponentProps & TPropsFromRedux> = p
             onClick={() => {
               props.toggleFilterComponentIgnoreCase(props.componentId);
             }}
+            variant={props.theme.buttons.case.variant}
+            colorPalette={props.theme.buttons.case.colorPalette}
           >
             {props.component.ignoreCase ? <IgnoreCaseIcon /> : <MatchCaseIcon />}
           </TooltipIconButton>
@@ -92,22 +93,27 @@ const FilterComponentImpl: React.FC<TFilterComponentProps & TPropsFromRedux> = p
             onClick={() => {
               props.toggleComponentIsEquals(props.componentId);
             }}
+            variant={props.theme.buttons.equals.variant}
+            colorPalette={props.theme.buttons.equals.colorPalette}
           >
             {props.component.isEquals ? <EqualsIcon /> : <NotEqualsIcon />}
           </TooltipIconButton>
         </ButtonGroup>
 
         <Input
-          borderColor={borderColor}
-          colorPalette='green'
           defaultValue={props.component.data}
           placeholder='Filter'
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             props.setComponentData(props.componentId, event.target.value);
           }}
+          backgroundColor={props.theme.input.background}
+          borderColor={props.theme.input.border}
+          color={props.theme.input.text}
+          colorPalette={props.theme.input.colorPalette}
+          variant={props.theme.input.variant}
         />
 
-        <DraggableList.ItemHandle />
+        <DraggableList.ItemHandle color={props.theme.itemHandle} />
       </HStack>
     </DraggableList.Item>
   );
@@ -120,6 +126,7 @@ const mapState = (state: TRootState, ownProps: TFilterComponentProps) => ({
     state.filters.components,
     ownProps.componentId
   ),
+  theme: state.theme.themes[state.theme.activeThemeIndex].filters.component,
 });
 
 const mapDispatch = {

@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description App class
  */
 
@@ -15,12 +15,12 @@ import LogView from '@/components/app/log-view';
 import Settings from '@/components/app/settings';
 import ToolBar from '@/components/app/toolbar';
 import { useSwitch } from '@/hooks/useSwitch';
-import { store } from '@/store';
+import { TRootState } from '@/store';
 import { Box } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 
-export const App = () => {
+const AppImpl: React.FC<TPropsFromRedux> = props => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
   const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(true);
 
@@ -35,8 +35,8 @@ export const App = () => {
   }, []);
 
   return (
-    <ReduxProvider store={store}>
-      <Box height={contentHeight} overflow='scroll'>
+    <>
+      <Box height={contentHeight} overflow='scroll' backgroundColor={props.theme.background}>
         <ToolBar
           _ref={toolbarRef}
           onSettingsOpen={toggleSettingsMenu}
@@ -56,6 +56,19 @@ export const App = () => {
         }}
         filtersOpen={filtersMenuOpen}
       />
-    </ReduxProvider>
+    </>
   );
 };
+
+// <redux>
+const mapState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].general,
+});
+
+const mapDispatch = {};
+
+const connector = connect(mapState, mapDispatch);
+type TPropsFromRedux = ConnectedProps<typeof connector>;
+
+export const App = connector(AppImpl);
+// </redux>

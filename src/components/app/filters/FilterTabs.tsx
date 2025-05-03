@@ -6,14 +6,13 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.30
+ * @version 0.31
  * @description Filters component
  */
 
-import { NewIcon, SaveIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { NewIcon, SaveIcon } from '@/components/ui/icons';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
-import { useColorModeValue } from '@/hooks/useColorMode';
 import { type TRootState } from '@/store';
 import {
   addNewFilterTab,
@@ -41,8 +40,6 @@ const FilterTabsImpl: React.FC<TFiltersProps & TPropsFromRedux> = props => {
   }, []);
 
   const tabsRef = useRef<HTMLDivElement>(null);
-  const bg = useColorModeValue('gray.200', 'gray.900');
-  const boxBorderColor = useColorModeValue('gray.700', 'gray.500');
 
   const startResizing = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -83,23 +80,35 @@ const FilterTabsImpl: React.FC<TFiltersProps & TPropsFromRedux> = props => {
           defaultValue={props.focusedTab}
           value={props.focusedTab}
           ref={tabsRef}
-          bgColor={bg}
+          backgroundColor={props.theme.general.background}
           overflowY='scroll'
           height='400px'
           minH='200px'
           maxH='90vh'
         >
-          <Stack gap='0.5em' top='0' position='sticky' bgColor={bg} pb='0.5em' zIndex={15000}>
+          <Stack
+            gap='0.5em'
+            top='0'
+            position='sticky'
+            backgroundColor={props.theme.general.background}
+            pb='0.5em'
+            zIndex={15000}
+          >
             <Box
               height={DRAG_HANDLE_HEIGHT}
-              bgColor={boxBorderColor}
+              backgroundColor={props.theme.general.dragHandle}
               cursor='row-resize'
               onMouseDown={startResizing}
             />
 
             <HStack>
-              <ButtonGroup ml='0.5em' pt='0.25em' colorPalette='green' size='xs' variant='subtle'>
-                <TooltipIconButton tooltip='New filters tab' onClick={props.addNewFilterTab}>
+              <ButtonGroup ml='0.5em' pt='0.25em' size='xs'>
+                <TooltipIconButton
+                  tooltip='New filters tab'
+                  onClick={props.addNewFilterTab}
+                  variant={props.theme.tabs.buttons.addNewTab.variant}
+                  colorPalette={props.theme.tabs.buttons.addNewTab.colorPalette}
+                >
                   <NewIcon />
                 </TooltipIconButton>
                 <TooltipIconButton
@@ -113,6 +122,8 @@ const FilterTabsImpl: React.FC<TFiltersProps & TPropsFromRedux> = props => {
                       props.overAlternatives
                     );
                   }}
+                  variant={props.theme.tabs.buttons.saveTabs.variant}
+                  colorPalette={props.theme.tabs.buttons.saveTabs.colorPalette}
                 >
                   <SaveIcon />
                 </TooltipIconButton>
@@ -159,6 +170,7 @@ const mapState = (state: TRootState) => ({
   focusedTab: state.filters.focusedTabId,
   canSaveTabs: state.filters.canSaveData,
   overAlternatives: state.filters.overAlternatives,
+  theme: state.theme.themes[state.theme.activeThemeIndex].filters,
 });
 
 const mapDispatch = {

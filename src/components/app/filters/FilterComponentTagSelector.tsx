@@ -6,7 +6,7 @@
  *
  * @file FilterComponentTagSelector.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Tag selector for filter component.
  */
 
@@ -39,7 +39,20 @@ const FilterComponentTagSelectorImpl: React.FC<TFilterComponentTagSelectorProps>
         size: 'md',
         maxWidth: '150px',
         variant: 'outline',
-        color: valid ? '' : 'red',
+        color: valid ? props.theme.text.valid : props.theme.text.invalid,
+        borderColor: props.theme.border,
+        backgroundColor: props.theme.background,
+        overflow: 'hidden',
+      }}
+      content={{
+        backgroundColor: props.theme.alternatives.background,
+        color: props.theme.alternatives.text,
+      }}
+      item={{
+        _hover: {
+          backgroundColor: props.theme.alternatives.hover.background,
+          color: props.theme.alternatives.text,
+        },
       }}
       collection={overAlternatives}
       value={props.value}
@@ -53,6 +66,7 @@ const FilterComponentTagSelectorImpl: React.FC<TFilterComponentTagSelectorProps>
 // <redux>
 const mapState = (state: TRootState) => ({
   overAlternatives: state.filters.overAlternatives,
+  theme: state.theme.themes[state.theme.activeThemeIndex].filters.component.select,
 });
 
 const mapDispatch = {

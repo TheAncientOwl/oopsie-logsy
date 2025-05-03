@@ -6,13 +6,14 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description .
  */
 
 import { thunk } from 'redux-thunk';
 import { filtersTagsReducer } from './filters/reducer';
 import { logRegexTagsReducer } from './log-regex-tags/reducer';
+import { themeReducer } from './theme/reducer';
 
 import { configureStore, Middleware } from '@reduxjs/toolkit';
 
@@ -28,6 +29,7 @@ export const store = configureStore({
   reducer: {
     logRegexTags: logRegexTagsReducer,
     filters: filtersTagsReducer,
+    theme: themeReducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk, storeWatcher),
 });

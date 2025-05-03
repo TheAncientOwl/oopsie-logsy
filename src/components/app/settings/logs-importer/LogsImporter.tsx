@@ -6,16 +6,20 @@
  *
  * @file LogsImporter.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Import logs button
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { ImportIcon } from '@/components/ui/Icons';
+import { ImportIcon } from '@/components/ui/icons';
+import { TRootState } from '@/store';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
+import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 
-export const LogsImportButton = () => {
+// TODO: Make this a tab
+const LogsImporterImpl: React.FC<TPropsFromRedux> = props => {
   // TODO: use array of log files instead of single file
   const handleImportClick = async () => {
     const selectedFile = await open({
@@ -27,12 +31,12 @@ export const LogsImportButton = () => {
       try {
         const response = await invoke('set_current_log_paths', { paths: [selectedFile] });
         console.info(
-          `${LogsImportButton.name}::${handleImportClick.name}`,
+          `${LogsImporterImpl.name}::${handleImportClick.name}`,
           `rust response: ${response}`
         );
       } catch (error) {
         console.error(
-          `${LogsImportButton.name}::${handleImportClick.name}`,
+          `${LogsImporterImpl.name}::${handleImportClick.name}`,
           `error sending log file paths: ${error}`
         );
       }
@@ -42,11 +46,24 @@ export const LogsImportButton = () => {
   return (
     <TooltipIconButton
       tooltip='Import logs'
-      colorPalette='green'
-      variant='outline'
       onClick={handleImportClick}
+      variant={props.theme.button.variant}
+      colorPalette={props.theme.button.colorPalette}
     >
       <ImportIcon />
     </TooltipIconButton>
   );
 };
+
+// <redux>
+const mapState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].settings.logsImporter,
+});
+
+const mapDispatch = {};
+
+const connector = connect(mapState, mapDispatch);
+type TPropsFromRedux = ConnectedProps<typeof connector>;
+
+export const LogsImporter = connector(LogsImporterImpl);
+// </redux>

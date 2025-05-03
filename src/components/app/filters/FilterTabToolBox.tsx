@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Filter tab related tools.
  */
 
@@ -24,8 +24,7 @@ import {
   NewIcon,
   SoundOffIcon,
   SoundOnIcon,
-} from '@/components/ui/Icons';
-import { useColorModeValue } from '@/hooks/useColorMode';
+} from '@/components/ui/icons';
 import { useSwitch } from '@/hooks/useSwitch';
 import { type TRootState } from '@/store';
 import {
@@ -48,8 +47,6 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
     `Failed to find focused tab with id ${props.focusedTabId}`
   );
 
-  const borderColor = useColorModeValue('gray.500', 'gray.500');
-
   const [doubleCheckDeleteShown, toggleDeleteDoubleCheck] = useSwitch(false);
   const [doubleCheckClearShown, toggleClearDoubleCheck] = useSwitch(false);
 
@@ -57,15 +54,23 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
   return (
     <>
       <HStack padding='0 0.5em'>
-        <ButtonGroup size='sm' variant='subtle' colorPalette='green'>
-          <TooltipIconButton tooltip='Apply filters' disabled>
+        <ButtonGroup size='sm'>
+          <TooltipIconButton
+            tooltip='Apply filters'
+            disabled
+            variant={props.theme.buttons.filters.apply.variant}
+            colorPalette={props.theme.buttons.filters.apply.colorPalette}
+          >
             <ApplyIcon />
           </TooltipIconButton>
+
           <TooltipIconButton
             tooltip='New filter'
             onClick={() => {
               props.addNewFilter(props.focusedTabId);
             }}
+            variant={props.theme.buttons.filters.add.variant}
+            colorPalette={props.theme.buttons.filters.add.colorPalette}
           >
             <NewIcon />
           </TooltipIconButton>
@@ -78,33 +83,44 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
               props.unmuteAllFilters(props.focusedTabId);
             }}
             // disabled={focusedTab?.filterIDs.every(filter => filter.isActive)}
+            variant={props.theme.buttons.filters.unmute.variant}
+            colorPalette={props.theme.buttons.filters.unmute.colorPalette}
           >
             <SoundOnIcon />
           </TooltipIconButton>
+
           <TooltipIconButton
             tooltip='Mute all'
             onClick={() => {
               props.muteAllFilters(props.focusedTabId);
             }}
             // disabled={focusedTab?.filterIDs.every(filter => !filter.isActive)}
+            variant={props.theme.buttons.filters.mute.variant}
+            colorPalette={props.theme.buttons.filters.mute.colorPalette}
           >
             <SoundOffIcon />
           </TooltipIconButton>
+
           <TooltipIconButton
             tooltip='Collapse All'
             onClick={() => {
               props.setAllFiltersCollapsed(props.focusedTabId, true);
             }}
             // disabled={focusedTab?.filterIDs.every(filter => filter.collapsed)}
+            variant={props.theme.buttons.filters.collapse.variant}
+            colorPalette={props.theme.buttons.filters.collapse.colorPalette}
           >
             <CollapseIcon />
           </TooltipIconButton>
+
           <TooltipIconButton
             tooltip='Expand All'
             onClick={() => {
               props.setAllFiltersCollapsed(props.focusedTabId, false);
             }}
             // disabled={focusedTab?.filterIDs.every(filter => !filter.collapsed)}
+            variant={props.theme.buttons.filters.expand.variant}
+            colorPalette={props.theme.buttons.filters.expand.colorPalette}
           >
             <ExpandIcon />
           </TooltipIconButton>
@@ -116,20 +132,26 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
             onClick={() => {
               props.duplicateFiltersTab(props.focusedTabId);
             }}
+            variant={props.theme.buttons.tab.duplicate.variant}
+            colorPalette={props.theme.buttons.tab.duplicate.colorPalette}
           >
             <DuplicateIcon />
           </TooltipIconButton>
+
           <TooltipIconButton
-            colorPalette='red'
             tooltip='Clear filters'
             onClick={toggleClearDoubleCheck}
+            variant={props.theme.buttons.tab.clear.variant}
+            colorPalette={props.theme.buttons.tab.clear.colorPalette}
           >
             <ClearIcon />
           </TooltipIconButton>
+
           <TooltipIconButton
-            colorPalette='red'
             tooltip='Delete Tab'
             onClick={toggleDeleteDoubleCheck}
+            variant={props.theme.buttons.tab.delete.variant}
+            colorPalette={props.theme.buttons.tab.delete.colorPalette}
           >
             <DeleteIcon />
           </TooltipIconButton>
@@ -138,13 +160,15 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
         </ButtonGroup>
 
         <Input
-          borderColor={borderColor}
-          colorPalette='green'
           placeholder='Filter Tab Name'
           value={props.focusedTab?.name}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             props.setFilterTabName(props.focusedTabId, event.target.value);
           }}
+          color={props.theme.input.text}
+          backgroundColor={props.theme.input.background}
+          colorPalette={props.theme.input.colorPalette}
+          variant={props.theme.input.variant}
         />
       </HStack>
 
@@ -185,6 +209,7 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
 const mapState = (state: TRootState) => ({
   focusedTabId: state.filters.focusedTabId,
   focusedTab: state.filters.tabs.find(tab => tab.id === state.filters.focusedTabId),
+  theme: state.theme.themes[state.theme.activeThemeIndex].filters.toolbox,
 });
 
 const mapDispatch = {

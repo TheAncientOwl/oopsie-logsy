@@ -6,15 +6,16 @@
  *
  * @file RegexTagItem.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description LogRegexConfigurator regex tag item.
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { DoubleCheck } from '@/components/ui/DoubleCheck';
-import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/Icons';
+import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/icons';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { useSwitch } from '@/hooks/useSwitch';
+import { TRootState } from '@/store';
 import { TRegexTag } from '@/store/log-regex-tags/data';
 import {
   removeTag,
@@ -44,8 +45,8 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
         <TooltipIconButton
           onClick={toggleDeleteDoubleCheck}
           tooltip='Delete tag'
-          colorPalette='red'
-          variant='subtle'
+          variant={props.theme.buttons.delete.variant}
+          colorPalette={props.theme.buttons.delete.colorPalette}
         >
           <DeleteIcon />
         </TooltipIconButton>
@@ -58,8 +59,8 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
             }
           }}
           tooltip={props.tag.displayed ? 'Hide tag in log view' : 'Show tag in log view'}
-          colorPalette='green'
-          variant='subtle'
+          variant={props.theme.buttons.hide.variant}
+          colorPalette={props.theme.buttons.hide.colorPalette}
         >
           {props.tag.displayed ? <EyeOpenIcon /> : <EyeClosedIcon />}
         </TooltipIconButton>
@@ -68,6 +69,7 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             props.setTagName(props.tag.id, event.target.value);
           }}
+          backgroundColor={props.generalTheme.colors.background}
         />
         <Input
           defaultValue={props.tag.regex}
@@ -75,9 +77,10 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
             props.setTagRegex(props.tag.id, event.target.value);
           }}
           colorPalette={props.tag.regex.length > 0 ? 'current' : 'red'}
+          backgroundColor={props.generalTheme.colors.background}
         />
 
-        <DraggableList.ItemHandle />
+        <DraggableList.ItemHandle color={props.theme.itemHandleColor} />
       </HStack>
 
       <DoubleCheck
@@ -116,7 +119,10 @@ const RegexTagItemImpl: React.FC<TRegexTagItemProps> = props => {
 };
 
 // <redux>
-const mapState = () => ({});
+const mapState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].settings.regexConfigurator,
+  generalTheme: state.theme.themes[state.theme.activeThemeIndex].settings.general,
+});
 
 const mapDispatch = {
   removeTag: removeTag.dispatch,

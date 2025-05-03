@@ -6,12 +6,14 @@
  *
  * @file tooltip.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Tooltip component
  */
 
+import { TRootState } from '@/store';
 import { Tooltip as ChakraTooltip, Portal } from '@chakra-ui/react';
 import * as React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 
 export type TTooltipProps = ChakraTooltip.RootProps & {
   showArrow?: boolean;
@@ -22,7 +24,7 @@ export type TTooltipProps = ChakraTooltip.RootProps & {
   disabled?: boolean;
 };
 
-export const Tooltip = React.forwardRef<HTMLDivElement, TTooltipProps>(
+const TooltipImpl = React.forwardRef<HTMLDivElement, TTooltipProps & TPropsFromRedux>(
   function Tooltip(props, ref) {
     const {
       showArrow,
@@ -42,7 +44,13 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TTooltipProps>(
         <ChakraTooltip.Trigger asChild>{children}</ChakraTooltip.Trigger>
         <Portal disabled={!portalled} container={portalRef}>
           <ChakraTooltip.Positioner>
-            <ChakraTooltip.Content zIndex='10000' ref={ref} {...contentProps}>
+            <ChakraTooltip.Content
+              zIndex='10000'
+              ref={ref}
+              color={props.theme.tooltip.text}
+              backgroundColor={props.theme.tooltip.background}
+              {...contentProps}
+            >
               {showArrow && (
                 <ChakraTooltip.Arrow>
                   <ChakraTooltip.ArrowTip />
@@ -56,3 +64,16 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TTooltipProps>(
     );
   }
 );
+
+// <redux>
+const mapState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].general,
+});
+
+const mapDispatch = {};
+
+const connector = connect(mapState, mapDispatch);
+type TPropsFromRedux = ConnectedProps<typeof connector>;
+
+export const Tooltip = connector(TooltipImpl);
+// </redux>

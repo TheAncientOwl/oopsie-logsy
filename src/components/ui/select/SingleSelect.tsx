@@ -6,11 +6,10 @@
  *
  * @file SingleSelect.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description SingleSelect Chakra UI wrapper.
  */
 
-import { useColorModeValue } from '@/hooks/useColorMode';
 import {
   ListCollection,
   Select,
@@ -27,14 +26,14 @@ type TListItem = {
 
 type TSingleSelectProps<T extends TListItem> = {
   root?: Partial<SelectRootProps<T>>;
+  content?: Partial<Select.ContentProps>;
+  item?: Partial<Select.ItemProps>;
   collection: ListCollection<T>;
   value: string;
   onChange: (newValue: string) => void;
 };
 
 export const SingleSelect = <T extends TListItem>(props: TSingleSelectProps<T>) => {
-  const borderColor = useColorModeValue('gray.500', 'gray.500');
-
   const value = useMemo(() => [props.value], [props.value]);
 
   return (
@@ -50,16 +49,16 @@ export const SingleSelect = <T extends TListItem>(props: TSingleSelectProps<T>) 
       <Select.HiddenSelect />
 
       <Select.Control>
-        <Select.Trigger cursor='pointer' borderColor={borderColor}>
+        <Select.Trigger cursor='pointer' borderColor={props.root?.borderColor}>
           <Select.ValueText placeholder={props.value} />
         </Select.Trigger>
       </Select.Control>
 
       <Select.Positioner>
-        <Select.Content>
+        <Select.Content zIndex={100000} {...props.content}>
           <For each={props.collection.items}>
             {item => (
-              <Select.Item item={item} key={item.value}>
+              <Select.Item item={item} key={item.value} cursor='pointer'>
                 {item.label}
               </Select.Item>
             )}

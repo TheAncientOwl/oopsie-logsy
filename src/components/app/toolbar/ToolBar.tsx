@@ -6,17 +6,16 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description App main toolbar
  */
 
-import { SettingsIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { useColorModeValue } from '@/hooks/useColorMode';
+import { FiltersIcon, NextIcon, PrevIcon, SettingsIcon } from '@/components/ui/icons';
+import { TRootState } from '@/store';
 import { ButtonGroup, Flex, Input } from '@chakra-ui/react';
 import React from 'react';
-import { BsArrowLeft, BsArrowRight } from 'react-icons/bs';
-import { GiSettingsKnobs } from 'react-icons/gi';
+import { connect, ConnectedProps } from 'react-redux';
 
 type TToolBarProps = {
   onSettingsOpen: () => void;
@@ -24,37 +23,75 @@ type TToolBarProps = {
   _ref: React.RefObject<HTMLDivElement>;
 };
 
-export const ToolBar: React.FC<TToolBarProps> = props => {
-  const bgColor = useColorModeValue('white', 'black');
-
+const ToolBarImpl: React.FC<TToolBarProps & TPropsFromRedux> = props => {
   return (
     <Flex
       ref={props._ref}
       position='sticky'
       top='0'
-      bgColor={bgColor}
       padding='0.5em'
       gap='0.5em'
       justify='center'
       alignItems='center'
+      backgroundColor={props.theme.background}
     >
       <Flex gap='0.25em'>
-        <ButtonGroup colorPalette='green' variant='outline'>
-          <TooltipIconButton tooltip='Open Settings' onClick={props.onSettingsOpen}>
+        <ButtonGroup>
+          <TooltipIconButton
+            tooltip='Open Settings'
+            onClick={props.onSettingsOpen}
+            variant={props.theme.buttons.settings.variant}
+            colorPalette={props.theme.buttons.settings.colorPalette}
+          >
             <SettingsIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Toggle filters' onClick={props.onFiltersToggle}>
-            <GiSettingsKnobs />
+
+          <TooltipIconButton
+            tooltip='Toggle filters'
+            onClick={props.onFiltersToggle}
+            variant={props.theme.buttons.filters.variant}
+            colorPalette={props.theme.buttons.filters.colorPalette}
+          >
+            <FiltersIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Prev'>
-            <BsArrowLeft />
+
+          <TooltipIconButton
+            tooltip='Prev'
+            variant={props.theme.buttons.prev.variant}
+            colorPalette={props.theme.buttons.prev.colorPalette}
+          >
+            <PrevIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Next'>
-            <BsArrowRight />
+
+          <TooltipIconButton
+            tooltip='Next'
+            variant={props.theme.buttons.next.variant}
+            colorPalette={props.theme.buttons.next.colorPalette}
+          >
+            <NextIcon />
           </TooltipIconButton>
         </ButtonGroup>
       </Flex>
-      <Input colorPalette='green' variant='subtle' placeholder='search' />
+      <Input
+        placeholder='search'
+        backgroundColor={props.theme.input.background}
+        colorPalette={props.theme.input.colorPalette}
+        variant={props.theme.input.variant}
+        color={props.theme.input.text}
+      />
     </Flex>
   );
 };
+
+// <redux>
+const mapState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].toolbar,
+});
+
+const mapDispatch = {};
+
+const connector = connect(mapState, mapDispatch);
+type TPropsFromRedux = ConnectedProps<typeof connector>;
+
+export const ToolBar = connector(ToolBarImpl);
+// </redux>

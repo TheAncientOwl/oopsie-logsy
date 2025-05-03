@@ -4,9 +4,9 @@
  * -------------------------------------------------------------------------- *
  * @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
  *
- * @file ThemeProvider.tsx
+ * @file ChakraThemeProvider.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description ChakraUI theme provider
  */
 
@@ -16,7 +16,7 @@ import React, { type PropsWithChildren } from 'react';
 
 type ThemeProviderProps = PropsWithChildren<{}>;
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = props => {
+export const ChakraThemeProvider: React.FC<ThemeProviderProps> = props => {
   return (
     <ChakraProvider value={defaultSystem}>
       <NextThemeProvider attribute='class' disableTransitionOnChange children={props.children} />

@@ -6,10 +6,10 @@
  *
  * @file index.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Theme index
  */
 
-import { ThemeProvider } from '@/components/app/theme/ThemeProvider';
+import { ChakraThemeProvider } from '@/components/app/theme/ChakraThemeProvider';
 
-export default ThemeProvider;
+export default ChakraThemeProvider;

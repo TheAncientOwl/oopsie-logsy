@@ -6,12 +6,12 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Configure log line regex for parsing
  */
 
-import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/Icons';
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
+import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/icons';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { For } from '@/components/ui/utils/For';
 import { type TRootState } from '@/store';
@@ -32,14 +32,29 @@ const mergeRegexSequences = (tags: Array<TRegexTag>): string => {
   return tags.map(tag => (tag.displayed ? `(${tag.regex})` : tag.regex)).join('');
 };
 
-export const LogRegexConfiguratorTrigger = () => {
+export const LogRegexConfiguratorTriggerImpl: React.FC<TTriggerPropsFromRedux> = props => {
   return (
     <HStack alignItems='center' justifyContent='center' cursor='button'>
-      <GrConfigure />
-      <Heading size='md'>Regex configurator</Heading>
+      <GrConfigure color={props.theme.colors.text} />
+      <Heading size='md' color={props.theme.colors.text}>
+        Regex configurator
+      </Heading>
     </HStack>
   );
 };
+
+// <redux>
+const mapTriggerState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].settings.general,
+});
+
+const mapTriggerDispatch = {};
+
+const triggerConnector = connect(mapTriggerState, mapTriggerDispatch);
+type TTriggerPropsFromRedux = ConnectedProps<typeof triggerConnector>;
+
+export const LogRegexConfiguratorTrigger = triggerConnector(LogRegexConfiguratorTriggerImpl);
+// </redux>
 
 const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
   useEffect(() => {
@@ -50,10 +65,18 @@ const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
     <Stack>
       <HStack>
         <ButtonGroup colorPalette='blue' variant='subtle' size='md'>
-          <TooltipIconButton tooltip='Import configuration'>
+          <TooltipIconButton
+            tooltip='Import configuration'
+            variant={props.theme.buttons.import.variant}
+            colorPalette={props.theme.buttons.import.colorPalette}
+          >
             <ImportIcon />
           </TooltipIconButton>
-          <TooltipIconButton tooltip='Export configuration'>
+          <TooltipIconButton
+            tooltip='Export configuration'
+            variant={props.theme.buttons.export.variant}
+            colorPalette={props.theme.buttons.export.colorPalette}
+          >
             <ExportIcon />
           </TooltipIconButton>
         </ButtonGroup>
@@ -61,21 +84,28 @@ const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
       </HStack>
 
       <HStack>
-        <ButtonGroup variant='surface'>
-          <TooltipIconButton onClick={props.addNewTag} tooltip='New tag' colorPalette='green'>
-            <NewIcon />
-          </TooltipIconButton>
-          <TooltipIconButton
-            onClick={() => props.invokeSetTags(props.tags)}
-            disabled={!props.canApply}
-            tooltip='Apply regex'
-            colorPalette='green'
-          >
-            <ApplyIcon />
-          </TooltipIconButton>
-        </ButtonGroup>
+        <TooltipIconButton
+          onClick={props.addNewTag}
+          tooltip='New tag'
+          variant={props.theme.buttons.newTag.variant}
+          colorPalette={props.theme.buttons.newTag.colorPalette}
+        >
+          <NewIcon />
+        </TooltipIconButton>
+
+        <TooltipIconButton
+          onClick={() => props.invokeSetTags(props.tags)}
+          disabled={!props.canApply}
+          tooltip='Apply regex'
+          variant={props.theme.buttons.apply.variant}
+          colorPalette={props.theme.buttons.apply.colorPalette}
+        >
+          <ApplyIcon />
+        </TooltipIconButton>
+
         <Input disabled cursor='default' value='Tag Name' />
         <Input disabled cursor='default' value='Tag Regex' />
+
         <DraggableList.ItemHandle disabled />
       </HStack>
 
@@ -97,6 +127,7 @@ const mapState = (state: TRootState) => ({
   tags: state.logRegexTags.tags,
   canApply: state.logRegexTags.canApplyTags,
   loading: state.logRegexTags.loading,
+  theme: state.theme.themes[state.theme.activeThemeIndex].settings.regexConfigurator,
 });
 
 const mapDispatch = {

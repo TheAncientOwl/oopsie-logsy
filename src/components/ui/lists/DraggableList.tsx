@@ -6,11 +6,12 @@
  *
  * @file DraggableList.tsx
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Draggable list.
  */
 
 import { type UUID } from '@/store/common/identifier';
+import { TColor } from '@/store/theme/data';
 import { Box, Icon } from '@chakra-ui/react';
 import {
   closestCorners,
@@ -28,7 +29,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import React, { createContext, PropsWithChildren, useCallback, useContext } from 'react';
-import { DragIcon } from '../Icons';
+import { DragIcon } from '../icons';
 
 type TDragHandleContext = {
   attributes: ReturnType<typeof useSortable>['attributes'];
@@ -45,6 +46,7 @@ const useDragHandle = () => {
 
 type TDraggableListItemHandleProps = {
   disabled?: boolean;
+  color?: TColor;
 };
 
 const DraggableListItemHandle: React.FC<TDraggableListItemHandleProps> = props => {
@@ -54,7 +56,7 @@ const DraggableListItemHandle: React.FC<TDraggableListItemHandleProps> = props =
 
   return (
     <Box cursor={props.disabled ? 'disabled' : 'grab'} {...attributes} {...listeners}>
-      <Icon as={DragIcon} color={props.disabled ? 'gray.500' : ''} />
+      <Icon as={DragIcon} color={props.disabled ? 'gray.500' : props.color} />
     </Box>
   );
 };
