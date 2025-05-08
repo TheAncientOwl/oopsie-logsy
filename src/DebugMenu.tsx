@@ -6,7 +6,7 @@
  *
  * @file DebugMenu.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Debug tools menu.
  */
 
@@ -22,7 +22,7 @@ type TDebugMenuProps = {
 
 export const DebugMenu: React.FC<TDebugMenuProps> = props => {
   return (
-    <Box position='fixed' top='10px' right='10px' zIndex='8888' display='flex'>
+    <Box position='fixed' top='10px' right='10px' zIndex={7000} display='flex'>
       <ButtonGroup size='xs'>
         <TooltipIconButton
           tooltip={props.strictModeOn ? 'Toggle strict mode off' : 'Toggle strict mode on'}

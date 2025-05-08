@@ -6,7 +6,7 @@
  *
  * @file SingleSelect.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description SingleSelect Chakra UI wrapper.
  */
 
@@ -55,7 +55,7 @@ export const SingleSelect = <T extends TListItem>(props: TSingleSelectProps<T>) 
       </Select.Control>
 
       <Select.Positioner>
-        <Select.Content zIndex={100000} {...props.content}>
+        <Select.Content zIndex={1500} {...props.content}>
           <For each={props.collection.items}>
             {item => (
               <Select.Item item={item} key={item.value} cursor='pointer'>

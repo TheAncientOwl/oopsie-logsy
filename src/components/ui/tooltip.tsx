@@ -6,7 +6,7 @@
  *
  * @file tooltip.tsx
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Tooltip component
  */
 
@@ -45,7 +45,7 @@ const TooltipImpl = React.forwardRef<HTMLDivElement, TTooltipProps & TPropsFromR
         <Portal disabled={!portalled} container={portalRef}>
           <ChakraTooltip.Positioner>
             <ChakraTooltip.Content
-              zIndex='10000'
+              zIndex={5000}
               ref={ref}
               color={props.theme.tooltip.text}
               backgroundColor={props.theme.tooltip.background}

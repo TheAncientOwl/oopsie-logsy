@@ -6,7 +6,7 @@
  *
  * @file lightTheme.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Theme maker helper.
  */
 
@@ -31,7 +31,6 @@ export const makeLightTheme = (): TAppTheme => ({
   filters: {
     general: {
       background: 'gray.100',
-      dragHandle: 'gray.400',
       text: 'black',
     },
     tabs: {
@@ -231,6 +230,7 @@ export const makeLightTheme = (): TAppTheme => ({
   },
   general: {
     background: 'gray.100',
+    dragHandle: 'gray.400',
     tooltip: {
       background: 'gray.200',
       text: 'gray.700',

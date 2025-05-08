@@ -6,7 +6,7 @@
  *
  * @file ChannelSliders.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description ColorPicker with channel sliders.
  */
 
@@ -60,7 +60,7 @@ export const ChannelSlidersPicker: React.FC<TChannelSliderPickerProps> = props =
       </ColorPicker.Control>
       <Portal>
         <ColorPicker.Positioner>
-          <ColorPicker.Content zIndex='99999999'>
+          <ColorPicker.Content zIndex={10000}>
             <ColorPicker.FormatSelect />
             <ChannelSliders format='hsla' />
             <ChannelSliders format='hsba' />

@@ -6,7 +6,7 @@
  *
  * @file darkTheme.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Theme maker helper.
  */
 
@@ -31,7 +31,6 @@ export const makeDarkTheme = (): TAppTheme => ({
   filters: {
     general: {
       background: 'gray.900',
-      dragHandle: 'gray.500',
       text: 'gray.100',
     },
     tabs: {
@@ -231,6 +230,7 @@ export const makeDarkTheme = (): TAppTheme => ({
   },
   general: {
     background: 'black',
+    dragHandle: 'gray.500',
     tooltip: {
       background: 'gray.600',
       text: 'gray.100',

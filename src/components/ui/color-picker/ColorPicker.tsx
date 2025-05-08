@@ -6,7 +6,7 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description ColorPicker with box.
  */
 
@@ -42,7 +42,7 @@ export const ColorPicker: React.FC<TBoxColorPickerProps> = props => {
       </ChakraColorPicker.Control>
       <Portal>
         <ChakraColorPicker.Positioner>
-          <ChakraColorPicker.Content zIndex='99999999'>
+          <ChakraColorPicker.Content zIndex={10000}>
             {props.label ? <Heading size='md'>{props.label}</Heading> : <></>}
             <ChakraColorPicker.Area />
             <Stack>

@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import React, { PropsWithChildren, useState } from 'react';
 import { IconType } from 'react-icons';
-import { StarIcon, StarsFormation, StarsIcon } from '../Icons';
+import { StarIcon, StarsFormation, StarsIcon } from '../icons';
 import { ChannelSliders } from './ChannelSlidersPicker';
 
 const swatches: Array<ColorPickerValueChangeDetails> = [
@@ -156,7 +156,7 @@ export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
       </ColorPicker.Control>
       <Portal>
         <ColorPicker.Positioner>
-          <ColorPicker.Content zIndex='99999999'>
+          <ColorPicker.Content zIndex={10000}>
             <HStack>
               <ColorPicker.Label>{props.label}</ColorPicker.Label>
               <ColorPicker.Input colorPalette='green' />

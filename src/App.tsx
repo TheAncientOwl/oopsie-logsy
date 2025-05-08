@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description App class
  */
 
@@ -17,45 +17,101 @@ import ToolBar from '@/components/app/toolbar';
 import { useSwitch } from '@/hooks/useSwitch';
 import { TRootState } from '@/store';
 import { Box } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+
+const DRAG_HANDLE_HEIGHT = '3px';
+const DEFAULT_FILTER_TABS_HEIGHT = '400px';
+const MIN_FILTER_TABS_HEIGHT_VALUE = 100;
+const MAX_FILTER_TABS_HEIGHT_RATIO = 0.9;
 
 const AppImpl: React.FC<TPropsFromRedux> = props => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
-  const [filtersMenuOpen, toggleFiltersMenu] = useSwitch(true);
+  const [filtersMenuOpen, setFiltersMenuOpen] = useState(false);
 
   const toolbarRef = useRef<HTMLDivElement>(null);
-  const [toolbarHeight, setToolbarHeight] = useState(0);
-  const [contentHeight, setContentHeight] = useState(`100vh`);
 
-  useEffect(() => {
-    if (toolbarRef.current) {
-      setToolbarHeight(toolbarRef.current.offsetHeight);
+  const mainBoxRef = useRef<HTMLDivElement>(null);
+  const filtersBoxRef = useRef<HTMLDivElement>(null);
+
+  const toggleFiltersMenu = () => {
+    if (filtersMenuOpen) {
+      if (mainBoxRef.current) {
+        mainBoxRef.current.style.height = '100vh';
+      }
+    } else {
+      if (mainBoxRef.current && filtersBoxRef.current) {
+        if (filtersBoxRef.current.style.height === '') {
+          filtersBoxRef.current.style.height = DEFAULT_FILTER_TABS_HEIGHT;
+        }
+        mainBoxRef.current.style.height = `calc(100vh - ${filtersBoxRef.current.style.height})`;
+      }
     }
-  }, []);
+
+    setFiltersMenuOpen(!filtersMenuOpen);
+  };
+
+  const startVerticalResizing = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = filtersBoxRef.current?.offsetHeight || 0;
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      if (!filtersBoxRef.current || !mainBoxRef.current) return;
+
+      const newFilterTabsHeight = startHeight + (startY - moveEvent.clientY);
+
+      if (
+        newFilterTabsHeight >= MIN_FILTER_TABS_HEIGHT_VALUE &&
+        newFilterTabsHeight <= window.innerHeight * MAX_FILTER_TABS_HEIGHT_RATIO
+      ) {
+        filtersBoxRef.current.style.height = `${newFilterTabsHeight}px`;
+        mainBoxRef.current.style.height = `${window.innerHeight - newFilterTabsHeight}px`;
+      }
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
 
   return (
     <>
-      <Box height={contentHeight} overflow='scroll' backgroundColor={props.theme.background}>
-        <ToolBar
-          _ref={toolbarRef}
-          onSettingsOpen={toggleSettingsMenu}
-          onFiltersToggle={() => {
-            if (filtersMenuOpen) {
-              setContentHeight(`100vh`);
-            }
-            toggleFiltersMenu();
-          }}
-        />
-        <LogView offsetTop={`${toolbarHeight}px`} />
-      </Box>
       <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
-      <FilterTabs
-        onHeightChange={newHeight => {
-          setContentHeight(`${window.innerHeight - newHeight}px`);
-        }}
-        filtersOpen={filtersMenuOpen}
-      />
+
+      <Box
+        ref={mainBoxRef}
+        height='100vh'
+        position='relative'
+        overflowY='scroll'
+        backgroundColor={props.theme.background}
+      >
+        <ToolBar
+          ref={toolbarRef}
+          onSettingsToggle={toggleSettingsMenu}
+          onFiltersToggle={toggleFiltersMenu}
+        />
+        <LogView offsetTop={`${toolbarRef.current?.offsetHeight}px`} />
+      </Box>
+
+      <Box
+        ref={filtersBoxRef}
+        height='400px'
+        display={filtersMenuOpen ? 'block' : 'none'}
+        visibility={filtersMenuOpen ? 'block' : 'collapse'}
+      >
+        <Box
+          height={DRAG_HANDLE_HEIGHT}
+          backgroundColor={props.theme.dragHandle}
+          cursor='row-resize'
+          onMouseDown={startVerticalResizing}
+        />
+        <FilterTabs />
+      </Box>
     </>
   );
 };

@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Display logs in table format
  */
 
@@ -200,7 +200,7 @@ const items = [
 const LogViewImpl: React.FC<TLogViewProps & TPropsFromRedux> = props => {
   return (
     <Table.Root size='sm'>
-      <Table.Header position='sticky' top={props.offsetTop} zIndex='1'>
+      <Table.Header position='sticky' top={props.offsetTop} zIndex={1}>
         <Table.Row
           color={props.theme.table.text}
           backgroundColor={props.theme.table.header.background}

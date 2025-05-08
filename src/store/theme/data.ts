@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Theme data.
  */
 
@@ -71,7 +71,6 @@ type TLogViewTheme = {
 type TFiltersTheme = {
   general: {
     background: TColor;
-    dragHandle: TColor;
     text: TColor;
   };
   tabs: {
@@ -165,6 +164,7 @@ type TFiltersTheme = {
 
 type TGeneralTheme = {
   background: TColor;
+  dragHandle: TColor;
   tooltip: {
     background: TColor;
     text: TColor;
