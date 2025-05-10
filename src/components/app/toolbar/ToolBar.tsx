@@ -6,7 +6,7 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description App main toolbar
  */
 
@@ -91,7 +91,7 @@ const mapState = (state: TRootState) => ({
 
 const mapDispatch = {};
 
-const connector = connect(mapState, mapDispatch);
+const connector = connect(mapState, mapDispatch, null, { forwardRef: true });
 type TPropsFromRedux = ConnectedProps<typeof connector>;
 
 export const ToolBar = connector(ToolBarImpl);
