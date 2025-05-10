@@ -6,7 +6,7 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Pick fg/bg colors of logs.
  */
 
@@ -30,6 +30,7 @@ const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
   return (
     <HStack>
       <UltraColorPicker
+        zIndex={50}
         label='Foreground'
         defaultValue={props.defaultColors.fg}
         onValueChangeEnd={(details: ColorPickerValueChangeDetails) => {
@@ -38,6 +39,7 @@ const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
         onValueChange={props.onColorChangeFg}
       />
       <UltraColorPicker
+        zIndex={50}
         label='Background'
         defaultValue={props.defaultColors.bg}
         onValueChangeEnd={(details: ColorPickerValueChangeDetails) => {

@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -18,7 +18,6 @@ import {
   HStack,
   Icon,
   parseColor,
-  Portal,
 } from '@chakra-ui/react';
 import React, { PropsWithChildren, useState } from 'react';
 import { IconType } from 'react-icons';
@@ -117,6 +116,7 @@ type TUltraColorPickerProps = {
   defaultValue: string;
   onValueChange: (details: ColorPickerValueChangeDetails) => void;
   onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
+  zIndex?: number | string;
 };
 
 export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
@@ -149,51 +149,50 @@ export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
       onValueChange={handleOnValueChange}
       onValueChangeEnd={props.onValueChangeEnd}
       positioning={{ placement: 'bottom' }}
+      zIndex={props.zIndex}
     >
       <ColorPicker.HiddenInput />
       <ColorPicker.Control>
         <ColorPicker.Trigger cursor='pointer' />
       </ColorPicker.Control>
-      <Portal>
-        <ColorPicker.Positioner>
-          <ColorPicker.Content zIndex={10000}>
-            <HStack>
-              <ColorPicker.Label>{props.label}</ColorPicker.Label>
-              <ColorPicker.Input colorPalette='green' />
-            </HStack>
+      <ColorPicker.Positioner>
+        <ColorPicker.Content>
+          <HStack>
+            <ColorPicker.Label>{props.label}</ColorPicker.Label>
+            <ColorPicker.Input colorPalette='green' />
+          </HStack>
 
-            <UltraPickerState
-              label='Presets'
-              icon={StarIcon}
-              open={pickerState === EUltraColorPickerState.Presets}
-              defaultOpen={false}
-              onActivate={setPresetsState}
-            >
-              <PresetsPicker />
-            </UltraPickerState>
+          <UltraPickerState
+            label='Presets'
+            icon={StarIcon}
+            open={pickerState === EUltraColorPickerState.Presets}
+            defaultOpen={false}
+            onActivate={setPresetsState}
+          >
+            <PresetsPicker />
+          </UltraPickerState>
 
-            <UltraPickerState
-              label='Simple'
-              icon={StarsFormation}
-              open={pickerState === EUltraColorPickerState.Simple}
-              defaultOpen={true}
-              onActivate={setSimpleState}
-            >
-              <SimplePicker />
-            </UltraPickerState>
+          <UltraPickerState
+            label='Simple'
+            icon={StarsFormation}
+            open={pickerState === EUltraColorPickerState.Simple}
+            defaultOpen={true}
+            onActivate={setSimpleState}
+          >
+            <SimplePicker />
+          </UltraPickerState>
 
-            <UltraPickerState
-              label='Advanced'
-              icon={StarsIcon}
-              open={pickerState === EUltraColorPickerState.Advanced}
-              defaultOpen={false}
-              onActivate={setAdvancedState}
-            >
-              <SliderPicker />
-            </UltraPickerState>
-          </ColorPicker.Content>
-        </ColorPicker.Positioner>
-      </Portal>
+          <UltraPickerState
+            label='Advanced'
+            icon={StarsIcon}
+            open={pickerState === EUltraColorPickerState.Advanced}
+            defaultOpen={false}
+            onActivate={setAdvancedState}
+          >
+            <SliderPicker />
+          </UltraPickerState>
+        </ColorPicker.Content>
+      </ColorPicker.Positioner>
     </ColorPicker.Root>
   );
 };
