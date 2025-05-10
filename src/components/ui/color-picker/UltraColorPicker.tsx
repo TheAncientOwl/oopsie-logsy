@@ -6,21 +6,19 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
 import {
-  Collapsible,
   ColorPicker,
   ColorPickerValueChangeDetails,
-  Heading,
   HStack,
   Icon,
   parseColor,
+  Tabs,
 } from '@chakra-ui/react';
-import React, { PropsWithChildren, useState } from 'react';
-import { IconType } from 'react-icons';
+import React, { useState } from 'react';
 import { StarIcon, StarsFormation, StarsIcon } from '../icons';
 import { ChannelSliders } from './ChannelSlidersPicker';
 
@@ -36,36 +34,6 @@ const swatches: Array<ColorPickerValueChangeDetails> = [
   'gray',
   'black',
 ].map(colorString => ({ value: parseColor(colorString), valueAsString: colorString }));
-
-enum EUltraColorPickerState {
-  Presets,
-  Simple,
-  Advanced,
-}
-
-type TPickerStateProps = PropsWithChildren & {
-  open: boolean;
-  defaultOpen: boolean;
-  onActivate: () => void;
-  label: string;
-  icon: IconType;
-};
-
-const UltraPickerState: React.FC<TPickerStateProps> = props => {
-  return (
-    <Collapsible.Root defaultOpen={true} open={props.open}>
-      <Collapsible.Trigger cursor='pointer' onClick={props.onActivate} width='100%'>
-        <HStack>
-          <Icon as={props.icon} />
-          <Heading size='md' fontWeight={props.open ? 'bold' : 'normal'}>
-            {props.label}
-          </Heading>
-        </HStack>
-      </Collapsible.Trigger>
-      <Collapsible.Content>{props.children}</Collapsible.Content>
-    </Collapsible.Root>
-  );
-};
 
 const PresetsPicker: React.FC = () => {
   return (
@@ -120,22 +88,10 @@ type TUltraColorPickerProps = {
 };
 
 export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
-  const [pickerState, setPickerState] = useState(EUltraColorPickerState.Presets);
-
-  const setSimpleState = () => {
-    setPickerState(EUltraColorPickerState.Simple);
-  };
-
-  const setPresetsState = () => {
-    setPickerState(EUltraColorPickerState.Presets);
-  };
-
-  const setAdvancedState = () => {
-    setPickerState(EUltraColorPickerState.Advanced);
-  };
+  const [activeTab, setActiveTab] = useState<'presets' | 'picker' | 'channels'>('presets');
 
   const handleOnValueChange = (details: ColorPickerValueChangeDetails) => {
-    if (pickerState === EUltraColorPickerState.Presets) {
+    if (activeTab === 'presets') {
       props.onValueChange(details);
       props.onValueChangeEnd(details);
     } else {
@@ -149,48 +105,50 @@ export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
       onValueChange={handleOnValueChange}
       onValueChangeEnd={props.onValueChangeEnd}
       positioning={{ placement: 'bottom' }}
-      zIndex={props.zIndex}
     >
       <ColorPicker.HiddenInput />
       <ColorPicker.Control>
         <ColorPicker.Trigger cursor='pointer' />
       </ColorPicker.Control>
       <ColorPicker.Positioner>
-        <ColorPicker.Content>
+        <ColorPicker.Content minWidth='350px' zIndex={props.zIndex}>
           <HStack>
             <ColorPicker.Label>{props.label}</ColorPicker.Label>
             <ColorPicker.Input colorPalette='green' />
           </HStack>
 
-          <UltraPickerState
-            label='Presets'
-            icon={StarIcon}
-            open={pickerState === EUltraColorPickerState.Presets}
-            defaultOpen={false}
-            onActivate={setPresetsState}
-          >
-            <PresetsPicker />
-          </UltraPickerState>
+          <Tabs.Root variant='line' value={activeTab}>
+            <HStack>
+              <Tabs.Trigger value='presets' onClick={() => setActiveTab('presets')}>
+                <HStack>
+                  <Icon as={StarIcon} />
+                  Presets
+                </HStack>
+              </Tabs.Trigger>
+              <Tabs.Trigger value='picker' onClick={() => setActiveTab('picker')}>
+                <HStack>
+                  <Icon as={StarsFormation} />
+                  Picker
+                </HStack>
+              </Tabs.Trigger>
+              <Tabs.Trigger value='channels' onClick={() => setActiveTab('channels')}>
+                <HStack>
+                  <Icon as={StarsIcon} />
+                  Channels
+                </HStack>
+              </Tabs.Trigger>
+            </HStack>
 
-          <UltraPickerState
-            label='Simple'
-            icon={StarsFormation}
-            open={pickerState === EUltraColorPickerState.Simple}
-            defaultOpen={true}
-            onActivate={setSimpleState}
-          >
-            <SimplePicker />
-          </UltraPickerState>
-
-          <UltraPickerState
-            label='Advanced'
-            icon={StarsIcon}
-            open={pickerState === EUltraColorPickerState.Advanced}
-            defaultOpen={false}
-            onActivate={setAdvancedState}
-          >
-            <SliderPicker />
-          </UltraPickerState>
+            <Tabs.Content value='presets'>
+              <PresetsPicker />
+            </Tabs.Content>
+            <Tabs.Content value='picker'>
+              <SimplePicker />
+            </Tabs.Content>
+            <Tabs.Content value='channels'>
+              <SliderPicker />
+            </Tabs.Content>
+          </Tabs.Root>
         </ColorPicker.Content>
       </ColorPicker.Positioner>
     </ColorPicker.Root>
