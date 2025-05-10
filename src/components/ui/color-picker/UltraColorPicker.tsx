@@ -6,7 +6,7 @@
  *
  * @file UltraColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description ColorPicker with basic box, defaults and color filters.
  */
 
@@ -21,6 +21,7 @@ import {
 import React, { useState } from 'react';
 import { StarIcon, StarsFormation, StarsIcon } from '../icons';
 import { ChannelSliders } from './ChannelSlidersPicker';
+import { TColorPalette } from '@/store/theme/data';
 
 const swatches: Array<ColorPickerValueChangeDetails> = [
   'red',
@@ -85,6 +86,7 @@ type TUltraColorPickerProps = {
   onValueChange: (details: ColorPickerValueChangeDetails) => void;
   onValueChangeEnd: (details: ColorPickerValueChangeDetails) => void;
   zIndex?: number | string;
+  colorPalette: TColorPalette;
 };
 
 export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
@@ -105,6 +107,7 @@ export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
       onValueChange={handleOnValueChange}
       onValueChangeEnd={props.onValueChangeEnd}
       positioning={{ placement: 'bottom' }}
+      colorPalette={props.colorPalette}
     >
       <ColorPicker.HiddenInput />
       <ColorPicker.Control>
@@ -114,10 +117,10 @@ export const UltraColorPicker: React.FC<TUltraColorPickerProps> = props => {
         <ColorPicker.Content minWidth='350px' zIndex={props.zIndex}>
           <HStack>
             <ColorPicker.Label>{props.label}</ColorPicker.Label>
-            <ColorPicker.Input colorPalette='green' />
+            <ColorPicker.Input colorPalette={props.colorPalette} />
           </HStack>
 
-          <Tabs.Root variant='line' value={activeTab}>
+          <Tabs.Root variant='line' value={activeTab} colorPalette={props.colorPalette}>
             <HStack>
               <Tabs.Trigger value='presets' onClick={() => setActiveTab('presets')}>
                 <HStack>

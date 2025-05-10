@@ -6,7 +6,7 @@
  *
  * @file darkTheme.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Theme maker helper.
  */
 
@@ -101,6 +101,7 @@ export const makeDarkTheme = (): TAppTheme => ({
       background: 'gray.800',
       border: 'gray.700',
       separator: 'gray.600',
+      colorPickerColorPalette: 'green',
       filterNameInput: {
         colorPalette: 'green',
         variant: 'subtle',

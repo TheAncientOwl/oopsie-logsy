@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Theme data.
  */
 
@@ -108,6 +108,7 @@ type TFiltersTheme = {
     background: TColor;
     border: TColor;
     separator: TColor;
+    colorPickerColorPalette: TColorPalette;
     filterNameInput: {
       colorPalette: TColorPalette;
       variant: TInputVariant;

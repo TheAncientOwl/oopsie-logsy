@@ -6,7 +6,7 @@
  *
  * @file lightTheme.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Theme maker helper.
  */
 
@@ -101,6 +101,7 @@ export const makeLightTheme = (): TAppTheme => ({
       background: 'gray.200',
       border: 'gray.300',
       separator: 'gray.600',
+      colorPickerColorPalette: 'green',
       filterNameInput: {
         colorPalette: 'green',
         variant: 'subtle',

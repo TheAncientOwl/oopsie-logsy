@@ -6,7 +6,7 @@
  *
  * @file ColorPicker.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description Pick fg/bg colors of logs.
  */
 
@@ -17,6 +17,7 @@ import { TFilterColors } from '@/store/filters/data';
 import { setFilterBg, setFilterFg } from '@/store/filters/handlers';
 import { ColorPickerValueChangeDetails, HStack } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
+import { TRootState } from '@/store';
 
 type TColorPickerProps = TPropsFromRedux & {
   tabId: string;
@@ -31,6 +32,7 @@ const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
     <HStack>
       <UltraColorPicker
         zIndex={50}
+        colorPalette={props.theme.colorPickerColorPalette}
         label='Foreground'
         defaultValue={props.defaultColors.fg}
         onValueChangeEnd={(details: ColorPickerValueChangeDetails) => {
@@ -40,6 +42,7 @@ const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
       />
       <UltraColorPicker
         zIndex={50}
+        colorPalette={props.theme.colorPickerColorPalette}
         label='Background'
         defaultValue={props.defaultColors.bg}
         onValueChangeEnd={(details: ColorPickerValueChangeDetails) => {
@@ -52,7 +55,9 @@ const FilterColorPickerImpl: React.FC<TColorPickerProps> = props => {
 };
 
 // <redux>
-const mapState = () => ({});
+const mapState = (state: TRootState) => ({
+  theme: state.theme.themes[state.theme.activeThemeIndex].filters.filter,
+});
 
 const mapDispatch = {
   setFilterFg: setFilterFg.dispatch,
