@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description App class
  */
 
@@ -17,13 +17,32 @@ import ToolBar from '@/components/app/toolbar';
 import { useSwitch } from '@/hooks/useSwitch';
 import { TRootState } from '@/store';
 import { Box } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 const DRAG_HANDLE_HEIGHT = '3px';
 const DEFAULT_FILTER_TABS_HEIGHT = '400px';
 const MIN_FILTER_TABS_HEIGHT_VALUE = 100;
 const MAX_FILTER_TABS_HEIGHT_RATIO = 0.9;
+
+const updateLayoutHeights = (
+  filtersMenuOpen: boolean,
+  mainBoxRef: React.RefObject<HTMLDivElement>,
+  filtersBoxRef: React.RefObject<HTMLDivElement>
+) => {
+  if (filtersMenuOpen) {
+    if (mainBoxRef.current && filtersBoxRef.current) {
+      if (filtersBoxRef.current.style.height === '') {
+        filtersBoxRef.current.style.height = DEFAULT_FILTER_TABS_HEIGHT;
+      }
+      mainBoxRef.current.style.height = `calc(100vh - ${filtersBoxRef.current.style.height})`;
+    }
+  } else {
+    if (mainBoxRef.current) {
+      mainBoxRef.current.style.height = '100vh';
+    }
+  }
+};
 
 const AppImpl: React.FC<TPropsFromRedux> = props => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
@@ -34,21 +53,19 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
   const mainBoxRef = useRef<HTMLDivElement>(null);
   const filtersBoxRef = useRef<HTMLDivElement>(null);
 
-  const toggleFiltersMenu = () => {
-    if (filtersMenuOpen) {
-      if (mainBoxRef.current) {
-        mainBoxRef.current.style.height = '100vh';
-      }
-    } else {
-      if (mainBoxRef.current && filtersBoxRef.current) {
-        if (filtersBoxRef.current.style.height === '') {
-          filtersBoxRef.current.style.height = DEFAULT_FILTER_TABS_HEIGHT;
-        }
-        mainBoxRef.current.style.height = `calc(100vh - ${filtersBoxRef.current.style.height})`;
-      }
-    }
+  useEffect(() => {
+    const handleWindowResize = () => {
+      updateLayoutHeights(filtersMenuOpen, mainBoxRef, filtersBoxRef);
+    };
 
-    setFiltersMenuOpen(!filtersMenuOpen);
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [filtersMenuOpen, mainBoxRef, filtersBoxRef]);
+
+  const toggleFiltersMenu = () => {
+    const newFiltersMenuOpen = !filtersMenuOpen;
+    updateLayoutHeights(newFiltersMenuOpen, mainBoxRef, filtersBoxRef);
+    setFiltersMenuOpen(newFiltersMenuOpen);
   };
 
   const startVerticalResizing = (e: React.MouseEvent<HTMLDivElement>) => {
