@@ -6,17 +6,18 @@
  *
  * @file FilterComponentTagSelector.tsx
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Tag selector for filter component.
  */
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { SingleSelect } from '@/components/ui/select/SingleSelect';
 import { type TRootState } from '@/store';
 import { setComponentOverAlternative } from '@/store/filters/handlers';
 import { createListCollection } from '@chakra-ui/react';
 import { connect, ConnectedProps } from 'react-redux';
+import { DefaultFilterComponentOverAlternativeId } from '@/store/filters/data';
 
 type TFilterComponentTagSelectorProps = TPropsFromRedux & {
   tabId: string;
@@ -32,6 +33,15 @@ const FilterComponentTagSelectorImpl: React.FC<TFilterComponentTagSelectorProps>
   );
 
   const valid = overAlternatives.items.some(item => item.value === props.value);
+
+  useEffect(() => {
+    if (
+      overAlternatives.items.length > 0 &&
+      (props.value === DefaultFilterComponentOverAlternativeId || !valid)
+    ) {
+      props.setComponentOverAlternative(props.componentId, overAlternatives.items[0].value);
+    }
+  }, [overAlternatives, props.value, valid]);
 
   return (
     <SingleSelect

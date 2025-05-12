@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description Filters data structures.
  */
 
@@ -86,8 +86,12 @@ export const checkCanSaveData = (
   return components.every(component => overAlternativesSet.has(component.overAlternativeId));
 };
 
+export const DefaultFilterComponentOverAlternativeId = 'Choose Tag';
+
 export const DefaultFactory = {
-  makeFilterComponent: (overAlternativeId = 'Choose Tag'): TFilterComponent => ({
+  makeFilterComponent: (
+    overAlternativeId = DefaultFilterComponentOverAlternativeId
+  ): TFilterComponent => ({
     id: uuid(),
     overAlternativeId: overAlternativeId,
     data: '',
