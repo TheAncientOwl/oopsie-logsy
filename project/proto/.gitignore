@@ -1,0 +1,5 @@
+benchmark_logs.*
+tools/generate_entries
+Cargo.lock
+logs.json
+logs.oopsie
