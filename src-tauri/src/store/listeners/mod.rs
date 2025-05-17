@@ -7,10 +7,8 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
-//! **Description**: common mod file.
+//! **Version**: 0.1
+//! **Description**: listeners mod file.
 //!
 
-pub mod command_status;
-pub mod scope_log;
-pub mod timer;
+pub mod set_current_processed_logs_path;

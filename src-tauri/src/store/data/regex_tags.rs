@@ -7,15 +7,19 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
 
 use once_cell::sync::Lazy;
-use std::sync::Mutex;
+use std::sync::RwLock;
 
-use super::api::event_handler::EventHandler;
-use crate::{commands::command_status, common::scope_log::ScopeLog, store::store::Store};
+use crate::{
+    common::{command_status, scope_log::ScopeLog},
+    log_error,
+    store::api::event_handler::EventHandler,
+    store::store::Store,
+};
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -52,11 +56,11 @@ impl RegexTagsManager {
 
 // <events>
 pub static ON_STORE_SET_REGEX_TAGS: Lazy<
-    Mutex<EventHandler<dyn Fn(&Vec<RegexTag>) + Send + Sync>>,
-> = Lazy::new(|| Mutex::new(EventHandler::new()));
+    RwLock<EventHandler<dyn Fn(&Vec<RegexTag>) + Send + Sync>>,
+> = Lazy::new(|| RwLock::new(EventHandler::new()));
 pub static ON_STORE_GET_REGEX_TAGS: Lazy<
-    Mutex<EventHandler<dyn Fn(&Vec<RegexTag>) + Send + Sync>>,
-> = Lazy::new(|| Mutex::new(EventHandler::new()));
+    RwLock<EventHandler<dyn Fn(&Vec<RegexTag>) + Send + Sync>>,
+> = Lazy::new(|| RwLock::new(EventHandler::new()));
 // </events>
 
 // <commands>
@@ -64,14 +68,21 @@ pub static ON_STORE_GET_REGEX_TAGS: Lazy<
 pub fn set_regex_tags(tags: Vec<RegexTag>) -> Result<u16, String> {
     let _log = ScopeLog::new(&set_regex_tags);
 
-    Store::get_instance()?.regex_tags.set(&tags);
-
     ON_STORE_SET_REGEX_TAGS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &set_regex_tags,
+                "Failed to acquire lock on ON_STORE_SET_REGEX_TAGS: {}",
+                err
+            );
+        })
         .unwrap()
         .handlers()
         .iter()
         .for_each(|handler| handler(&tags));
+
+    Store::get_instance_mut().regex_tags.set(&tags);
 
     Ok(command_status::ok())
 }
@@ -80,16 +91,24 @@ pub fn set_regex_tags(tags: Vec<RegexTag>) -> Result<u16, String> {
 pub fn get_regex_tags() -> Result<Vec<RegexTag>, String> {
     let _log = ScopeLog::new(&get_regex_tags);
 
-    let instance = Store::get_instance()?;
-    let tags = instance.regex_tags.get();
+    let store = Store::get_instance_mut();
+    let tags = store.regex_tags.get().clone();
+    std::mem::drop(store);
 
     ON_STORE_GET_REGEX_TAGS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &get_regex_tags,
+                "Failed to acquire lock on ON_STORE_GET_REGEX_TAGS: {}",
+                err
+            );
+        })
         .unwrap()
         .handlers()
         .iter()
         .for_each(|handler| handler(&tags));
 
-    Ok(tags.clone())
+    Ok(tags)
 }
 // </commands>

@@ -8,7 +8,9 @@
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.2
-//! **Description**: commands mod file.
+//! **Description**: data mod file.
 //!
 
-pub mod command_status;
+pub mod filter_tabs;
+pub mod logs;
+pub mod regex_tags;

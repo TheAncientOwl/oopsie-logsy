@@ -4,20 +4,21 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `mod.rs`
+//! # `watcher.rs`
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.3
-//! **Description**: logging mod file.
+//! **Description**: Log IO data.
 //!
 
-use crate::log_trace;
-
-use super::{
-    current_log_paths::{LogPaths, ON_STORE_SET_CURRENT_LOG_PATHS},
-    filter_tabs::{Filter, FilterComponent, FilterTab, ON_STORE_GET_TABS, ON_STORE_SET_TABS},
+use crate::store::data::{
+    filter_tabs::{
+        set_filter_tabs, Filter, FilterComponent, FilterTab, ON_STORE_GET_TABS, ON_STORE_SET_TABS,
+    },
+    logs::{LogPaths, ON_STORE_SET_CURRENT_LOG_PATHS},
     regex_tags::{RegexTag, ON_STORE_GET_REGEX_TAGS, ON_STORE_SET_REGEX_TAGS},
 };
+use crate::{log_error, log_trace};
 
 pub fn on_set_regex_tags(tags: &Vec<RegexTag>) {
     log_trace!(
@@ -106,27 +107,63 @@ pub fn on_get_filter_tabs(
 
 pub fn setup() {
     ON_STORE_SET_REGEX_TAGS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &setup,
+                "Failed to acquire lock on ON_STORE_SET_REGEX_TAGS: {}",
+                err
+            );
+        })
         .unwrap()
         .add_event_listener(Box::new(on_set_regex_tags));
 
     ON_STORE_GET_REGEX_TAGS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &setup,
+                "Failed to acquire lock on ON_STORE_GET_REGEX_TAGS: {}",
+                err
+            );
+        })
         .unwrap()
         .add_event_listener(Box::new(on_get_regex_tags));
 
     ON_STORE_SET_CURRENT_LOG_PATHS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &setup,
+                "Failed to aquire lock on ON_STORE_SET_CURRENT_LOG_PATH: {}",
+                err
+            )
+        })
         .unwrap()
         .add_event_listener(Box::new(on_set_current_log_paths));
 
     ON_STORE_SET_TABS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &set_filter_tabs,
+                "Failed to acquire lock on ON_STORE_SET_TABS: {}",
+                err
+            );
+            err.to_string()
+        })
         .unwrap()
         .add_event_listener(Box::new(on_set_filter_tabs));
 
     ON_STORE_GET_TABS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &set_filter_tabs,
+                "Failed to acquire lock on ON_STORE_GET_TABS: {}",
+                err
+            );
+        })
         .unwrap()
         .add_event_listener(Box::new(on_get_filter_tabs));
 }

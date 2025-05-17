@@ -7,15 +7,32 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Logger utilities.
 //!
 
 use owo_colors::{OwoColorize, Style};
 
-fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::fmt::Arguments) {
+pub fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::fmt::Arguments) {
     let sep = "|".bright_black();
     let caller_str = std::any::type_name::<T>();
+
+    let caller_short = caller_str
+        .strip_prefix("oopsie_logsy_lib")
+        .unwrap_or(caller_str);
+
+    let gray = Style::new().bright_black();
+    let styled_caller = caller_short
+        .split("::")
+        .enumerate()
+        .map(|(i, part)| {
+            if i > 0 {
+                format!("{}{}", "::".style(gray), part.style(level_style))
+            } else {
+                part.style(level_style).to_string()
+            }
+        })
+        .collect::<String>();
 
     println!(
         // "| time | level | caller: message"
@@ -28,10 +45,7 @@ fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::fmt::
         sep, // |
         format!("{:^5}", level).style(level_style), // level
         sep, // |
-        caller_str
-            .strip_prefix("oopsie_logsy_lib")
-            .unwrap_or(caller_str)
-            .style(level_style), // caller
+        styled_caller, // caller
         ":".bright_black(), // :
         args.style(level_style), // message
         "".default_color()
@@ -43,7 +57,7 @@ pub fn trace<T>(caller: &T, args: std::fmt::Arguments) {
 }
 
 pub fn info<T>(caller: &T, args: std::fmt::Arguments) {
-    log("info", Style::new().blue(), caller, args)
+    log("info", Style::new().bright_blue(), caller, args)
 }
 
 pub fn warn<T>(caller: &T, args: std::fmt::Arguments) {

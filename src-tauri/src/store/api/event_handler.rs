@@ -7,7 +7,7 @@
 //! # `callback.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: .
 //!
 
@@ -32,7 +32,7 @@ where
         self.handlers.push(handler);
     }
 
-    pub fn handlers(&mut self) -> &mut Vec<Box<T>> {
-        &mut self.handlers
+    pub fn handlers(&mut self) -> &Vec<Box<T>> {
+        &self.handlers
     }
 }

@@ -7,38 +7,65 @@
 //! # `store.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Application data store manager.
 //!
 
 use super::{
-    current_log_paths::CurrentLogPathsManager, filter_tabs::FilterTabsManager,
-    regex_tags::RegexTagsManager,
+    data::{
+        filter_tabs::FilterTabsManager,
+        logs::{Logs, ON_STORE_SET_CURRENT_LOG_PATHS},
+        regex_tags::RegexTagsManager,
+    },
+    listeners, watcher,
 };
+use crate::log_error;
+
+use once_cell::sync::Lazy;
+use std::sync::RwLock;
 
 pub struct Store {
     pub regex_tags: RegexTagsManager,
-    pub current_log_paths: CurrentLogPathsManager,
+    pub logs: Logs,
     pub filter_tabs: FilterTabsManager,
 }
+
+static STORE: Lazy<RwLock<Store>> = Lazy::new(|| RwLock::new(Store::new()));
 
 impl Store {
     fn new() -> Self {
         Self {
             regex_tags: RegexTagsManager::new(),
-            current_log_paths: CurrentLogPathsManager::new(),
+            logs: Logs::new(),
             filter_tabs: FilterTabsManager::new(),
         }
     }
 
-    pub fn get_instance_mutex() -> &'static std::sync::Mutex<Store> {
-        static INSTANCE: std::sync::OnceLock<std::sync::Mutex<Store>> = std::sync::OnceLock::new();
-        INSTANCE.get_or_init(|| std::sync::Mutex::new(Store::new()))
+    pub fn get_instance() -> std::sync::RwLockReadGuard<'static, Store> {
+        STORE.read().expect("Failed to acquire read lock on STORE")
     }
 
-    pub fn get_instance() -> Result<std::sync::MutexGuard<'static, Store>, String> {
-        Store::get_instance_mutex()
-            .lock()
-            .map_err(|error| format!("Mutex lock error: {}", error))
+    pub fn get_instance_mut() -> std::sync::RwLockWriteGuard<'static, Store> {
+        STORE
+            .write()
+            .expect("Failed to acquire write lock on STORE")
+    }
+
+    pub fn setup() {
+        watcher::setup();
+
+        ON_STORE_SET_CURRENT_LOG_PATHS
+            .write()
+            .map_err(|err| {
+                log_error!(
+                    &Store::setup,
+                    "Failed to acquire lock on ON_STORE_SET_CURRENT_LOG_PATH: {}",
+                    err
+                );
+            })
+            .unwrap()
+            .add_event_listener(Box::new(
+                listeners::set_current_processed_logs_path::listener,
+            ));
     }
 }

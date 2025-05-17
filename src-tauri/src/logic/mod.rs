@@ -7,10 +7,9 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
-//! **Description**: common mod file.
+//! **Version**: 0.1
+//! **Description**: Logics mod file.
 //!
 
-pub mod command_status;
-pub mod scope_log;
-pub mod timer;
+pub mod logs_converter;
+pub mod logs_reader_test;

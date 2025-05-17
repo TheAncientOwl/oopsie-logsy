@@ -6,7 +6,7 @@
  *
  * @file invokeGetTags.ts
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description InvokeGetTags handler.
  */
 
@@ -17,7 +17,7 @@ import {
 } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
-import { DefaultFactory, type TStoreState, type TRegexTag } from '../data';
+import { type TRegexTag, type TStoreState, getStaticDefaultTags } from '../data';
 import { invokeSetTags } from './invokeSetTags';
 
 const action = {
@@ -51,7 +51,8 @@ export const invokeGetTags: IApiCallStoreHandler<
       const tags = await invoke<Array<TRegexTag>>('get_regex_tags');
       console.info(invokeGetTags.dispatch, `received ${tags.length} tags`);
 
-      const finalTags = tags.length === 0 ? [DefaultFactory.makeTag('Payload')] : tags;
+      const finalTags =
+        tags.length === 0 ? (getStaticDefaultTags._defaultTags as TRegexTag[]) : tags;
 
       if (tags.length === 0) {
         console.info(invokeGetTags.dispatch, `Setting default tags`);

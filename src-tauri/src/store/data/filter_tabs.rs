@@ -7,16 +7,19 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
 use once_cell::sync::Lazy;
-use std::sync::Mutex;
+use std::sync::RwLock;
 
-use crate::{commands::command_status, common::scope_log::ScopeLog, store::store::Store};
-
-use super::api::event_handler::EventHandler;
+use crate::{
+    common::{command_status, scope_log::ScopeLog},
+    log_error,
+    store::api::event_handler::EventHandler,
+    store::store::Store,
+};
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -111,11 +114,15 @@ impl FilterTabsManager {
 
 // <events>
 pub static ON_STORE_SET_TABS: Lazy<
-    Mutex<EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>>,
-> = Lazy::new(|| Mutex::new(EventHandler::new()));
+    RwLock<
+        EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>,
+    >,
+> = Lazy::new(|| RwLock::new(EventHandler::new()));
 pub static ON_STORE_GET_TABS: Lazy<
-    Mutex<EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>>,
-> = Lazy::new(|| Mutex::new(EventHandler::new()));
+    RwLock<
+        EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>,
+    >,
+> = Lazy::new(|| RwLock::new(EventHandler::new()));
 // </events>
 
 // <commands>
@@ -128,14 +135,22 @@ pub fn set_filter_tabs(
     let _log = ScopeLog::new(&set_filter_tabs);
 
     ON_STORE_SET_TABS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &set_filter_tabs,
+                "Failed to acquire lock on ON_STORE_SET_TABS: {}",
+                err
+            );
+        })
         .unwrap()
         .handlers()
         .iter()
         .for_each(|handler| handler(&tabs, &filters, &components));
 
-    let mut instance = Store::get_instance()?;
-    instance.filter_tabs.set(&tabs, &filters, &components);
+    Store::get_instance_mut()
+        .filter_tabs
+        .set(&tabs, &filters, &components);
 
     Ok(command_status::ok())
 }
@@ -144,18 +159,26 @@ pub fn set_filter_tabs(
 pub fn get_filter_tabs() -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
     let _log = ScopeLog::new(&get_filter_tabs);
 
-    let instance = Store::get_instance()?;
-    let tabs = instance.filter_tabs.get_tabs();
-    let filters = instance.filter_tabs.get_filters();
-    let components = instance.filter_tabs.get_components();
+    let instance = Store::get_instance();
+    let tabs = instance.filter_tabs.get_tabs().clone();
+    let filters = instance.filter_tabs.get_filters().clone();
+    let components = instance.filter_tabs.get_components().clone();
+    std::mem::drop(instance);
 
     ON_STORE_GET_TABS
-        .lock()
+        .write()
+        .map_err(|err| {
+            log_error!(
+                &set_filter_tabs,
+                "Failed to acquire lock on ON_STORE_GET_TABS: {}",
+                err
+            );
+        })
         .unwrap()
         .handlers()
         .iter()
         .for_each(|handler| handler(&tabs, &filters, &components));
 
-    Ok((tabs.clone(), filters.clone(), components.clone()))
+    Ok((tabs, filters, components))
 }
 // </commands>

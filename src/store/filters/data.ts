@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description Filters data structures.
  */
 
@@ -83,6 +83,8 @@ export const checkCanSaveData = (
   overAlternatives: TOverAlternatives
 ) => {
   const overAlternativesSet = new Set(overAlternatives.map(alternative => alternative.value));
+  tabs;
+  filters;
   return components.every(component => overAlternativesSet.has(component.overAlternativeId));
 };
 
