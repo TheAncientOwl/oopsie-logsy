@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "oopsie-logsy",
+  "productName": "OopsieLogsy",
   "version": "0.1.2",
   "identifier": "dev.defaultybuf.oopsie-logsy",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "oopsie-logsy",
+        "title": "OopsieLogsy",
         "width": 800,
         "height": 600,
         "minWidth": 650
