@@ -7,7 +7,7 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
@@ -21,7 +21,7 @@ use regex::Regex;
 use crate::{
     common::scope_log::ScopeLog,
     log_error, log_info, log_warn,
-    store::{data::regex_tags::RegexTag, store::Store},
+    store::{regex_tags::RegexTag, store::Store},
 };
 
 fn compute_line_regex(tags: &Vec<RegexTag>) -> regex::Regex {

@@ -7,14 +7,14 @@
 //! # `set_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Set RegexTags command.
 //!
 
 use crate::{
     common::{command_status, scope_log::ScopeLog},
     log_trace,
-    store::{data::regex_tags::RegexTag, store::Store},
+    store::{regex_tags::RegexTag, store::Store},
 };
 
 #[tauri::command]

@@ -11,5 +11,7 @@
 //! **Description**: store mod file.
 //!
 
-pub mod data;
+pub mod filter_tabs;
+pub mod logs;
+pub mod regex_tags;
 pub mod store;

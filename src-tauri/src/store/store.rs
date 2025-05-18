@@ -14,7 +14,7 @@
 use once_cell::sync::Lazy;
 use std::sync::RwLock;
 
-use super::data::{filter_tabs::FilterTabsManager, logs::Logs, regex_tags::RegexTagsManager};
+use super::{filter_tabs::FilterTabsManager, logs::Logs, regex_tags::RegexTagsManager};
 
 pub struct Store {
     pub regex_tags: RegexTagsManager,

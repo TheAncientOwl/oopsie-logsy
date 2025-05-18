@@ -7,14 +7,14 @@
 //! # `set_current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Set CurrentLogPaths command.
 //!
 
 use crate::{
     common::{command_status, scope_log::ScopeLog},
     log_trace, logics,
-    store::{data::logs::LogPaths, store::Store},
+    store::{logs::LogPaths, store::Store},
 };
 
 #[tauri::command]

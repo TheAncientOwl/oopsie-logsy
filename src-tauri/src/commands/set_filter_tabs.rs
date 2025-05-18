@@ -7,7 +7,7 @@
 //! # `set_filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Set FilterTabs command.
 //!
 
@@ -15,7 +15,7 @@ use crate::{
     common::{command_status, scope_log::ScopeLog},
     log_trace,
     store::{
-        data::filter_tabs::{Filter, FilterComponent, FilterTab},
+        filter_tabs::{Filter, FilterComponent, FilterTab},
         store::Store,
     },
 };
