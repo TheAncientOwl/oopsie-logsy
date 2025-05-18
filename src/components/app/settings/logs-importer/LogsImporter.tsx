@@ -13,7 +13,7 @@
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { ImportIcon } from '@/components/ui/icons';
 import { TRootState } from '@/store';
-import { invoke } from '@tauri-apps/api/core';
+import { invokeSetCurrentLogPaths } from '@/store/logs/handlers';
 import { open } from '@tauri-apps/plugin-dialog';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -28,18 +28,7 @@ const LogsImporterImpl: React.FC<TPropsFromRedux> = props => {
     });
 
     if (selectedFile) {
-      try {
-        const response = await invoke('set_current_log_paths', { paths: [selectedFile] });
-        console.info(
-          `${LogsImporterImpl.name}::${handleImportClick.name}`,
-          `rust response: ${response}`
-        );
-      } catch (error) {
-        console.error(
-          `${LogsImporterImpl.name}::${handleImportClick.name}`,
-          `error sending log file paths: ${error}`
-        );
-      }
+      props.invokeSetCurrentLogPaths([selectedFile]);
     }
   };
 
@@ -60,7 +49,9 @@ const mapState = (state: TRootState) => ({
   theme: state.theme.themes[state.theme.activeThemeIndex].settings.logsImporter,
 });
 
-const mapDispatch = {};
+const mapDispatch = {
+  invokeSetCurrentLogPaths: invokeSetCurrentLogPaths.dispatch,
+};
 
 const connector = connect(mapState, mapDispatch);
 type TPropsFromRedux = ConnectedProps<typeof connector>;

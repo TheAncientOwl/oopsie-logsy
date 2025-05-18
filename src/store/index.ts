@@ -16,6 +16,7 @@ import { logRegexTagsReducer } from './log-regex-tags/reducer';
 import { themeReducer } from './theme/reducer';
 
 import { configureStore, Middleware } from '@reduxjs/toolkit';
+import { logsReducer } from './logs/reducer';
 
 const storeWatcher: Middleware = storeAPI => next => action => {
   console.trace(storeWatcher, 'Dispatching:', action);
@@ -30,6 +31,7 @@ export const store = configureStore({
     logRegexTags: logRegexTagsReducer,
     filters: filtersTagsReducer,
     theme: themeReducer,
+    logs: logsReducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk, storeWatcher),
 });

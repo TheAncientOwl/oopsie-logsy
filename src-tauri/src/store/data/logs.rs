@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -92,8 +92,9 @@ pub static ON_STORE_SET_CURRENT_LOG_PATHS: Lazy<
 // </events>
 
 // <commands>
+// TODO: Refactor commands to support async by default
 #[tauri::command]
-pub fn set_current_log_paths(paths: LogPaths) -> Result<u16, String> {
+pub async fn set_current_log_paths(paths: LogPaths) -> Result<u16, String> {
     let _log = ScopeLog::new(&set_current_log_paths);
 
     assert!(paths.len() > 0, "Received 0 paths");

@@ -19,6 +19,7 @@ import { TRootState } from '@/store';
 import { Box } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import LoadingScreen from './components/app/loading-screen';
 
 const DRAG_HANDLE_HEIGHT = '3px';
 const DEFAULT_FILTER_TABS_HEIGHT = '400px';
@@ -98,6 +99,7 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
 
   return (
     <>
+      <LoadingScreen />
       <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
 
       <Box
