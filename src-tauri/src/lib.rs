@@ -7,21 +7,20 @@
 //! # `lib.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: OopsieLogsy tauri lib.
 //!
 
+pub mod commands;
 pub mod common;
 pub mod logger;
-pub mod logic;
+pub mod logics;
 pub mod store;
 
 use tauri::Manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    store::store::Store::setup();
-
     tauri::Builder::default()
         .setup(|app| {
             #[cfg(debug_assertions)]
@@ -35,11 +34,11 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            store::data::regex_tags::set_regex_tags,
-            store::data::regex_tags::get_regex_tags,
-            store::data::filter_tabs::set_filter_tabs,
-            store::data::filter_tabs::get_filter_tabs,
-            store::data::logs::set_current_log_paths,
+            commands::set_regex_tags::set_regex_tags,
+            commands::get_regex_tags::get_regex_tags,
+            commands::set_filter_tabs::set_filter_tabs,
+            commands::get_filter_tabs::get_filter_tabs,
+            commands::set_current_log_paths::set_current_log_paths,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

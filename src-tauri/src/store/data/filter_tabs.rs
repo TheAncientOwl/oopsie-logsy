@@ -7,19 +7,9 @@
 //! # `filter_tabs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
-
-use once_cell::sync::Lazy;
-use std::sync::RwLock;
-
-use crate::{
-    common::{command_status, scope_log::ScopeLog},
-    log_error,
-    store::api::event_handler::EventHandler,
-    store::store::Store,
-};
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -111,74 +101,3 @@ impl FilterTabsManager {
     }
 }
 // </manager>
-
-// <events>
-pub static ON_STORE_SET_TABS: Lazy<
-    RwLock<
-        EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>,
-    >,
-> = Lazy::new(|| RwLock::new(EventHandler::new()));
-pub static ON_STORE_GET_TABS: Lazy<
-    RwLock<
-        EventHandler<dyn Fn(&Vec<FilterTab>, &Vec<Filter>, &Vec<FilterComponent>) + Send + Sync>,
-    >,
-> = Lazy::new(|| RwLock::new(EventHandler::new()));
-// </events>
-
-// <commands>
-#[tauri::command]
-pub fn set_filter_tabs(
-    tabs: Vec<FilterTab>,
-    filters: Vec<Filter>,
-    components: Vec<FilterComponent>,
-) -> Result<u16, String> {
-    let _log = ScopeLog::new(&set_filter_tabs);
-
-    ON_STORE_SET_TABS
-        .write()
-        .map_err(|err| {
-            log_error!(
-                &set_filter_tabs,
-                "Failed to acquire lock on ON_STORE_SET_TABS: {}",
-                err
-            );
-        })
-        .unwrap()
-        .handlers()
-        .iter()
-        .for_each(|handler| handler(&tabs, &filters, &components));
-
-    Store::get_instance_mut()
-        .filter_tabs
-        .set(&tabs, &filters, &components);
-
-    Ok(command_status::ok())
-}
-
-#[tauri::command]
-pub fn get_filter_tabs() -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
-    let _log = ScopeLog::new(&get_filter_tabs);
-
-    let instance = Store::get_instance();
-    let tabs = instance.filter_tabs.get_tabs().clone();
-    let filters = instance.filter_tabs.get_filters().clone();
-    let components = instance.filter_tabs.get_components().clone();
-    std::mem::drop(instance);
-
-    ON_STORE_GET_TABS
-        .write()
-        .map_err(|err| {
-            log_error!(
-                &set_filter_tabs,
-                "Failed to acquire lock on ON_STORE_GET_TABS: {}",
-                err
-            );
-        })
-        .unwrap()
-        .handlers()
-        .iter()
-        .for_each(|handler| handler(&tabs, &filters, &components));
-
-    Ok((tabs, filters, components))
-}
-// </commands>

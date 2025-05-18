@@ -7,19 +7,9 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
-
-use once_cell::sync::Lazy;
-use std::sync::RwLock;
-
-use crate::{
-    common::{command_status, scope_log::ScopeLog},
-    log_error,
-    store::api::event_handler::EventHandler,
-    store::store::Store,
-};
 
 // <data>
 pub type LogPaths = Vec<std::path::PathBuf>;
@@ -83,43 +73,3 @@ impl Logs {
     }
 }
 // </manager>
-
-// <events>
-// TODO: refactor to return some Result whether operation was ok or not
-pub static ON_STORE_SET_CURRENT_LOG_PATHS: Lazy<
-    RwLock<EventHandler<dyn Fn(&LogPaths) + Send + Sync>>,
-> = Lazy::new(|| RwLock::new(EventHandler::new()));
-// </events>
-
-// <commands>
-// TODO: Refactor commands to support async by default
-#[tauri::command]
-pub async fn set_current_log_paths(paths: LogPaths) -> Result<u16, String> {
-    let _log = ScopeLog::new(&set_current_log_paths);
-
-    assert!(paths.len() > 0, "Received 0 paths");
-    assert!(
-        std::fs::metadata(&paths[0]).is_ok(),
-        "Invalid logs input file for conversion"
-    );
-
-    ON_STORE_SET_CURRENT_LOG_PATHS
-        .write()
-        .map_err(|err| {
-            log_error!(
-                &set_current_log_paths,
-                "Failed to acquire lock on ON_STORE_SET_CURRENT_LOG_PATH: {}",
-                err
-            );
-        })
-        .unwrap()
-        .handlers()
-        .iter()
-        .for_each(|handler| handler(&paths));
-
-    let mut instance = Store::get_instance_mut();
-    instance.logs.set_current_raw_logs_path(&paths);
-
-    Ok(command_status::ok())
-}
-// </commands>

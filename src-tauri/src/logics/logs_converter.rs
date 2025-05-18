@@ -20,7 +20,7 @@ use regex::Regex;
 
 use crate::{
     common::scope_log::ScopeLog,
-    log_debug, log_error, log_info, log_warn,
+    log_error, log_info, log_warn,
     store::{data::regex_tags::RegexTag, store::Store},
 };
 

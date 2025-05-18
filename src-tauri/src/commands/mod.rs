@@ -8,7 +8,11 @@
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.1
-//! **Description**: listeners mod file.
+//! **Description**: Commands mod file.
 //!
 
-pub mod set_current_processed_logs_path;
+pub mod get_filter_tabs;
+pub mod get_regex_tags;
+pub mod set_current_log_paths;
+pub mod set_filter_tabs;
+pub mod set_regex_tags;
