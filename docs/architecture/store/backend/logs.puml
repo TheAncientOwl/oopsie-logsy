@@ -1,0 +1,23 @@
+@startuml Logs
+
+package OopsieLogsy #LightYellow {
+    package Backend {
+        struct LogsManager #LightSteelBlue {
+            - current_raw_logs_path : Path[]
+            - current_processed_logs_path : optional<Path>
+
+            + set_current_raw_logs_path(new_paths: Path[]) : void
+            + get_current_raw_logs_path() : &Path[]
+            + get_current_processed_logs_path() : &optional<Path>
+
+            + static get_home_dir() : Path
+            + static get_processed_logs_dir() : Path
+        }
+        note right
+            `current_processed_logs_path` computed out of
+             `current_raw_logs_path` in `set_current_raw_logs_path`
+        end note
+    }
+}
+
+@enduml

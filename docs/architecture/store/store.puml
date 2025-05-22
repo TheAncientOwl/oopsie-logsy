@@ -1,0 +1,6 @@
+@startuml Store
+
+!include ./frontend/store.puml
+!include ./backend/store.puml
+
+@enduml

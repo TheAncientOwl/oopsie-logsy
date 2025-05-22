@@ -1,0 +1,45 @@
+@startuml ImportLogs
+
+actor User #LightYellow
+participant "<Frontend>\nImportLogsButton" as FrontendImport #LightSkyBlue
+participant "<Frontend>\nStore" as FrontendStore #LightBlue
+participant "<Backend>\nStore" as BackendStore #Salmon
+participant "<Backend>\nCommand::import_logs" as BackendImport #LightSalmon
+participant "<Backend>\nLogics::LogsParser" as LogsParser #Orange
+participant "<Backend>\nConvertedLogs:\nArray<JSON>" as converted_logs #Orange
+
+User -> FrontendImport : Click
+FrontendImport -> User : Show file select dialog
+User -> FrontendImport : Select logs file
+
+FrontendImport -> FrontendStore : dispatch(EActionType::Logs_Loading, {})
+note left
+    Loading screen should
+     BE visible in frontend
+end note
+FrontendImport -> BackendImport : invoke import_logs(path)
+
+group import_logs(path)
+    BackendImport -> BackendStore : call logs.set_current_raw_logs_path(param{path})
+
+    BackendStore -> BackendImport : get in_path = logs.get_current_raw_logs_path()
+    BackendStore -> BackendImport : get out_path = logs.get_current_processed_logs_path()
+    BackendStore -> BackendImport : get line_regex = regex_tags.get_line_regex()
+    BackendImport -> LogsParser : call(in_path, out_path, line_regex)
+    !include ./LogsParser.puml
+    LogsParser -> BackendImport : processing done, return parsed logs
+
+end
+BackendImport -> FrontendImport : send parsed logs (if ok), error otherwise
+
+group if backend import success
+    FrontendImport -> FrontendStore : dispatch(EActionType::Logs_ImportLogsOK, {parsed logs})
+else
+    FrontendImport -> FrontendStore : dispatch(EActionType::Logs_ImportLogsNOK, {backend error})
+end
+note right
+    Loading screen should
+     NOT BE visible in frontend
+end note
+
+@enduml

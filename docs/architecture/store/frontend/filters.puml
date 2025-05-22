@@ -1,0 +1,118 @@
+@startuml Filters
+
+package OopsieLogsy #LightYellow {
+    package Frontend {
+        struct OverAlternative #LightBlue {
+            + label : string
+            + value : string
+        }
+
+        struct FilterComponent #LightBlue {
+            + id: UUID
+            + overAlternativeId: UUID
+            + data : string
+            + isRegex : bool
+            + isEquals : bool
+            + ignoreCase : bool
+        }
+
+        struct FilterColors #LightBlue {
+            + fg : string
+            + bg : string
+        }
+
+        struct Filter #LightBlue {
+            + id : UUID
+            + name : string
+            + isActive : bool
+            + isHighlightOnly : bool
+            + componentIDs : UUID[]
+            + colors : FilterColors
+            + priority : number
+            + collapsed : bool
+        }
+
+        struct FilterTab #LightBlue {
+            + id : UUID
+            + name : string
+            + filterIDs : UUID[]
+        }
+
+        struct FiltersStore #LightSkyBlue {
+            + loading : bool
+            + focusedTabId : UUID
+            + canSaveData : bool
+
+            + tabs : FilterTab[]
+            + filters : Filter[]
+            + components : FilterComponent[]
+            + overAlternatives : OverAlternative[]
+
+            + beforeDragNotCollapsed : UUID[]
+        }
+
+        struct FiltersHandlers #LightSalmon {
+            ==[ IPC ]==
+            + loading()
+            + invokeGetTabs(overAlternatives: OverAlternative[])
+            + invokeSetTabs(tabs: FilterTab[], filters: Filter[], components: FilterComponent[], overAlternatives: OverAlternative[])
+
+            ==[ filters management ]==
+            + addNewFilter(targetTabId: UUID)
+            + deleteFilter(targetTabId: UUID, targetFilterId: UUID)
+            + duplicateFilter(targetTabId: UUID, targetFilterId: UUID)
+            + muteAllFilters(targetTabId: UUID)
+            + unmuteAllFilters(targetTabId: UUID)
+            + prepareFiltersForDrag(targetTabId: UUID)
+            + reorderFilters(targetTabId: UUID, activeId: UUID, overId: UUID)
+            + setAllFiltersCollapsed(targetTabId: UUID, collapsed: bool)
+            + deleteAllFilters(targetTabId: UUID)
+
+            ==[ filters data management ]==
+            + setFilterBg(targetFilterId: UUID, color: string)
+            + setFilterFg(targetFilterId: UUID, color: string)
+            + setFilterName(targetFilterId: UUID, name: string)
+            + setFilterPriority(targetFilterId: UUID, priority: number)
+            + toggleFilterActive(targetFilterId: UUID)
+            + toggleFilterCollapsed(targetFilterId: UUID)
+            + toggleFilterComponentIgnoreCase(targetComponentId: UUID)
+            + toggleFilterHighlightOnly(targetFilterId: UUID)
+
+            ==[ filter components management ]==
+            + addNewFilterComponent(targetFilterId: UUID, targetComponentId: UUID)
+            + deleteFilterComponent(targetFilterId: UUID, targetComponentId: UUID)
+            + reorderFilterComponents(targetFilterId: UUID, activeId: UUID, overId: UUID)
+
+            ==[ filter component data management ]==
+            + setComponentData(targetComponentId: UUID, data: string)
+            + setComponentOverAlternative(targetComponentId: UUID, overAlternativeId: UUID)
+            + toggleComponentIsEquals(targetComponentId: UUID)
+            + toggleComponentIsRegex(targetComponentId: UUID)
+
+            ==[ tabs management ]==
+            + addNewFilterTab()
+            + deleteFilterTab(targetTabId: UUID)
+            + duplicateFiltersTab(targetTabId: UUID)
+            + focusFilterTab(targetId: UUID)
+            + reorderTabs(activeId: UUID, overId: UUID)
+
+            ==[ tab data management ]==
+            + setFilterTabName(targetTabId: UUID, name: string)
+        }
+
+        struct FiltersListeners #LightSalmon {
+            ==[ EActionType.InvokeSetTagsOk ]==
+            + onLogRegexTagsSet()
+        }
+
+        FiltersStore -down-* FiltersHandlers : data modifiers
+        FiltersStore -down-* FiltersListeners : data modifiers based \n on external events
+        FiltersStore -down-> FilterTab : has
+        FiltersStore -down-> Filter : has
+        Filter -> FilterColors : has
+        FiltersStore -down-> FilterComponent : has
+        FiltersStore -down-> OverAlternative : has
+    }
+}
+
+@enduml

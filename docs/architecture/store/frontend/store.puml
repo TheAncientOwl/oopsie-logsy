@@ -1,0 +1,21 @@
+@startuml FrontendStore
+
+!include ./regex_tags.puml
+!include ./filters.puml
+!include ./logs.puml
+
+package OopsieLogsy #LightYellow {
+    package Frontend #White {
+        struct Store #LightSalmon {
+            filters: FiltersStore
+            regex_tags: RegexTagsStore
+            logs: LogsStore
+        }
+
+        Store -down-> FiltersStore : has
+        Store -down-> RegexTagsStore : has
+        Store -down-> LogsStore : has
+    }
+}
+
+@enduml

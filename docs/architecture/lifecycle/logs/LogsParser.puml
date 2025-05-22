@@ -1,0 +1,20 @@
+@startuml LogsParser
+
+participant "<Backend>\nLogics::LogsParser" as LogsParser #Orange
+participant "<Backend>\nConvertedLogs:\nArray<JSON>" as converted_logs #Orange
+
+group parse_logs (in_path, out_path, line_regex)
+    LogsParser -> LogsParser : raw_logs_file = open param{in_path} [READ]
+    LogsParser -> LogsParser : parsed_logs_file = open param{out_path} [WRITE]
+    LogsParser -> converted_logs : .init()
+    activate converted_logs
+    group for each line in raw_logs_file
+        LogsParser -> LogsParser : parse with params{line_regex}
+        LogsParser -> LogsParser : save parsed entry to parsed_log_file
+        LogsParser -> converted_logs : .add(parsed entry)
+    end
+    converted_logs -> LogsParser
+    deactivate converted_logs
+end
+
+@enduml

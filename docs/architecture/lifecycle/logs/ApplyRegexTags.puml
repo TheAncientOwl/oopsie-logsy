@@ -1,0 +1,44 @@
+@startuml ApplyRegexTags
+
+actor User #LightYellow
+participant "<Frontend>\nApplyRegexTagsButton" as FrontendApply #LightSkyBlue
+participant "<Frontend>\nStore" as FrontendStore #LightBlue
+participant "<Backend>\nStore" as BackendStore #Salmon
+participant "<Backend>\nCommand::apply_regex_tags" as BackendApply #LightSalmon
+participant "<Backend>\nLogics::LogsParser" as LogsParser #Orange
+participant "<Backend>\nConvertedLogs:\nArray<JSON>" as converted_logs #Orange
+
+User -> FrontendApply : Click
+
+FrontendApply -> FrontendStore : dispatch(EActionType::RegexTags_Loading, {})
+note left
+    Loading screen should
+     BE visible in frontend
+end note
+FrontendApply -> BackendApply : invoke apply_regex_tags(tags)
+
+group apply_regex_tags(tags)
+    BackendApply -> BackendStore : call regex_tags.set(param{tags})
+
+    BackendStore -> BackendApply : get in_path = logs.get_current_raw_logs_path()
+    BackendStore -> BackendApply : get out_path = logs.get_current_processed_logs_path()
+    BackendStore -> BackendApply : get line_regex = regex_tags.get_line_regex()
+
+    BackendApply -> LogsParser : call parse_logs(in_path, out_path, line_regex)
+    !include ./LogsParser.puml
+    LogsParser -> BackendApply : processing done, return parsed logs
+end
+
+BackendApply -> FrontendApply : send parsed logs (if ok), error otherwise
+
+group if backend import success
+    FrontendApply -> FrontendStore : dispatch(EActionType::RegexTags_ApplyRegexTagsOK, {parsed logs})
+else
+    FrontendApply -> FrontendStore : dispatch(EActionType::RegexTags_ApplyRegexTagsNOK, {backend error})
+end
+note right
+    Loading screen should
+     NOT BE visible in frontend
+end note
+
+@enduml

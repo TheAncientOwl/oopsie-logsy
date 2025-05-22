@@ -1,0 +1,83 @@
+@startuml ApplyFilters
+
+actor User #LightYellow
+participant "<Frontend>\nApplyFiltersButton" as FrontendApply #LightSkyBlue
+participant "<Frontend>\nStore" as FrontendStore #LightBlue
+participant "<Backend>\nStore" as BackendStore #Salmon
+participant "<Backend>\nCommand::apply_filters" as BackendApply #LightSalmon
+participant "<Backend>\nActiveFilters:\nArray<filter>" as active_filters #Orange
+participant "<Backend>\nFilteredLogs:\nArray<{filter ID, JSON}>" as filtered_logs #Orange
+
+User -> FrontendApply : Click
+
+FrontendApply -> FrontendStore : dispatch(EActionType::Filters_Loading, {})
+note left
+    Loading screen should
+     BE visible in frontend
+end note
+FrontendApply -> BackendApply : invoke apply_filters(tabs, filters, components)
+
+group apply_filters(tabs, filters, components)
+    BackendApply -> BackendStore : call filters.set(param{tabs}, param{filters}, param{components})
+
+    BackendStore -> BackendApply : get parsed_logs_path = logs.get_current_processed_logs_path()
+    BackendStore -> BackendApply : get tags = regex_tags.get()
+
+    group if in_file is NONE
+        group error
+            BackendApply -> BackendApply : return
+        end
+    end
+
+    BackendApply -> active_filters : .init()
+    activate active_filters
+    group for each tab in tabs
+        group if tab.is_active
+            group for each filter_id in tab.filter_ids
+                group if filters[filter_id].is_active
+                    BackendApply -> active_filters : .push(filters[filter_id])
+                end
+            end
+        end
+    end
+    BackendApply -> active_filters : sort by filter.priority (highest first)
+    ' TODO: consider using a priority queue later
+    deactivate active_filters
+
+    BackendApply -> BackendApply : logs_file = open parsed_logs_path file [READ]
+    BackendApply -> filtered_logs : .init()
+    activate filtered_logs
+    group for each line in logs_file
+        BackendApply -> BackendApply : obj = parse JSON from line
+        group for each filter in active_filters
+            BackendApply -> BackendApply : is_filter_matching = true
+            group for each component_id in filter.component_ids
+                BackendApply -> BackendApply : component = components[component_id]
+                group if component.data NOT match obj{tags[component.over_alternative_id]}
+                    BackendApply -> BackendApply : is_filter_matching = false
+                    BackendApply -> BackendApply : break
+                end
+            end
+            group if is_filter_matching
+                BackendApply -> filtered_logs : .push({filter.id, obj})
+                BackendApply -> BackendApply : break
+            end
+        end
+    end
+    filtered_logs -> BackendApply : filtering done
+    deactivate filtered_logs
+end
+
+BackendApply -> FrontendApply : send filtered logs (if ok), error otherwise
+
+group if backend import success
+    FrontendApply -> FrontendStore : dispatch(EActionType::Filters_ApplyFiltersOK, {filtered logs})
+else
+    FrontendApply -> FrontendStore : dispatch(EActionType::Filters_ApplyFiltersNOK, {backend error})
+end
+note right
+    Loading screen should
+     NOT BE visible in frontend
+end note
+
+@enduml
