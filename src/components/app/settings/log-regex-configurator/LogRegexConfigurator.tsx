@@ -6,7 +6,7 @@
  *
  * @file LogRegexConfgurator.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Configure log line regex for parsing
  */
 
@@ -15,13 +15,13 @@ import { ApplyIcon, ExportIcon, ImportIcon, NewIcon } from '@/components/ui/icon
 import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { For } from '@/components/ui/utils/For';
 import { type TRootState } from '@/store';
-import { type TRegexTag } from '@/store/log-regex-tags/data';
+import { type TRegexTag } from '@/store/regex-tags/data';
 import {
   addNewTag,
-  invokeGetTags,
-  invokeSetTags,
+  invokeGetRegexTags,
+  invokeApplyRegexTags,
   reorderTags,
-} from '@/store/log-regex-tags/handlers';
+} from '@/store/regex-tags/handlers';
 import { ButtonGroup, Heading, HStack, Input, Stack } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { GrConfigure } from 'react-icons/gr';
@@ -58,7 +58,7 @@ export const LogRegexConfiguratorTrigger = triggerConnector(LogRegexConfigurator
 
 const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
   useEffect(() => {
-    props.invokeGetTags();
+    props.invokeGetRegexTags();
   }, []);
 
   return (
@@ -94,7 +94,7 @@ const LogRegexConfiguratorContentImpl: React.FC<TPropsFromRedux> = props => {
         </TooltipIconButton>
 
         <TooltipIconButton
-          onClick={() => props.invokeSetTags(props.tags)}
+          onClick={() => props.invokeApplyRegexTags(props.tags)}
           disabled={!props.canApply}
           tooltip='Apply regex'
           variant={props.theme.buttons.apply.variant}
@@ -131,8 +131,8 @@ const mapState = (state: TRootState) => ({
 });
 
 const mapDispatch = {
-  invokeGetTags: invokeGetTags.dispatch,
-  invokeSetTags: invokeSetTags.dispatch,
+  invokeGetRegexTags: invokeGetRegexTags.dispatch,
+  invokeApplyRegexTags: invokeApplyRegexTags.dispatch,
   addNewTag: addNewTag.dispatch,
   reorderTags: reorderTags.dispatch,
 };

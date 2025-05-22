@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description Handlers index file.
  */
 
@@ -20,8 +20,8 @@ import { deleteFilterTab } from './deleteFilterTab';
 import { duplicateFilter } from './duplicateFilter';
 import { duplicateFiltersTab } from './duplicateFiltersTab';
 import { focusFilterTab } from './focusFilterTab';
-import { invokeGetTabs } from './invokeGetTabs';
-import { invokeSetTabs } from './invokeSetTabs';
+import { invokeApplyFilters } from './invokeApplyFilters';
+import { invokeGetFilters } from './invokeGetFilters';
 import { loading } from './loading';
 import { muteAllFilters } from './muteAllFilters';
 import { prepareFiltersForDrag } from './prepareFiltersForDrag';
@@ -78,7 +78,7 @@ const basicHandlers = [
   unmuteAllFilters,
 ];
 
-const apiCallHandlers = [invokeGetTabs, invokeSetTabs];
+const apiCallHandlers = [invokeGetFilters, invokeApplyFilters];
 
 export {
   addNewFilter,
@@ -93,8 +93,8 @@ export {
   duplicateFilter,
   duplicateFiltersTab,
   focusFilterTab,
-  invokeGetTabs,
-  invokeSetTabs,
+  invokeApplyFilters,
+  invokeGetFilters,
   loading,
   muteAllFilters,
   prepareFiltersForDrag,

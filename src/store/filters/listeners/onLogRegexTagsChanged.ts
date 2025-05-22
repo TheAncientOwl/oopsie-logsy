@@ -6,16 +6,16 @@
  *
  * @file onLogRegexTagsChanged.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Update over alternatives when tags are changed.
  */
 
 import { IStoreChangeListener } from '@/store/common/storeHandler';
-import { TRegexTag } from '@/store/log-regex-tags/data';
-import { type TPayloadOk as TInvokeGetTagsPayloadOk } from '@/store/log-regex-tags/handlers/invokeGetTags';
-import { type TPayloadOk as TInvokeSetTagsPayloadOk } from '@/store/log-regex-tags/handlers/invokeSetTags';
+import { EActionType } from '@/store/regex-tags/actions';
+import { TRegexTag } from '@/store/regex-tags/data';
+import { type TPayloadOk as TInvokeApplyRegexTagsPayloadNOk } from '@/store/regex-tags/handlers/invokeApplyRegexTags';
+import { type TPayloadOk as TInvokeApplyRegexTagsPayloadOk } from '@/store/regex-tags/handlers/invokeGetRegexTags';
 import { checkCanSaveData, makeOverAlternatives, type TStoreState } from '../data';
-import { EActionType as EActionType } from '@/store/log-regex-tags/actions';
 
 const handle = <PayloadWithTags extends { tags: TRegexTag[] }>(
   state: TStoreState,
@@ -34,18 +34,18 @@ const handle = <PayloadWithTags extends { tags: TRegexTag[] }>(
 
 export const onLogRegexTagsGet: IStoreChangeListener<
   TStoreState,
-  TInvokeGetTagsPayloadOk,
+  TInvokeApplyRegexTagsPayloadOk,
   EActionType
 > = {
-  action: EActionType.InvokeGetTagsOK,
+  action: EActionType.InvokeGetRegexTagsOK,
   reduce: (state, payload) => handle(state, payload),
 };
 
 export const onLogRegexTagsSet: IStoreChangeListener<
   TStoreState,
-  TInvokeSetTagsPayloadOk,
+  TInvokeApplyRegexTagsPayloadNOk,
   EActionType
 > = {
-  action: EActionType.InvokeSetTagsOK,
+  action: EActionType.InvokeApplyRegexTagssOK,
   reduce: (state, payload) => handle(state, payload),
 };

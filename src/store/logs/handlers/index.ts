@@ -6,15 +6,15 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Handlers index file.
  */
 
-import { invokeSetCurrentLogPaths } from './invokeSetCurrentLogPaths';
+import { invokeImportLogs } from './invokeImportLogs';
 import { loading } from './loading';
 
 const basicHandlers = [loading];
 
-const apiCallHandlers = [invokeSetCurrentLogPaths];
+const apiCallHandlers = [invokeImportLogs];
 
-export { basicHandlers, apiCallHandlers, invokeSetCurrentLogPaths, loading };
+export { apiCallHandlers, basicHandlers, invokeImportLogs, loading };

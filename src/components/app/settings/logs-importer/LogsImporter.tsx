@@ -6,14 +6,14 @@
  *
  * @file LogsImporter.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Import logs button
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
 import { ImportIcon } from '@/components/ui/icons';
 import { TRootState } from '@/store';
-import { invokeSetCurrentLogPaths } from '@/store/logs/handlers';
+import { invokeImportLogs } from '@/store/logs/handlers';
 import { open } from '@tauri-apps/plugin-dialog';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -28,7 +28,7 @@ const LogsImporterImpl: React.FC<TPropsFromRedux> = props => {
     });
 
     if (selectedFile) {
-      props.invokeSetCurrentLogPaths([selectedFile]);
+      props.invokeImportLogs([selectedFile]);
     }
   };
 
@@ -50,7 +50,7 @@ const mapState = (state: TRootState) => ({
 });
 
 const mapDispatch = {
-  invokeSetCurrentLogPaths: invokeSetCurrentLogPaths.dispatch,
+  invokeImportLogs: invokeImportLogs.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

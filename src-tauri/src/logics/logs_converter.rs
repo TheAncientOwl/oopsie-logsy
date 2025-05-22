@@ -7,7 +7,7 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
@@ -23,29 +23,6 @@ use crate::{
     log_error, log_info, log_warn,
     store::{regex_tags::RegexTag, store::Store},
 };
-
-fn compute_line_regex(tags: &Vec<RegexTag>) -> regex::Regex {
-    let _log = ScopeLog::new(&compute_line_regex);
-
-    let capacity: usize = tags
-        .iter()
-        .map(|tag| tag.regex.len() + if tag.displayed { 2 } else { 0 })
-        .sum();
-
-    let mut regex_str = String::with_capacity(capacity);
-
-    for tag in tags.iter() {
-        if tag.displayed {
-            regex_str.push('(');
-            regex_str.push_str(&tag.regex);
-            regex_str.push(')');
-        } else {
-            regex_str.push_str(&tag.regex);
-        }
-    }
-
-    regex::Regex::new(&regex_str).unwrap()
-}
 
 fn convert(in_file: &File, out_file: &File, tags: &Vec<RegexTag>, line_regex: &Regex) {
     let _log = ScopeLog::new(&convert);
@@ -136,8 +113,8 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
         .unwrap();
 
     let store = Store::get_instance();
-    let tags = store.regex_tags.get();
-    let line_regex = compute_line_regex(tags);
+    let tags = store.regex_tags.get_tags();
+    let line_regex = store.regex_tags.get_line_regex();
 
     convert(&in_file, &out_file, &tags, &line_regex);
 }

@@ -1,0 +1,36 @@
+@startuml Logs
+
+package OopsieLogsy #LightYellow {
+    package Frontend {
+        struct LogsStore #LightSteelBlue {
+            + loading: bool
+            + logs: JSON[]
+            + filterIDs: string[]
+        }
+        note left
+            if `filterIDs` is empty, 
+             it means no filtering was done, 
+             so no coloring in the UI should occur
+        end note
+
+        struct LogsHandlers #LightSalmon {
+            + invokeImportLogs(paths: string[])
+        }
+
+        struct LogsListeners #LightSalmon {
+            ==[ EActionType::RegexTags_ApplyRegexTagsOK ]==
+            + onApplyRegexTagsOk()
+
+            ==[ EActionType::Filters_ApplyFiltersOK] ==
+            + onApplyFiltersOk()
+
+            == [ EActionType::Logs_ImportLogsOK ] ==
+            + onImportLogsOk()
+        }
+
+        LogsStore -down-* LogsHandlers : data modifiers
+        LogsStore -down-* LogsListeners : data modifiers based \n on external events
+    }
+}
+
+@enduml

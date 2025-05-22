@@ -4,32 +4,31 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `get_regex_tags.rs`
+//! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.3
-//! **Description**: Get RegexTags command.
+//! **Description**: Set RegexTags command.
 //!
 
 use crate::{
-    common::scope_log::ScopeLog,
+    common::{command_status, scope_log::ScopeLog},
     log_trace,
     store::{regex_tags::RegexTag, store::Store},
 };
 
 #[tauri::command]
-pub async fn get_regex_tags() -> Result<Vec<RegexTag>, String> {
-    let _log = ScopeLog::new(&get_regex_tags);
-
-    let store = Store::get_instance_mut();
-    let tags = store.regex_tags.get_tags().clone();
+pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<u16, String> {
+    let _log = ScopeLog::new(&apply_regex_tags);
 
     log_trace!(
-        &get_regex_tags,
-        "Sending {} tags: {}",
+        &apply_regex_tags,
+        "Received {} tags: {}",
         tags.len(),
         serde_json::to_string(&tags).unwrap_or_else(|_| "Failed to serialize tags".to_string())
     );
 
-    Ok(tags)
+    Store::get_instance_mut().regex_tags.set(&tags);
+
+    Ok(command_status::ok())
 }

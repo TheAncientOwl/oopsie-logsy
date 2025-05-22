@@ -1,0 +1,44 @@
+@startuml RegexTags
+
+package OopsieLogsy #LightYellow {
+    package Frontend {
+        struct RegexTag #LightGreen {
+            + id : string
+            + displayed : bool
+            + regex : string
+            + name : string
+        }
+
+        struct RegexTagsStore #MediumSpringGreen {
+            + tags : RegexTag[]
+            + loading : bool
+            + canApplyTags : bool
+        }
+
+        struct RegexTagsHandlers #LightSalmon {
+            ==[ IPC ]==
+            + loading()
+            + invokeApplyTags()
+            + invokeGetRegexTags()
+
+            ==[ tags management ]==
+            + addNewTag()
+            + removeTag(targetId: UUID)
+            + reorderTag(activeId: UUID, overId: UUID)
+
+            ==[ tag data management ]==
+            + setTagName(targetId: UUID, newName: string)
+            + setTagRegex(targetId: UUID, newRegex: string)
+            + toggleTagDisplay(targetId: UUID)
+        }
+
+        struct RegexTagsListeners #LightSalmon {
+        }
+
+        RegexTagsStore -down-* RegexTagsHandlers : data modifiers
+        RegexTagsStore -down-* RegexTagsListeners : data modifiers based \n on external events
+        RegexTagsStore -down-> RegexTag : has
+    }
+}
+
+@enduml

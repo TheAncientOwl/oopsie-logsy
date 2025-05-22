@@ -1,0 +1,54 @@
+@startuml Filters
+
+package OopsieLogsy #LightYellow {
+    package Backend {
+        struct FilterComponent #LightBlue {
+            + id : string
+            + over_alternative_id : string
+            + data : string
+            + is_regex : string
+            + is_equals : bool
+            + ignore_case : bool
+        }
+
+        struct FilterColors #LightBlue {
+            + fg: string
+            + bg : string
+        }
+
+        struct Filter #LightBlue {
+            + id : string
+            + name : string
+            + is_active : bool
+            + is_highlight_only : bool
+            + component_ids : string[]
+            + colors : FilterColors
+            + priority : uint64
+            + collapsed : bool
+        }
+
+        struct FilterTab #LightBlue {
+            + id : string
+            + name : string
+            + filter_ids: string[]
+        }
+
+        struct FiltersManager #LightSkyBlue {
+            - tabs : FilterTab[]
+            - filters : Filter[]
+            - components : FilterComponent[]
+
+            + set(new_tabs: FilterTab[], new_filters: Filter[], new_components: Component[]) : void
+            + get_tabs() : &FilterTab[]
+            + get_filters() : &Filter[]
+            + get_components() : &Filter[]
+        }
+
+        Filter -right-> FilterColors : has one
+        FiltersManager -down-> FilterTab : has all
+        FiltersManager -down-> Filter : has all
+        FiltersManager -down-> FilterComponent : has all
+    }
+}
+
+@enduml

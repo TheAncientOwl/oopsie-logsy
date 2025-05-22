@@ -6,27 +6,24 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Logs action types.
  */
 
 import { Dispatch as ReduxDispatch, UnknownAction } from '@reduxjs/toolkit';
+import { TInvokeImportLogsNOk, TInvokeImportLogsOk } from './handlers/invokeImportLogs';
 import { TLoadingAction } from './handlers/loading';
-import {
-  TInvokeSetCurrentLogPathsNOk,
-  TInvokeSetCurrentLogPathsOk,
-} from './handlers/invokeSetCurrentLogPaths';
 
 export enum EActionType {
   Loading = 'Logs__Loading',
-  InvokeSetCurrentLogPathsOK = 'Logs__InvokeSetCurrentLogPathsOK',
-  InvokeSetCurrentLogPathsNOK = 'Logs__InvokeSetCurrentLogPathsNOK',
+  InvokeImportLogsOK = 'Logs__ImportLogsOK',
+  InvokeImportLogsNOK = 'Logs__ImportLogsNOK',
 }
 
 export type TDispatchTypes =
   | UnknownAction
   | TLoadingAction
-  | TInvokeSetCurrentLogPathsOk
-  | TInvokeSetCurrentLogPathsNOk;
+  | TInvokeImportLogsOk
+  | TInvokeImportLogsNOk;
 
 export type TDispatch = ReduxDispatch<TDispatchTypes>;

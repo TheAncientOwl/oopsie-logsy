@@ -7,12 +7,12 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Commands mod file.
 //!
 
-pub mod get_filter_tabs;
+pub mod apply_filters;
+pub mod apply_regex_tags;
+pub mod get_filters;
 pub mod get_regex_tags;
-pub mod set_current_log_paths;
-pub mod set_filter_tabs;
-pub mod set_regex_tags;
+pub mod import_logs;

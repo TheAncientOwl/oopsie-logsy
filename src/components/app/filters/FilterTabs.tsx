@@ -6,7 +6,7 @@
  *
  * @file FilterTabs.tsx
  * @author Alexandru Delegeanu
- * @version 0.32
+ * @version 0.33
  * @description Filters component
  */
 
@@ -17,8 +17,8 @@ import { type TRootState } from '@/store';
 import {
   addNewFilterTab,
   focusFilterTab,
-  invokeGetTabs,
-  invokeSetTabs,
+  invokeGetFilters,
+  invokeApplyFilters,
   reorderTabs,
 } from '@/store/filters/handlers';
 import { Box, ButtonGroup, HStack, Stack, Tabs } from '@chakra-ui/react';
@@ -29,7 +29,7 @@ import { FilterTabToolBox } from './FilterTabToolBox';
 
 const FilterTabsImpl: React.FC<TPropsFromRedux> = props => {
   useEffect(() => {
-    props.invokeGetTabs(props.overAlternatives);
+    props.invokeGetFilters(props.overAlternatives);
   }, []);
 
   return (
@@ -63,7 +63,7 @@ const FilterTabsImpl: React.FC<TPropsFromRedux> = props => {
               disabled={!props.canSaveTabs}
               tooltip='Save tabs'
               onClick={() => {
-                props.invokeSetTabs(
+                props.invokeApplyFilters(
                   props.tabs,
                   props.filters,
                   props.components,
@@ -121,8 +121,8 @@ const mapState = (state: TRootState) => ({
 
 const mapDispatch = {
   addNewFilterTab: addNewFilterTab.dispatch,
-  invokeGetTabs: invokeGetTabs.dispatch,
-  invokeSetTabs: invokeSetTabs.dispatch,
+  invokeGetFilters: invokeGetFilters.dispatch,
+  invokeApplyFilters: invokeApplyFilters.dispatch,
   reorderTabs: reorderTabs.dispatch,
   focusFilterTab: focusFilterTab.dispatch,
 };

@@ -6,13 +6,13 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.4
- * @description .
+ * @version 0.5
+ * @description Store index file.
  */
 
 import { thunk } from 'redux-thunk';
 import { filtersTagsReducer } from './filters/reducer';
-import { logRegexTagsReducer } from './log-regex-tags/reducer';
+import { logRegexTagsReducer } from './regex-tags/reducer';
 import { themeReducer } from './theme/reducer';
 
 import { configureStore, Middleware } from '@reduxjs/toolkit';

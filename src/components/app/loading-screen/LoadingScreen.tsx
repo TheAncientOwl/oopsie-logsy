@@ -49,6 +49,8 @@ const LoadingScreenImpl: React.FC<TPropsFromRedux> = props => {
 
 // <redux>
 const mapState = (state: TRootState) => ({
+  // TODO: display loading for settings and filters only if open;
+  // it includes moving open states to redux store
   loading: state.filters.loading || state.logRegexTags.loading || state.logs.loading,
 });
 

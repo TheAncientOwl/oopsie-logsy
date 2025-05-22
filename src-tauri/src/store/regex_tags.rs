@@ -7,9 +7,11 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
+
+use crate::common::scope_log::ScopeLog;
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -22,6 +24,7 @@ pub struct RegexTag {
 
 pub struct RegexTagsManager {
     regex_tags: Vec<RegexTag>,
+    regex_line: regex::Regex,
 }
 // </data>
 
@@ -30,16 +33,48 @@ impl RegexTagsManager {
     pub fn new() -> Self {
         Self {
             regex_tags: Vec::new(),
+            regex_line: regex::Regex::new(".*").expect("Failed to generate default regex line"),
         }
     }
 
-    pub fn set(&mut self, new_tags: &Vec<RegexTag>) {
-        self.regex_tags.clear();
-        self.regex_tags.extend(new_tags.iter().cloned());
+    fn compute_line_regex(tags: &Vec<RegexTag>) -> regex::Regex {
+        let _log = ScopeLog::new(&RegexTagsManager::compute_line_regex);
+
+        let capacity: usize = tags
+            .iter()
+            .map(|tag| tag.regex.len() + if tag.displayed { 2 } else { 0 })
+            .sum();
+
+        let mut regex_str = String::with_capacity(capacity);
+
+        for tag in tags.iter() {
+            if tag.displayed {
+                regex_str.push('(');
+                regex_str.push_str(&tag.regex);
+                regex_str.push(')');
+            } else {
+                regex_str.push_str(&tag.regex);
+            }
+        }
+
+        regex::Regex::new(&regex_str).unwrap()
     }
 
-    pub fn get(&self) -> &Vec<RegexTag> {
+    pub fn set(&mut self, new_tags: &Vec<RegexTag>) {
+        let _log = ScopeLog::new(&RegexTagsManager::set);
+
+        self.regex_tags.clear();
+        self.regex_tags.extend(new_tags.iter().cloned());
+
+        self.regex_line = RegexTagsManager::compute_line_regex(&new_tags);
+    }
+
+    pub fn get_tags(&self) -> &Vec<RegexTag> {
         &self.regex_tags
+    }
+
+    pub fn get_line_regex(&self) -> &regex::Regex {
+        &self.regex_line
     }
 }
 // </manager>

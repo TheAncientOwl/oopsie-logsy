@@ -7,19 +7,19 @@
 //! # `store.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.6
 //! **Description**: Application data store manager.
 //!
 
 use once_cell::sync::Lazy;
 use std::sync::RwLock;
 
-use super::{filter_tabs::FilterTabsManager, logs::Logs, regex_tags::RegexTagsManager};
+use super::{filters::FiltersManager, logs::LogsManager, regex_tags::RegexTagsManager};
 
 pub struct Store {
     pub regex_tags: RegexTagsManager,
-    pub logs: Logs,
-    pub filter_tabs: FilterTabsManager,
+    pub logs: LogsManager,
+    pub filters: FiltersManager,
 }
 
 static STORE: Lazy<RwLock<Store>> = Lazy::new(|| RwLock::new(Store::new()));
@@ -28,8 +28,8 @@ impl Store {
     fn new() -> Self {
         Self {
             regex_tags: RegexTagsManager::new(),
-            logs: Logs::new(),
-            filter_tabs: FilterTabsManager::new(),
+            logs: LogsManager::new(),
+            filters: FiltersManager::new(),
         }
     }
 

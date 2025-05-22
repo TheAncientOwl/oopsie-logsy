@@ -6,7 +6,7 @@
  *
  * @file RegexTagItem.tsx
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description LogRegexConfigurator regex tag item.
  */
 
@@ -16,13 +16,8 @@ import { DeleteIcon, EyeClosedIcon, EyeOpenIcon } from '@/components/ui/icons';
 import { DraggableList } from '@/components/ui/lists/DraggableList';
 import { useSwitch } from '@/hooks/useSwitch';
 import { TRootState } from '@/store';
-import { TRegexTag } from '@/store/log-regex-tags/data';
-import {
-  removeTag,
-  setTagName,
-  setTagRegex,
-  toggleTagDisplay,
-} from '@/store/log-regex-tags/handlers';
+import { TRegexTag } from '@/store/regex-tags/data';
+import { removeTag, setTagName, setTagRegex, toggleTagDisplay } from '@/store/regex-tags/handlers';
 import { HStack, Input, Span } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';

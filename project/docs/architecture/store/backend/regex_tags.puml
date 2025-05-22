@@ -1,0 +1,29 @@
+@startuml RegexTags
+
+package OopsieLogsy #LightYellow {
+    package Backend {
+        struct RegexTag #LightGreen {
+            + id : string
+            + displayed : bool
+            + regex : string
+            + name : string
+        }
+
+        struct RegexTagsManager #MediumSpringGreen {
+            - regex_tags : RegexTag[]
+            - regex_line : Regex
+
+            + set(new_tags: RegexTag[]) : void
+            + get_tags() : &RegexTag[]
+            + get_line_regex() : Regex
+        }
+        note right
+            `regex_line` computed out of
+             `regex_tags` in `set` method
+        end note
+
+        RegexTagsManager -down-> RegexTag : has all
+    }
+}
+
+@enduml

@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.20
+ * @version 0.21
  * @description Filters action types.
  */
 
@@ -23,13 +23,13 @@ import { type TDuplicateFilterAction } from './handlers/duplicateFilter';
 import { type TDuplicateFiltersTabAction } from './handlers/duplicateFiltersTab';
 import { type TFocusFilterTabAction } from './handlers/focusFilterTab';
 import {
-  type TInvokeGetTabsNOkAction,
-  type TInvokeGetTabsOkAction,
-} from './handlers/invokeGetTabs';
+  type TInvokeApplyFiltersNOkAction,
+  type TInvokeApplyFiltersOkAction,
+} from './handlers/invokeApplyFilters';
 import {
-  type TInvokeSetTabsNOkAction,
-  type TInvokeSetTabsOkAction,
-} from './handlers/invokeSetTabs';
+  type TInvokeGetFiltersNOkAction,
+  type TInvokeGetFiltersOkAction,
+} from './handlers/invokeGetFilters';
 import { type TLoadingAction } from './handlers/loading';
 import { type TMuteAllFiltersAction } from './handlers/muteAllFilters';
 import { TPrepareFiltersForDragAction } from './handlers/prepareFiltersForDrag';
@@ -53,10 +53,10 @@ import { type TUnmuteAllFiltersAction } from './handlers/unmuteAllFilters';
 export enum EActionType {
   Loading = 'Filters__Loading',
 
-  InvokeSetTabsOK = 'Filters__InvokeSetTabsOK',
-  InvokeSetTabsNOK = 'Filters__InvokeSetTabsNOK',
-  InvokeGetTabsOK = 'Filters__InvokeGetTabsOK',
-  InvokeGetTabsNOK = 'Filters__InvokeGetTabsNOK',
+  InvokeApplyFiltersOK = 'Filters__ApplyFiltersOK',
+  InvokeApplyFiltersNOK = 'Filters__ApplyFiltersNOK',
+  InvokeGetFiltersOK = 'Filters__InvokeGetTabsOK',
+  InvokeGetFiltersNOK = 'Filters__InvokeGetTabsNOK',
 
   AddNewFilterTab = 'Filters__AddNewFilterTab',
   DeleteFilterTab = 'Filters__DeleteFilterTab',
@@ -113,10 +113,10 @@ export type TDispatchTypes =
   | TMuteAllFiltersAction
   | TUnmuteAllFiltersAction
   | TDeleteAllFiltersAction
-  | TInvokeGetTabsOkAction
-  | TInvokeGetTabsNOkAction
-  | TInvokeSetTabsOkAction
-  | TInvokeSetTabsNOkAction
+  | TInvokeGetFiltersOkAction
+  | TInvokeGetFiltersNOkAction
+  | TInvokeApplyFiltersOkAction
+  | TInvokeApplyFiltersNOkAction
   | TSetFilterTabNameAction
   | TToggleFilterComponentIgnoreCaseAction
   | TSetFilterPriorityAction

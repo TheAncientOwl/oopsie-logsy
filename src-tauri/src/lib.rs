@@ -7,7 +7,7 @@
 //! # `lib.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: OopsieLogsy tauri lib.
 //!
 
@@ -34,11 +34,11 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            commands::set_regex_tags::set_regex_tags,
+            commands::apply_regex_tags::apply_regex_tags,
             commands::get_regex_tags::get_regex_tags,
-            commands::set_filter_tabs::set_filter_tabs,
-            commands::get_filter_tabs::get_filter_tabs,
-            commands::set_current_log_paths::set_current_log_paths,
+            commands::apply_filters::apply_filters,
+            commands::get_filters::get_filters,
+            commands::import_logs::import_logs,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

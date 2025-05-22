@@ -6,12 +6,12 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.19
+ * @version 0.21
  * @description Filters data structures.
  */
 
 import { uuid, type UUID } from '../common/identifier';
-import { getStaticDefaultTags, type TRegexTag } from '../log-regex-tags/data';
+import { getStaticDefaultTags, type TRegexTag } from '../regex-tags/data';
 
 // <types>
 export type TOverAlternative = {
@@ -23,7 +23,7 @@ export type TOverAlternatives = Array<TOverAlternative>;
 
 export type TFilterComponent = {
   id: UUID;
-  overAlternativeId: string;
+  overAlternativeId: UUID;
   data: string;
   isRegex: boolean;
   isEquals: boolean;
@@ -47,14 +47,14 @@ export type TFilter = {
 };
 
 export type TFilterTab = {
-  id: string;
+  id: UUID;
   name: string;
   filterIDs: Array<UUID>;
 };
 
 export type TStoreState = {
   loading: boolean;
-  focusedTabId: string;
+  focusedTabId: UUID;
   canSaveData: boolean;
 
   tabs: Array<TFilterTab>;

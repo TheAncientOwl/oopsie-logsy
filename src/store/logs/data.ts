@@ -6,18 +6,24 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Logs data.
  */
+
+import { UUID } from '../common/identifier';
 
 // <types>
 export type TStoreState = {
   loading: boolean;
+  logs: Array<JSON>;
+  filterIDs: UUID[];
 };
 // </types>
 
 // <data>
 export const defaultState: TStoreState = {
   loading: false,
+  logs: [],
+  filterIDs: [],
 };
 // </data>
