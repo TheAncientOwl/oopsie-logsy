@@ -6,7 +6,7 @@
  *
  * @file DoubleCheck.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Self explanatory.
  */
 
@@ -34,7 +34,7 @@ export const DoubleCheck: React.FC<TDoubleCheckProps & PropsWithChildren> = prop
         display={props.isShown ? 'flex' : 'none'}
         visibility={props.isShown ? 'visible' : 'hidden'}
         position='fixed'
-        zIndex={5000}
+        zIndex={50000}
         top='0'
         bottom='0'
         left='0'
