@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description LogRegexTags action types.
  */
 
@@ -32,7 +32,7 @@ export enum EActionType {
   Loading = 'LogRegexTags__Loading',
   InvokeGetRegexTagsOK = 'LogRegexTags__InvokeGetTagsOK',
   InvokeGetRegexTagsNOK = 'LogRegexTags__InvokeGetTagsNOK',
-  InvokeApplyRegexTagssOK = 'LogRegexTags__InvokeApplyRegexTagssOK',
+  InvokeApplyRegexTagsOK = 'LogRegexTags__InvokeApplyRegexTagssOK',
   InvokeApplyRegexTagssNOK = 'LogRegexTags__InvokeApplyRegexTagssNOK',
   AddNewTag = 'LogRegexTags__AddNewTag',
   RemoveTag = 'LogRegexTags__RemoveTag',

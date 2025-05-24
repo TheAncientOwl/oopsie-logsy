@@ -7,18 +7,18 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Set RegexTags command.
 //!
 
 use crate::{
-    common::{command_status, scope_log::ScopeLog},
-    log_trace,
+    common::scope_log::ScopeLog,
+    log_trace, logics,
     store::{regex_tags::RegexTag, store::Store},
 };
 
 #[tauri::command]
-pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<u16, String> {
+pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<Vec<Vec<String>>, String> {
     let _log = ScopeLog::new(&apply_regex_tags);
 
     log_trace!(
@@ -28,7 +28,23 @@ pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<u16, String> {
         serde_json::to_string(&tags).unwrap_or_else(|_| "Failed to serialize tags".to_string())
     );
 
-    Store::get_instance_mut().regex_tags.set(&tags);
+    let mut store = Store::get_instance_mut();
 
-    Ok(command_status::ok())
+    store.regex_tags.set(&tags);
+
+    if store.logs.get_current_raw_logs_path().len() == 0 {
+        let mut empty_data: Vec<Vec<String>> = Vec::new();
+        tags.iter().for_each(|_| empty_data.push(Vec::new()));
+
+        return Ok(empty_data);
+    }
+
+    let in_file_path = store.logs.get_current_raw_logs_path()[0].clone();
+    let out_file_dir = store.logs.get_current_processed_logs_dir().clone();
+
+    std::mem::drop(store);
+    Ok(logics::logs_converter::execute(
+        &in_file_path,
+        &out_file_dir,
+    ))
 }

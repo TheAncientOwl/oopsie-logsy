@@ -6,19 +6,23 @@
  *
  * @file reducer.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Logs data reducer.
  */
 
-import { makeReducer, makeReducerMap, NoStoreChangeListeners } from '../common/reducer';
+import { makeReducer, makeReducerMap } from '../common/reducer';
+import { EActionType as ELogRegexTagsActionType } from '../regex-tags/actions';
 import { EActionType, TDispatchTypes } from './actions';
 import { defaultState, TStoreState } from './data';
 import { apiCallHandlers, basicHandlers } from './handlers';
+import { listeners } from './listeners';
 
-const reducerMap = makeReducerMap<EActionType, TStoreState>(
+type TCompoundActionType = EActionType | ELogRegexTagsActionType;
+
+const reducerMap = makeReducerMap<TCompoundActionType, TStoreState>(
   basicHandlers,
   apiCallHandlers,
-  NoStoreChangeListeners
+  listeners
 );
 
 export const logsReducer = makeReducer<TStoreState, EActionType, TDispatchTypes>(

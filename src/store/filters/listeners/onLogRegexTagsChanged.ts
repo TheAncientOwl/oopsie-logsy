@@ -6,7 +6,7 @@
  *
  * @file onLogRegexTagsChanged.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Update over alternatives when tags are changed.
  */
 
@@ -46,6 +46,6 @@ export const onLogRegexTagsSet: IStoreChangeListener<
   TInvokeApplyRegexTagsPayloadNOk,
   EActionType
 > = {
-  action: EActionType.InvokeApplyRegexTagssOK,
+  action: EActionType.InvokeApplyRegexTagsOK,
   reduce: (state, payload) => handle(state, payload),
 };

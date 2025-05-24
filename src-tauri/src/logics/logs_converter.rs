@@ -7,7 +7,7 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
@@ -18,7 +18,7 @@ use std::{
 
 use crate::{
     common::scope_log::ScopeLog,
-    log_error, log_info, log_warn,
+    log_error, log_trace,
     store::{regex_tags::RegexTag, store::Store},
 };
 
@@ -54,7 +54,7 @@ pub fn execute(
 ) -> Vec<Vec<String>> {
     let _log = ScopeLog::new(&execute);
 
-    log_info!(
+    log_trace!(
         &execute,
         "Converting log file \"{}\" into \"{}\"",
         input_path.to_str().unwrap_or("Unknown"),
@@ -83,6 +83,7 @@ pub fn execute(
         .expect("Failed to read first line");
     // log_debug!(&execute, "Converting: {}", line);
     if let Some(caps) = line_regex.captures(&line) {
+        // log_debug!(&execute, "Regex matched");
         for idx in 1..caps.len() {
             if let Some(m) = caps.get(idx) {
                 // log_debug!(&execute, "Capture group {}: {}", idx, m.as_str());
@@ -107,6 +108,9 @@ pub fn execute(
                 field_writers.push(writer);
             }
         }
+    } else {
+        // TODO: handle error and report to frontend
+        log_error!(&execute, "Regex did not match");
     }
 
     for line in reader.lines() {
@@ -124,7 +128,8 @@ pub fn execute(
                 }
             }
         } else {
-            log_warn!(&execute, "No match for line: {}", line);
+            // TODO: handle error and report to frontend
+            log_error!(&execute, "No match for line: {}", line);
         }
     }
 

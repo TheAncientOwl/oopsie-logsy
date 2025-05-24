@@ -7,11 +7,11 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
 
-use crate::common::scope_log::ScopeLog;
+use crate::{common::scope_log::ScopeLog, log_trace};
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -56,6 +56,8 @@ impl RegexTagsManager {
                 regex_str.push_str(&tag.regex);
             }
         }
+
+        log_trace!(&RegexTagsManager::compute_line_regex, "\"{}\"", regex_str);
 
         regex::Regex::new(&regex_str).unwrap()
     }

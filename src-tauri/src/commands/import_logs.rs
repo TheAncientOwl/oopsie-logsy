@@ -7,7 +7,7 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Set CurrentLogPaths command.
 //!
 
@@ -35,10 +35,7 @@ pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<Vec<Vec<Strin
 
     let in_file_path = &paths[0];
     let out_file_dir = store.logs.get_current_processed_logs_dir().clone();
+
     std::mem::drop(store);
-
-    let logs = logics::logs_converter::execute(in_file_path, &out_file_dir);
-    // logic::logs_reader_test::execute();
-
-    Ok(logs)
+    Ok(logics::logs_converter::execute(in_file_path, &out_file_dir))
 }

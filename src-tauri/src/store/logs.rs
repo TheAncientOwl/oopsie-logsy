@@ -7,13 +7,13 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
 use std::fs::{File, OpenOptions};
 
-use crate::{common::scope_log::ScopeLog, log_error};
+use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
 // <data>
 pub struct LogsManager {
@@ -68,6 +68,12 @@ impl LogsManager {
         let mut final_name = name.to_owned();
         final_name.push_str(".oopsie");
         let path = self.get_current_processed_logs_dir().join(final_name);
+
+        log_trace!(
+            &LogsManager::open_field_file_out,
+            "new field file: {:?}",
+            path
+        );
 
         OpenOptions::new()
             .write(true)
