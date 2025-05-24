@@ -6,24 +6,29 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Logs data.
  */
 
 import { UUID } from '../common/identifier';
+import { getStaticDefaultTags } from '../regex-tags/data';
 
 // <types>
+export type TColumnLogs = Array<Array<string>>;
+
 export type TStoreState = {
   loading: boolean;
-  logs: Array<JSON>;
-  filterIDs: UUID[];
+  logs: TColumnLogs;
+  filterIDs: Array<UUID>;
 };
 // </types>
 
 // <data>
 export const defaultState: TStoreState = {
   loading: false,
-  logs: [],
+  logs: getStaticDefaultTags()
+    .filter(tag => tag.displayed)
+    .map(() => []),
   filterIDs: [],
 };
 // </data>

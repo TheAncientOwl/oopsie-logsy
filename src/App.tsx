@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.17
+ * @version 0.18
  * @description App class
  */
 
@@ -23,25 +23,24 @@ import LoadingScreen from './components/app/loading-screen';
 
 const DRAG_HANDLE_HEIGHT = '3px';
 const DEFAULT_FILTER_TABS_HEIGHT = '400px';
-const MIN_FILTER_TABS_HEIGHT_VALUE = 100;
-const MAX_FILTER_TABS_HEIGHT_RATIO = 0.9;
+const MIN_FILTER_TABS_HEIGHT_VALUE = 150;
+const LOGVIEW_HEIGHT_THRESHOLD = 5;
 
 const updateLayoutHeights = (
   filtersMenuOpen: boolean,
-  mainBoxRef: React.RefObject<HTMLDivElement>,
+  toolbarBoxRef: React.RefObject<HTMLDivElement>,
+  logViewBoxRef: React.RefObject<HTMLDivElement>,
   filtersBoxRef: React.RefObject<HTMLDivElement>
 ) => {
+  if (!toolbarBoxRef.current || !logViewBoxRef.current || !filtersBoxRef.current) return;
+
   if (filtersMenuOpen) {
-    if (mainBoxRef.current && filtersBoxRef.current) {
-      if (filtersBoxRef.current.style.height === '') {
-        filtersBoxRef.current.style.height = DEFAULT_FILTER_TABS_HEIGHT;
-      }
-      mainBoxRef.current.style.height = `calc(100vh - ${filtersBoxRef.current.style.height})`;
+    if (filtersBoxRef.current.style.height === '') {
+      filtersBoxRef.current.style.height = DEFAULT_FILTER_TABS_HEIGHT;
     }
+    logViewBoxRef.current.style.height = `calc(100vh - ${toolbarBoxRef.current.offsetHeight}px - ${filtersBoxRef.current.style.height})`;
   } else {
-    if (mainBoxRef.current) {
-      mainBoxRef.current.style.height = '100vh';
-    }
+    logViewBoxRef.current.style.height = `calc(100vh - ${toolbarBoxRef.current.offsetHeight}px)`;
   }
 };
 
@@ -49,23 +48,24 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
   const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(true);
   const [filtersMenuOpen, setFiltersMenuOpen] = useState(false);
 
-  const toolbarRef = useRef<HTMLDivElement>(null);
-
-  const mainBoxRef = useRef<HTMLDivElement>(null);
+  const toolbarBoxRef = useRef<HTMLDivElement>(null);
+  const logViewBoxRef = useRef<HTMLDivElement>(null);
   const filtersBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    updateLayoutHeights(filtersMenuOpen, toolbarBoxRef, logViewBoxRef, filtersBoxRef);
+
     const handleWindowResize = () => {
-      updateLayoutHeights(filtersMenuOpen, mainBoxRef, filtersBoxRef);
+      updateLayoutHeights(filtersMenuOpen, toolbarBoxRef, logViewBoxRef, filtersBoxRef);
     };
 
     window.addEventListener('resize', handleWindowResize);
     return () => window.removeEventListener('resize', handleWindowResize);
-  }, [filtersMenuOpen, mainBoxRef, filtersBoxRef]);
+  }, [filtersMenuOpen, toolbarBoxRef, logViewBoxRef, filtersBoxRef]);
 
   const toggleFiltersMenu = () => {
     const newFiltersMenuOpen = !filtersMenuOpen;
-    updateLayoutHeights(newFiltersMenuOpen, mainBoxRef, filtersBoxRef);
+    updateLayoutHeights(newFiltersMenuOpen, toolbarBoxRef, logViewBoxRef, filtersBoxRef);
     setFiltersMenuOpen(newFiltersMenuOpen);
   };
 
@@ -75,16 +75,17 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
     const startHeight = filtersBoxRef.current?.offsetHeight || 0;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      if (!filtersBoxRef.current || !mainBoxRef.current) return;
+      if (!toolbarBoxRef.current || !filtersBoxRef.current || !logViewBoxRef.current) return;
 
       const newFilterTabsHeight = startHeight + (startY - moveEvent.clientY);
 
       if (
         newFilterTabsHeight >= MIN_FILTER_TABS_HEIGHT_VALUE &&
-        newFilterTabsHeight <= window.innerHeight * MAX_FILTER_TABS_HEIGHT_RATIO
+        newFilterTabsHeight <=
+          window.innerHeight - toolbarBoxRef.current.offsetHeight - LOGVIEW_HEIGHT_THRESHOLD
       ) {
         filtersBoxRef.current.style.height = `${newFilterTabsHeight}px`;
-        mainBoxRef.current.style.height = `${window.innerHeight - newFilterTabsHeight}px`;
+        updateLayoutHeights(filtersMenuOpen, toolbarBoxRef, logViewBoxRef, filtersBoxRef);
       }
     };
 
@@ -98,30 +99,21 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
   };
 
   return (
-    <>
-      <LoadingScreen />
-      <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
+    <Box height='100vh' width='100vw' backgroundColor={props.theme.background}>
+      <Box ref={toolbarBoxRef} position='sticky' top='0' zIndex={100}>
+        <ToolBar onSettingsToggle={toggleSettingsMenu} onFiltersToggle={toggleFiltersMenu} />
+      </Box>
 
-      <Box
-        ref={mainBoxRef}
-        height='100vh'
-        position='relative'
-        overflowY='scroll'
-        backgroundColor={props.theme.background}
-      >
-        <ToolBar
-          ref={toolbarRef}
-          onSettingsToggle={toggleSettingsMenu}
-          onFiltersToggle={toggleFiltersMenu}
-        />
-        <LogView offsetTop={`${toolbarRef.current?.offsetHeight}px`} />
+      <Box ref={logViewBoxRef} width='100vw' overflow='scroll'>
+        <LogView />
       </Box>
 
       <Box
         ref={filtersBoxRef}
-        height='400px'
+        // height='400px'
         display={filtersMenuOpen ? 'block' : 'none'}
         visibility={filtersMenuOpen ? 'block' : 'collapse'}
+        zIndex={100}
       >
         <Box
           height={DRAG_HANDLE_HEIGHT}
@@ -131,7 +123,10 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
         />
         <FilterTabs />
       </Box>
-    </>
+
+      <LoadingScreen />
+      <Settings menuOpen={settingsMenuOpen} onMenuClose={toggleSettingsMenu} />
+    </Box>
   );
 };
 

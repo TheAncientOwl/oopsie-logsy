@@ -6,7 +6,7 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description App main toolbar
  */
 
@@ -22,67 +22,64 @@ type TToolBarProps = {
   onFiltersToggle: () => void;
 };
 
-const ToolBarImpl = React.forwardRef<HTMLDivElement, TToolBarProps & TPropsFromRedux>(
-  (props, ref) => {
-    return (
-      <Flex
-        ref={ref}
-        position='sticky'
-        top='0'
-        padding='0.5em'
-        gap='0.5em'
-        justify='center'
-        alignItems='center'
-        backgroundColor={props.theme.background}
-      >
-        <Flex gap='0.25em'>
-          <ButtonGroup>
-            <TooltipIconButton
-              tooltip='Open Settings'
-              onClick={props.onSettingsToggle}
-              variant={props.theme.buttons.settings.variant}
-              colorPalette={props.theme.buttons.settings.colorPalette}
-            >
-              <SettingsIcon />
-            </TooltipIconButton>
+const ToolBarImpl: React.FC<TToolBarProps & TPropsFromRedux> = props => {
+  return (
+    <Flex
+      position='sticky'
+      top='0'
+      padding='0.5em'
+      gap='0.5em'
+      justify='center'
+      alignItems='center'
+      backgroundColor={props.theme.background}
+    >
+      <Flex gap='0.25em'>
+        <ButtonGroup>
+          <TooltipIconButton
+            tooltip='Open Settings'
+            onClick={props.onSettingsToggle}
+            variant={props.theme.buttons.settings.variant}
+            colorPalette={props.theme.buttons.settings.colorPalette}
+          >
+            <SettingsIcon />
+          </TooltipIconButton>
 
-            <TooltipIconButton
-              tooltip='Toggle filters'
-              onClick={props.onFiltersToggle}
-              variant={props.theme.buttons.filters.variant}
-              colorPalette={props.theme.buttons.filters.colorPalette}
-            >
-              <FiltersIcon />
-            </TooltipIconButton>
+          <TooltipIconButton
+            tooltip='Toggle filters'
+            onClick={props.onFiltersToggle}
+            variant={props.theme.buttons.filters.variant}
+            colorPalette={props.theme.buttons.filters.colorPalette}
+          >
+            <FiltersIcon />
+          </TooltipIconButton>
 
-            <TooltipIconButton
-              tooltip='Prev'
-              variant={props.theme.buttons.prev.variant}
-              colorPalette={props.theme.buttons.prev.colorPalette}
-            >
-              <PrevIcon />
-            </TooltipIconButton>
+          <TooltipIconButton
+            tooltip='Prev'
+            variant={props.theme.buttons.prev.variant}
+            colorPalette={props.theme.buttons.prev.colorPalette}
+          >
+            <PrevIcon />
+          </TooltipIconButton>
 
-            <TooltipIconButton
-              tooltip='Next'
-              variant={props.theme.buttons.next.variant}
-              colorPalette={props.theme.buttons.next.colorPalette}
-            >
-              <NextIcon />
-            </TooltipIconButton>
-          </ButtonGroup>
-        </Flex>
-        <Input
-          placeholder='search'
-          backgroundColor={props.theme.input.background}
-          colorPalette={props.theme.input.colorPalette}
-          variant={props.theme.input.variant}
-          color={props.theme.input.text}
-        />
+          <TooltipIconButton
+            tooltip='Next'
+            variant={props.theme.buttons.next.variant}
+            colorPalette={props.theme.buttons.next.colorPalette}
+          >
+            <NextIcon />
+          </TooltipIconButton>
+        </ButtonGroup>
       </Flex>
-    );
-  }
-);
+      <Input
+        placeholder='search'
+        backgroundColor={props.theme.input.background}
+        colorPalette={props.theme.input.colorPalette}
+        variant={props.theme.input.variant}
+        color={props.theme.input.text}
+      />
+    </Flex>
+  );
+};
 
 // <redux>
 const mapState = (state: TRootState) => ({

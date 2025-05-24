@@ -6,22 +6,26 @@
  *
  * @file invokeSetCurrentLogPaths.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description InvokeSetCurrentLogPaths handler.
  */
 
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { type TDispatch, EActionType } from '../actions';
-import { type TStoreState } from '../data';
+import { TColumnLogs, type TStoreState } from '../data';
 
 const action = {
   ok: EActionType.InvokeImportLogsOK,
   nok: EActionType.InvokeImportLogsNOK,
 };
 
-type TPayloadOk = {};
-type TPayloadNOk = {};
+export type TPayloadOk = {
+  logs: TColumnLogs;
+};
+type TPayloadNOk = {
+  error: any;
+};
 
 export type TInvokeImportLogsOk = TStoreAction<typeof action.ok, TPayloadOk>;
 export type TInvokeImportLogsNOk = TStoreAction<typeof action.nok, TPayloadNOk>;
@@ -38,9 +42,9 @@ export const invokeImportLogs: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke<string[][]>('import_logs', { paths });
+      const response = await invoke<TColumnLogs>('import_logs', { paths });
       console.info(invokeImportLogs.dispatch, 'rust response:', response);
-      dispatch({ type: EActionType.InvokeImportLogsOK, payload: {} });
+      dispatch({ type: EActionType.InvokeImportLogsOK, payload: { logs: response } });
     } catch (error) {
       console.error(invokeImportLogs.dispatch, `error sending current log paths to rust: ${error}`);
       dispatch({ type: EActionType.InvokeImportLogsNOK, payload: { error } });
@@ -48,10 +52,12 @@ export const invokeImportLogs: IApiCallStoreHandler<
   },
 
   reduce: {
-    ok: state => {
+    ok: (state, payload) => {
       return {
         ...state,
         loading: false,
+        logs: payload.logs,
+        filterIDs: [],
       };
     },
 
@@ -59,6 +65,8 @@ export const invokeImportLogs: IApiCallStoreHandler<
       return {
         ...state,
         loading: false,
+        logs: [],
+        filterIDs: [],
       };
     },
   },
