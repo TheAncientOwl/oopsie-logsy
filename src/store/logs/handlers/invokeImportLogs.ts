@@ -6,7 +6,7 @@
  *
  * @file invokeSetCurrentLogPaths.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description InvokeSetCurrentLogPaths handler.
  */
 
@@ -38,8 +38,8 @@ export const invokeImportLogs: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke('import_logs', { paths });
-      console.info(invokeImportLogs.dispatch, `rust response: ${response}`);
+      const response = await invoke<string[][]>('import_logs', { paths });
+      console.info(invokeImportLogs.dispatch, 'rust response:', response);
       dispatch({ type: EActionType.InvokeImportLogsOK, payload: {} });
     } catch (error) {
       console.error(invokeImportLogs.dispatch, `error sending current log paths to rust: ${error}`);

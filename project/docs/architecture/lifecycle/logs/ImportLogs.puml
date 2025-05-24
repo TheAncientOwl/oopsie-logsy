@@ -1,12 +1,23 @@
 @startuml ImportLogs
 
+' -------------------------------------------------------------------------- `
+'                     Copyright (c) by OopsieLogsy 2025                      `
+' -------------------------------------------------------------------------- `
+' @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
+' 
+' @file ImportLogs.puml
+' @author Alexandru Delegeanu
+' @version: 0.2
+' @description Import logs scheme
+'
+
 actor User #LightYellow
 participant "<Frontend>\nImportLogsButton" as FrontendImport #LightSkyBlue
 participant "<Frontend>\nStore" as FrontendStore #LightBlue
 participant "<Backend>\nStore" as BackendStore #Salmon
 participant "<Backend>\nCommand::import_logs" as BackendImport #LightSalmon
 participant "<Backend>\nLogics::LogsParser" as LogsParser #Orange
-participant "<Backend>\nConvertedLogs:\nArray<JSON>" as converted_logs #Orange
+participant "<Backend>\nConvertedLogs:\nArray<Array<string>>" as converted_logs #Orange
 
 User -> FrontendImport : Click
 FrontendImport -> User : Show file select dialog

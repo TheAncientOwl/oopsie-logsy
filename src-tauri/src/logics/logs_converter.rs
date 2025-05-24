@@ -7,16 +7,14 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
 use std::{
-    fs::{File, OpenOptions},
+    fs::File,
     io::{BufRead, Write},
 };
-
-use regex::Regex;
 
 use crate::{
     common::scope_log::ScopeLog,
@@ -24,69 +22,36 @@ use crate::{
     store::{regex_tags::RegexTag, store::Store},
 };
 
-fn convert(in_file: &File, out_file: &File, tags: &Vec<RegexTag>, line_regex: &Regex) {
-    let _log = ScopeLog::new(&convert);
-
-    let mut common_length: usize = 3; // {} and \n
-    let mut idx_to_tag: Vec<&str> = Vec::new();
-    idx_to_tag.push("");
-    tags.iter().for_each(|tag| {
-        if tag.displayed {
-            idx_to_tag.push(&tag.name);
-            common_length = common_length + 5 + tag.name.len(); // 4 x '"' + ','
-        }
-    });
-
-    let reader = std::io::BufReader::new(in_file);
-    let mut writer = std::io::BufWriter::new(out_file);
-    let mut json_buffer = String::with_capacity(512);
-
-    for line in reader.lines() {
-        let line = line.expect("Failed to read line");
-        // log_debug!(&execute, "Converting: {}", line);
-
-        if let Some(caps) = line_regex.captures(&line) {
-            let mut content_length: usize = 0;
-
-            for idx in 1..caps.len() {
-                if let Some(m) = caps.get(idx) {
-                    content_length += m.as_str().len();
-                }
-            }
-
-            json_buffer.clear();
-            json_buffer.reserve(common_length + content_length);
-
-            json_buffer.push('{');
-            for idx in 1..caps.len() {
-                if let Some(m) = caps.get(idx) {
-                    json_buffer.push('"');
-                    json_buffer.push_str(&idx_to_tag[idx]);
-                    json_buffer.push_str("\":");
-                    json_buffer.push_str(&json::stringify(m.as_str()));
-                    json_buffer.push(',');
-
-                    // log_debug!(&execute, "Capture group {}: {}", idx, m.as_str());
-                }
-            }
-            json_buffer.pop();
-            json_buffer.push_str("}\n");
-            // log_debug!(&execute, "JSON: {}", json_buffer);
-
-            let _ = writer
-                .write_all(json_buffer.as_bytes())
-                .map_err(|err| log_error!(&execute, "Error writing json line: {}", err));
-        } else {
-            log_warn!(&execute, "No match for line: {}", line);
-        }
-    }
-
-    let _ = writer
-        .flush()
-        .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
+fn write_entry(writer: &mut std::io::BufWriter<File>, value: &str, tag: &str) {
+    writer
+        .write(value.as_bytes())
+        .map_err(|err| {
+            log_error!(
+                &execute,
+                "Error while writing value \"{}\" to field file \"{}\": {}",
+                value,
+                tag,
+                err
+            );
+        })
+        .unwrap();
+    writer
+        .write(b"\n")
+        .map_err(|err| {
+            log_error!(
+                &execute,
+                "Error while writing '\\n' to field file \"{}\": {}",
+                tag,
+                err
+            );
+        })
+        .unwrap();
 }
 
-pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf) {
+pub fn execute(
+    input_path: &std::path::PathBuf,
+    output_path: &std::path::PathBuf,
+) -> Vec<Vec<String>> {
     let _log = ScopeLog::new(&execute);
 
     log_info!(
@@ -97,24 +62,77 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
     );
 
     let in_file = File::open(input_path).expect("Failed to open logs input file for conversion");
-    let out_file = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(output_path)
-        .map_err(|err| {
-            log_error!(
-                &execute,
-                "Error opening output file {}: {}",
-                output_path.to_str().unwrap_or("Unknown"),
-                err
-            );
-        })
-        .unwrap();
 
     let store = Store::get_instance();
-    let tags = store.regex_tags.get_tags();
+    let tags: Vec<&RegexTag> = store
+        .regex_tags
+        .get_tags()
+        .iter()
+        .filter(|tag| tag.displayed)
+        .collect();
     let line_regex = store.regex_tags.get_line_regex();
 
-    convert(&in_file, &out_file, &tags, &line_regex);
+    let mut field_logs: Vec<Vec<String>> = Vec::new();
+    let mut field_writers: Vec<std::io::BufWriter<File>> = Vec::new();
+
+    let mut reader = std::io::BufReader::new(in_file);
+
+    let mut line = String::new();
+    reader
+        .read_line(&mut line)
+        .expect("Failed to read first line");
+    // log_debug!(&execute, "Converting: {}", line);
+    if let Some(caps) = line_regex.captures(&line) {
+        for idx in 1..caps.len() {
+            if let Some(m) = caps.get(idx) {
+                // log_debug!(&execute, "Capture group {}: {}", idx, m.as_str());
+                let mut logs: Vec<String> = Vec::new();
+                logs.push(m.as_str().to_owned());
+                field_logs.push(logs);
+
+                let field_file = store
+                    .logs
+                    .open_field_file_out(&tags[idx - 1].name)
+                    .map_err(|err| {
+                        log_error!(
+                            &execute,
+                            "Error opening output field file {}: {}",
+                            tags[idx - 1].name,
+                            err
+                        );
+                    })
+                    .unwrap();
+                let mut writer = std::io::BufWriter::new(field_file);
+                write_entry(&mut writer, m.as_str(), &tags[idx - 1].name);
+                field_writers.push(writer);
+            }
+        }
+    }
+
+    for line in reader.lines() {
+        let line = line.expect("Failed to read line");
+        // log_debug!(&execute, "Converting: {}", line);
+
+        if let Some(caps) = line_regex.captures(&line) {
+            for idx in 1..caps.len() {
+                if let Some(m) = caps.get(idx) {
+                    // log_debug!(&execute, "Capture group {}: {}", idx, m.as_str());
+                    let logs = &mut field_logs[idx - 1];
+                    logs.push(m.as_str().to_owned());
+
+                    write_entry(&mut field_writers[idx - 1], m.as_str(), &tags[idx - 1].name);
+                }
+            }
+        } else {
+            log_warn!(&execute, "No match for line: {}", line);
+        }
+    }
+
+    field_writers.iter_mut().for_each(|writer| {
+        let _ = writer
+            .flush()
+            .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
+    });
+
+    field_logs
 }

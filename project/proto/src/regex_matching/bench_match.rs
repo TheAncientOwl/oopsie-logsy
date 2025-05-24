@@ -7,7 +7,7 @@
 //! # `match.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Regex matching prototypes.
 //!
 
@@ -294,7 +294,7 @@ fn regex_set_from_mmap_utf8_lossy(binary_input_file: &File) -> std::io::Result<(
     let mut offset = 0;
     let len = mmap.len();
 
-    let tags = vec!["timestamp", "level", "channel", "payload"];
+    // let tags = vec!["timestamp", "level", "channel", "payload"];
     let mut index = 0;
 
     while offset + 4 <= len {
@@ -329,7 +329,7 @@ fn regex_set_from_mmap_utf8(binary_input_file: &File) -> std::io::Result<()> {
     let mut offset = 0;
     let len = mmap.len();
 
-    let tags = vec!["timestamp", "level", "channel", "payload"];
+    // let tags = vec!["timestamp", "level", "channel", "payload"];
     let mut index = 0;
 
     while offset + 4 <= len {
@@ -364,7 +364,7 @@ fn regex_set_from_mmap_utf8_str_from(binary_input_file: &File) -> std::io::Resul
     let mut offset = 0;
     let len = mmap.len();
 
-    let tags = vec!["timestamp", "level", "channel", "payload"];
+    // let tags = vec!["timestamp", "level", "channel", "payload"];
     let mut index = 0;
 
     while offset + 4 <= len {

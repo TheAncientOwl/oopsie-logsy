@@ -7,18 +7,14 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Set CurrentLogPaths command.
 //!
 
-use crate::{
-    common::{command_status, scope_log::ScopeLog},
-    log_trace, logics,
-    store::store::Store,
-};
+use crate::{common::scope_log::ScopeLog, log_trace, logics, store::store::Store};
 
 #[tauri::command]
-pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<u16, String> {
+pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<Vec<Vec<String>>, String> {
     let _log = ScopeLog::new(&import_logs);
 
     log_trace!(
@@ -38,16 +34,11 @@ pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<u16, String> 
     store.logs.set_current_raw_logs_path(&paths);
 
     let in_file_path = &paths[0];
-    let out_file_path_opt = store.logs.get_current_processed_logs_path().clone();
+    let out_file_dir = store.logs.get_current_processed_logs_dir().clone();
     std::mem::drop(store);
 
-    assert!(
-        out_file_path_opt.is_some(),
-        "Failed to set output log path value"
-    );
-
-    logics::logs_converter::execute(in_file_path, out_file_path_opt.as_ref().unwrap());
+    let logs = logics::logs_converter::execute(in_file_path, &out_file_dir);
     // logic::logs_reader_test::execute();
 
-    Ok(command_status::ok())
+    Ok(logs)
 }

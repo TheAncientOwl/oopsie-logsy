@@ -4,11 +4,12 @@ package OopsieLogsy #LightYellow {
     package Backend {
         struct LogsManager #LightSteelBlue {
             - current_raw_logs_path : Path[]
-            - current_processed_logs_path : optional<Path>
+            - current_processed_logs_dir : optional<Path>
 
             + set_current_raw_logs_path(new_paths: Path[]) : void
             + get_current_raw_logs_path() : &Path[]
-            + get_current_processed_logs_path() : &optional<Path>
+            + get_current_processed_logs_dir() : &optional<Path>
+            + open_field_file_out(name: string) : File
 
             + static get_home_dir() : Path
             + static get_processed_logs_dir() : Path

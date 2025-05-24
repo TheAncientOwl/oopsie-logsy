@@ -1,20 +1,65 @@
 @startuml LogsParser
 
-participant "<Backend>\nLogics::LogsParser" as LogsParser #Orange
-participant "<Backend>\nConvertedLogs:\nArray<JSON>" as converted_logs #Orange
+' -------------------------------------------------------------------------- `
+'                     Copyright (c) by OopsieLogsy 2025                      `
+' -------------------------------------------------------------------------- `
+' @license https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE
+'
+' @file LogsParser.puml
+' @author Alexandru Delegeanu
+' @version: 0.2
+' @description Parse logs scheme
+'
 
-group parse_logs (in_path, out_path, line_regex)
+participant "<Backend>\nLogics::LogsParser" as LogsParser #Orange
+participant "<Backend>\nParsedLogs:\nArray<Array<string>>" as parsed_logs #Orange
+participant "<Backend>\nOutputFiles:\nArray<File>" as output_files #Orange
+
+group parse_logs (in_path, out_dir_path, line_regex)
+    note over LogsParser
+        Parsing process:
+            » read file line by line
+            » parse with the line regex
+            » for each field create a file named `out_dir_path.field.oopsie`
+            » store entries field based in separate files
+        Example:
+            » { "field1": "value11", "field2": "value12" }
+            » { "field1": "value21", "field2": "value22" }
+            » $out_dir_path/field1.oopsie: value11 value21
+            » $out_dir_path/field2.oopsie: value12 value22
+    end note
+
     LogsParser -> LogsParser : raw_logs_file = open param{in_path} [READ]
-    LogsParser -> LogsParser : parsed_logs_file = open param{out_path} [WRITE]
-    LogsParser -> converted_logs : .init()
-    activate converted_logs
-    group for each line in raw_logs_file
+
+    group create output files
+        LogsParser -> LogsParser : read first line of parsed_logs_file
         LogsParser -> LogsParser : parse with params{line_regex}
-        LogsParser -> LogsParser : save parsed entry to parsed_log_file
-        LogsParser -> converted_logs : .add(parsed entry)
+        LogsParser -> parsed_logs : .add(parsed entry)
+
+        LogsParser -> output_files : .init()
+        activate output_files
+        group for each field of parsed entry
+            LogsParser -> parsed_logs : .push(field value)
+
+            LogsParser -> LogsParser : create file `param{out_dir_path}/field_name.oopsie`
+            LogsParser -> output_files : .push(opened file [WRITE])
+            LogsParser -> output_files : write field value to the file
+        end
     end
-    converted_logs -> LogsParser
-    deactivate converted_logs
+
+    LogsParser -> parsed_logs : .init()
+    activate parsed_logs
+    group for each line in raw_logs_file (-first line)
+        LogsParser -> LogsParser : parse with params{line_regex}
+        group for each field of parsed entry
+            LogsParser -> parsed_logs : .push(field value)
+            LogsParser -> output_files : write field to its file
+        end
+        LogsParser -> parsed_logs : .add(parsed entry)
+    end
+    parsed_logs -> LogsParser
+    deactivate parsed_logs
+    deactivate output_files
 end
 
 @enduml

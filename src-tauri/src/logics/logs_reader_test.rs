@@ -7,7 +7,7 @@
 //! # `logs_reader_test.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Test only.
 //!
 
@@ -22,11 +22,7 @@ pub fn execute() {
     let _log = ScopeLog::new(&execute);
 
     let store = Store::get_instance();
-    let out_file_path = store
-        .logs
-        .get_current_processed_logs_path()
-        .as_ref()
-        .unwrap();
+    let out_file_path = store.logs.get_current_processed_logs_dir();
 
     let file = File::open(out_file_path).expect("Cannot open file");
     let reader = BufReader::new(file);
