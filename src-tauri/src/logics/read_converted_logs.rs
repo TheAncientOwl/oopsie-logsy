@@ -7,15 +7,14 @@
 //! # `read_converted_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Read all converted logs and return Column data out of it.
 //!
 
-use std::io::{BufRead, Read};
+use std::io::BufRead;
 
 use crate::{
-    common::scope_log::ScopeLog,
-    log_error,
+    common::{config_file::ConfigFile, scope_log::ScopeLog},
     store::{logs::ColumnLogs, store::Store},
 };
 
@@ -28,17 +27,9 @@ pub fn execute() -> ColumnLogs {
     let active_tags = store.regex_tags.compute_active_tags();
     let mut field_readers = store.logs.open_current_field_readers(&active_tags);
 
-    let config_file = store
-        .logs
-        .open_current_processed_logs_config_file_in()
-        .map_err(|err| log_error!(&execute, "Error while opening config file: {}", err))
-        .unwrap();
-    let mut config_reader = std::io::BufReader::new(config_file);
-    let mut buf = [0u8; 8];
-    config_reader
-        .read_exact(&mut buf)
-        .expect("Failed to read from config file");
-    let logs_count = u64::from_le_bytes(buf);
+    let mut config = ConfigFile::new(store.logs.get_current_processed_logs_config_path());
+    config.load();
+    let logs_count = config.get_number("logs_count", 0) as usize;
 
     let mut out_logs: ColumnLogs = store
         .logs

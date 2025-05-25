@@ -7,15 +7,15 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Set FilterTabs command.
 //!
 
-use std::io::{BufRead, Read};
+use std::io::BufRead;
 
 use crate::{
-    common::scope_log::ScopeLog,
-    log_error, log_trace, logics,
+    common::{config_file::ConfigFile, scope_log::ScopeLog},
+    log_trace, logics,
     store::{
         filters::{Filter, FilterComponent, FilterTab},
         logs::ColumnLogs,
@@ -85,19 +85,9 @@ pub fn apply_filters(
     let mut out_filtered_logs: ColumnLogs = store.logs.make_empty_column_logs(log_fields_count);
     let mut out_filters: Vec<String> = Vec::new();
 
-    // TODO: Change config storage approach
-    let config_file = store
-        .logs
-        .open_current_processed_logs_config_file_in()
-        .map_err(|err| log_error!(&apply_filters, "Error while opening config file: {}", err))
-        .unwrap();
-    let mut config_reader = std::io::BufReader::new(config_file);
-    let mut buf = [0u8; 8];
-    config_reader
-        .read_exact(&mut buf)
-        .expect("Failed to read from config file");
-    let logs_count = u64::from_le_bytes(buf);
-    // TODO: end
+    let mut config = ConfigFile::new(store.logs.get_current_processed_logs_config_path());
+    config.load();
+    let logs_count = config.get_number("logs_count", 0);
 
     let mut field_value_buf = String::with_capacity(512);
     let mut log_entry_buf: Vec<String> = Vec::with_capacity(log_fields_count);

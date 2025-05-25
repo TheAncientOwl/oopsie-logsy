@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.10
+//! **Version**: 0.11
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -68,36 +68,8 @@ impl LogsManager {
         &self.current_processed_logs_dir
     }
 
-    fn get_current_processed_logs_config_path(&self) -> std::path::PathBuf {
+    pub fn get_current_processed_logs_config_path(&self) -> std::path::PathBuf {
         self.get_current_processed_logs_dir().join("config.oopsie")
-    }
-
-    pub fn open_current_processed_logs_config_file_out(&self) -> Result<File, std::io::Error> {
-        let path = self.get_current_processed_logs_config_path();
-
-        log_trace!(
-            &LogsManager::open_current_processed_logs_config_file_out,
-            "new config file: {:?}",
-            path
-        );
-
-        OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(path)
-    }
-
-    pub fn open_current_processed_logs_config_file_in(&self) -> Result<File, std::io::Error> {
-        let path = self.get_current_processed_logs_config_path();
-
-        log_trace!(
-            &LogsManager::open_current_processed_logs_config_file_out,
-            "opening config file: {:?}",
-            path
-        );
-
-        OpenOptions::new().read(true).open(path)
     }
 
     fn get_field_file_path(&self, name: &str) -> std::path::PathBuf {

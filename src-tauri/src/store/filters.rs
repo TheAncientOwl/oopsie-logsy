@@ -7,11 +7,11 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.13
+//! **Version**: 0.14
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
-use std::{collections::HashMap, f32::consts::E};
+use std::collections::HashMap;
 
 use crate::{common::scope_log::ScopeLog, log_error, log_warn};
 

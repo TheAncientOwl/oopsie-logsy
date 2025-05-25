@@ -7,7 +7,7 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
@@ -17,7 +17,7 @@ use std::{
 };
 
 use crate::{
-    common::scope_log::ScopeLog,
+    common::{config_file::ConfigFile, scope_log::ScopeLog},
     log_error, log_trace,
     store::{logs::ColumnLogs, store::Store},
 };
@@ -135,19 +135,10 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
             .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
     });
 
-    let config_file = store
-        .logs
-        .open_current_processed_logs_config_file_out()
-        .map_err(|err| log_error!(&execute, "Failed to open config file: {}", err))
-        .unwrap();
-    let mut writer = std::io::BufWriter::new(config_file);
-    writer
-        .write_all(&(field_logs[0].len() as u64).to_le_bytes())
-        .map_err(|err| log_error!(&execute, "Failed to write length to config file: {}", err))
-        .unwrap();
-    let _ = writer
-        .flush()
-        .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
+    let mut config = ConfigFile::new(store.logs.get_current_processed_logs_config_path());
+    config.create_and_load();
+    config.set_number("logs_count", field_logs[0].len() as u128);
+    config.save();
 
     field_logs
 }
