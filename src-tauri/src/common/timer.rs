@@ -7,7 +7,7 @@
 //! # `timer.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Timer utility.
 //!
 
@@ -55,17 +55,14 @@ impl Timer {
         let values = [minutes, seconds, milliseconds, nanoseconds];
         let units = ["m", "s", "ms", "ns"];
 
-        match values.iter().position(|&x| x != 0) {
-            Some(index) => {
-                for idx in index..values.len() {
-                    formatted.push_str(&values[idx].to_string());
-                    formatted.push_str(units[idx]);
-                    formatted.push_str(", ");
-                }
-                formatted.pop();
-                formatted.pop();
+        if let Some(index) = values.iter().position(|&x| x != 0) {
+            for idx in index..values.len() {
+                formatted.push_str(&values[idx].to_string());
+                formatted.push_str(units[idx]);
+                formatted.push_str(", ");
             }
-            None => {}
+            formatted.pop();
+            formatted.pop();
         }
 
         formatted

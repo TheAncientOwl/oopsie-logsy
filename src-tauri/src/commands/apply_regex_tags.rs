@@ -7,18 +7,18 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Set RegexTags command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
     log_trace, logics,
-    store::{regex_tags::RegexTag, store::Store},
+    store::{logs::ColumnLogs, regex_tags::RegexTag, store::Store},
 };
 
 #[tauri::command]
-pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<Vec<Vec<String>>, String> {
+pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<ColumnLogs, String> {
     let _log = ScopeLog::new(&apply_regex_tags);
 
     log_trace!(
@@ -33,7 +33,7 @@ pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<Vec<Vec<String>>, S
     store.regex_tags.set(&tags);
 
     if store.logs.get_current_raw_logs_path().len() == 0 {
-        let mut empty_data: Vec<Vec<String>> = Vec::new();
+        let mut empty_data: ColumnLogs = Vec::new();
         tags.iter().for_each(|_| empty_data.push(Vec::new()));
 
         return Ok(empty_data);

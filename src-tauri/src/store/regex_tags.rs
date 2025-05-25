@@ -7,7 +7,7 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.6
+//! **Version**: 0.7
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
 
@@ -77,6 +77,10 @@ impl RegexTagsManager {
 
     pub fn get_line_regex(&self) -> &regex::Regex {
         &self.regex_line
+    }
+
+    pub fn compute_active_tags(&self) -> Vec<&RegexTag> {
+        self.regex_tags.iter().filter(|tag| tag.displayed).collect()
     }
 }
 // </manager>

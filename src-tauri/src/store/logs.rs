@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -15,7 +15,11 @@ use std::fs::{File, OpenOptions};
 
 use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
+use super::regex_tags::RegexTag;
+
 // <data>
+pub type ColumnLogs = Vec<Vec<String>>;
+
 pub struct LogsManager {
     current_raw_logs_path: Vec<std::path::PathBuf>,
     current_processed_logs_dir: std::path::PathBuf,
@@ -131,6 +135,29 @@ impl LogsManager {
         OpenOptions::new().read(true).open(path)
     }
 
+    pub fn open_current_field_readers(
+        &self,
+        active_tags: &Vec<&RegexTag>,
+    ) -> Vec<std::io::BufReader<std::fs::File>> {
+        active_tags
+            .iter()
+            .map(|tag| {
+                let file = self
+                    .open_field_file_in(&tag.name)
+                    .map_err(|err| {
+                        log_error!(
+                            &LogsManager::open_current_field_readers,
+                            "Error opening output field file {}: {}",
+                            tag.name,
+                            err
+                        );
+                    })
+                    .unwrap();
+                std::io::BufReader::new(file)
+            })
+            .collect()
+    }
+
     pub fn get_home_dir() -> std::path::PathBuf {
         let path = dirs::home_dir()
             .map(|home| home.join(".oopsie-logsy"))
@@ -147,10 +174,30 @@ impl LogsManager {
         let path = LogsManager::get_home_dir().join("processed");
 
         if std::fs::metadata(&path).is_err() {
-            let _ = std::fs::create_dir_all(path.clone());
+            let _ = std::fs::create_dir_all(&path);
         }
 
         path
+    }
+
+    pub fn make_empty_column_logs(&self, fields_count: usize) -> ColumnLogs {
+        let mut logs: ColumnLogs = Vec::new();
+        for _ in 0..fields_count {
+            logs.push(Vec::new());
+        }
+        logs
+    }
+
+    pub fn make_empty_column_logs_with_capacity(
+        &self,
+        fields_count: usize,
+        entries_count: usize,
+    ) -> ColumnLogs {
+        let mut logs: ColumnLogs = Vec::new();
+        for _ in 0..fields_count {
+            logs.push(Vec::with_capacity(entries_count));
+        }
+        logs
     }
 }
 // </manager>

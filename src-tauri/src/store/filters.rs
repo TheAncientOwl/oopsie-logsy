@@ -7,11 +7,15 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.12
+//! **Version**: 0.13
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
-use crate::common::scope_log::ScopeLog;
+use std::{collections::HashMap, f32::consts::E};
+
+use crate::{common::scope_log::ScopeLog, log_error, log_warn};
+
+use super::regex_tags::RegexTag;
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -63,6 +67,19 @@ pub struct FiltersManager {
     filters: Vec<Filter>,
     components: Vec<FilterComponent>,
 }
+
+#[derive(Debug)]
+pub struct ComputedFilterComponent {
+    pub field_index: usize,
+    pub regex: regex::Regex,
+    pub is_equals: bool,
+}
+
+#[derive(Debug)]
+pub struct ActiveFilter<'a> {
+    pub filter: &'a Filter,
+    pub components: Vec<ComputedFilterComponent>,
+}
 // </data>
 
 // <manager>
@@ -103,6 +120,95 @@ impl FiltersManager {
 
     pub fn get_components(&self) -> &Vec<FilterComponent> {
         &self.components
+    }
+
+    pub fn compute_active_filters(&self, active_tags: &Vec<&RegexTag>) -> Vec<ActiveFilter> {
+        let _log = ScopeLog::new(&FiltersManager::compute_active_filters);
+
+        let mut active_filters: Vec<ActiveFilter> = Vec::new();
+
+        let id_to_filter: HashMap<_, _> = self
+            .filters
+            .iter()
+            .map(|filter| (&filter.id, filter))
+            .collect();
+        let id_to_component: HashMap<_, _> = self
+            .components
+            .iter()
+            .map(|component| (&component.id, component))
+            .collect();
+        let tag_id_to_idx: HashMap<_, _> = active_tags
+            .iter()
+            .enumerate()
+            .map(|(idx, tag)| (&tag.id, idx))
+            .collect();
+
+        self.tabs.iter().for_each(|tab| {
+            if tab.enabled {
+                tab.filter_ids.iter().for_each(|filter_id| {
+                    if let Some(filter) = id_to_filter.get(filter_id) {
+                        if filter.is_active {
+                            let mut filter_components: Vec<ComputedFilterComponent> =
+                                Vec::with_capacity(filter.component_ids.len());
+
+                            filter.component_ids.iter().for_each(|component_id| {
+                                if let Some(component) = id_to_component.get(component_id) {
+                                    if let Some(index) =
+                                        tag_id_to_idx.get(&component.over_alternative_id)
+                                    {
+                                        filter_components.push(ComputedFilterComponent {
+                                            field_index: *index,
+                                            regex: regex::Regex::new(&component.data)
+                                                .map_err(|err| {
+                                                    log_error!(
+                                                        &FiltersManager::compute_active_filters,
+                                                        "Failed to cumpute regex from \"{}\": {}",
+                                                        component.data,
+                                                        err
+                                                    )
+                                                })
+                                                .unwrap(),
+                                            is_equals: component.is_equals,
+                                        });
+                                    } else {
+                                        log_warn!(
+                                            &FiltersManager::compute_active_filters,
+                                            "Missing over alternative with ID {}",
+                                            component.over_alternative_id
+                                        )
+                                    }
+                                } else {
+                                    log_warn!(
+                                        &FiltersManager::compute_active_filters,
+                                        "Missing filter component with ID {}",
+                                        component_id
+                                    )
+                                }
+                            });
+
+                            active_filters.push(ActiveFilter {
+                                filter: filter,
+                                components: filter_components,
+                            });
+                        }
+                    } else {
+                        log_warn!(
+                            &FiltersManager::compute_active_filters,
+                            "Missing filter with ID {}",
+                            filter_id
+                        )
+                    }
+                });
+            }
+        });
+
+        active_filters
+    }
+}
+
+impl ComputedFilterComponent {
+    pub fn is_match(&self, value: &str) -> bool {
+        self.regex.is_match(value)
     }
 }
 // </manager>

@@ -7,14 +7,18 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.6
+//! **Version**: 0.7
 //! **Description**: Set CurrentLogPaths command.
 //!
 
-use crate::{common::scope_log::ScopeLog, log_trace, logics, store::store::Store};
+use crate::{
+    common::scope_log::ScopeLog,
+    log_trace, logics,
+    store::{logs::ColumnLogs, store::Store},
+};
 
 #[tauri::command]
-pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<Vec<Vec<String>>, String> {
+pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<ColumnLogs, String> {
     let _log = ScopeLog::new(&import_logs);
 
     log_trace!(
