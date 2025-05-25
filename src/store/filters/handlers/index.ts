@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description Handlers index file.
  */
 
@@ -42,6 +42,7 @@ import { toggleFilterActive } from './toggleFilterActive';
 import { toggleFilterCollapsed } from './toggleFilterCollapsed';
 import { toggleFilterComponentIgnoreCase } from './toggleFilterComponentIgnoreCase';
 import { toggleFilterHighlightOnly } from './toggleFilterHighlightOnly';
+import { toggleFilterTabEnabled } from './toggleFilterTabEnabled';
 import { unmuteAllFilters } from './unmuteAllFilters';
 
 const basicHandlers = [
@@ -75,6 +76,7 @@ const basicHandlers = [
   toggleFilterCollapsed,
   toggleFilterComponentIgnoreCase,
   toggleFilterHighlightOnly,
+  toggleFilterTabEnabled,
   unmuteAllFilters,
 ];
 
@@ -115,5 +117,6 @@ export {
   toggleFilterCollapsed,
   toggleFilterComponentIgnoreCase,
   toggleFilterHighlightOnly,
+  toggleFilterTabEnabled,
   unmuteAllFilters,
 };

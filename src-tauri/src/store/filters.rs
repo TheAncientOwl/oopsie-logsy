@@ -7,7 +7,7 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.11
+//! **Version**: 0.12
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
@@ -55,6 +55,7 @@ pub struct FilterTab {
     pub name: String,
     #[serde(rename = "filterIDs")]
     pub filter_ids: Vec<String>,
+    pub enabled: bool,
 }
 
 pub struct FiltersManager {

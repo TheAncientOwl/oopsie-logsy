@@ -6,7 +6,7 @@
  *
  * @file TabToolbox.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Filter tab related tools.
  */
 
@@ -34,6 +34,7 @@ import {
   duplicateFiltersTab,
   muteAllFilters,
   setFilterTabName,
+  toggleFilterTabEnabled,
   unmuteAllFilters,
 } from '@/store/filters/handlers';
 import { setAllFiltersCollapsed } from '@/store/filters/handlers/setAllFiltersCollapsed';
@@ -56,10 +57,12 @@ const FilterTabToolBoxImpl: React.FC<TPropsFromRedux> = props => {
       <HStack padding='0 0.5em'>
         <ButtonGroup size='sm'>
           <TooltipIconButton
-            tooltip='Apply filters'
-            disabled
+            tooltip={props.focusedTab?.enabled ? 'Disable filters' : 'Enable filters'}
             variant={props.theme.buttons.filters.apply.variant}
-            colorPalette={props.theme.buttons.filters.apply.colorPalette}
+            colorPalette={
+              props.focusedTab?.enabled ? props.theme.buttons.filters.apply.colorPalette : 'gray'
+            }
+            onClick={() => props.toggleFilterTabEnabled(props.focusedTabId)}
           >
             <ApplyIcon />
           </TooltipIconButton>
@@ -221,6 +224,7 @@ const mapDispatch = {
   setFilterTabName: setFilterTabName.dispatch,
   setAllFiltersCollapsed: setAllFiltersCollapsed.dispatch,
   duplicateFiltersTab: duplicateFiltersTab.dispatch,
+  toggleFilterTabEnabled: toggleFilterTabEnabled.dispatch,
 };
 
 const connector = connect(mapState, mapDispatch);

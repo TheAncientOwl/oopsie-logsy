@@ -6,7 +6,7 @@
  *
  * @file invokeApplyFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description InvokeApplyFilters handler.
  */
 
@@ -21,13 +21,19 @@ import {
   type TFilterTab,
   type TOverAlternatives,
 } from '../data';
+import { type TColumnLogs } from '@/store/logs/data';
+import { type UUID } from '@/store/common/identifier';
 
 const action = {
   ok: EActionType.InvokeApplyFiltersOK,
   nok: EActionType.InvokeApplyFiltersNOK,
 };
 
-type TPayloadOk = {};
+export type TPayloadOk = {
+  filteredLogs: TColumnLogs;
+  filterIDs: Array<UUID>;
+  anyActiveFilters: boolean;
+};
 
 type TPayloadNok = {
   error: unknown;
@@ -79,9 +85,20 @@ export const invokeApplyFilters: IApiCallStoreHandler<
 
       if (checkCanSaveData(tabs, filters, components, overAlternatives)) {
         console.info(invokeApplyFilters.dispatch, 'Saving tabs data...');
-        const response = await invoke('apply_filters', { tabs, filters, components });
-        console.info(invokeApplyFilters.dispatch, `rust response: ${response}`);
-        dispatch({ type: EActionType.InvokeApplyFiltersOK, payload: {} });
+        const response = await invoke<[TColumnLogs, Array<String>, boolean]>('apply_filters', {
+          tabs,
+          filters,
+          components,
+        });
+        console.info(invokeApplyFilters.dispatch, 'rust response:', { response });
+        dispatch({
+          type: EActionType.InvokeApplyFiltersOK,
+          payload: {
+            filteredLogs: response[0],
+            filterIDs: response[1],
+            anyActiveFilters: response[2],
+          },
+        });
       } else {
         console.info(invokeApplyFilters.dispatch, 'Cannot save tabs data', {
           tabs,

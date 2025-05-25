@@ -7,9 +7,9 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Logics mod file.
 //!
 
 pub mod logs_converter;
-pub mod logs_reader_test;
+pub mod read_converted_logs;

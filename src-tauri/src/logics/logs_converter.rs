@@ -7,7 +7,7 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
@@ -138,6 +138,20 @@ pub fn execute(
             .flush()
             .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
     });
+
+    let config_file = store
+        .logs
+        .open_current_processed_logs_config_file_out()
+        .map_err(|err| log_error!(&execute, "Failed to open config file: {}", err))
+        .unwrap();
+    let mut writer = std::io::BufWriter::new(config_file);
+    writer
+        .write_all(&(field_logs[0].len() as u64).to_le_bytes())
+        .map_err(|err| log_error!(&execute, "Failed to write length to config file: {}", err))
+        .unwrap();
+    let _ = writer
+        .flush()
+        .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
 
     field_logs
 }

@@ -6,7 +6,7 @@
  *
  * @file actions.ts
  * @author Alexandru Delegeanu
- * @version 0.21
+ * @version 0.22
  * @description Filters action types.
  */
 
@@ -64,6 +64,7 @@ export enum EActionType {
   SetFilterTabName = 'Filters__SetFilterTabName',
   DuplicateFiltersTab = 'Filters__DuplicateFiltersTab',
   ReorderFilterTabs = 'Filters__ReorderFilterTabs',
+  ToggleFilterTabEnabled = 'Filters__ToggleFilterTabEnabled',
 
   AddNewFilter = 'Filters__AddNewFilter',
   DeleteFilter = 'Filters__DeleteFilter',

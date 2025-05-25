@@ -6,12 +6,14 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Display logs in table format
  */
 
 import { For } from '@/components/ui/utils/For';
 import { TRootState } from '@/store';
+import { type UUID } from '@/store/common/identifier';
+import { type TFilterColors } from '@/store/filters/data';
 import { Table } from '@chakra-ui/react';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -45,14 +47,25 @@ const LogViewImpl: React.FC<TPropsFromRedux> = props => {
       <Table.Body color={props.theme.table.text}>
         <For each={props.logs[0]}>
           {(_, rowIndex) => {
+            const filterId = props.filterIDs[rowIndex];
+            const colors = props.filterToColors.get(filterId);
+
+            const backgroundColor =
+              colors !== undefined
+                ? colors.bg
+                : rowIndex % 2 === 0
+                  ? props.theme.table.stripedEven
+                  : props.theme.table.stripedOdd;
+
+            const textColor = colors !== undefined ? colors.fg : 'inherit';
+
             return (
               <Table.Row
                 key={rowIndex}
                 textWrap='nowrap'
-                backgroundColor={
-                  rowIndex % 2 === 0 ? props.theme.table.stripedEven : props.theme.table.stripedOdd
-                }
+                backgroundColor={backgroundColor}
                 borderColor={props.theme.table.border}
+                color={textColor}
               >
                 <For each={props.tags}>
                   {(_, fieldIndex) => {
@@ -75,8 +88,12 @@ const LogViewImpl: React.FC<TPropsFromRedux> = props => {
 // <redux>
 const mapState = (state: TRootState) => ({
   theme: state.theme.themes[state.theme.activeThemeIndex].logView,
-  logs: state.logs.logs,
   tags: state.logRegexTags.tags.filter(tag => tag.displayed),
+  logs: state.logs.logs,
+  filterIDs: state.logs.filterIDs,
+  filterToColors: new Map<UUID, TFilterColors>(
+    state.filters.filters.map(filter => [filter.id, filter.colors])
+  ),
 });
 
 const mapDispatch = {};

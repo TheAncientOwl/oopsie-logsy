@@ -6,12 +6,13 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Listeners index file.
  */
 
 import { onApplyRegexTags } from './onApplyRegexTags';
+import { onApplyFilters } from './onApplyFilters';
 
-const listeners = [onApplyRegexTags];
+const listeners = [onApplyRegexTags, onApplyFilters];
 
-export { listeners, onApplyRegexTags };
+export { listeners, onApplyRegexTags, onApplyFilters };

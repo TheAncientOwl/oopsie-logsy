@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -64,10 +64,47 @@ impl LogsManager {
         &self.current_processed_logs_dir
     }
 
-    pub fn open_field_file_out(&self, name: &str) -> Result<File, std::io::Error> {
+    fn get_current_processed_logs_config_path(&self) -> std::path::PathBuf {
+        self.get_current_processed_logs_dir().join("config.oopsie")
+    }
+
+    pub fn open_current_processed_logs_config_file_out(&self) -> Result<File, std::io::Error> {
+        let path = self.get_current_processed_logs_config_path();
+
+        log_trace!(
+            &LogsManager::open_current_processed_logs_config_file_out,
+            "new config file: {:?}",
+            path
+        );
+
+        OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(path)
+    }
+
+    pub fn open_current_processed_logs_config_file_in(&self) -> Result<File, std::io::Error> {
+        let path = self.get_current_processed_logs_config_path();
+
+        log_trace!(
+            &LogsManager::open_current_processed_logs_config_file_out,
+            "opening config file: {:?}",
+            path
+        );
+
+        OpenOptions::new().read(true).open(path)
+    }
+
+    fn get_field_file_path(&self, name: &str) -> std::path::PathBuf {
         let mut final_name = name.to_owned();
         final_name.push_str(".oopsie");
-        let path = self.get_current_processed_logs_dir().join(final_name);
+
+        self.get_current_processed_logs_dir().join(final_name)
+    }
+
+    pub fn open_field_file_out(&self, name: &str) -> Result<File, std::io::Error> {
+        let path = self.get_field_file_path(name);
 
         log_trace!(
             &LogsManager::open_field_file_out,
@@ -80,6 +117,18 @@ impl LogsManager {
             .create(true)
             .truncate(true)
             .open(path)
+    }
+
+    pub fn open_field_file_in(&self, name: &str) -> Result<File, std::io::Error> {
+        let path = self.get_field_file_path(name);
+
+        log_trace!(
+            &LogsManager::open_field_file_in,
+            "opening field file: {:?}",
+            path
+        );
+
+        OpenOptions::new().read(true).open(path)
     }
 
     pub fn get_home_dir() -> std::path::PathBuf {
