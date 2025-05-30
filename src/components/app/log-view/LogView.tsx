@@ -6,12 +6,13 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description Display logs in table format
  */
 
 import { For } from '@/components/ui/utils/For';
-import { TRootState } from '@/store';
+import { useDebounce } from '@/hooks/useDebounce';
+import { type TRootState } from '@/store';
 import { type UUID } from '@/store/common/identifier';
 import { type TFilterColors } from '@/store/filters/data';
 import { Box, Table } from '@chakra-ui/react';
@@ -24,7 +25,6 @@ const overscan = 5;
 const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, ref) => {
   const [scrollTop, setScrollTop] = useState(0);
 
-  const dummyRef = useRef<HTMLTableRowElement>(null);
   const headerRef = useRef<HTMLTableSectionElement>(null);
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
@@ -55,6 +55,8 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
     });
   };
 
+  const syncWidthsDebounced = useDebounce(syncWidths, 100);
+
   useEffect(() => {
     syncWidths();
     window.addEventListener('resize', syncWidths);
@@ -82,7 +84,6 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 
       items.push(
         <Table.Row
-          ref={dummyRef}
           data-index={rowIndex}
           key={rowIndex}
           textWrap='nowrap'
@@ -112,7 +113,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       width='100vw'
       onScroll={e => {
         setScrollTop(e.currentTarget.scrollTop);
-        syncWidths();
+        syncWidthsDebounced();
       }}
       position='relative'
     >
