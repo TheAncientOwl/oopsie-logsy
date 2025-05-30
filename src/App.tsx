@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description App class
  */
 
@@ -104,9 +104,7 @@ const AppImpl: React.FC<TPropsFromRedux> = props => {
         <ToolBar onSettingsToggle={toggleSettingsMenu} onFiltersToggle={toggleFiltersMenu} />
       </Box>
 
-      <Box ref={logViewBoxRef} width='100vw' overflow='scroll'>
-        <LogView />
-      </Box>
+      <LogView ref={logViewBoxRef} />
 
       <Box
         ref={filtersBoxRef}
