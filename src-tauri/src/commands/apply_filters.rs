@@ -7,7 +7,7 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.6
+//! **Version**: 0.7
 //! **Description**: Set FilterTabs command.
 //!
 
@@ -15,10 +15,11 @@ use std::io::BufRead;
 
 use crate::{
     common::{config_file::ConfigFile, scope_log::ScopeLog},
-    log_trace, logics,
+    log_trace,
+    logics::{self, common::index_range::IndexRange},
     store::{
         filters::{Filter, FilterComponent, FilterTab},
-        logs::ColumnLogs,
+        logs::ColumnLogsView,
         store::Store,
     },
 };
@@ -54,7 +55,8 @@ pub fn apply_filters(
     tabs: Vec<FilterTab>,
     filters: Vec<Filter>,
     components: Vec<FilterComponent>,
-) -> Result<(ColumnLogs, Vec<String>, bool), String> {
+    desired_range: IndexRange,
+) -> Result<(ColumnLogsView, Vec<String>, bool), String> {
     let _log = ScopeLog::new(&apply_filters);
 
     log_data(&tabs, &filters, &components);
@@ -64,14 +66,16 @@ pub fn apply_filters(
     store.filters.set(&tabs, &filters, &components);
 
     let active_tags = store.regex_tags.compute_active_tags();
-    let log_fields_count = active_tags.len();
-    let mut active_filters = store.filters.compute_active_filters(&active_tags);
 
+    let mut active_filters = store.filters.compute_active_filters(&active_tags);
     if active_filters.len() == 0 {
         std::mem::drop(store);
-        return Ok((logics::read_converted_logs::execute(), Vec::new(), false));
+        return Ok((
+            logics::read_converted_logs::execute(desired_range),
+            Vec::new(),
+            false,
+        ));
     }
-
     log_trace!(&apply_filters, "Active filters: {:?}", active_filters);
     active_filters.sort_by(|a, b| b.filter.priority.cmp(&a.filter.priority));
     log_trace!(
@@ -82,15 +86,16 @@ pub fn apply_filters(
 
     let mut field_readers = store.logs.open_current_field_readers(&active_tags);
 
-    let mut out_filtered_logs: ColumnLogs = store.logs.make_empty_column_logs(log_fields_count);
+    let mut out_logs =
+        ColumnLogsView::new_with_field_capacity(active_tags.len(), desired_range.size());
     let mut out_filters: Vec<String> = Vec::new();
 
     let mut config = ConfigFile::new(store.logs.get_current_processed_logs_config_path());
     config.load();
-    let logs_count = config.get_number("logs_count", 0);
+    let logs_count = config.get_number("logs_count", 0) as usize;
 
     let mut field_value_buf = String::with_capacity(512);
-    let mut log_entry_buf: Vec<String> = Vec::with_capacity(log_fields_count);
+    let mut log_entry_buf: Vec<String> = Vec::with_capacity(active_tags.len());
     for _ in 0..logs_count {
         log_entry_buf.clear();
 
@@ -109,12 +114,13 @@ pub fn apply_filters(
                 component.is_equals == component.is_match(&log_entry_buf[component.field_index])
             })
         }) {
+            out_logs.total_logs += 1;
             for (field_idx, field_value) in log_entry_buf.drain(..).enumerate() {
-                out_filtered_logs[field_idx].push(field_value);
+                out_logs.logs[field_idx].push(field_value);
             }
             out_filters.push(active_filter.filter.id.clone());
         }
     }
 
-    Ok((out_filtered_logs, out_filters, true))
+    Ok((out_logs, out_filters, true))
 }

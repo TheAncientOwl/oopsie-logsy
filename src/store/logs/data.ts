@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Logs data.
  */
 
@@ -15,11 +15,16 @@ import { getStaticDefaultTags } from '../regex-tags/data';
 
 // <types>
 export type TColumnLogs = Array<Array<string>>;
+export type TColumnLogsView = {
+  logs: TColumnLogs;
+  totalLogs: number;
+};
 
 export type TStoreState = {
   loading: boolean;
   logs: TColumnLogs;
   filterIDs: Array<UUID>;
+  totalLogs: number;
 };
 // </types>
 
@@ -30,5 +35,6 @@ export const defaultState: TStoreState = {
     .filter(tag => tag.displayed)
     .map(() => []),
   filterIDs: [],
+  totalLogs: 0,
 };
 // </data>

@@ -6,23 +6,23 @@
  *
  * @file invokeApplyFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description InvokeApplyFilters handler.
  */
 
+import { type UUID } from '@/store/common/identifier';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
+import { type TColumnLogsView, type TColumnLogs } from '@/store/logs/data';
 import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
 import {
   checkCanSaveData,
   type TFilter,
   type TFilterComponent,
-  type TStoreState,
   type TFilterTab,
   type TOverAlternatives,
+  type TStoreState,
 } from '../data';
-import { type TColumnLogs } from '@/store/logs/data';
-import { type UUID } from '@/store/common/identifier';
 
 const action = {
   ok: EActionType.InvokeApplyFiltersOK,
@@ -33,6 +33,7 @@ export type TPayloadOk = {
   filteredLogs: TColumnLogs;
   filterIDs: Array<UUID>;
   anyActiveFilters: boolean;
+  totalLogs: number;
 };
 
 type TPayloadNok = {
@@ -85,16 +86,18 @@ export const invokeApplyFilters: IApiCallStoreHandler<
 
       if (checkCanSaveData(tabs, filters, components, overAlternatives)) {
         console.info(invokeApplyFilters.dispatch, 'Saving tabs data...');
-        const response = await invoke<[TColumnLogs, Array<String>, boolean]>('apply_filters', {
+        const response = await invoke<[TColumnLogsView, Array<String>, boolean]>('apply_filters', {
           tabs,
           filters,
           components,
+          desiredRange: { begin: 0, end: 1000 },
         });
         console.info(invokeApplyFilters.dispatch, 'rust response:', { response });
         dispatch({
           type: EActionType.InvokeApplyFiltersOK,
           payload: {
-            filteredLogs: response[0],
+            filteredLogs: response[0].logs,
+            totalLogs: response[0].totalLogs,
             filterIDs: response[1],
             anyActiveFilters: response[2],
           },

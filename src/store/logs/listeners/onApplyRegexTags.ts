@@ -6,7 +6,7 @@
  *
  * @file onApplyRegexTags.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Update logs when tags are applied.
  */
 
@@ -25,6 +25,8 @@ export const onApplyRegexTags: IStoreChangeListener<
     return {
       ...state,
       logs: payload.logs,
+      filterIDs: [],
+      totalLogs: payload.totalLogs,
     };
   },
 };

@@ -7,7 +7,7 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
@@ -19,8 +19,10 @@ use std::{
 use crate::{
     common::{config_file::ConfigFile, scope_log::ScopeLog},
     log_error, log_trace,
-    store::{logs::ColumnLogs, store::Store},
+    store::{logs::ColumnLogsView, store::Store},
 };
+
+use super::common::index_range::IndexRange;
 
 fn write_entry(writer: &mut std::io::BufWriter<File>, value: &str, tag: &str) {
     writer
@@ -48,7 +50,11 @@ fn write_entry(writer: &mut std::io::BufWriter<File>, value: &str, tag: &str) {
         .unwrap();
 }
 
-pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf) -> ColumnLogs {
+pub fn execute(
+    input_path: &std::path::PathBuf,
+    output_path: &std::path::PathBuf,
+    desired_range: IndexRange,
+) -> ColumnLogsView {
     let _log = ScopeLog::new(&execute);
 
     log_trace!(
@@ -64,7 +70,7 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
     let active_tags = store.regex_tags.compute_active_tags();
     let line_regex = store.regex_tags.get_line_regex();
 
-    let mut field_logs: ColumnLogs = Vec::new();
+    let mut out = ColumnLogsView::new(active_tags.len());
     let mut field_writers: Vec<std::io::BufWriter<File>> = Vec::new();
 
     let mut reader = std::io::BufReader::new(in_file);
@@ -76,12 +82,13 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
     // log_debug!(&execute, "Converting: {}", line);
     if let Some(caps) = line_regex.captures(&line) {
         // log_debug!(&execute, "Regex matched");
+        out.total_logs += 1;
         for idx in 1..caps.len() {
             if let Some(m) = caps.get(idx) {
                 // log_debug!(&execute, "Capture group {}: {}", idx, m.as_str());
-                let mut logs: Vec<String> = Vec::new();
-                logs.push(m.as_str().to_owned());
-                field_logs.push(logs);
+                if desired_range.contains(0) {
+                    out.logs[idx - 1].push(m.as_str().to_owned());
+                }
 
                 let field_file = store
                     .logs
@@ -106,6 +113,7 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
     }
 
     for line in reader.lines() {
+        out.total_logs += 1;
         let line = line.expect("Failed to read line");
         // log_debug!(&execute, "Converting: {}", line);
 
@@ -113,8 +121,10 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
             for idx in 1..caps.len() {
                 if let Some(m) = caps.get(idx) {
                     // log_debug!(&execute, "Capture group {}: {}", idx, m.as_str());
-                    let logs = &mut field_logs[idx - 1];
-                    logs.push(m.as_str().to_owned());
+                    if desired_range.contains(idx) {
+                        let logs = &mut out.logs[idx - 1];
+                        logs.push(m.as_str().to_owned());
+                    }
 
                     write_entry(
                         &mut field_writers[idx - 1],
@@ -137,8 +147,8 @@ pub fn execute(input_path: &std::path::PathBuf, output_path: &std::path::PathBuf
 
     let mut config = ConfigFile::new(store.logs.get_current_processed_logs_config_path());
     config.create_and_load();
-    config.set_number("logs_count", field_logs[0].len() as u128);
+    config.set_number("logs_count", out.total_logs as u128);
     config.save();
 
-    field_logs
+    out
 }

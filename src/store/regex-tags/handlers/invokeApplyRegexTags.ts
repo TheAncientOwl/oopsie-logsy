@@ -6,7 +6,7 @@
  *
  * @file invokeApplyRegexTags.ts
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description InvokeApplyRegexTags handler.
  */
 
@@ -14,7 +14,7 @@ import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/sto
 import { invoke } from '@tauri-apps/api/core';
 import { type TDispatch, EActionType } from '../actions';
 import { type TRegexTag, type TStoreState } from '../data';
-import { TColumnLogs } from '@/store/logs/data';
+import { TColumnLogs, TColumnLogsView } from '@/store/logs/data';
 
 const action = {
   ok: EActionType.InvokeApplyRegexTagsOK,
@@ -24,6 +24,7 @@ const action = {
 export type TPayloadOk = {
   tags: Array<TRegexTag>;
   logs: TColumnLogs;
+  totalLogs: number;
 };
 
 type TPayloadNOk = {
@@ -45,9 +46,15 @@ export const invokeApplyRegexTags: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke<TColumnLogs>('apply_regex_tags', { tags });
+      const response = await invoke<TColumnLogsView>('apply_regex_tags', {
+        tags,
+        desiredRange: { begin: 0, end: 1000 },
+      });
       console.info(invokeApplyRegexTags.dispatch, 'rust response:', { logs: response });
-      dispatch({ type: EActionType.InvokeApplyRegexTagsOK, payload: { tags, logs: response } });
+      dispatch({
+        type: EActionType.InvokeApplyRegexTagsOK,
+        payload: { tags, logs: response.logs, totalLogs: response.totalLogs },
+      });
     } catch (error) {
       console.error(invokeApplyRegexTags.dispatch, `error sending tags to rust: ${error}`);
       dispatch({ type: EActionType.InvokeApplyRegexTagssNOK, payload: { error } });

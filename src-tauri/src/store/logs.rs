@@ -7,18 +7,24 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.11
+//! **Version**: 0.12
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
-use std::fs::{File, OpenOptions};
-
-use crate::{common::scope_log::ScopeLog, log_error, log_trace};
-
 use super::regex_tags::RegexTag;
+use crate::{common::scope_log::ScopeLog, log_error, log_trace};
+use serde::{Deserialize, Serialize};
+use std::fs::{File, OpenOptions};
 
 // <data>
 pub type ColumnLogs = Vec<Vec<String>>;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ColumnLogsView {
+    pub logs: ColumnLogs,
+    #[serde(rename = "totalLogs")]
+    pub total_logs: usize,
+}
 
 pub struct LogsManager {
     current_raw_logs_path: Vec<std::path::PathBuf>,
@@ -170,6 +176,30 @@ impl LogsManager {
             logs.push(Vec::with_capacity(entries_count));
         }
         logs
+    }
+}
+
+impl ColumnLogsView {
+    pub fn new(fields: usize) -> Self {
+        let mut logs = Vec::with_capacity(fields);
+        for _ in 0..fields {
+            logs.push(Vec::new());
+        }
+        Self {
+            logs,
+            total_logs: 0,
+        }
+    }
+
+    pub fn new_with_field_capacity(fields: usize, capacity: usize) -> Self {
+        let mut logs = Vec::with_capacity(fields);
+        for _ in 0..fields {
+            logs.push(Vec::with_capacity(capacity));
+        }
+        Self {
+            logs,
+            total_logs: 0,
+        }
     }
 }
 // </manager>

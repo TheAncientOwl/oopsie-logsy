@@ -7,18 +7,22 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Set RegexTags command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
-    log_trace, logics,
-    store::{logs::ColumnLogs, regex_tags::RegexTag, store::Store},
+    log_trace,
+    logics::{self, common::index_range::IndexRange},
+    store::{logs::ColumnLogsView, regex_tags::RegexTag, store::Store},
 };
 
 #[tauri::command]
-pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<ColumnLogs, String> {
+pub async fn apply_regex_tags(
+    tags: Vec<RegexTag>,
+    desired_range: IndexRange,
+) -> Result<ColumnLogsView, String> {
     let _log = ScopeLog::new(&apply_regex_tags);
 
     log_trace!(
@@ -33,10 +37,7 @@ pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<ColumnLogs, String>
     store.regex_tags.set(&tags);
 
     if store.logs.get_current_raw_logs_path().len() == 0 {
-        let mut empty_data: ColumnLogs = Vec::new();
-        tags.iter().for_each(|_| empty_data.push(Vec::new()));
-
-        return Ok(empty_data);
+        return Ok(ColumnLogsView::new(tags.len()));
     }
 
     let in_file_path = store.logs.get_current_raw_logs_path()[0].clone();
@@ -46,5 +47,6 @@ pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<ColumnLogs, String>
     Ok(logics::logs_converter::execute(
         &in_file_path,
         &out_file_dir,
+        desired_range,
     ))
 }

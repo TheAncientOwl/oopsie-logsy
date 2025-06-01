@@ -6,14 +6,14 @@
  *
  * @file invokeSetCurrentLogPaths.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.6
  * @description InvokeSetCurrentLogPaths handler.
  */
 
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
-import { type TDispatch, EActionType } from '../actions';
-import { TColumnLogs, type TStoreState } from '../data';
+import { EActionType, type TDispatch } from '../actions';
+import { type TColumnLogs, type TColumnLogsView, type TStoreState } from '../data';
 
 const action = {
   ok: EActionType.InvokeImportLogsOK,
@@ -22,6 +22,7 @@ const action = {
 
 export type TPayloadOk = {
   logs: TColumnLogs;
+  totalLogs: number;
 };
 type TPayloadNOk = {
   error: any;
@@ -42,9 +43,15 @@ export const invokeImportLogs: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke<TColumnLogs>('import_logs', { paths });
+      const response = await invoke<TColumnLogsView>('import_logs', {
+        paths,
+        desiredRange: { begin: 0, end: 1000 },
+      });
       console.info(invokeImportLogs.dispatch, 'rust response:', response);
-      dispatch({ type: EActionType.InvokeImportLogsOK, payload: { logs: response } });
+      dispatch({
+        type: EActionType.InvokeImportLogsOK,
+        payload: { logs: response.logs, totalLogs: response.totalLogs },
+      });
     } catch (error) {
       console.error(invokeImportLogs.dispatch, `error sending current log paths to rust: ${error}`);
       dispatch({ type: EActionType.InvokeImportLogsNOK, payload: { error } });
@@ -58,6 +65,7 @@ export const invokeImportLogs: IApiCallStoreHandler<
         loading: false,
         logs: payload.logs,
         filterIDs: [],
+        totalLogs: payload.totalLogs,
       };
     },
 
@@ -67,6 +75,7 @@ export const invokeImportLogs: IApiCallStoreHandler<
         loading: false,
         logs: [],
         filterIDs: [],
+        totalLogs: 0,
       };
     },
   },

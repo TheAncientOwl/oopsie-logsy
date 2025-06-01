@@ -7,18 +7,22 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: Set CurrentLogPaths command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
-    log_trace, logics,
-    store::{logs::ColumnLogs, store::Store},
+    log_trace,
+    logics::{self, common::index_range::IndexRange},
+    store::{logs::ColumnLogsView, store::Store},
 };
 
 #[tauri::command]
-pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<ColumnLogs, String> {
+pub async fn import_logs(
+    paths: Vec<std::path::PathBuf>,
+    desired_range: IndexRange,
+) -> Result<ColumnLogsView, String> {
     let _log = ScopeLog::new(&import_logs);
 
     log_trace!(
@@ -41,5 +45,9 @@ pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<ColumnLogs, S
     let out_file_dir = store.logs.get_current_processed_logs_dir().clone();
 
     std::mem::drop(store);
-    Ok(logics::logs_converter::execute(in_file_path, &out_file_dir))
+    Ok(logics::logs_converter::execute(
+        in_file_path,
+        &out_file_dir,
+        desired_range,
+    ))
 }
