@@ -7,11 +7,9 @@
 //! # `read_converted_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Read all converted logs and return Column data out of it.
 //!
-
-use std::io::BufRead;
 
 use crate::{
     common::{config_file::ConfigFile, scope_log::ScopeLog},
@@ -35,17 +33,10 @@ pub fn execute(desired_range: IndexRange) -> ColumnLogsView {
     config.load();
     out.total_logs = config.get_number("logs count", 0) as usize;
 
-    let mut buf = String::with_capacity(512);
     for _ in 0..out.total_logs {
         let mut field_idx = 0;
         field_readers.iter_mut().for_each(|field_reader| {
-            buf.clear();
-            field_reader
-                .read_line(&mut buf)
-                .expect("Failed to read field");
-            buf.pop();
-
-            out.logs[field_idx].push(buf.as_str().to_owned());
+            out.logs[field_idx].push(field_reader.read_at(field_idx));
             field_idx += 1;
         });
     }

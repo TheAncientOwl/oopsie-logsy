@@ -7,14 +7,11 @@
 //! # `logs_converter.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: Convert input log file from txt format to internal OopsieLogsy format.
 //!
 
-use std::{
-    fs::File,
-    io::{BufRead, Write},
-};
+use std::{fs::File, io::BufRead};
 
 use crate::{
     common::{config_file::ConfigFile, scope_log::ScopeLog},
@@ -23,32 +20,6 @@ use crate::{
 };
 
 use super::common::index_range::IndexRange;
-
-fn write_entry(writer: &mut std::io::BufWriter<File>, value: &str, tag: &str) {
-    writer
-        .write(value.as_bytes())
-        .map_err(|err| {
-            log_error!(
-                &execute,
-                "Error while writing value \"{}\" to field file \"{}\": {}",
-                value,
-                tag,
-                err
-            );
-        })
-        .unwrap();
-    writer
-        .write(b"\n")
-        .map_err(|err| {
-            log_error!(
-                &execute,
-                "Error while writing '\\n' to field file \"{}\": {}",
-                tag,
-                err
-            );
-        })
-        .unwrap();
-}
 
 pub fn execute(
     input_path: &std::path::PathBuf,
@@ -71,7 +42,7 @@ pub fn execute(
     let line_regex = store.regex_tags.get_line_regex();
 
     let mut out = ColumnLogsView::new(active_tags.len());
-    let mut field_writers: Vec<std::io::BufWriter<File>> = Vec::new();
+    let mut field_writers = store.logs.open_current_field_writers(&active_tags);
 
     let mut reader = std::io::BufReader::new(in_file);
 
@@ -90,21 +61,7 @@ pub fn execute(
                     out.logs[idx - 1].push(m.as_str().to_owned());
                 }
 
-                let field_file = store
-                    .logs
-                    .open_field_file_out(&active_tags[idx - 1].name)
-                    .map_err(|err| {
-                        log_error!(
-                            &execute,
-                            "Error opening output field file {}: {}",
-                            active_tags[idx - 1].name,
-                            err
-                        );
-                    })
-                    .unwrap();
-                let mut writer = std::io::BufWriter::new(field_file);
-                write_entry(&mut writer, m.as_str(), &active_tags[idx - 1].name);
-                field_writers.push(writer);
+                field_writers[idx - 1].write(m.as_str());
             }
         }
     } else {
@@ -126,11 +83,7 @@ pub fn execute(
                         logs.push(m.as_str().to_owned());
                     }
 
-                    write_entry(
-                        &mut field_writers[idx - 1],
-                        m.as_str(),
-                        &active_tags[idx - 1].name,
-                    );
+                    field_writers[idx - 1].write(m.as_str());
                 }
             }
         } else {
@@ -139,11 +92,7 @@ pub fn execute(
         }
     }
 
-    field_writers.iter_mut().for_each(|writer| {
-        let _ = writer
-            .flush()
-            .map_err(|err| log_error!(&execute, "Error flushing writer: {}", err));
-    });
+    field_writers.iter_mut().for_each(|writer| writer.flush());
 
     let mut config = ConfigFile::new(store.logs.get_current_processed_logs_config_path());
     config.create_and_load();

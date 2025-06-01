@@ -7,14 +7,19 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.12
+//! **Version**: 0.13
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
 use super::regex_tags::RegexTag;
-use crate::{common::scope_log::ScopeLog, log_error, log_trace};
+use crate::{
+    common::{
+        log_field_storage::{reader::Reader, writer::Writer},
+        scope_log::ScopeLog,
+    },
+    log_error,
+};
 use serde::{Deserialize, Serialize};
-use std::fs::{File, OpenOptions};
 
 // <data>
 pub type ColumnLogs = Vec<Vec<String>>;
@@ -85,54 +90,17 @@ impl LogsManager {
         self.get_current_processed_logs_dir().join(final_name)
     }
 
-    pub fn open_field_file_out(&self, name: &str) -> Result<File, std::io::Error> {
-        let path = self.get_field_file_path(name);
-
-        log_trace!(
-            &LogsManager::open_field_file_out,
-            "new field file: {:?}",
-            path
-        );
-
-        OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(path)
-    }
-
-    pub fn open_field_file_in(&self, name: &str) -> Result<File, std::io::Error> {
-        let path = self.get_field_file_path(name);
-
-        log_trace!(
-            &LogsManager::open_field_file_in,
-            "opening field file: {:?}",
-            path
-        );
-
-        OpenOptions::new().read(true).open(path)
-    }
-
-    pub fn open_current_field_readers(
-        &self,
-        active_tags: &Vec<&RegexTag>,
-    ) -> Vec<std::io::BufReader<std::fs::File>> {
+    pub fn open_current_field_readers(&self, active_tags: &Vec<&RegexTag>) -> Vec<Reader> {
         active_tags
             .iter()
-            .map(|tag| {
-                let file = self
-                    .open_field_file_in(&tag.name)
-                    .map_err(|err| {
-                        log_error!(
-                            &LogsManager::open_current_field_readers,
-                            "Error opening output field file {}: {}",
-                            tag.name,
-                            err
-                        );
-                    })
-                    .unwrap();
-                std::io::BufReader::new(file)
-            })
+            .map(|tag| Reader::open(&tag.name, self.get_field_file_path(&tag.name)))
+            .collect()
+    }
+
+    pub fn open_current_field_writers(&self, active_tags: &Vec<&RegexTag>) -> Vec<Writer> {
+        active_tags
+            .iter()
+            .map(|tag| Writer::open(&tag.name, self.get_field_file_path(&tag.name)))
             .collect()
     }
 
@@ -156,26 +124,6 @@ impl LogsManager {
         }
 
         path
-    }
-
-    pub fn make_empty_column_logs(&self, fields_count: usize) -> ColumnLogs {
-        let mut logs: ColumnLogs = Vec::new();
-        for _ in 0..fields_count {
-            logs.push(Vec::new());
-        }
-        logs
-    }
-
-    pub fn make_empty_column_logs_with_capacity(
-        &self,
-        fields_count: usize,
-        entries_count: usize,
-    ) -> ColumnLogs {
-        let mut logs: ColumnLogs = Vec::new();
-        for _ in 0..fields_count {
-            logs.push(Vec::with_capacity(entries_count));
-        }
-        logs
     }
 }
 

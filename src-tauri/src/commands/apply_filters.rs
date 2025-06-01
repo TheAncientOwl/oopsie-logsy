@@ -7,11 +7,9 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: Set FilterTabs command.
 //!
-
-use std::io::BufRead;
 
 use crate::{
     common::{config_file::ConfigFile, scope_log::ScopeLog},
@@ -94,19 +92,12 @@ pub fn apply_filters(
     config.load();
     let logs_count = config.get_number("logs_count", 0) as usize;
 
-    let mut field_value_buf = String::with_capacity(512);
     let mut log_entry_buf: Vec<String> = Vec::with_capacity(active_tags.len());
-    for _ in 0..logs_count {
+    for idx in 0..logs_count {
         log_entry_buf.clear();
 
         field_readers.iter_mut().for_each(|field_reader| {
-            field_value_buf.clear();
-            field_reader
-                .read_line(&mut field_value_buf)
-                .expect("Failed to read field");
-            field_value_buf.pop();
-
-            log_entry_buf.push(field_value_buf.as_str().to_owned());
+            log_entry_buf.push(field_reader.read_at(idx));
         });
 
         if let Some(active_filter) = active_filters.iter().find(|filter| {
