@@ -4,28 +4,28 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `log_field_storage.rs`
+//! # `log_field_reader.rs`
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.1
-//! **Description**: Log field IO manager.
+//! **Description**: Log field input manager.
 //!
 
 use std::fs::OpenOptions;
 
 use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
-pub struct Reader {
+pub struct LogFieldReader {
     field_name: String,
     data_reader: std::io::BufReader<std::fs::File>,
     index_reader: std::io::BufReader<std::fs::File>,
     buffer: Vec<u8>,
 }
 
-impl Reader {
+impl LogFieldReader {
     pub fn open(field_name: &str, data_path: std::path::PathBuf) -> Self {
-        let _log = ScopeLog::new(&Reader::open);
-        log_trace!(&Reader::open, "field: \"{}\"", field_name,);
+        let _log = ScopeLog::new(&LogFieldReader::open);
+        log_trace!(&LogFieldReader::open, "field: \"{}\"", field_name,);
 
         let index_path = data_path.with_file_name(
             data_path
@@ -35,21 +35,21 @@ impl Reader {
         );
         Self {
             field_name: field_name.to_owned(),
-            data_reader: Reader::open_file(data_path, field_name),
-            index_reader: Reader::open_file(index_path, field_name),
+            data_reader: LogFieldReader::open_file(data_path, field_name),
+            index_reader: LogFieldReader::open_file(index_path, field_name),
             buffer: Vec::with_capacity(512),
         }
     }
 
     fn open_file(path: std::path::PathBuf, field_name: &str) -> std::io::BufReader<std::fs::File> {
-        log_trace!(&Reader::open_file, "path: {:?}", &path,);
+        log_trace!(&LogFieldReader::open_file, "path: {:?}", &path,);
 
         let file = OpenOptions::new()
             .read(true)
             .open(&path)
             .map_err(|err| {
                 log_error!(
-                    &Reader::open_file,
+                    &LogFieldReader::open_file,
                     "Failed to open field \"{}\" storage file at \"{:?}\", reason: {}",
                     field_name,
                     path,
@@ -60,7 +60,7 @@ impl Reader {
         std::io::BufReader::new(file)
     }
 
-    pub fn read_at(&mut self, index: usize) -> String {
+    pub fn read_at(&mut self, index: u64) -> String {
         use std::io::{Read, Seek, SeekFrom};
 
         let mut offset_bytes = [0u8; 8];
@@ -69,7 +69,7 @@ impl Reader {
 
         if let Err(err) = self.index_reader.seek(SeekFrom::Start(seek_pos)) {
             log_error!(
-                &Reader::read_at,
+                &LogFieldReader::read_at,
                 "Failed to seek index for field \"{}\", reason: {}",
                 self.field_name,
                 err
@@ -79,7 +79,7 @@ impl Reader {
 
         if let Err(err) = self.index_reader.read_exact(&mut offset_bytes) {
             log_error!(
-                &Reader::read_at,
+                &LogFieldReader::read_at,
                 "Failed to read offset for field \"{}\", reason: {}",
                 self.field_name,
                 err
@@ -89,7 +89,7 @@ impl Reader {
 
         if let Err(err) = self.index_reader.read_exact(&mut size_bytes) {
             log_error!(
-                &Reader::read_at,
+                &LogFieldReader::read_at,
                 "Failed to read size for field \"{}\", reason: {}",
                 self.field_name,
                 err
@@ -102,7 +102,7 @@ impl Reader {
 
         if let Err(err) = self.data_reader.seek(SeekFrom::Start(offset)) {
             log_error!(
-                &Reader::read_at,
+                &LogFieldReader::read_at,
                 "Failed to seek data for field \"{}\", reason: {}",
                 self.field_name,
                 err
@@ -118,7 +118,7 @@ impl Reader {
 
         if let Err(err) = self.data_reader.read_exact(&mut self.buffer) {
             log_error!(
-                &Reader::read_at,
+                &LogFieldReader::read_at,
                 "Failed to read data for field \"{}\", reason: {}",
                 self.field_name,
                 err

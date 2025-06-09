@@ -4,13 +4,16 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `status.rs`
+//! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.1
-//! **Description**: Response codes.
+//! **Description**: Disk IO mod file.
 //!
 
-pub fn ok() -> u16 {
-    200
-}
+pub mod active_logs_reader;
+pub mod active_logs_writer;
+pub mod config_file;
+pub mod log_field_reader;
+pub mod log_field_writer;
+pub mod paths;

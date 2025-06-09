@@ -7,17 +7,19 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.13
+//! **Version**: 0.14
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
 use super::regex_tags::RegexTag;
 use crate::{
-    common::{
-        log_field_storage::{reader::Reader, writer::Writer},
-        scope_log::ScopeLog,
+    common::scope_log::ScopeLog,
+    controller::common::disk_io::{
+        active_logs_reader::ActiveLogsReader, active_logs_writer::ActiveLogsWriter,
+        log_field_reader::LogFieldReader, log_field_writer::LogFieldWriter,
+        paths::get_oopsie_home_dir,
     },
-    log_error,
+    log_assert, log_error,
 };
 use serde::{Deserialize, Serialize};
 
@@ -25,15 +27,17 @@ use serde::{Deserialize, Serialize};
 pub type ColumnLogs = Vec<Vec<String>>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ColumnLogsView {
+pub struct ColumnLogsChunk {
     pub logs: ColumnLogs,
+    #[serde(rename = "filterIds")]
+    pub filter_ids: Vec<String>,
     #[serde(rename = "totalLogs")]
     pub total_logs: usize,
 }
 
 pub struct LogsManager {
-    current_raw_logs_path: Vec<std::path::PathBuf>,
-    current_processed_logs_dir: std::path::PathBuf,
+    raw_logs_path: Vec<std::path::PathBuf>,
+    working_dir: Option<std::path::PathBuf>,
 }
 // </data>
 
@@ -41,16 +45,16 @@ pub struct LogsManager {
 impl LogsManager {
     pub fn new() -> Self {
         Self {
-            current_raw_logs_path: Vec::new(),
-            current_processed_logs_dir: std::path::PathBuf::new(),
+            raw_logs_path: Vec::new(),
+            working_dir: None,
         }
     }
 
-    pub fn set_current_raw_logs_path(&mut self, new_path: &Vec<std::path::PathBuf>) {
-        let _log = ScopeLog::new(&LogsManager::set_current_raw_logs_path);
+    pub fn set_raw_logs_path(&mut self, new_path: &Vec<std::path::PathBuf>) {
+        let _log = ScopeLog::new(&LogsManager::set_raw_logs_path);
 
-        self.current_raw_logs_path.clear();
-        self.current_raw_logs_path.extend(new_path.iter().cloned());
+        self.raw_logs_path.clear();
+        self.raw_logs_path.extend(new_path.iter().cloned());
 
         let in_file_path = &new_path[0];
         let out_dir_name = in_file_path
@@ -58,76 +62,78 @@ impl LogsManager {
             // .and_then(|name| name.to_str().map(|s| format!("{}.oopsie", s)))
             .expect("Failed to extract valid UTF-8 file name from input");
 
-        self.current_processed_logs_dir = LogsManager::get_processed_logs_dir().join(out_dir_name);
+        self.working_dir = Some(get_oopsie_home_dir().join(out_dir_name));
     }
 
-    pub fn get_current_raw_logs_path(&self) -> &Vec<std::path::PathBuf> {
-        &self.current_raw_logs_path
+    pub fn get_raw_logs_path(&self) -> &Vec<std::path::PathBuf> {
+        &self.raw_logs_path
     }
 
-    pub fn get_current_processed_logs_dir(&self) -> &std::path::PathBuf {
-        if std::fs::metadata(&self.current_processed_logs_dir).is_err() {
-            let _ = std::fs::create_dir_all(&self.current_processed_logs_dir).map_err(|err| {
+    pub fn is_working_dir_set(&self) -> bool {
+        self.working_dir.is_some()
+    }
+
+    pub fn get_working_dir(&self) -> &std::path::PathBuf {
+        log_assert!(
+            &LogsManager::get_working_dir,
+            self.working_dir.is_some(),
+            "Working dir was not initialized"
+        );
+
+        let path = self.working_dir.as_ref().unwrap();
+
+        if !path.exists() {
+            let _ = std::fs::create_dir_all(&path).map_err(|err| {
                 log_error!(
-                    &LogsManager::get_current_processed_logs_dir,
+                    &LogsManager::get_working_dir,
                     "Error while creating processed logs dir: {}",
                     err
                 );
             });
         }
 
-        &self.current_processed_logs_dir
+        path
     }
 
-    pub fn get_current_processed_logs_config_path(&self) -> std::path::PathBuf {
-        self.get_current_processed_logs_dir().join("config.oopsie")
+    pub fn get_logs_config_path(&self) -> std::path::PathBuf {
+        self.get_working_dir().join("config.oopsie")
     }
 
     fn get_field_file_path(&self, name: &str) -> std::path::PathBuf {
         let mut final_name = name.to_owned();
         final_name.push_str(".oopsie");
 
-        self.get_current_processed_logs_dir().join(final_name)
+        self.get_working_dir().join(final_name)
     }
 
-    pub fn open_current_field_readers(&self, active_tags: &Vec<&RegexTag>) -> Vec<Reader> {
+    pub fn open_field_readers(&self, active_tags: &Vec<&RegexTag>) -> Vec<LogFieldReader> {
         active_tags
             .iter()
-            .map(|tag| Reader::open(&tag.name, self.get_field_file_path(&tag.name)))
+            .map(|tag| LogFieldReader::open(&tag.name, self.get_field_file_path(&tag.name)))
             .collect()
     }
 
-    pub fn open_current_field_writers(&self, active_tags: &Vec<&RegexTag>) -> Vec<Writer> {
+    pub fn open_field_writers(&self, active_tags: &Vec<&RegexTag>) -> Vec<LogFieldWriter> {
         active_tags
             .iter()
-            .map(|tag| Writer::open(&tag.name, self.get_field_file_path(&tag.name)))
+            .map(|tag| LogFieldWriter::open(&tag.name, self.get_field_file_path(&tag.name)))
             .collect()
     }
 
-    pub fn get_home_dir() -> std::path::PathBuf {
-        let path = dirs::home_dir()
-            .map(|home| home.join(".oopsie-logsy"))
-            .expect("Failed to determine user's home directory");
-
-        if std::fs::metadata(&path).is_err() {
-            let _ = std::fs::create_dir_all(&path);
-        }
-
-        path
+    fn get_active_logs_file(&self) -> std::path::PathBuf {
+        self.get_working_dir().join("active_logs.oopsie")
     }
 
-    pub fn get_processed_logs_dir() -> std::path::PathBuf {
-        let path = LogsManager::get_home_dir().join("processed");
+    pub fn open_active_logs_writer(&self) -> ActiveLogsWriter {
+        ActiveLogsWriter::open(self.get_active_logs_file())
+    }
 
-        if std::fs::metadata(&path).is_err() {
-            let _ = std::fs::create_dir_all(&path);
-        }
-
-        path
+    pub fn open_active_logs_reader(&self) -> ActiveLogsReader {
+        ActiveLogsReader::open(self.get_active_logs_file())
     }
 }
 
-impl ColumnLogsView {
+impl ColumnLogsChunk {
     pub fn new(fields: usize) -> Self {
         let mut logs = Vec::with_capacity(fields);
         for _ in 0..fields {
@@ -135,6 +141,7 @@ impl ColumnLogsView {
         }
         Self {
             logs,
+            filter_ids: Vec::new(),
             total_logs: 0,
         }
     }
@@ -146,6 +153,7 @@ impl ColumnLogsView {
         }
         Self {
             logs,
+            filter_ids: Vec::with_capacity(capacity),
             total_logs: 0,
         }
     }

@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Store index file.
  */
 
@@ -19,10 +19,10 @@ import { configureStore, Middleware } from '@reduxjs/toolkit';
 import { logsReducer } from './logs/reducer';
 
 const storeWatcher: Middleware = storeAPI => next => action => {
-  console.trace(storeWatcher, 'Dispatching:', action);
-  console.verbose(storeWatcher, 'Prev state:', storeAPI.getState());
+  console.redux(storeWatcher, 'Dispatching:', action);
+  console.redux(storeWatcher, 'Prev state:', storeAPI.getState());
   const result = next(action);
-  console.verbose(storeWatcher, 'Next state:', storeAPI.getState());
+  console.redux(storeWatcher, 'Next state:', storeAPI.getState());
   return result;
 };
 

@@ -6,11 +6,11 @@
  *
  * @file Logger.ts
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Extend logging functionality.
  */
 
-type TLogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'verbose';
+type TLogLevel = 'trace' | 'info' | 'warn' | 'debug' | 'error' | 'redux';
 
 const cerror = console.error;
 const cwarn = console.warn;
@@ -24,7 +24,7 @@ const logFunctions: Record<TLogLevel, (...args: any[]) => void> = {
   debug: cwarn,
   info: cinfo,
   trace: ctrace,
-  verbose: clog,
+  redux: clog,
 };
 
 const padLeft = (value: number, digits: number = 2) => value.toString().padStart(digits, '0');
@@ -95,8 +95,13 @@ const error = (caller: Nameable, ...data: any[]) => {
   _log('error', 'color: red', caller, ...data);
 };
 
-const verbose = (caller: Nameable, ...data: any[]) => {
-  _log('verbose', 'color: gray', caller, ...data);
+const redux = (caller: Nameable, ...data: any[]) => {
+  _log(
+    'redux',
+    'color: hotpink; background-color: rgba(128, 0, 128, 0.5); padding: 2px 3px; border-radius: 5px',
+    caller,
+    ...data
+  );
 };
 
 const assert = (caller: Nameable, condition: boolean, ...data: any[]) => {
@@ -114,7 +119,7 @@ const assert = (caller: Nameable, condition: boolean, ...data: any[]) => {
   console.debug = debug;
   console.error = error;
   console.assertX = assert;
-  console.verbose = verbose;
+  console.redux = redux;
 
   trace('setup', 'console logging augmented');
 })();

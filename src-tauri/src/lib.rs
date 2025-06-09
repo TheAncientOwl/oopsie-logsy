@@ -7,14 +7,14 @@
 //! # `lib.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: OopsieLogsy tauri lib.
 //!
 
 pub mod commands;
 pub mod common;
+pub mod controller;
 pub mod logger;
-pub mod logics;
 pub mod store;
 
 use tauri::Manager;
@@ -39,6 +39,7 @@ pub fn run() {
             commands::apply_filters::apply_filters,
             commands::get_filters::get_filters,
             commands::import_logs::import_logs,
+            commands::get_logs_chunk::get_logs_chunk
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

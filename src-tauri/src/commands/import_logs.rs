@@ -7,22 +7,14 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: Set CurrentLogPaths command.
 //!
 
-use crate::{
-    common::scope_log::ScopeLog,
-    log_trace,
-    logics::{self, common::index_range::IndexRange},
-    store::{logs::ColumnLogsView, store::Store},
-};
+use crate::{common::scope_log::ScopeLog, controller, log_trace, store::store::Store};
 
 #[tauri::command]
-pub async fn import_logs(
-    paths: Vec<std::path::PathBuf>,
-    desired_range: IndexRange,
-) -> Result<ColumnLogsView, String> {
+pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<String, String> {
     let _log = ScopeLog::new(&import_logs);
 
     log_trace!(
@@ -38,16 +30,10 @@ pub async fn import_logs(
         "Invalid logs input file for conversion"
     );
 
-    let mut store = Store::get_instance_mut();
-    store.logs.set_current_raw_logs_path(&paths);
+    {
+        let mut store = Store::get_instance_mut();
+        store.logs.set_raw_logs_path(&paths);
+    }
 
-    let in_file_path = &paths[0];
-    let out_file_dir = store.logs.get_current_processed_logs_dir().clone();
-
-    std::mem::drop(store);
-    Ok(logics::logs_converter::execute(
-        in_file_path,
-        &out_file_dir,
-        desired_range,
-    ))
+    controller::convert_logs::execute()
 }

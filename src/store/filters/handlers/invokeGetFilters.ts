@@ -6,7 +6,7 @@
  *
  * @file invokeGetFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description InvokeGetFilters handler.
  */
 
@@ -56,9 +56,9 @@ export const invokeGetFilters: IApiCallStoreHandler<
       const [tabs, filters, components] =
         await invoke<[Array<TFilterTab>, Array<TFilter>, Array<TFilterComponent>]>('get_filters');
       if (tabs.length !== 0) {
-        console.verbose(invokeGetFilters.dispatch, `Received ${tabs.length} tabs:`, tabs);
-        console.verbose(invokeGetFilters.dispatch, `Received ${filters.length} filters:`, filters);
-        console.verbose(
+        console.trace(invokeGetFilters.dispatch, `Received ${tabs.length} tabs:`, tabs);
+        console.trace(invokeGetFilters.dispatch, `Received ${filters.length} filters:`, filters);
+        console.trace(
           invokeGetFilters.dispatch,
           `Received ${components.length} components:`,
           components

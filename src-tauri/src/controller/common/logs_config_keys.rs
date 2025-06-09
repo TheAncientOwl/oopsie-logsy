@@ -4,12 +4,12 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `mod.rs`
+//! # `logs_config_keys.rs`
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.1
-//! **Description**: LogFieldStorage mod file.
+//! **Description**: String keys of logs config.
 //!
 
-pub mod reader;
-pub mod writer;
+pub const TOTAL_LOGS_COUNT: &str = "total_logs_count";
+pub const ACTIVE_LOGS_COUNT: &str = "active_logs_count";

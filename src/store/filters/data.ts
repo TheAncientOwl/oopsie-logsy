@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.22
+ * @version 0.23
  * @description Filters data structures.
  */
 
@@ -121,7 +121,7 @@ export const DefaultFactory = {
     id: uuid(),
     name: 'NewFilterTab',
     filterIDs: filters.map(filter => filter.id),
-    enabled: false,
+    enabled: true,
   }),
 };
 

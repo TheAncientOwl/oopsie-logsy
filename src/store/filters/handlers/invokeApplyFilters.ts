@@ -6,13 +6,11 @@
  *
  * @file invokeApplyFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description InvokeApplyFilters handler.
  */
 
-import { type UUID } from '@/store/common/identifier';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
-import { type TColumnLogsView, type TColumnLogs } from '@/store/logs/data';
 import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
 import {
@@ -30,10 +28,7 @@ const action = {
 };
 
 export type TPayloadOk = {
-  filteredLogs: TColumnLogs;
-  filterIDs: Array<UUID>;
-  anyActiveFilters: boolean;
-  totalLogs: number;
+  activeLogsChangedTime: string;
 };
 
 type TPayloadNok = {
@@ -76,31 +71,33 @@ export const invokeApplyFilters: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      console.verbose(invokeApplyFilters.dispatch, `Sending ${tabs.length} tabs:`, tabs);
-      console.verbose(invokeApplyFilters.dispatch, `Sending ${filters.length} filters:`, filters);
-      console.verbose(
+      console.trace(invokeApplyFilters.dispatch, `Sending ${tabs.length} tabs:`, tabs);
+      console.trace(invokeApplyFilters.dispatch, `Sending ${filters.length} filters:`, filters);
+      console.trace(
         invokeApplyFilters.dispatch,
         `Sending ${components.length} components:`,
         components
       );
 
       if (checkCanSaveData(tabs, filters, components, overAlternatives)) {
-        console.info(invokeApplyFilters.dispatch, 'Saving tabs data...');
-        const response = await invoke<[TColumnLogsView, Array<String>, boolean]>('apply_filters', {
+        console.info(invokeApplyFilters.dispatch, 'Saving tabs data...', {
           tabs,
           filters,
           components,
-          desiredRange: { begin: 0, end: 1000 },
+          overAlternatives,
         });
+
+        const response = await invoke<string>('apply_filters', {
+          tabs,
+          filters,
+          components,
+        });
+
         console.info(invokeApplyFilters.dispatch, 'rust response:', { response });
+
         dispatch({
           type: EActionType.InvokeApplyFiltersOK,
-          payload: {
-            filteredLogs: response[0].logs,
-            totalLogs: response[0].totalLogs,
-            filterIDs: response[1],
-            anyActiveFilters: response[2],
-          },
+          payload: { activeLogsChangedTime: response } as TPayloadOk,
         });
       } else {
         console.info(invokeApplyFilters.dispatch, 'Cannot save tabs data', {

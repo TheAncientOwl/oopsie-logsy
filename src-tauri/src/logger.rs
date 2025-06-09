@@ -7,7 +7,7 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Logger utilities.
 //!
 
@@ -76,6 +76,13 @@ pub fn stringify<T>(val: T) -> &'static str {
     std::any::type_name_of_val(&val)
 }
 
+pub fn assert<T>(caller: &T, condition: bool, message: std::fmt::Arguments) {
+    if !condition {
+        error(caller, format_args!("Assertion Failed: {}", message));
+        panic!("Assertion Failed");
+    }
+}
+
 #[macro_export]
 macro_rules! log_trace {
     ($caller:expr, $($arg:tt)*) => ($crate::logger::trace($caller, format_args!($($arg)*)));
@@ -99,4 +106,11 @@ macro_rules! log_debug {
 #[macro_export]
 macro_rules! log_error {
     ($caller:expr, $($arg:tt)*) => ($crate::logger::error($caller, format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! log_assert {
+    ($caller:expr, $cond:expr, $($arg:tt)*) => {
+        $crate::logger::assert($caller, $cond, format_args!($($arg)*));
+    };
 }

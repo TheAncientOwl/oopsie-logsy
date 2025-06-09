@@ -11,9 +11,9 @@
 //! **Description**: Configuration file helper.
 //!
 
-use crate::{log_error, log_trace};
+use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
-use super::scope_log::ScopeLog;
+use super::paths::{overwrite_file, read_file_to_string, remove_file};
 
 pub struct ConfigFile {
     path: std::path::PathBuf,
@@ -21,85 +21,50 @@ pub struct ConfigFile {
 }
 
 impl ConfigFile {
-    pub fn new(path: std::path::PathBuf) -> Self {
+    pub fn overwrite(path: std::path::PathBuf) -> Self {
+        let _log = ScopeLog::new(&ConfigFile::overwrite);
+
+        if path.exists() {
+            remove_file(&path);
+            overwrite_file(&path, "{}");
+        }
+
         Self {
             path: path,
-            data: serde_json::Value::from("{}"),
+            data: serde_json::Value::Object(serde_json::Map::new()),
         }
     }
 
-    fn create_if_missing(&self) {
-        if !self.path.exists() {
-            log_trace!(
-                &ConfigFile::create_if_missing,
-                "Creating default config file at \"{:?}\"",
-                self.path
-            );
-            if let Err(err) = std::fs::write(&self.path, "{}") {
-                log_error!(
-                    &ConfigFile::create_if_missing,
-                    "Failed to create config file at {}: {}",
-                    self.path.display(),
-                    err
-                );
-            }
-        }
-    }
-
-    pub fn create_and_load(&mut self) {
-        let _log = ScopeLog::new(&ConfigFile::create_and_load);
-
-        if self.path.exists() {
-            let _ = std::fs::remove_file(&self.path);
-        }
-
-        self.create_if_missing();
-        self.load();
-    }
-
-    pub fn load(&mut self) {
+    pub fn load(path: std::path::PathBuf) -> Self {
         let _log = ScopeLog::new(&ConfigFile::load);
 
-        self.create_if_missing();
-
-        if let Ok(content) = std::fs::read_to_string(&self.path) {
-            match serde_json::from_str(&content) {
-                Ok(json) => self.data = json,
-                Err(err) => log_error!(
+        let file_content = read_file_to_string(&path);
+        let data = match serde_json::from_str(&file_content) {
+            Ok(val) => val,
+            Err(err) => {
+                log_error!(
                     &ConfigFile::load,
-                    "Failed to parse config file {}: {}",
-                    self.path.display(),
+                    "Failed to parse config file as JSON: {}. Using empty object.",
                     err
-                ),
+                );
+                serde_json::Value::Object(serde_json::Map::new())
             }
-        } else {
-            log_error!(
-                &ConfigFile::load,
-                "Failed to read config file at {}",
-                self.path.display()
-            );
-        }
+        };
+
+        Self { path, data }
     }
 
     pub fn save(&self) {
         let _log = ScopeLog::new(&ConfigFile::save);
-
-        self.create_if_missing();
-
         match serde_json::to_string_pretty(&self.data) {
             Ok(json_str) => {
-                if let Err(err) = std::fs::write(&self.path, json_str) {
-                    log_error!(
-                        &ConfigFile::save,
-                        "Failed to write config to file {}: {}",
-                        self.path.display(),
-                        err
-                    );
-                }
+                log_trace!(&ConfigFile::save, "data: \n{}", self.data);
+                overwrite_file(&self.path, &json_str);
             }
             Err(err) => log_error!(
                 &ConfigFile::save,
-                "Failed to serialize config data: {}",
+                "Failed to serialize config data {}, reason: {}",
+                self.data,
                 err
             ),
         }
@@ -136,9 +101,10 @@ impl ConfigFile {
         } else {
             log_error!(
                 &ConfigFile::set_str,
-                "Unable to set \"{}\" key to \"{}\" value in config internals",
+                "Unable to set \"{}\" key to \"{}\" value in config internals: {}",
                 key,
                 value,
+                &self.data
             )
         }
     }

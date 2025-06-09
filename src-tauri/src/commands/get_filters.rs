@@ -7,7 +7,7 @@
 //! # `get_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Get FilterTabs command.
 //!
 
@@ -21,7 +21,7 @@ use crate::{
 };
 
 #[tauri::command]
-pub fn get_filters() -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
+pub async fn get_filters() -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
     let _log = ScopeLog::new(&get_filters);
 
     let instance = Store::get_instance();

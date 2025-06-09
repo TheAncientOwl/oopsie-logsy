@@ -6,7 +6,7 @@
  *
  * @file onApplyFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Update logs when filters are applied.
  */
 
@@ -24,9 +24,7 @@ export const onApplyFilters: IStoreChangeListener<
   reduce: (state, payload) => {
     return {
       ...state,
-      logs: payload.filteredLogs,
-      filterIDs: payload.anyActiveFilters ? payload.filterIDs : [],
-      totalLogs: payload.totalLogs,
+      activeLogsChangedTime: payload.activeLogsChangedTime,
     };
   },
 };

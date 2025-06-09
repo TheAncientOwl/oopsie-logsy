@@ -7,7 +7,7 @@
 //! # `index.range.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Utility struct. Inclusive range [begin, end]
 //!
 
@@ -30,5 +30,13 @@ impl IndexRange {
 
     pub fn size(&self) -> usize {
         self.end - self.begin + 1
+    }
+
+    pub fn begin(&self) -> usize {
+        self.begin
+    }
+
+    pub fn end(&self) -> usize {
+        self.end
     }
 }

@@ -6,24 +6,25 @@
  *
  * @file invokeSetCurrentLogPaths.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description InvokeSetCurrentLogPaths handler.
  */
 
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
 import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
-import { type TColumnLogs, type TColumnLogsView, type TStoreState } from '../data';
+import { type TStoreState } from '../data';
+import { getStaticDefaultTags } from '@/store/regex-tags/data';
 
 const action = {
   ok: EActionType.InvokeImportLogsOK,
   nok: EActionType.InvokeImportLogsNOK,
 };
 
-export type TPayloadOk = {
-  logs: TColumnLogs;
-  totalLogs: number;
+type TPayloadOk = {
+  activeLogsChangedTime: string;
 };
+
 type TPayloadNOk = {
   error: any;
 };
@@ -43,14 +44,13 @@ export const invokeImportLogs: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke<TColumnLogsView>('import_logs', {
-        paths,
-        desiredRange: { begin: 0, end: 1000 },
-      });
+      const response = await invoke<string>('import_logs', { paths });
+
       console.info(invokeImportLogs.dispatch, 'rust response:', response);
+
       dispatch({
         type: EActionType.InvokeImportLogsOK,
-        payload: { logs: response.logs, totalLogs: response.totalLogs },
+        payload: { activeLogsChangedTime: response } as TPayloadOk,
       });
     } catch (error) {
       console.error(invokeImportLogs.dispatch, `error sending current log paths to rust: ${error}`);
@@ -63,9 +63,7 @@ export const invokeImportLogs: IApiCallStoreHandler<
       return {
         ...state,
         loading: false,
-        logs: payload.logs,
-        filterIDs: [],
-        totalLogs: payload.totalLogs,
+        activeLogsChangedTime: payload.activeLogsChangedTime,
       };
     },
 
@@ -73,7 +71,13 @@ export const invokeImportLogs: IApiCallStoreHandler<
       return {
         ...state,
         loading: false,
-        logs: [],
+        chunkData: {
+          logs: getStaticDefaultTags()
+            .filter(tag => tag.displayed)
+            .map(() => []),
+          totalLogs: 0,
+          filterIds: [],
+        },
         filterIDs: [],
         totalLogs: 0,
       };

@@ -8,7 +8,10 @@
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.1
-//! **Description**: common mod file.
+//! **Description**: Controller mod file.
 //!
 
-pub mod index_range;
+pub mod common;
+pub mod convert_logs;
+pub mod filter_logs;
+pub mod read_logs_chunk;

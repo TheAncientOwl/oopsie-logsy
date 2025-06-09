@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description Display logs in table format
  */
 
@@ -15,6 +15,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { type TRootState } from '@/store';
 import { type UUID } from '@/store/common/identifier';
 import { type TFilterColors } from '@/store/filters/data';
+import { invokeGetLogsChunk } from '@/store/logs/handlers';
 import { Box, Table } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
@@ -23,12 +24,16 @@ const itemHeight = 45;
 const overscan = 5;
 
 const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, ref) => {
+  useEffect(() => {
+    props.invokeGetLogsChunk(0, 200);
+  }, [props.activeLogsChangedTime]);
+
   const [scrollTop, setScrollTop] = useState(0);
 
   const headerRef = useRef<HTMLTableSectionElement>(null);
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
-  const numberOfItems = props.logs[0].length;
+  const numberOfItems = props.logsChunk.logs.length === 0 ? 0 : props.logsChunk.logs[0].length;
   const innerRef = ref as React.RefObject<HTMLDivElement>;
   const windowHeight = innerRef.current ? innerRef.current.offsetHeight : 300;
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
@@ -62,14 +67,14 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
     window.addEventListener('resize', syncWidths);
 
     return () => window.removeEventListener('resize', syncWidths);
-  }, [props.tags, props.logs, renderedNodesCount]);
+  }, [props.tags, props.logsChunk, renderedNodesCount]);
 
   const generateLogRows = () => {
     const items: Array<JSX.Element> = [];
     for (let i = 0; i < renderedNodesCount; i++) {
       const rowIndex = i + startIndex;
 
-      const filterId = props.filterIDs[rowIndex];
+      const filterId = props.logsChunk.filterIds[rowIndex];
 
       const colors = props.filterToColors.get(filterId);
 
@@ -95,7 +100,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
             {(_, fieldIndex) => {
               return (
                 <Table.Cell minWidth='100px' borderColor='inherit' width='100%' maxWidth='100%'>
-                  {props.logs[fieldIndex][rowIndex]}
+                  {props.logsChunk.logs[fieldIndex][rowIndex]}
                 </Table.Cell>
               );
             }}
@@ -162,14 +167,16 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 const mapState = (state: TRootState) => ({
   theme: state.theme.themes[state.theme.activeThemeIndex].logView,
   tags: state.logRegexTags.tags.filter(tag => tag.displayed),
-  logs: state.logs.logs,
-  filterIDs: state.logs.filterIDs,
+  logsChunk: state.logs.chunkData,
   filterToColors: new Map<UUID, TFilterColors>(
     state.filters.filters.map(filter => [filter.id, filter.colors])
   ),
+  activeLogsChangedTime: state.logs.activeLogsChangedTime,
 });
 
-const mapDispatch = {};
+const mapDispatch = {
+  invokeGetLogsChunk: invokeGetLogsChunk.dispatch,
+};
 
 const connector = connect(mapState, mapDispatch, null, { forwardRef: true });
 type TPropsFromRedux = ConnectedProps<typeof connector>;
