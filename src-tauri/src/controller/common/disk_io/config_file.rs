@@ -7,13 +7,13 @@
 //! # `configuration.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Configuration file helper.
 //!
 
 use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
-use super::paths::{overwrite_file, read_file_to_string, remove_file};
+use super::common::{overwrite_file, read_file_to_string, remove_file};
 
 pub struct ConfigFile {
     path: std::path::PathBuf,
@@ -58,7 +58,7 @@ impl ConfigFile {
         let _log = ScopeLog::new(&ConfigFile::save);
         match serde_json::to_string_pretty(&self.data) {
             Ok(json_str) => {
-                log_trace!(&ConfigFile::save, "data: \n{}", self.data);
+                log_trace!(&ConfigFile::save, "data: {}", self.data);
                 overwrite_file(&self.path, &json_str);
             }
             Err(err) => log_error!(

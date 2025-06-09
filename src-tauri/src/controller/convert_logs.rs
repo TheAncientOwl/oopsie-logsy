@@ -7,7 +7,7 @@
 //! # `convert_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Convert raw logs to OopsieLogsy format.
 //!
 
@@ -18,7 +18,7 @@ use chrono::Utc;
 use crate::{
     common::scope_log::ScopeLog,
     controller::common::{
-        disk_io::{active_logs_writer::DEFAULT_FILTER_ID, config_file::ConfigFile},
+        disk_io::{active_logs_writer::DEFAULT_FILTER_INDEX, config_file::ConfigFile},
         logs_config_keys,
     },
     log_error, log_trace,
@@ -57,7 +57,7 @@ pub fn execute() -> Result<String, String> {
     // log_debug!(&execute, "Converting: {}", line);
     if let Some(caps) = line_regex.captures(&line) {
         // log_debug!(&execute, "Regex matched");
-        active_logs_writer.write(total_logs_count, DEFAULT_FILTER_ID);
+        active_logs_writer.write(total_logs_count, DEFAULT_FILTER_INDEX);
         total_logs_count += 1;
 
         for idx in 1..caps.len() {
@@ -79,7 +79,7 @@ pub fn execute() -> Result<String, String> {
     }
 
     for line in reader.lines() {
-        active_logs_writer.write(total_logs_count, DEFAULT_FILTER_ID);
+        active_logs_writer.write(total_logs_count, DEFAULT_FILTER_INDEX);
 
         total_logs_count += 1;
         let line = line.expect("Failed to read line");

@@ -7,18 +7,18 @@
 //! # `active_logs_writer.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Save active logs indices.
 //!
 
 use std::fs::File;
-use std::io::{BufReader, Read};
+use std::io::{BufReader, Read, Seek, SeekFrom};
 
 use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
 use super::active_logs_writer::DEFAULT_FILTER_ID;
 
-const FILTER_ID_LEN: usize = DEFAULT_FILTER_ID.len();
+const FILTER_ID_INDEX_LEN: usize = DEFAULT_FILTER_ID.len();
 
 pub struct ActiveLogsReader {
     reader: BufReader<File>,
@@ -26,7 +26,7 @@ pub struct ActiveLogsReader {
 
 pub struct LogMetadata {
     pub index: u64,
-    pub filter_id: String,
+    pub filter_id_index: u16,
 }
 
 impl ActiveLogsReader {
@@ -51,38 +51,38 @@ impl ActiveLogsReader {
     }
 
     pub fn read_next(&mut self) -> Option<LogMetadata> {
-        let mut index_buf = [0u8; 8];
-        if self.reader.read_exact(&mut index_buf).is_err() {
+        let mut log_index_buf = [0u8; 8];
+        if self.reader.read_exact(&mut log_index_buf).is_err() {
             return None;
         }
 
-        let mut filter_buf = [0u8; FILTER_ID_LEN];
-        if self.reader.read_exact(&mut filter_buf).is_err() {
+        let mut filter_id_index_buf = [0u8; 2];
+        if self.reader.read_exact(&mut filter_id_index_buf).is_err() {
             return None;
         }
-
-        let log_index = u64::from_le_bytes(index_buf);
-        let filter_id = match std::str::from_utf8(&filter_buf) {
-            Ok(s) => s.to_string(),
-            Err(_) => return None,
-        };
 
         Some(LogMetadata {
-            index: log_index,
-            filter_id,
+            index: u64::from_le_bytes(log_index_buf),
+            filter_id_index: u16::from_le_bytes(filter_id_index_buf),
         })
     }
 
-    pub fn read_at(&mut self, index: u64) -> Option<LogMetadata> {
-        use std::io::{Seek, SeekFrom};
-
-        let entry_size = 8 + FILTER_ID_LEN as u64;
+    pub fn seek_to(&mut self, index: u64) -> bool {
+        let entry_size = 8 + FILTER_ID_INDEX_LEN as u64;
 
         if self
             .reader
             .seek(SeekFrom::Start(index * entry_size))
             .is_err()
         {
+            return false;
+        }
+
+        return true;
+    }
+
+    pub fn read_at(&mut self, index: u64) -> Option<LogMetadata> {
+        if !self.seek_to(index) {
             return None;
         }
 

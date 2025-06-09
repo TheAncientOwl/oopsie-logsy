@@ -7,7 +7,7 @@
 //! # `active_logs_writer.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Save active logs indices.
 //!
 
@@ -15,7 +15,7 @@
 // generated filter: 01974f35-19f5-7782-a378-dd3f8100bdaf
 
 pub const DEFAULT_FILTER_ID: &str = "00000000-0000-0000-0000-000000000000";
-const FILTER_ID_LEN: usize = DEFAULT_FILTER_ID.len();
+pub const DEFAULT_FILTER_INDEX: u16 = 0;
 
 use std::fs::OpenOptions;
 
@@ -50,16 +50,8 @@ impl ActiveLogsWriter {
         }
     }
 
-    pub fn write(&mut self, log_index: u64, filter_id: &str) {
-        assert_eq!(
-            filter_id.len(),
-            FILTER_ID_LEN as usize,
-            "Received filter ID {} with length {} > default {}",
-            filter_id,
-            filter_id.len(),
-            FILTER_ID_LEN
-        );
-
+    pub fn write(&mut self, log_index: u64, filter_id_index: u16) {
+        let _log = ScopeLog::new(&ActiveLogsWriter::write);
         use std::io::Write;
 
         let index_bytes = log_index.to_le_bytes();
@@ -73,11 +65,12 @@ impl ActiveLogsWriter {
             return;
         }
 
-        if let Err(err) = self.writer.write_all(filter_id.as_bytes()) {
+        let filter_id_index_bytes = filter_id_index.to_le_bytes();
+        if let Err(err) = self.writer.write_all(&filter_id_index_bytes) {
             log_error!(
                 &ActiveLogsWriter::write,
-                "Failed to write filter ID \"{}\", reason: {}",
-                filter_id,
+                "Failed to write filter ID index \"{}\", reason: {}",
+                filter_id_index,
                 err
             );
         }

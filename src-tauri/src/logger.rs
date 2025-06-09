@@ -7,13 +7,34 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Logger utilities.
 //!
 
+use std::{fs::OpenOptions, sync::Mutex};
+
+use once_cell::sync::Lazy;
 use owo_colors::{OwoColorize, Style};
 
+use crate::store::paths::common::get_oopsie_home_dir;
+
+static LOG_FILE: Lazy<Mutex<std::fs::File>> = Lazy::new(|| {
+    let file_path = get_oopsie_home_dir().join("oopsie-logsy.log");
+
+    let file = OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open(file_path)
+        .expect("Failed to open log file");
+
+    Mutex::new(file)
+});
+
+const NEW_LINE: &[u8] = "\n".as_bytes();
+
 pub fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::fmt::Arguments) {
+    // return;
+
     let sep = "|".bright_black();
     let caller_str = std::any::type_name::<T>();
 
@@ -34,7 +55,7 @@ pub fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::f
         })
         .collect::<String>();
 
-    println!(
+    let log_line = format!(
         // "| time | level | caller: message"
         "{} {} {} {} {} {}{} {}{}",
         sep, // |
@@ -50,6 +71,13 @@ pub fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::f
         args.style(level_style), // message
         "".default_color()
     );
+    println!("{}", log_line);
+
+    use std::io::Write;
+    if let Ok(mut file) = LOG_FILE.lock() {
+        let _ = file.write_all(log_line.as_bytes());
+        let _ = file.write_all(NEW_LINE);
+    }
 }
 
 pub fn trace<T>(caller: &T, args: std::fmt::Arguments) {

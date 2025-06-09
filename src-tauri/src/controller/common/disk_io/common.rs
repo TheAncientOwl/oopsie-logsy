@@ -4,14 +4,14 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `paths.rs`
+//! # `common.rs`
 //!
 //! **Author**: Alexandru Delegeanu
 //! **Version**: 0.1
-//! **Description**: Paths management.
+//! **Description**: Common IO operations.
 //!
 
-use crate::log_error;
+use crate::{common::scope_log::ScopeLog, log_error};
 
 pub fn create_file(path: &std::path::PathBuf) {
     use std::fs;
@@ -56,6 +56,8 @@ pub fn create_file(path: &std::path::PathBuf) {
 }
 
 pub fn overwrite_file(path: &std::path::PathBuf, content: &str) {
+    let _log = ScopeLog::new(&overwrite_file);
+
     if path.exists() {
         remove_file(path);
     }
@@ -81,6 +83,8 @@ pub fn remove_file(path: &std::path::PathBuf) {
 }
 
 pub fn read_file_to_string(path: &std::path::PathBuf) -> String {
+    let _log = ScopeLog::new(&overwrite_file);
+
     match std::fs::read_to_string(path) {
         Ok(content) => content,
         Err(err) => {
@@ -95,20 +99,26 @@ pub fn read_file_to_string(path: &std::path::PathBuf) -> String {
     }
 }
 
-pub fn get_oopsie_home_dir() -> std::path::PathBuf {
-    let path = dirs::home_dir()
-        .map(|home| home.join(".oopsie-logsy"))
-        .expect("Failed to determine user's home directory");
+use serde::de::DeserializeOwned;
 
-    if !path.exists() {
-        let _ = std::fs::create_dir_all(&path).map_err(|err| {
-            log_error!(
-                &&get_oopsie_home_dir,
-                "Error while creating oopsie home dir: {}",
-                err
-            );
-        });
+pub fn read_vec<T: DeserializeOwned>(path: &std::path::PathBuf) -> Vec<T> {
+    let _log = ScopeLog::new(&read_vec::<T>);
+
+    let content = read_file_to_string(path);
+    if content.is_empty() {
+        return vec![];
     }
 
-    path
+    match serde_json::from_str::<Vec<T>>(&content) {
+        Ok(data) => data,
+        Err(err) => {
+            log_error!(
+                &read_vec::<T>,
+                "Failed to deserialize JSON array from {:?}, reason: {}",
+                path,
+                err
+            );
+            vec![]
+        }
+    }
 }

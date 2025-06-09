@@ -7,15 +7,22 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.14
+//! **Version**: 0.15
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
 use std::collections::HashMap;
 
-use crate::{common::scope_log::ScopeLog, log_error, log_warn};
+use crate::{
+    common::{json::stringify, scope_log::ScopeLog},
+    controller::common::disk_io::common::overwrite_file,
+    log_error, log_warn,
+};
 
-use super::regex_tags::RegexTag;
+use super::{
+    paths::filters::{get_components_path, get_filters_path, get_tabs_path},
+    regex_tags::RegexTag,
+};
 
 // <data>
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -102,12 +109,18 @@ impl FiltersManager {
 
         self.tabs.clear();
         self.tabs.extend(new_tabs.iter().cloned());
+        let tabs_str = stringify(&self.tabs);
+        overwrite_file(&get_tabs_path(), &tabs_str);
 
         self.filters.clear();
         self.filters.extend(new_filters.iter().cloned());
+        let filters_str = stringify(&self.filters);
+        overwrite_file(&get_filters_path(), &filters_str);
 
         self.components.clear();
         self.components.extend(new_components.iter().cloned());
+        let components_str = stringify(&self.components);
+        overwrite_file(&get_components_path(), &components_str);
     }
 
     pub fn get_tabs(&self) -> &Vec<FilterTab> {
@@ -196,7 +209,7 @@ impl FiltersManager {
                             &FiltersManager::compute_active_filters,
                             "Missing filter with ID {}",
                             filter_id
-                        )
+                        );
                     }
                 });
             }

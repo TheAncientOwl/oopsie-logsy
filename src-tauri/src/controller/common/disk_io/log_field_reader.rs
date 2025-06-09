@@ -7,7 +7,7 @@
 //! # `log_field_reader.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Log field input manager.
 //!
 
@@ -61,6 +61,8 @@ impl LogFieldReader {
     }
 
     pub fn read_at(&mut self, index: u64) -> String {
+        let _log = ScopeLog::new(&LogFieldReader::read_at);
+
         use std::io::{Read, Seek, SeekFrom};
 
         let mut offset_bytes = [0u8; 8];

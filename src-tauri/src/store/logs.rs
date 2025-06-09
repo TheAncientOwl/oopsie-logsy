@@ -7,17 +7,16 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.14
+//! **Version**: 0.15
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
-use super::regex_tags::RegexTag;
+use super::{paths::common::get_oopsie_home_dir, regex_tags::RegexTag};
 use crate::{
     common::scope_log::ScopeLog,
     controller::common::disk_io::{
         active_logs_reader::ActiveLogsReader, active_logs_writer::ActiveLogsWriter,
         log_field_reader::LogFieldReader, log_field_writer::LogFieldWriter,
-        paths::get_oopsie_home_dir,
     },
     log_assert, log_error,
 };
@@ -32,7 +31,7 @@ pub struct ColumnLogsChunk {
     #[serde(rename = "filterIds")]
     pub filter_ids: Vec<String>,
     #[serde(rename = "totalLogs")]
-    pub total_logs: usize,
+    pub total_logs: u64,
 }
 
 pub struct LogsManager {

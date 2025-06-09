@@ -7,10 +7,9 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
-//! **Description**: common mod file.
+//! **Version**: 0.1
+//! **Description**: Paths mod file.
 //!
 
-pub mod json;
-pub mod scope_log;
-pub mod timer;
+pub mod common;
+pub mod filters;
