@@ -24,6 +24,7 @@ pub struct ActiveLogsReader {
     reader: BufReader<File>,
 }
 
+#[derive(Clone)]
 pub struct LogMetadata {
     pub index: u64,
     pub filter_id_index: u16,

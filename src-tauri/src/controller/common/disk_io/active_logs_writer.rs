@@ -51,7 +51,7 @@ impl ActiveLogsWriter {
     }
 
     pub fn write(&mut self, log_index: u64, filter_id_index: u16) {
-        let _log = ScopeLog::new(&ActiveLogsWriter::write);
+        // let _log = ScopeLog::new(&ActiveLogsWriter::write);
         use std::io::Write;
 
         let index_bytes = log_index.to_le_bytes();

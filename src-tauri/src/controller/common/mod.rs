@@ -13,4 +13,5 @@
 
 pub mod disk_io;
 pub mod index_range;
+pub mod log_chunks_manager;
 pub mod logs_config_keys;

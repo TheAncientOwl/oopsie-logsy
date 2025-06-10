@@ -24,6 +24,16 @@ pub struct FiltersIndexIdMap {
     index_to_id: IndexToIdMap,
 }
 
+impl Clone for FiltersIndexIdMap {
+    fn clone(&self) -> Self {
+        FiltersIndexIdMap {
+            path: self.path.clone(),
+            id_to_idx: self.id_to_idx.clone(),
+            index_to_id: self.index_to_id.clone(),
+        }
+    }
+}
+
 impl FiltersIndexIdMap {
     pub fn load(path: PathBuf) -> Self {
         let id_to_idx = if path.exists() {
@@ -96,12 +106,12 @@ impl FiltersIndexIdMap {
     }
 
     pub fn get_id_of(&self, index: u16) -> Option<&String> {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::get_id_of);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::get_id_of);
         self.index_to_id.get(&index)
     }
 
     pub fn get_index_of(&self, id: &str) -> Option<&u16> {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::get_index_of);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::get_index_of);
         self.id_to_idx.get(id)
     }
 
@@ -110,17 +120,16 @@ impl FiltersIndexIdMap {
     }
 
     pub fn update_with(&mut self, active_filters: &Vec<ActiveFilter>) {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::update_with);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::update_with);
         active_filters.iter().for_each(|active_filter| {
-            let filter_id = &active_filter.filter.id;
-            if !self.contains_id(&filter_id) {
-                self.set(filter_id.clone(), self.get_next_free_index());
+            if !self.contains_id(&active_filter.filter_id) {
+                self.set(active_filter.filter_id.clone(), self.get_next_free_index());
             }
         });
     }
 
     fn get_next_free_index(&self) -> u16 {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::get_next_free_index);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::get_next_free_index);
         for index in 1..u16::MAX {
             if !self.index_to_id.contains_key(&index) {
                 return index;

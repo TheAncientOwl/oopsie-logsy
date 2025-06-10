@@ -75,16 +75,17 @@ pub struct FiltersManager {
     components: Vec<FilterComponent>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ComputedFilterComponent {
     pub field_index: usize,
     pub regex: regex::Regex,
     pub is_equals: bool,
 }
 
-#[derive(Debug)]
-pub struct ActiveFilter<'a> {
-    pub filter: &'a Filter,
+#[derive(Debug, Clone)]
+pub struct ActiveFilter {
+    pub filter_id: String,
+    pub priority: u64,
     pub components: Vec<ComputedFilterComponent>,
 }
 // </data>
@@ -200,7 +201,8 @@ impl FiltersManager {
                             });
 
                             active_filters.push(ActiveFilter {
-                                filter: filter,
+                                filter_id: filter.id.clone(),
+                                priority: filter.priority,
                                 components: filter_components,
                             });
                         }
