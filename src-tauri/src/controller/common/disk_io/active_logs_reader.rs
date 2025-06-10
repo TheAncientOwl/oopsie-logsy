@@ -7,7 +7,7 @@
 //! # `active_logs_writer.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Save active logs indices.
 //!
 
@@ -24,7 +24,7 @@ pub struct ActiveLogsReader {
     reader: BufReader<File>,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct LogMetadata {
     pub index: u64,
     pub filter_id_index: u16,

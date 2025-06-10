@@ -7,13 +7,13 @@
 //! # `filter_id_idx_map.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Datastructure to manage mapping of FilterID <-> u16 Index.
 //!
 
 use std::{collections::HashMap, fs, path::PathBuf};
 
-use crate::{common::scope_log::ScopeLog, store::filters::ActiveFilter};
+use crate::store::filters::ActiveFilter;
 
 type IdToIndexMap = HashMap<String, u16>;
 type IndexToIdMap = HashMap<u16, String>;
