@@ -7,7 +7,7 @@
 //! # `filtering_orchestrator.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Orchestrate logs reading and filtering.
 //!
 
@@ -185,7 +185,11 @@ fn find_matching_filter<'a>(
 ) -> Option<&'a ActiveFilter> {
     active_filters.iter().find(|filter| {
         filter.components.iter().all(|component| {
-            component.is_equals == component.is_match(&target[component.field_index])
+            if component.metadata.is_regex {
+                component.metadata.is_equals == component.is_match(&target[component.field_index])
+            } else {
+                component.metadata.data == target[component.field_index]
+            }
         })
     })
 }

@@ -7,7 +7,7 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.15
+//! **Version**: 0.16
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
@@ -79,7 +79,7 @@ pub struct FiltersManager {
 pub struct ComputedFilterComponent {
     pub field_index: usize,
     pub regex: regex::Regex,
-    pub is_equals: bool,
+    pub metadata: FilterComponent,
 }
 
 #[derive(Debug, Clone)]
@@ -182,7 +182,7 @@ impl FiltersManager {
                                                     )
                                                 })
                                                 .unwrap(),
-                                            is_equals: component.is_equals,
+                                            metadata: (*component).clone(),
                                         });
                                     } else {
                                         log_warn!(
