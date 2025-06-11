@@ -16,10 +16,17 @@ use std::fs::OpenOptions;
 use crate::{common::scope_log::ScopeLog, log_error, log_trace};
 
 pub struct LogFieldReader {
+    data_path: std::path::PathBuf,
     field_name: String,
     data_reader: std::io::BufReader<std::fs::File>,
     index_reader: std::io::BufReader<std::fs::File>,
     buffer: Vec<u8>,
+}
+
+impl Clone for LogFieldReader {
+    fn clone(&self) -> Self {
+        Self::open(&self.field_name, self.data_path.clone())
+    }
 }
 
 impl LogFieldReader {
@@ -34,6 +41,7 @@ impl LogFieldReader {
                 .expect("Invalid file name"),
         );
         Self {
+            data_path: data_path.clone(),
             field_name: field_name.to_owned(),
             data_reader: LogFieldReader::open_file(data_path, field_name),
             index_reader: LogFieldReader::open_file(index_path, field_name),
@@ -61,7 +69,7 @@ impl LogFieldReader {
     }
 
     pub fn read_at(&mut self, index: u64) -> String {
-        let _log = ScopeLog::new(&LogFieldReader::read_at);
+        // let _log = ScopeLog::new(&LogFieldReader::read_at);
 
         use std::io::{Read, Seek, SeekFrom};
 

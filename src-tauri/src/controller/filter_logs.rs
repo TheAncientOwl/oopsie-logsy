@@ -7,9 +7,11 @@
 //! # `filter_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Filter logs logics.
 //!
+
+use std::sync::Arc;
 
 use chrono::Utc;
 
@@ -21,6 +23,7 @@ use crate::{
             config_file::ConfigFile,
             filter_id_idx_map::FiltersIndexIdMap,
         },
+        filtering_orchestrator::{self, FilteringOrchestrator},
         logs_config_keys,
     },
     log_trace,
@@ -40,19 +43,6 @@ fn get_filters_disk_map(active_filters: &Vec<ActiveFilter>) -> FiltersIndexIdMap
     filters_disk_map
 }
 
-fn find_matching_filter<'a>(
-    target: &Vec<String>,
-    active_filters: &'a Vec<ActiveFilter>,
-) -> Option<&'a ActiveFilter<'a>> {
-    let _log = ScopeLog::new(&find_matching_filter);
-
-    active_filters.iter().find(|filter| {
-        filter.components.iter().all(|component| {
-            component.is_equals == component.is_match(&target[component.field_index])
-        })
-    })
-}
-
 pub fn execute() -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
 
@@ -65,48 +55,40 @@ pub fn execute() -> Result<String, String> {
     if active_filters.len() == 0 {
         return Ok(String::from("No active filters found"));
     }
-
     log_trace!(&execute, "Active filters: {:?}", active_filters);
-    active_filters.sort_by(|a, b| b.filter.priority.cmp(&a.filter.priority));
+    active_filters.sort_by(|a, b| b.priority.cmp(&a.priority));
     log_trace!(&execute, "Sorted active filters: {:?}", active_filters);
 
-    let mut field_readers = store.logs.open_field_readers(&active_tags);
-    let mut active_logs_writer = store.logs.open_active_logs_writer();
-
+    let field_readers = store.logs.open_field_readers(&active_tags);
     let filters_disk_map = get_filters_disk_map(&active_filters);
 
-    let mut new_active_logs_count: usize = 0;
+    let filtering_orchestrator = Arc::new(FilteringOrchestrator::new(
+        config.get_number(logs_config_keys::TOTAL_LOGS_COUNT, 0) as usize,
+        400, // read_chunk_size
+        15,  // reading_threads_count
+        30,  // filtering_threads_count
+        active_filters,
+        filters_disk_map,
+        field_readers,
+        active_tags.len(),
+    ));
+    let (new_active_logs_count, filtered_logs) =
+        filtering_orchestrator::run(filtering_orchestrator);
 
-    let mut log_entry_buf: Vec<String> = Vec::with_capacity(active_tags.len());
-    for log_index in 0..(config.get_number(logs_config_keys::TOTAL_LOGS_COUNT, 0) as u64) {
-        log_entry_buf.clear();
-
-        field_readers.iter_mut().for_each(|field_reader| {
-            log_entry_buf.push(field_reader.read_at(log_index));
-        });
-
-        if let Some(active_filter) = find_matching_filter(&log_entry_buf, &active_filters) {
-            // log_debug!(
-            //     &execute,
-            //     "log {} matches filter {}",
-            //     log_idx,
-            //     active_filter.filter.id
-            // );
-            new_active_logs_count += 1;
-
-            if let Some(filter_index) = filters_disk_map.get_index_of(&active_filter.filter.id) {
-                active_logs_writer.write(log_index as u64, *filter_index);
-            } else {
-                active_logs_writer.write(log_index as u64, DEFAULT_FILTER_INDEX);
-            }
-        }
-    }
+    // log_debug!(&execute, "Filtered logs: {:?}", filtered_logs);
 
     config.set_number(
         logs_config_keys::ACTIVE_LOGS_COUNT,
         new_active_logs_count as u128,
     );
     config.save();
+
+    let mut active_logs_writer = store.logs.open_active_logs_writer();
+    filtered_logs.iter().for_each(|log| {
+        // log_debug!(&execute, "Writing log index {}", log.index);
+        active_logs_writer.write(log.index, log.filter_id_index);
+    });
+    active_logs_writer.flush();
 
     Ok(Utc::now().format("%Y-%m-%d_%H-%M-%S").to_string())
 }

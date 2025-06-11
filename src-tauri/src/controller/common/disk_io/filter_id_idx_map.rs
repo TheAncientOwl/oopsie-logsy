@@ -7,13 +7,13 @@
 //! # `filter_id_idx_map.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Datastructure to manage mapping of FilterID <-> u16 Index.
 //!
 
 use std::{collections::HashMap, fs, path::PathBuf};
 
-use crate::{common::scope_log::ScopeLog, store::filters::ActiveFilter};
+use crate::store::filters::ActiveFilter;
 
 type IdToIndexMap = HashMap<String, u16>;
 type IndexToIdMap = HashMap<u16, String>;
@@ -22,6 +22,16 @@ pub struct FiltersIndexIdMap {
     path: std::path::PathBuf,
     id_to_idx: IdToIndexMap,
     index_to_id: IndexToIdMap,
+}
+
+impl Clone for FiltersIndexIdMap {
+    fn clone(&self) -> Self {
+        FiltersIndexIdMap {
+            path: self.path.clone(),
+            id_to_idx: self.id_to_idx.clone(),
+            index_to_id: self.index_to_id.clone(),
+        }
+    }
 }
 
 impl FiltersIndexIdMap {
@@ -96,12 +106,12 @@ impl FiltersIndexIdMap {
     }
 
     pub fn get_id_of(&self, index: u16) -> Option<&String> {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::get_id_of);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::get_id_of);
         self.index_to_id.get(&index)
     }
 
     pub fn get_index_of(&self, id: &str) -> Option<&u16> {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::get_index_of);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::get_index_of);
         self.id_to_idx.get(id)
     }
 
@@ -110,17 +120,16 @@ impl FiltersIndexIdMap {
     }
 
     pub fn update_with(&mut self, active_filters: &Vec<ActiveFilter>) {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::update_with);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::update_with);
         active_filters.iter().for_each(|active_filter| {
-            let filter_id = &active_filter.filter.id;
-            if !self.contains_id(&filter_id) {
-                self.set(filter_id.clone(), self.get_next_free_index());
+            if !self.contains_id(&active_filter.filter_id) {
+                self.set(active_filter.filter_id.clone(), self.get_next_free_index());
             }
         });
     }
 
     fn get_next_free_index(&self) -> u16 {
-        let _log = ScopeLog::new(&FiltersIndexIdMap::get_next_free_index);
+        // let _log = ScopeLog::new(&FiltersIndexIdMap::get_next_free_index);
         for index in 1..u16::MAX {
             if !self.index_to_id.contains_key(&index) {
                 return index;
