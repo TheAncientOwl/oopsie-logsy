@@ -187,8 +187,10 @@ fn find_matching_filter<'a>(
         filter.components.iter().all(|component| {
             if component.metadata.is_regex {
                 component.metadata.is_equals == component.is_match(&target[component.field_index])
-            } else {
+            } else if component.metadata.is_equals {
                 component.metadata.data == target[component.field_index]
+            } else {
+                component.metadata.data != target[component.field_index]
             }
         })
     })
