@@ -1,0 +1,6 @@
+{
+  "rust-analyzer.cargo.targetDir": true,
+  "material-icon-theme.folders.associations": {
+    "ipc": "api"
+  }
+}

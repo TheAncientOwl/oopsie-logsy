@@ -41,11 +41,10 @@ Thumbs.db
 
 # Editor/IDE specific
 .idea/
-.vscode/
 *.swp
 *.swo
 *.sublime-project
 *.sublime-workspace
 
 # Misc
-/tauir-build.log
+/tauri-build.log
