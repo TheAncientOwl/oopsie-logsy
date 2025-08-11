@@ -7,11 +7,11 @@
 //! # `filter_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Filter logs logics.
 //!
 
-use std::sync::Arc;
+use std::sync::{Arc, MutexGuard};
 
 use chrono::Utc;
 
@@ -27,7 +27,10 @@ use crate::{
         logs_config_keys,
     },
     log_trace,
-    store::{filters::ActiveFilter, paths::filters::get_filter_ids_map_path, store::Store},
+    store::{
+        filters::ActiveFilter, oopsie_logsy_store::OopsieLogsyStore,
+        paths::filters::get_filter_ids_map_path,
+    },
 };
 
 fn get_filters_disk_map(active_filters: &Vec<ActiveFilter>) -> FiltersIndexIdMap {
@@ -43,15 +46,13 @@ fn get_filters_disk_map(active_filters: &Vec<ActiveFilter>) -> FiltersIndexIdMap
     filters_disk_map
 }
 
-pub fn execute() -> Result<String, String> {
+pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
 
-    let store = Store::get_instance_mut();
+    let mut config = ConfigFile::load(state.logs.get_logs_config_path());
+    let active_tags = state.regex_tags.compute_active_tags();
 
-    let mut config = ConfigFile::load(store.logs.get_logs_config_path());
-    let active_tags = store.regex_tags.compute_active_tags();
-
-    let mut active_filters = store.filters.compute_active_filters(&active_tags);
+    let mut active_filters = state.filters.compute_active_filters(&active_tags);
     if active_filters.len() == 0 {
         return Ok(String::from("No active filters found"));
     }
@@ -59,7 +60,7 @@ pub fn execute() -> Result<String, String> {
     active_filters.sort_by(|a, b| b.priority.cmp(&a.priority));
     log_trace!(&execute, "Sorted active filters: {:?}", active_filters);
 
-    let field_readers = store.logs.open_field_readers(&active_tags);
+    let field_readers = state.logs.open_field_readers(&active_tags);
     let filters_disk_map = get_filters_disk_map(&active_filters);
 
     let filtering_orchestrator = Arc::new(FilteringOrchestrator::new(
@@ -83,7 +84,7 @@ pub fn execute() -> Result<String, String> {
     );
     config.save();
 
-    let mut active_logs_writer = store.logs.open_active_logs_writer();
+    let mut active_logs_writer = state.logs.open_active_logs_writer();
     filtered_logs.iter().for_each(|log| {
         // log_debug!(&execute, "Writing log index {}", log.index);
         active_logs_writer.write(log.index, log.filter_id_index);

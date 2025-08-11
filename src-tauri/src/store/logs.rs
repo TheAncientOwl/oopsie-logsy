@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.15
+//! **Version**: 0.16
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -42,7 +42,7 @@ pub struct LogsManager {
 
 // <manager>
 impl LogsManager {
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Self {
             raw_logs_path: Vec::new(),
             working_dir: None,

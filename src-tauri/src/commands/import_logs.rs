@@ -7,14 +7,23 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: Set CurrentLogPaths command.
 //!
 
-use crate::{common::scope_log::ScopeLog, controller, log_trace, store::store::Store};
+use std::sync::Mutex;
+
+use tauri::State;
+
+use crate::{
+    common::scope_log::ScopeLog, controller, log_trace, store::oopsie_logsy_store::OopsieLogsyStore,
+};
 
 #[tauri::command]
-pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<String, String> {
+pub async fn import_logs(
+    state: State<'_, Mutex<OopsieLogsyStore>>,
+    paths: Vec<std::path::PathBuf>,
+) -> Result<String, String> {
     let _log = ScopeLog::new(&import_logs);
 
     log_trace!(
@@ -30,10 +39,8 @@ pub async fn import_logs(paths: Vec<std::path::PathBuf>) -> Result<String, Strin
         "Invalid logs input file for conversion"
     );
 
-    {
-        let mut store = Store::get_instance_mut();
-        store.logs.set_raw_logs_path(&paths);
-    }
+    let mut state = state.lock().unwrap();
+    state.logs.set_raw_logs_path(&paths);
 
-    controller::convert_logs::execute()
+    controller::convert_logs::execute(state)
 }

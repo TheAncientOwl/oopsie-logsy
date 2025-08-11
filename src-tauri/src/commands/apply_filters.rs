@@ -7,9 +7,13 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: Set FilterTabs command.
 //!
+
+use std::sync::Mutex;
+
+use tauri::State;
 
 use crate::{
     common::scope_log::ScopeLog,
@@ -17,12 +21,13 @@ use crate::{
     log_trace,
     store::{
         filters::{Filter, FilterComponent, FilterTab},
-        store::Store,
+        oopsie_logsy_store::OopsieLogsyStore,
     },
 };
 
 #[tauri::command]
 pub async fn apply_filters(
+    state: State<'_, Mutex<OopsieLogsyStore>>,
     tabs: Vec<FilterTab>,
     filters: Vec<Filter>,
     components: Vec<FilterComponent>,
@@ -52,10 +57,8 @@ pub async fn apply_filters(
             .unwrap_or_else(|_| "Failed to serialize components".to_string())
     );
 
-    {
-        let mut store = Store::get_instance_mut();
-        store.filters.set(&tabs, &filters, &components);
-    }
+    let mut state = state.lock().unwrap();
+    state.filters.set(&tabs, &filters, &components);
 
-    controller::filter_logs::execute()
+    controller::filter_logs::execute(state)
 }

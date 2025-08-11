@@ -7,18 +7,25 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: Set RegexTags command.
 //!
+
+use std::sync::Mutex;
+
+use tauri::State;
 
 use crate::{
     common::scope_log::ScopeLog,
     controller, log_trace,
-    store::{regex_tags::RegexTag, store::Store},
+    store::{oopsie_logsy_store::OopsieLogsyStore, regex_tags::RegexTag},
 };
 
 #[tauri::command]
-pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<String, String> {
+pub async fn apply_regex_tags(
+    state: State<'_, Mutex<OopsieLogsyStore>>,
+    tags: Vec<RegexTag>,
+) -> Result<String, String> {
     let _log = ScopeLog::new(&apply_regex_tags);
 
     log_trace!(
@@ -28,14 +35,13 @@ pub async fn apply_regex_tags(tags: Vec<RegexTag>) -> Result<String, String> {
         serde_json::to_string(&tags).unwrap_or_else(|_| "Failed to serialize tags".to_string())
     );
 
-    {
-        let mut store = Store::get_instance_mut();
-        store.regex_tags.set(&tags);
+    let mut state = state.lock().unwrap();
 
-        if store.logs.get_raw_logs_path().len() == 0 {
-            return Ok(String::from("No logs were imported"));
-        }
+    state.regex_tags.set(&tags);
+
+    if state.logs.get_raw_logs_path().len() == 0 {
+        return Ok(String::from("No logs were imported"));
     }
 
-    controller::convert_logs::execute()
+    controller::convert_logs::execute(state)
 }

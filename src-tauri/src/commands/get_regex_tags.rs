@@ -7,22 +7,28 @@
 //! # `get_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Get RegexTags command.
 //!
+
+use std::sync::Mutex;
+
+use tauri::State;
 
 use crate::{
     common::scope_log::ScopeLog,
     log_trace,
-    store::{regex_tags::RegexTag, store::Store},
+    store::{oopsie_logsy_store::OopsieLogsyStore, regex_tags::RegexTag},
 };
 
 #[tauri::command]
-pub async fn get_regex_tags() -> Result<Vec<RegexTag>, String> {
+pub async fn get_regex_tags(
+    state: State<'_, Mutex<OopsieLogsyStore>>,
+) -> Result<Vec<RegexTag>, String> {
     let _log = ScopeLog::new(&get_regex_tags);
 
-    let store = Store::get_instance_mut();
-    let tags = store.regex_tags.get_tags().clone();
+    let state = state.lock().unwrap();
+    let tags = state.regex_tags.get_tags().clone();
 
     log_trace!(
         &get_regex_tags,

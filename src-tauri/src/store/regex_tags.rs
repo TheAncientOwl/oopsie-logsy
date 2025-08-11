@@ -7,7 +7,7 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
 
@@ -30,7 +30,7 @@ pub struct RegexTagsManager {
 
 // <manager>
 impl RegexTagsManager {
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Self {
             regex_tags: Vec::new(),
             regex_line: regex::Regex::new(".*").expect("Failed to generate default regex line"),

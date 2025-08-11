@@ -7,27 +7,34 @@
 //! # `get_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Get FilterTabs command.
 //!
+
+use std::sync::Mutex;
+
+use tauri::State;
 
 use crate::{
     common::scope_log::ScopeLog,
     log_trace,
     store::{
         filters::{Filter, FilterComponent, FilterTab},
-        store::Store,
+        oopsie_logsy_store::OopsieLogsyStore,
     },
 };
 
 #[tauri::command]
-pub async fn get_filters() -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
+pub async fn get_filters(
+    state: State<'_, Mutex<OopsieLogsyStore>>,
+) -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
     let _log = ScopeLog::new(&get_filters);
 
-    let instance = Store::get_instance();
-    let tabs = instance.filters.get_tabs().clone();
-    let filters = instance.filters.get_filters().clone();
-    let components = instance.filters.get_components().clone();
+    let state = state.lock().unwrap();
+
+    let tabs = state.filters.get_tabs().clone();
+    let filters = state.filters.get_filters().clone();
+    let components = state.filters.get_components().clone();
 
     log_trace!(
         &get_filters,

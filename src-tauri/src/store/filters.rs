@@ -7,7 +7,7 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.16
+//! **Version**: 0.17
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
@@ -92,7 +92,7 @@ pub struct ActiveFilter {
 
 // <manager>
 impl FiltersManager {
-    pub fn new() -> Self {
+    pub fn default() -> Self {
         Self {
             tabs: Vec::new(),
             filters: Vec::new(),

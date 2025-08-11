@@ -7,15 +7,20 @@
 //! # `read_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Read logs chunk logics.
 //!
+
+use std::sync::MutexGuard;
 
 use crate::{
     common::scope_log::ScopeLog,
     controller::common::disk_io::filter_id_idx_map::FiltersIndexIdMap,
     log_info,
-    store::{logs::ColumnLogsChunk, paths::filters::get_filter_ids_map_path, store::Store},
+    store::{
+        logs::ColumnLogsChunk, oopsie_logsy_store::OopsieLogsyStore,
+        paths::filters::get_filter_ids_map_path,
+    },
 };
 
 use super::common::{
@@ -25,15 +30,16 @@ use super::common::{
 };
 
 // TODO: consider using separate threads for each field. Current impl works for protoyping
-pub fn execute(desired_range: IndexRange) -> Result<ColumnLogsChunk, String> {
+pub fn execute(
+    state: MutexGuard<'_, OopsieLogsyStore>,
+    desired_range: IndexRange,
+) -> Result<ColumnLogsChunk, String> {
     let _log = ScopeLog::new(&execute);
 
-    let store = Store::get_instance();
-
-    let active_tags = store.regex_tags.compute_active_tags();
+    let active_tags = state.regex_tags.compute_active_tags();
     let mut out = ColumnLogsChunk::new_with_field_capacity(active_tags.len(), desired_range.size());
 
-    if !store.logs.is_working_dir_set() {
+    if !state.logs.is_working_dir_set() {
         log_info!(
             &execute,
             "Working dir was not set, returning empty log chunk"
@@ -41,10 +47,10 @@ pub fn execute(desired_range: IndexRange) -> Result<ColumnLogsChunk, String> {
         return Ok(out);
     }
 
-    let mut field_readers = store.logs.open_field_readers(&active_tags);
-    let mut active_logs_reader = store.logs.open_active_logs_reader();
+    let mut field_readers = state.logs.open_field_readers(&active_tags);
+    let mut active_logs_reader = state.logs.open_active_logs_reader();
 
-    let config = ConfigFile::load(store.logs.get_logs_config_path());
+    let config = ConfigFile::load(state.logs.get_logs_config_path());
     out.total_logs = config.get_number(logs_config_keys::TOTAL_LOGS_COUNT, 0) as u64;
     let active_logs_count = config.get_number(logs_config_keys::ACTIVE_LOGS_COUNT, 0) as u64;
 
