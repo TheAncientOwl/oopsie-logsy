@@ -7,11 +7,11 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.18
+//! **Version**: 0.19
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use crate::{
     common::{json::stringify, scope_log::ScopeLog},
@@ -70,9 +70,9 @@ pub struct FilterTab {
 }
 
 pub struct FiltersManager {
-    tabs: Vec<FilterTab>,
-    filters: Vec<Filter>,
-    components: Vec<FilterComponent>,
+    tabs: Arc<Vec<FilterTab>>,
+    filters: Arc<Vec<Filter>>,
+    components: Arc<Vec<FilterComponent>>,
 }
 
 #[derive(Debug, Clone)]
@@ -94,9 +94,9 @@ pub struct ActiveFilter {
 impl FiltersManager {
     pub fn default() -> Self {
         Self {
-            tabs: Vec::new(),
-            filters: Vec::new(),
-            components: Vec::new(),
+            tabs: Arc::new(Vec::new()),
+            filters: Arc::new(Vec::new()),
+            components: Arc::new(Vec::new()),
         }
     }
 
@@ -108,29 +108,29 @@ impl FiltersManager {
     ) {
         let _log = ScopeLog::new(&FiltersManager::set);
 
-        self.tabs = new_tabs;
+        self.tabs = Arc::new(new_tabs);
         let tabs_str = stringify(&self.tabs);
         overwrite_file(&get_tabs_path(), &tabs_str);
 
-        self.filters = new_filters;
+        self.filters = Arc::new(new_filters);
         let filters_str = stringify(&self.filters);
         overwrite_file(&get_filters_path(), &filters_str);
 
-        self.components = new_components;
+        self.components = Arc::new(new_components);
         let components_str = stringify(&self.components);
         overwrite_file(&get_components_path(), &components_str);
     }
 
-    pub fn get_tabs(&self) -> &Vec<FilterTab> {
-        &self.tabs
+    pub fn get_tabs(&self) -> Arc<Vec<FilterTab>> {
+        Arc::clone(&self.tabs)
     }
 
-    pub fn get_filters(&self) -> &Vec<Filter> {
-        &self.filters
+    pub fn get_filters(&self) -> Arc<Vec<Filter>> {
+        Arc::clone(&self.filters)
     }
 
-    pub fn get_components(&self) -> &Vec<FilterComponent> {
-        &self.components
+    pub fn get_components(&self) -> Arc<Vec<FilterComponent>> {
+        Arc::clone(&self.components)
     }
 
     pub fn compute_active_filters(&self, active_tags: &Vec<&RegexTag>) -> Vec<ActiveFilter> {

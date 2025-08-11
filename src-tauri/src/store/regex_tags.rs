@@ -7,9 +7,11 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
+
+use std::sync::Arc;
 
 use crate::{common::scope_log::ScopeLog, log_trace};
 
@@ -23,7 +25,7 @@ pub struct RegexTag {
 }
 
 pub struct RegexTagsManager {
-    regex_tags: Vec<RegexTag>,
+    regex_tags: Arc<Vec<RegexTag>>,
     regex_line: regex::Regex,
 }
 // </data>
@@ -32,7 +34,7 @@ pub struct RegexTagsManager {
 impl RegexTagsManager {
     pub fn default() -> Self {
         Self {
-            regex_tags: Vec::new(),
+            regex_tags: Arc::new(Vec::new()),
             regex_line: regex::Regex::new(".*").expect("Failed to generate default regex line"),
         }
     }
@@ -65,13 +67,13 @@ impl RegexTagsManager {
     pub fn set(&mut self, new_tags: Vec<RegexTag>) {
         let _log = ScopeLog::new(&RegexTagsManager::set);
 
-        self.regex_tags = new_tags;
+        self.regex_tags = Arc::new(new_tags);
 
         self.regex_line = RegexTagsManager::compute_line_regex(&self.regex_tags);
     }
 
-    pub fn get_tags(&self) -> &Vec<RegexTag> {
-        &self.regex_tags
+    pub fn get_tags(&self) -> Arc<Vec<RegexTag>> {
+        Arc::clone(&self.regex_tags)
     }
 
     pub fn get_line_regex(&self) -> &regex::Regex {

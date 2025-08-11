@@ -7,11 +7,11 @@
 //! # `get_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.6
+//! **Version**: 0.7
 //! **Description**: Get FilterTabs command.
 //!
 
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tauri::State;
 
@@ -27,7 +27,14 @@ use crate::{
 #[tauri::command]
 pub async fn get_filters(
     state: State<'_, Mutex<OopsieLogsyStore>>,
-) -> Result<(Vec<FilterTab>, Vec<Filter>, Vec<FilterComponent>), String> {
+) -> Result<
+    (
+        Arc<Vec<FilterTab>>,
+        Arc<Vec<Filter>>,
+        Arc<Vec<FilterComponent>>,
+    ),
+    String,
+> {
     let _log = ScopeLog::new(&get_filters);
 
     let state = state.lock().unwrap();
@@ -59,5 +66,5 @@ pub async fn get_filters(
             .unwrap_or_else(|_| "Failed to serialize components".to_string())
     );
 
-    Ok((tabs.clone(), filters.clone(), components.clone()))
+    Ok((tabs, filters, components))
 }
