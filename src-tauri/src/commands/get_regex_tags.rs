@@ -7,7 +7,7 @@
 //! # `get_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Get RegexTags command.
 //!
 
@@ -28,7 +28,7 @@ pub async fn get_regex_tags(
     let _log = ScopeLog::new(&get_regex_tags);
 
     let state = state.lock().unwrap();
-    let tags = state.regex_tags.get_tags().clone();
+    let tags = state.regex_tags.get_tags();
 
     log_trace!(
         &get_regex_tags,
@@ -37,5 +37,5 @@ pub async fn get_regex_tags(
         serde_json::to_string(&tags).unwrap_or_else(|_| "Failed to serialize tags".to_string())
     );
 
-    Ok(tags)
+    Ok(tags.clone())
 }

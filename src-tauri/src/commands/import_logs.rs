@@ -7,7 +7,7 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.10
+//! **Version**: 0.11
 //! **Description**: Set CurrentLogPaths command.
 //!
 
@@ -40,7 +40,7 @@ pub async fn import_logs(
     );
 
     let mut state = state.lock().unwrap();
-    state.logs.set_raw_logs_path(&paths);
+    state.logs.set_raw_logs_path(paths);
 
     controller::convert_logs::execute(state)
 }

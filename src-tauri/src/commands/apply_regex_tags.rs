@@ -7,7 +7,7 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: Set RegexTags command.
 //!
 
@@ -37,7 +37,7 @@ pub async fn apply_regex_tags(
 
     let mut state = state.lock().unwrap();
 
-    state.regex_tags.set(&tags);
+    state.regex_tags.set(tags);
 
     if state.logs.get_raw_logs_path().len() == 0 {
         return Ok(String::from("No logs were imported"));

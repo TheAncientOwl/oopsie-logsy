@@ -7,7 +7,7 @@
 //! # `get_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Get FilterTabs command.
 //!
 
@@ -32,9 +32,9 @@ pub async fn get_filters(
 
     let state = state.lock().unwrap();
 
-    let tabs = state.filters.get_tabs().clone();
-    let filters = state.filters.get_filters().clone();
-    let components = state.filters.get_components().clone();
+    let tabs = state.filters.get_tabs();
+    let filters = state.filters.get_filters();
+    let components = state.filters.get_components();
 
     log_trace!(
         &get_filters,
@@ -59,5 +59,5 @@ pub async fn get_filters(
             .unwrap_or_else(|_| "Failed to serialize components".to_string())
     );
 
-    Ok((tabs, filters, components))
+    Ok((tabs.clone(), filters.clone(), components.clone()))
 }

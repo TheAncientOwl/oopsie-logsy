@@ -7,7 +7,7 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.10
+//! **Version**: 0.11
 //! **Description**: Set FilterTabs command.
 //!
 
@@ -58,7 +58,7 @@ pub async fn apply_filters(
     );
 
     let mut state = state.lock().unwrap();
-    state.filters.set(&tabs, &filters, &components);
+    state.filters.set(tabs, filters, components);
 
     controller::filter_logs::execute(state)
 }

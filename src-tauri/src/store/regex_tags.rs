@@ -7,7 +7,7 @@
 //! # `logRegexTags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.8
+//! **Version**: 0.9
 //! **Description**: LogRegexTags data and ipc transfer commands.
 //!
 
@@ -62,13 +62,12 @@ impl RegexTagsManager {
         regex::Regex::new(&regex_str).unwrap()
     }
 
-    pub fn set(&mut self, new_tags: &Vec<RegexTag>) {
+    pub fn set(&mut self, new_tags: Vec<RegexTag>) {
         let _log = ScopeLog::new(&RegexTagsManager::set);
 
-        self.regex_tags.clear();
-        self.regex_tags.extend(new_tags.iter().cloned());
+        self.regex_tags = new_tags;
 
-        self.regex_line = RegexTagsManager::compute_line_regex(&new_tags);
+        self.regex_line = RegexTagsManager::compute_line_regex(&self.regex_tags);
     }
 
     pub fn get_tags(&self) -> &Vec<RegexTag> {

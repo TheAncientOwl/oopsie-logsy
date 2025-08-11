@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.16
+//! **Version**: 0.17
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -49,13 +49,12 @@ impl LogsManager {
         }
     }
 
-    pub fn set_raw_logs_path(&mut self, new_path: &Vec<std::path::PathBuf>) {
+    pub fn set_raw_logs_path(&mut self, new_path: Vec<std::path::PathBuf>) {
         let _log = ScopeLog::new(&LogsManager::set_raw_logs_path);
 
-        self.raw_logs_path.clear();
-        self.raw_logs_path.extend(new_path.iter().cloned());
+        self.raw_logs_path = new_path;
 
-        let in_file_path = &new_path[0];
+        let in_file_path = &self.raw_logs_path[0];
         let out_dir_name = in_file_path
             .file_stem()
             // .and_then(|name| name.to_str().map(|s| format!("{}.oopsie", s)))

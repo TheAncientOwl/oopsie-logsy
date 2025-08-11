@@ -7,7 +7,7 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.17
+//! **Version**: 0.18
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
@@ -102,24 +102,21 @@ impl FiltersManager {
 
     pub fn set(
         &mut self,
-        new_tabs: &Vec<FilterTab>,
-        new_filters: &Vec<Filter>,
-        new_components: &Vec<FilterComponent>,
+        new_tabs: Vec<FilterTab>,
+        new_filters: Vec<Filter>,
+        new_components: Vec<FilterComponent>,
     ) {
         let _log = ScopeLog::new(&FiltersManager::set);
 
-        self.tabs.clear();
-        self.tabs.extend(new_tabs.iter().cloned());
+        self.tabs = new_tabs;
         let tabs_str = stringify(&self.tabs);
         overwrite_file(&get_tabs_path(), &tabs_str);
 
-        self.filters.clear();
-        self.filters.extend(new_filters.iter().cloned());
+        self.filters = new_filters;
         let filters_str = stringify(&self.filters);
         overwrite_file(&get_filters_path(), &filters_str);
 
-        self.components.clear();
-        self.components.extend(new_components.iter().cloned());
+        self.components = new_components;
         let components_str = stringify(&self.components);
         overwrite_file(&get_components_path(), &components_str);
     }
