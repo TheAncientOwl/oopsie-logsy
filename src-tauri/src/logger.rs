@@ -7,7 +7,7 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Logger utilities.
 //!
 
@@ -23,8 +23,34 @@ use owo_colors::{OwoColorize, Style};
 
 use crate::store::paths::common::get_oopsie_home_dir;
 
+#[derive(Debug, Clone, Copy)]
+pub enum LogLevel {
+    Trace,
+    Info,
+    Warn,
+    Debug,
+    Error,
+    Scope,
+    Assert,
+}
+
+impl std::fmt::Display for LogLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            LogLevel::Trace => "trace",
+            LogLevel::Info => "info",
+            LogLevel::Warn => "warn",
+            LogLevel::Debug => "debug",
+            LogLevel::Error => "error",
+            LogLevel::Scope => "scope",
+            LogLevel::Assert => "assert",
+        };
+        write!(f, "{}", s)
+    }
+}
+
 pub struct LogRecord {
-    pub level: &'static str,
+    pub level: LogLevel,
     pub caller: String,
     pub message: String,
     pub timestamp: chrono::DateTime<chrono::Local>,
@@ -38,6 +64,7 @@ static TRACE_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_white());
 static INFO_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_blue());
 static WARN_STYLE: Lazy<Style> = Lazy::new(|| Style::new().yellow());
 static DEBUG_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_green());
+static ASSERT_STYLE: Lazy<Style> = Lazy::new(|| Style::new().red());
 static ERROR_STYLE: Lazy<Style> = Lazy::new(|| Style::new().red());
 static SCOPE_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_magenta());
 
@@ -60,13 +87,13 @@ pub fn init_logger_thread() {
         match rx.recv() {
             Ok(record) => {
                 let level_style = match record.level {
-                    "trace" => *TRACE_STYLE,
-                    "info" => *INFO_STYLE,
-                    "warn" => *WARN_STYLE,
-                    "debug" => *DEBUG_STYLE,
-                    "error" => *ERROR_STYLE,
-                    "scope" => *SCOPE_STYLE,
-                    _ => Style::new(),
+                    LogLevel::Trace => *TRACE_STYLE,
+                    LogLevel::Info => *INFO_STYLE,
+                    LogLevel::Warn => *WARN_STYLE,
+                    LogLevel::Debug => *DEBUG_STYLE,
+                    LogLevel::Error => *ERROR_STYLE,
+                    LogLevel::Scope => *SCOPE_STYLE,
+                    LogLevel::Assert => *ASSERT_STYLE,
                 };
 
                 let caller_str = &record.caller;
@@ -117,7 +144,7 @@ pub fn init_logger_thread() {
     });
 }
 
-pub fn log<T>(level: &'static str, _caller: &T, args: std::fmt::Arguments) {
+pub fn log<T>(level: LogLevel, _caller: &T, args: std::fmt::Arguments) {
     if let Some(sender) = LOG_SENDER.get() {
         let _ = sender.send(LogRecord {
             level,
@@ -128,60 +155,40 @@ pub fn log<T>(level: &'static str, _caller: &T, args: std::fmt::Arguments) {
     }
 }
 
-pub fn trace<T>(caller: &T, args: std::fmt::Arguments) {
-    log("trace", caller, args)
-}
-
-pub fn info<T>(caller: &T, args: std::fmt::Arguments) {
-    log("info", caller, args)
-}
-
-pub fn warn<T>(caller: &T, args: std::fmt::Arguments) {
-    log("warn", caller, args)
-}
-
-pub fn debug<T>(caller: &T, args: std::fmt::Arguments) {
-    log("debug", caller, args)
-}
-
-pub fn error<T>(caller: &T, args: std::fmt::Arguments) {
-    log("error", caller, args)
-}
-
-pub fn stringify<T>(val: T) -> &'static str {
-    std::any::type_name_of_val(&val)
-}
-
 pub fn assert<T>(caller: &T, condition: bool, message: std::fmt::Arguments) {
     if !condition {
-        error(caller, format_args!("Assertion Failed: {}", message));
+        log(
+            LogLevel::Assert,
+            caller,
+            format_args!("Assertion Failed: {}", message),
+        );
         panic!("Assertion Failed");
     }
 }
 
 #[macro_export]
 macro_rules! log_trace {
-    ($caller:expr, $($arg:tt)*) => ($crate::logger::trace($caller, format_args!($($arg)*)));
+    ($caller:expr, $($arg:tt)*) => ($crate::logger::log($crate::logger::LogLevel::Trace, $caller, format_args!($($arg)*)));
 }
 
 #[macro_export]
 macro_rules! log_info {
-    ($caller:expr, $($arg:tt)*) => ($crate::logger::info($caller, format_args!($($arg)*)));
+    ($caller:expr, $($arg:tt)*) => ($crate::logger::log($crate::logger::LogLevel::Info, $caller, format_args!($($arg)*)));
 }
 
 #[macro_export]
 macro_rules! log_warn {
-    ($caller:expr, $($arg:tt)*) => ($crate::logger::warn($caller, format_args!($($arg)*)));
+    ($caller:expr, $($arg:tt)*) => ($crate::logger::log($crate::logger::LogLevel::Warn, $caller, format_args!($($arg)*)));
 }
 
 #[macro_export]
 macro_rules! log_debug {
-    ($caller:expr, $($arg:tt)*) => ($crate::logger::debug($caller, format_args!($($arg)*)));
+    ($caller:expr, $($arg:tt)*) => ($crate::logger::log($crate::logger::LogLevel::Debug, $caller, format_args!($($arg)*)));
 }
 
 #[macro_export]
 macro_rules! log_error {
-    ($caller:expr, $($arg:tt)*) => ($crate::logger::error($caller, format_args!($($arg)*)));
+    ($caller:expr, $($arg:tt)*) => ($crate::logger::log($crate::logger::LogLevel::Error, $caller, format_args!($($arg)*)));
 }
 
 #[macro_export]

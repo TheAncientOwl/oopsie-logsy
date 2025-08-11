@@ -7,14 +7,14 @@
 //! # `scope_log.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Log the begining and end of a scope.
 //!
 
 use owo_colors::{OwoColorize, Style};
 
 use super::timer::Timer;
-use crate::logger::log;
+use crate::logger::{self, log};
 
 pub struct ScopeLog<'a, T> {
     caller: &'a T,
@@ -43,7 +43,7 @@ static END_LABEL: Lazy<String> = Lazy::new(|| {
 });
 
 fn log_scope_begin<T>(caller: &T, args: std::fmt::Arguments) {
-    log("scope", caller, args)
+    log(logger::LogLevel::Scope, caller, args)
 }
 #[macro_export]
 macro_rules! log_scope_begin {
@@ -63,7 +63,7 @@ impl<'a, T> ScopeLog<'a, T> {
 }
 
 fn log_scope_end<T>(caller: &T, args: std::fmt::Arguments) {
-    log("scope", caller, args)
+    log(logger::LogLevel::Scope, caller, args)
 }
 #[macro_export]
 macro_rules! log_scope_end {
