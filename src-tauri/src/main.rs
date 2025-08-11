@@ -7,7 +7,7 @@
 //! # `main.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Tauri entry point.
 //!
 
@@ -15,6 +15,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
+    oopsie_logsy_lib::logger::init_logger_thread();
+
     oopsie_logsy_lib::log_trace!(&main, "OopsieLogsy started running");
     oopsie_logsy_lib::run();
     oopsie_logsy_lib::log_trace!(&main, "OopsieLogsy stopped runnign");

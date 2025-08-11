@@ -7,97 +7,145 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Logger utilities.
 //!
 
-use std::{fs::OpenOptions, sync::Mutex};
+use std::{
+    fs::OpenOptions,
+    io::Write,
+    sync::mpsc::{self, Receiver, Sender},
+    thread,
+};
 
-use once_cell::sync::Lazy;
+use once_cell::sync::{Lazy, OnceCell};
 use owo_colors::{OwoColorize, Style};
 
 use crate::store::paths::common::get_oopsie_home_dir;
 
-static LOG_FILE: Lazy<Mutex<std::fs::File>> = Lazy::new(|| {
-    let file_path = get_oopsie_home_dir().join("oopsie-logsy.log");
+pub struct LogRecord {
+    pub level: &'static str,
+    pub caller: String,
+    pub message: String,
+    pub timestamp: chrono::DateTime<chrono::Local>,
+}
 
-    let file = OpenOptions::new()
+static LOG_SENDER: OnceCell<Sender<LogRecord>> = OnceCell::new();
+
+static SEP: Lazy<String> = Lazy::new(|| "|".bright_black().to_string());
+static GRAY: Lazy<Style> = Lazy::new(|| Style::new().bright_black());
+static TRACE_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_white());
+static INFO_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_blue());
+static WARN_STYLE: Lazy<Style> = Lazy::new(|| Style::new().yellow());
+static DEBUG_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_green());
+static ERROR_STYLE: Lazy<Style> = Lazy::new(|| Style::new().red());
+static SCOPE_STYLE: Lazy<Style> = Lazy::new(|| Style::new().bright_magenta());
+
+pub fn init_logger_thread() {
+    let (tx, rx): (Sender<LogRecord>, Receiver<LogRecord>) = mpsc::channel();
+
+    if LOG_SENDER.set(tx).is_err() {
+        panic!("Logger already initialized");
+    }
+
+    let file_path = get_oopsie_home_dir().join("oopsie-logsy.log");
+    let mut file = OpenOptions::new()
         .write(true)
+        .create(true)
         .truncate(true)
         .open(file_path)
         .expect("Failed to open log file");
 
-    Mutex::new(file)
-});
+    thread::spawn(move || loop {
+        match rx.recv() {
+            Ok(record) => {
+                let level_style = match record.level {
+                    "trace" => *TRACE_STYLE,
+                    "info" => *INFO_STYLE,
+                    "warn" => *WARN_STYLE,
+                    "debug" => *DEBUG_STYLE,
+                    "error" => *ERROR_STYLE,
+                    "scope" => *SCOPE_STYLE,
+                    _ => Style::new(),
+                };
 
-const NEW_LINE: &[u8] = "\n".as_bytes();
+                let caller_str = &record.caller;
 
-pub fn log<T>(level: &'static str, level_style: Style, _caller: &T, args: std::fmt::Arguments) {
-    // return;
+                let caller_short = caller_str
+                    .strip_prefix("oopsie_logsy_lib")
+                    .unwrap_or(caller_str);
 
-    let sep = "|".bright_black();
-    let caller_str = std::any::type_name::<T>();
+                let styled_caller = caller_short
+                    .split("::")
+                    .enumerate()
+                    .map(|(i, part)| {
+                        if i > 0 {
+                            format!("{}{}", "::".style(*GRAY), part.style(level_style))
+                        } else {
+                            part.style(level_style).to_string()
+                        }
+                    })
+                    .collect::<String>();
 
-    let caller_short = caller_str
-        .strip_prefix("oopsie_logsy_lib")
-        .unwrap_or(caller_str);
+                let log_line = format!(
+                    "{} {} {} {} {} {}{} {}{}",
+                    *SEP,
+                    record
+                        .timestamp
+                        .format("%H:%M:%S:%3f:%6f")
+                        .to_string()
+                        .blue(),
+                    *SEP,
+                    format!("{:^5}", record.level).style(level_style),
+                    *SEP,
+                    styled_caller,
+                    ":".bright_black(),
+                    record.message.style(level_style),
+                    "".default_color()
+                );
 
-    let gray = Style::new().bright_black();
-    let styled_caller = caller_short
-        .split("::")
-        .enumerate()
-        .map(|(i, part)| {
-            if i > 0 {
-                format!("{}{}", "::".style(gray), part.style(level_style))
-            } else {
-                part.style(level_style).to_string()
+                println!("{}", log_line);
+
+                let _ = file.write_all(log_line.as_bytes());
+                let _ = file.write_all(b"\n");
+                let _ = file.flush();
             }
-        })
-        .collect::<String>();
+            Err(_) => {
+                break;
+            }
+        }
+    });
+}
 
-    let log_line = format!(
-        // "| time | level | caller: message"
-        "{} {} {} {} {} {}{} {}{}",
-        sep, // |
-        chrono::Local::now()
-            .format("%H:%M:%S:%3f:%6f")
-            .to_string()
-            .blue(), // time
-        sep, // |
-        format!("{:^5}", level).style(level_style), // level
-        sep, // |
-        styled_caller, // caller
-        ":".bright_black(), // :
-        args.style(level_style), // message
-        "".default_color()
-    );
-    println!("{}", log_line);
-
-    use std::io::Write;
-    if let Ok(mut file) = LOG_FILE.lock() {
-        let _ = file.write_all(log_line.as_bytes());
-        let _ = file.write_all(NEW_LINE);
+pub fn log<T>(level: &'static str, _caller: &T, args: std::fmt::Arguments) {
+    if let Some(sender) = LOG_SENDER.get() {
+        let _ = sender.send(LogRecord {
+            level,
+            caller: std::any::type_name::<T>().to_string(),
+            message: format!("{}", args),
+            timestamp: chrono::Local::now(),
+        });
     }
 }
 
 pub fn trace<T>(caller: &T, args: std::fmt::Arguments) {
-    log("trace", Style::new().bright_white(), caller, args)
+    log("trace", caller, args)
 }
 
 pub fn info<T>(caller: &T, args: std::fmt::Arguments) {
-    log("info", Style::new().bright_blue(), caller, args)
+    log("info", caller, args)
 }
 
 pub fn warn<T>(caller: &T, args: std::fmt::Arguments) {
-    log("warn", Style::new().yellow(), caller, args)
+    log("warn", caller, args)
 }
 
 pub fn debug<T>(caller: &T, args: std::fmt::Arguments) {
-    log("debug", Style::new().bright_green(), caller, args)
+    log("debug", caller, args)
 }
 
 pub fn error<T>(caller: &T, args: std::fmt::Arguments) {
-    log("error", Style::new().red(), caller, args)
+    log("error", caller, args)
 }
 
 pub fn stringify<T>(val: T) -> &'static str {

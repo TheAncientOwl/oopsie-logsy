@@ -7,7 +7,7 @@
 //! # `scope_log.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Log the begining and end of a scope.
 //!
 
@@ -22,8 +22,6 @@ pub struct ScopeLog<'a, T> {
 }
 
 use once_cell::sync::Lazy;
-
-const COLOR: Style = Style::new().bright_magenta();
 
 static BEGIN_BRACKET: Lazy<String> = Lazy::new(|| {
     "[".style(Style::new().bright_black()).to_string()
@@ -45,7 +43,7 @@ static END_LABEL: Lazy<String> = Lazy::new(|| {
 });
 
 fn log_scope_begin<T>(caller: &T, args: std::fmt::Arguments) {
-    log("scope", COLOR, caller, args)
+    log("scope", caller, args)
 }
 #[macro_export]
 macro_rules! log_scope_begin {
@@ -65,7 +63,7 @@ impl<'a, T> ScopeLog<'a, T> {
 }
 
 fn log_scope_end<T>(caller: &T, args: std::fmt::Arguments) {
-    log("scope", COLOR, caller, args)
+    log("scope", caller, args)
 }
 #[macro_export]
 macro_rules! log_scope_end {
