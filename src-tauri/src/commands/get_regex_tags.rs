@@ -25,7 +25,7 @@ use crate::{
 pub async fn get_regex_tags(
     state: State<'_, Mutex<OopsieLogsyStore>>,
 ) -> Result<Arc<Vec<RegexTag>>, String> {
-    let _log = ScopeLog::new(&get_regex_tags);
+    let _log = ScopeLog::new_command(&get_regex_tags);
 
     let state = state.lock().unwrap();
     let tags = state.regex_tags.get_tags();

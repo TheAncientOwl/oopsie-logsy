@@ -26,7 +26,7 @@ pub async fn apply_regex_tags(
     state: State<'_, Mutex<OopsieLogsyStore>>,
     tags: Vec<RegexTag>,
 ) -> Result<String, String> {
-    let _log = ScopeLog::new(&apply_regex_tags);
+    let _log = ScopeLog::new_command(&apply_regex_tags);
 
     log_trace!(
         &apply_regex_tags,

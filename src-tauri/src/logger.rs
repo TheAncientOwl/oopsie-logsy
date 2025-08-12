@@ -38,8 +38,8 @@ impl std::fmt::Display for LogLevel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
             LogLevel::Trace => "trace",
-            LogLevel::Info => "info",
-            LogLevel::Warn => "warn",
+            LogLevel::Info => " info",
+            LogLevel::Warn => " warn",
             LogLevel::Debug => "debug",
             LogLevel::Error => "error",
             LogLevel::Scope => "scope",
@@ -123,7 +123,7 @@ pub fn init_logger_thread() {
                         .to_string()
                         .blue(),
                     *SEP,
-                    format!("{:^5}", record.level).style(level_style),
+                    format!("{}", record.level).style(level_style),
                     *SEP,
                     styled_caller,
                     ":".bright_black(),

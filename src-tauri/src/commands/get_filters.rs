@@ -35,7 +35,7 @@ pub async fn get_filters(
     ),
     String,
 > {
-    let _log = ScopeLog::new(&get_filters);
+    let _log = ScopeLog::new_command(&get_filters);
 
     let state = state.lock().unwrap();
 

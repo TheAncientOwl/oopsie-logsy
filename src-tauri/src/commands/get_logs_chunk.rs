@@ -27,7 +27,7 @@ pub async fn get_logs_chunk(
     state: State<'_, Mutex<OopsieLogsyStore>>,
     desired_range: IndexRange,
 ) -> Result<ColumnLogsChunk, String> {
-    let _log = ScopeLog::new(&get_logs_chunk);
+    let _log = ScopeLog::new_command(&get_logs_chunk);
 
     log_trace!(
         &get_logs_chunk,

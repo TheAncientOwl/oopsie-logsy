@@ -19,6 +19,7 @@ use crate::logger::{self, log};
 pub struct ScopeLog<'a, T> {
     caller: &'a T,
     timer: Timer,
+    is_command: bool,
 }
 
 use once_cell::sync::Lazy;
@@ -58,6 +59,22 @@ impl<'a, T> ScopeLog<'a, T> {
         Self {
             caller,
             timer: Timer::new(),
+            is_command: false,
+        }
+    }
+
+    pub fn new_command(caller: &'a T) -> Self {
+        log_scope_begin!(
+            caller,
+            "{}{} {}",
+            &*BEGIN_BRACKET,
+            &*BEGIN_LABEL,
+            "command".style(Style::new().bright_green()).to_string()
+        );
+        Self {
+            caller,
+            timer: Timer::new(),
+            is_command: true,
         }
     }
 }
@@ -76,8 +93,13 @@ impl<'a, T> Drop for ScopeLog<'a, T> {
     fn drop(&mut self) {
         log_scope_end!(
             self.caller,
-            "{}{}{}",
+            "{}{}{}{}",
             &*END_BRACKET,
+            if self.is_command {
+                " command".style(Style::new().bright_red()).to_string()
+            } else {
+                "".to_string()
+            },
             &*END_LABEL,
             Timer::format_duration(self.timer.elapsed_ms()).style(Style::new().bright_white()),
         );

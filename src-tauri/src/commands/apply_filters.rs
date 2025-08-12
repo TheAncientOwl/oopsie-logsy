@@ -32,7 +32,7 @@ pub async fn apply_filters(
     filters: Vec<Filter>,
     components: Vec<FilterComponent>,
 ) -> Result<String, String> {
-    let _log = ScopeLog::new(&apply_filters);
+    let _log = ScopeLog::new_command(&apply_filters);
 
     log_trace!(
         &apply_filters,

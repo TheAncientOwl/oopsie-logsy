@@ -24,7 +24,7 @@ pub async fn import_logs(
     state: State<'_, Mutex<OopsieLogsyStore>>,
     paths: Vec<std::path::PathBuf>,
 ) -> Result<String, String> {
-    let _log = ScopeLog::new(&import_logs);
+    let _log = ScopeLog::new_command(&import_logs);
 
     log_trace!(
         &import_logs,
