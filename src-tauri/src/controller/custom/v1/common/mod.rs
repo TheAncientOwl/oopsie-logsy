@@ -7,8 +7,11 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
-//! **Description**: Controller mod file.
+//! **Version**: 0.2
+//! **Description**: Controller common mod file.
 //!
 
-pub mod custom;
+pub mod disk_io;
+pub mod filtering_orchestrator;
+pub mod log_chunks_manager;
+pub mod logs_config_keys;

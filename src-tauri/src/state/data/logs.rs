@@ -11,14 +11,14 @@
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
-use super::{paths::common::get_oopsie_home_dir, regex_tags::RegexTag};
 use crate::{
     common::scope_log::ScopeLog,
-    controller::common::disk_io::{
+    controller::custom::v1::common::disk_io::{
         active_logs_reader::ActiveLogsReader, active_logs_writer::ActiveLogsWriter,
         log_field_reader::LogFieldReader, log_field_writer::LogFieldWriter,
     },
     log_assert, log_error,
+    state::data::{paths::common::get_oopsie_home_dir, regex_tags::RegexTag},
 };
 use serde::{Deserialize, Serialize};
 

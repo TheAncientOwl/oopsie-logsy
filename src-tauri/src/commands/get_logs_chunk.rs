@@ -7,24 +7,23 @@
 //! # `get_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: GetLogsChunk command.
 //!
 
-use std::sync::Mutex;
-
-use tauri::State;
-
 use crate::{
     common::scope_log::ScopeLog,
-    controller::{self, common::index_range::IndexRange},
     log_trace,
-    store::{logs::ColumnLogsChunk, oopsie_logsy_store::OopsieLogsyStore},
+    state::{
+        controller::{common::index_range::IndexRange, OopsieLogsyController},
+        data::logs::ColumnLogsChunk,
+        AppState, AppStateMutex,
+    },
 };
 
 #[tauri::command]
 pub async fn get_logs_chunk(
-    state: State<'_, Mutex<OopsieLogsyStore>>,
+    state: AppStateMutex<'_>,
     desired_range: IndexRange,
 ) -> Result<ColumnLogsChunk, String> {
     let _log = ScopeLog::new_command(&get_logs_chunk);
@@ -36,5 +35,8 @@ pub async fn get_logs_chunk(
         desired_range.end()
     );
 
-    controller::read_logs_chunk::execute(state.lock().unwrap(), desired_range)
+    let mut state = state.lock().unwrap();
+    let AppState { data, controller } = &mut *state;
+
+    controller.get_active_logs_chunk(data, desired_range)
 }

@@ -7,7 +7,7 @@
 //! # `lib.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.11
+//! **Version**: 0.12
 //! **Description**: OopsieLogsy tauri lib.
 //!
 
@@ -15,7 +15,7 @@ pub mod commands;
 pub mod common;
 pub mod controller;
 pub mod logger;
-pub mod store;
+pub mod state;
 
 use std::sync::Mutex;
 
@@ -32,9 +32,7 @@ pub fn run() {
                 window.close_devtools();
             }
 
-            app.manage(Mutex::new(
-                store::oopsie_logsy_store::OopsieLogsyStore::default(),
-            ));
+            app.manage(Mutex::new(state::AppState::default()));
 
             Ok(())
         })

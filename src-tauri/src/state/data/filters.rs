@@ -15,7 +15,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use crate::{
     common::{json::stringify, scope_log::ScopeLog},
-    controller::common::disk_io::common::overwrite_file,
+    controller::custom::v1::common::disk_io::common::overwrite_file,
     log_error, log_warn,
 };
 

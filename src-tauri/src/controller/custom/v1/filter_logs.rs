@@ -7,17 +7,17 @@
 //! # `filter_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Filter logs logics.
 //!
 
-use std::sync::{Arc, MutexGuard};
+use std::sync::Arc;
 
 use chrono::Utc;
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::common::{
+    controller::custom::v1::common::{
         disk_io::{
             active_logs_writer::{DEFAULT_FILTER_ID, DEFAULT_FILTER_INDEX},
             config_file::ConfigFile,
@@ -27,10 +27,7 @@ use crate::{
         logs_config_keys,
     },
     log_trace,
-    store::{
-        filters::ActiveFilter, oopsie_logsy_store::OopsieLogsyStore,
-        paths::filters::get_filter_ids_map_path,
-    },
+    state::data::{filters::ActiveFilter, paths::filters::get_filter_ids_map_path, AppData},
 };
 
 fn get_filters_disk_map(active_filters: &Vec<ActiveFilter>) -> FiltersIndexIdMap {
@@ -46,13 +43,13 @@ fn get_filters_disk_map(active_filters: &Vec<ActiveFilter>) -> FiltersIndexIdMap
     filters_disk_map
 }
 
-pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String> {
+pub fn execute(data: &mut AppData) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
 
-    let mut config = ConfigFile::load(state.logs.get_logs_config_path());
-    let active_tags = state.regex_tags.compute_active_tags();
+    let mut config = ConfigFile::load(data.logs.get_logs_config_path());
+    let active_tags = data.regex_tags.compute_active_tags();
 
-    let mut active_filters = state.filters.compute_active_filters(&active_tags);
+    let mut active_filters = data.filters.compute_active_filters(&active_tags);
     if active_filters.len() == 0 {
         return Ok(String::from("No active filters found"));
     }
@@ -60,7 +57,7 @@ pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String
     active_filters.sort_by(|a, b| b.priority.cmp(&a.priority));
     log_trace!(&execute, "Sorted active filters: {:?}", active_filters);
 
-    let field_readers = state.logs.open_field_readers(&active_tags);
+    let field_readers = data.logs.open_field_readers(&active_tags);
     let filters_disk_map = get_filters_disk_map(&active_filters);
 
     let filtering_orchestrator = Arc::new(FilteringOrchestrator::new(
@@ -84,7 +81,7 @@ pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String
     );
     config.save();
 
-    let mut active_logs_writer = state.logs.open_active_logs_writer();
+    let mut active_logs_writer = data.logs.open_active_logs_writer();
     filtered_logs.iter().for_each(|log| {
         // log_debug!(&execute, "Writing log index {}", log.index);
         active_logs_writer.write(log.index, log.filter_id_index);

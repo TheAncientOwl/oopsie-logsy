@@ -7,26 +7,24 @@
 //! # `get_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: Get FilterTabs command.
 //!
 
-use std::sync::{Arc, Mutex};
-
-use tauri::State;
+use std::sync::Arc;
 
 use crate::{
     common::scope_log::ScopeLog,
     log_trace,
-    store::{
-        filters::{Filter, FilterComponent, FilterTab},
-        oopsie_logsy_store::OopsieLogsyStore,
+    state::{
+        data::filters::{Filter, FilterComponent, FilterTab},
+        AppStateMutex,
     },
 };
 
 #[tauri::command]
 pub async fn get_filters(
-    state: State<'_, Mutex<OopsieLogsyStore>>,
+    state: AppStateMutex<'_>,
 ) -> Result<
     (
         Arc<Vec<FilterTab>>,
@@ -39,9 +37,9 @@ pub async fn get_filters(
 
     let state = state.lock().unwrap();
 
-    let tabs = state.filters.get_tabs();
-    let filters = state.filters.get_filters();
-    let components = state.filters.get_components();
+    let tabs = state.data.filters.get_tabs();
+    let filters = state.data.filters.get_filters();
+    let components = state.data.filters.get_components();
 
     log_trace!(
         &get_filters,

@@ -7,23 +7,21 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.9
+//! **Version**: 0.10
 //! **Description**: Set RegexTags command.
 //!
 
-use std::sync::Mutex;
-
-use tauri::State;
-
 use crate::{
     common::scope_log::ScopeLog,
-    controller, log_trace,
-    store::{oopsie_logsy_store::OopsieLogsyStore, regex_tags::RegexTag},
+    log_trace,
+    state::{
+        controller::OopsieLogsyController, data::regex_tags::RegexTag, AppState, AppStateMutex,
+    },
 };
 
 #[tauri::command]
 pub async fn apply_regex_tags(
-    state: State<'_, Mutex<OopsieLogsyStore>>,
+    state: AppStateMutex<'_>,
     tags: Vec<RegexTag>,
 ) -> Result<String, String> {
     let _log = ScopeLog::new_command(&apply_regex_tags);
@@ -36,12 +34,13 @@ pub async fn apply_regex_tags(
     );
 
     let mut state = state.lock().unwrap();
+    let AppState { data, controller } = &mut *state;
 
-    state.regex_tags.set(tags);
+    data.regex_tags.set(tags);
 
-    if state.logs.get_raw_logs_path().len() == 0 {
+    if data.logs.get_raw_logs_path().len() == 0 {
         return Ok(String::from("No logs were imported"));
     }
 
-    controller::convert_logs::execute(state)
+    controller.convert_logs(data)
 }

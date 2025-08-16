@@ -7,21 +7,19 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.11
+//! **Version**: 0.12
 //! **Description**: Set CurrentLogPaths command.
 //!
 
-use std::sync::Mutex;
-
-use tauri::State;
-
 use crate::{
-    common::scope_log::ScopeLog, controller, log_trace, store::oopsie_logsy_store::OopsieLogsyStore,
+    common::scope_log::ScopeLog,
+    log_trace,
+    state::{controller::OopsieLogsyController, AppState, AppStateMutex},
 };
 
 #[tauri::command]
 pub async fn import_logs(
-    state: State<'_, Mutex<OopsieLogsyStore>>,
+    state: AppStateMutex<'_>,
     paths: Vec<std::path::PathBuf>,
 ) -> Result<String, String> {
     let _log = ScopeLog::new_command(&import_logs);
@@ -40,7 +38,8 @@ pub async fn import_logs(
     );
 
     let mut state = state.lock().unwrap();
-    state.logs.set_raw_logs_path(paths);
+    let AppState { data, controller } = &mut *state;
 
-    controller::convert_logs::execute(state)
+    data.logs.set_raw_logs_path(paths);
+    controller.convert_logs(data)
 }

@@ -7,7 +7,7 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.6
+//! **Version**: 0.7
 //! **Description**: Logger utilities.
 //!
 
@@ -21,7 +21,7 @@ use std::{
 use once_cell::sync::{Lazy, OnceCell};
 use owo_colors::{OwoColorize, Style};
 
-use crate::store::paths::common::get_oopsie_home_dir;
+use crate::state::data::paths::common::get_oopsie_home_dir;
 
 #[derive(Debug, Clone, Copy)]
 pub enum LogLevel {

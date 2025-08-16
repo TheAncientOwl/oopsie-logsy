@@ -7,29 +7,29 @@
 //! # `convert_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Convert raw logs to OopsieLogsy format.
 //!
 
-use std::{fs::File, io::BufRead, sync::MutexGuard};
+use std::{fs::File, io::BufRead};
 
 use chrono::Utc;
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::common::{
+    controller::custom::v1::common::{
         disk_io::{active_logs_writer::DEFAULT_FILTER_INDEX, config_file::ConfigFile},
         logs_config_keys,
     },
     log_error, log_trace,
-    store::oopsie_logsy_store::OopsieLogsyStore,
+    state::data::AppData,
 };
 
-pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String> {
+pub fn execute(data: &mut AppData) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
 
-    let input_path = &state.logs.get_raw_logs_path()[0];
-    let output_dir_path = state.logs.get_working_dir();
+    let input_path = &data.logs.get_raw_logs_path()[0];
+    let output_dir_path = data.logs.get_working_dir();
     log_trace!(
         &execute,
         "Converting log file \"{}\" into \"{}\"",
@@ -37,16 +37,16 @@ pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String
         output_dir_path.to_str().unwrap_or("Unknown")
     );
 
-    let active_tags = state.regex_tags.compute_active_tags();
-    let line_regex = state.regex_tags.get_line_regex();
+    let active_tags = data.regex_tags.compute_active_tags();
+    let line_regex = data.regex_tags.get_line_regex();
 
     let mut total_logs_count: u64 = 0;
-    let mut field_writers = state.logs.open_field_writers(&active_tags);
+    let mut field_writers = data.logs.open_field_writers(&active_tags);
 
     let in_file = File::open(input_path).expect("Failed to open logs input file for conversion");
     let mut reader = std::io::BufReader::new(in_file);
 
-    let mut active_logs_writer = state.logs.open_active_logs_writer();
+    let mut active_logs_writer = data.logs.open_active_logs_writer();
 
     let mut line = String::new();
     reader
@@ -106,7 +106,7 @@ pub fn execute(state: MutexGuard<'_, OopsieLogsyStore>) -> Result<String, String
 
     field_writers.iter_mut().for_each(|writer| writer.flush());
 
-    let mut config = ConfigFile::overwrite(state.logs.get_logs_config_path());
+    let mut config = ConfigFile::overwrite(data.logs.get_logs_config_path());
     config.set_number(logs_config_keys::TOTAL_LOGS_COUNT, total_logs_count as u128);
     config.set_number(
         logs_config_keys::ACTIVE_LOGS_COUNT,

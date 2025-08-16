@@ -13,7 +13,7 @@
 
 use std::sync::Mutex;
 
-use crate::controller::common::index_range::IndexRange;
+use crate::state::controller::common::index_range::IndexRange;
 
 pub struct LogChunkManager {
     total_logs: u64,

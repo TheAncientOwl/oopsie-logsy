@@ -7,27 +7,23 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.11
+//! **Version**: 0.12
 //! **Description**: Set FilterTabs command.
 //!
 
-use std::sync::Mutex;
-
-use tauri::State;
-
 use crate::{
     common::scope_log::ScopeLog,
-    controller::{self},
     log_trace,
-    store::{
-        filters::{Filter, FilterComponent, FilterTab},
-        oopsie_logsy_store::OopsieLogsyStore,
+    state::{
+        controller::OopsieLogsyController,
+        data::filters::{Filter, FilterComponent, FilterTab},
+        AppState, AppStateMutex,
     },
 };
 
 #[tauri::command]
 pub async fn apply_filters(
-    state: State<'_, Mutex<OopsieLogsyStore>>,
+    state: AppStateMutex<'_>,
     tabs: Vec<FilterTab>,
     filters: Vec<Filter>,
     components: Vec<FilterComponent>,
@@ -58,7 +54,8 @@ pub async fn apply_filters(
     );
 
     let mut state = state.lock().unwrap();
-    state.filters.set(tabs, filters, components);
+    let AppState { data, controller } = &mut *state;
 
-    controller::filter_logs::execute(state)
+    data.filters.set(tabs, filters, components);
+    controller.filter_logs(data)
 }

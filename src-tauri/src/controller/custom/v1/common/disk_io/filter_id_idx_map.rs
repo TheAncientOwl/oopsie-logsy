@@ -13,7 +13,7 @@
 
 use std::{collections::HashMap, fs, path::PathBuf};
 
-use crate::store::filters::ActiveFilter;
+use crate::state::data::filters::ActiveFilter;
 
 type IdToIndexMap = HashMap<String, u16>;
 type IndexToIdMap = HashMap<u16, String>;

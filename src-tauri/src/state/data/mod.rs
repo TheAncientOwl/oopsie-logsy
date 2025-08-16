@@ -4,22 +4,29 @@
 //!
 //! Licensed under: <https://github.com/TheAncientOwl/oopsie-logsy/blob/main/LICENSE>
 //!
-//! # `oopsie_logsy_state.rs`
+//! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
-//! **Description**: Application state data structures.
+//! **Version**: 0.1
+//! **Description**: Store mod file.
 //!
 
-use super::{filters::FiltersManager, logs::LogsManager, regex_tags::RegexTagsManager};
+pub mod filters;
+pub mod logs;
+pub mod paths;
+pub mod regex_tags;
 
-pub struct OopsieLogsyStore {
+use crate::state::data::{
+    filters::FiltersManager, logs::LogsManager, regex_tags::RegexTagsManager,
+};
+
+pub struct AppData {
     pub regex_tags: RegexTagsManager,
     pub logs: LogsManager,
     pub filters: FiltersManager,
 }
 
-impl OopsieLogsyStore {
+impl AppData {
     pub fn default() -> Self {
         Self {
             regex_tags: RegexTagsManager::default(),
