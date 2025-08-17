@@ -7,8 +7,8 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
-//! **Description**: Mod file.
+//! **Version**: 0.2
+//! **Description**: Oopsie V1 Mod file.
 //!
 
 use crate::state::{
@@ -21,15 +21,15 @@ pub mod convert_logs;
 pub mod filter_logs;
 pub mod read_logs_chunk;
 
-pub struct CustomFileStorageV1Controller {}
+pub struct OopsieV1Controller {}
 
-impl CustomFileStorageV1Controller {
+impl OopsieV1Controller {
     pub fn new() -> Self {
         Self {}
     }
 }
 
-impl OopsieLogsyController for CustomFileStorageV1Controller {
+impl OopsieLogsyController for OopsieV1Controller {
     fn convert_logs(&mut self, app_data: &mut AppData) -> Result<String, String> {
         convert_logs::execute(app_data)
     }
@@ -38,7 +38,7 @@ impl OopsieLogsyController for CustomFileStorageV1Controller {
         filter_logs::execute(app_data)
     }
 
-    fn get_active_logs_chunk(
+    fn get_filtered_logs_chunk(
         &mut self,
         app_data: &mut AppData,
         desired_range: IndexRange,

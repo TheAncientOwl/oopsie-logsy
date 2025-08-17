@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: State mod file.
 //!
 
@@ -16,7 +16,7 @@ use std::sync::Mutex;
 use tauri::State;
 
 use crate::{
-    controller::custom::v1::CustomFileStorageV1Controller,
+    controller::oopsie::v1::OopsieV1Controller,
     state::{controller::OopsieLogsyControllerStrategy, data::AppData},
 };
 
@@ -32,9 +32,7 @@ impl AppState {
     pub fn default() -> Self {
         Self {
             data: AppData::default(),
-            controller: OopsieLogsyControllerStrategy::CustomFileStorageV1(
-                CustomFileStorageV1Controller::new(),
-            ),
+            controller: OopsieLogsyControllerStrategy::OopsieV1(OopsieV1Controller::new()),
         }
     }
 }

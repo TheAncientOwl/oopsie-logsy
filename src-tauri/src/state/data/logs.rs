@@ -7,13 +7,13 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.17
+//! **Version**: 0.18
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::custom::v1::common::disk_io::{
+    controller::oopsie::v1::common::disk_io::{
         active_logs_reader::ActiveLogsReader, active_logs_writer::ActiveLogsWriter,
         log_field_reader::LogFieldReader, log_field_writer::LogFieldWriter,
     },

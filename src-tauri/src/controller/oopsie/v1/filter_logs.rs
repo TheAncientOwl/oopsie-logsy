@@ -17,7 +17,7 @@ use chrono::Utc;
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::custom::v1::common::{
+    controller::oopsie::v1::common::{
         disk_io::{
             active_logs_writer::{DEFAULT_FILTER_ID, DEFAULT_FILTER_INDEX},
             config_file::ConfigFile,

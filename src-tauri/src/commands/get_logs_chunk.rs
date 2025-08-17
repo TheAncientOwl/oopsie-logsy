@@ -7,7 +7,7 @@
 //! # `get_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: GetLogsChunk command.
 //!
 
@@ -38,5 +38,5 @@ pub async fn get_logs_chunk(
     let mut state = state.lock().unwrap();
     let AppState { data, controller } = &mut *state;
 
-    controller.get_active_logs_chunk(data, desired_range)
+    controller.get_filtered_logs_chunk(data, desired_range)
 }

@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Controller mod file.
 //!
 
@@ -24,7 +24,7 @@ use crate::{
 pub trait OopsieLogsyController {
     fn convert_logs(&mut self, app_data: &mut AppData) -> Result<String, String>;
     fn filter_logs(&mut self, app_data: &mut AppData) -> Result<String, String>;
-    fn get_active_logs_chunk(
+    fn get_filtered_logs_chunk(
         &mut self,
         app_data: &mut AppData,
         desired_range: IndexRange,
@@ -32,34 +32,30 @@ pub trait OopsieLogsyController {
 }
 
 pub enum OopsieLogsyControllerStrategy {
-    CustomFileStorageV1(controller::custom::v1::CustomFileStorageV1Controller),
+    OopsieV1(controller::oopsie::v1::OopsieV1Controller),
 }
 
 impl OopsieLogsyController for OopsieLogsyControllerStrategy {
     fn convert_logs(&mut self, app_data: &mut AppData) -> Result<String, String> {
         match self {
-            OopsieLogsyControllerStrategy::CustomFileStorageV1(inner) => {
-                inner.convert_logs(app_data)
-            }
+            OopsieLogsyControllerStrategy::OopsieV1(inner) => inner.convert_logs(app_data),
         }
     }
 
     fn filter_logs(&mut self, app_data: &mut AppData) -> Result<String, String> {
         match self {
-            OopsieLogsyControllerStrategy::CustomFileStorageV1(inner) => {
-                inner.filter_logs(app_data)
-            }
+            OopsieLogsyControllerStrategy::OopsieV1(inner) => inner.filter_logs(app_data),
         }
     }
 
-    fn get_active_logs_chunk(
+    fn get_filtered_logs_chunk(
         &mut self,
         app_data: &mut AppData,
         desired_range: IndexRange,
     ) -> Result<ColumnLogsChunk, String> {
         match self {
-            OopsieLogsyControllerStrategy::CustomFileStorageV1(inner) => {
-                inner.get_active_logs_chunk(app_data, desired_range)
+            OopsieLogsyControllerStrategy::OopsieV1(inner) => {
+                inner.get_filtered_logs_chunk(app_data, desired_range)
             }
         }
     }

@@ -21,7 +21,7 @@ use std::{
 };
 
 use crate::{
-    controller::custom::v1::common::disk_io::{
+    controller::oopsie::v1::common::disk_io::{
         active_logs_reader::LogMetadata, active_logs_writer::DEFAULT_FILTER_INDEX,
         filter_id_idx_map::FiltersIndexIdMap, log_field_reader::LogFieldReader,
     },
