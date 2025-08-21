@@ -7,7 +7,7 @@
 //! # `convert_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Convert raw logs to OopsieLogsy format.
 //!
 
@@ -17,9 +17,12 @@ use chrono::Utc;
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::oopsie::v1::common::{
-        disk_io::{active_logs_writer::DEFAULT_FILTER_INDEX, config_file::ConfigFile},
-        logs_config_keys,
+    controller::oopsie::v1::{
+        common::{
+            disk_io::{active_logs_writer::DEFAULT_FILTER_INDEX, config_file::ConfigFile},
+            logs_config_keys,
+        },
+        OopsieV1Controller,
     },
     log_error, log_trace,
     state::data::AppData,
@@ -29,7 +32,7 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
 
     let input_path = &data.logs.get_raw_logs_path()[0];
-    let output_dir_path = data.logs.get_working_dir();
+    let output_dir_path = OopsieV1Controller::get_working_dir(&data.logs);
     log_trace!(
         &execute,
         "Converting log file \"{}\" into \"{}\"",
@@ -41,12 +44,12 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
     let line_regex = data.regex_tags.get_line_regex();
 
     let mut total_logs_count: u64 = 0;
-    let mut field_writers = data.logs.open_field_writers(&active_tags);
+    let mut field_writers = OopsieV1Controller::open_field_writers(&active_tags, &data.logs);
 
     let in_file = File::open(input_path).expect("Failed to open logs input file for conversion");
     let mut reader = std::io::BufReader::new(in_file);
 
-    let mut active_logs_writer = data.logs.open_active_logs_writer();
+    let mut active_logs_writer = OopsieV1Controller::open_active_logs_writer(&data.logs);
 
     let mut line = String::new();
     reader
@@ -106,7 +109,7 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
 
     field_writers.iter_mut().for_each(|writer| writer.flush());
 
-    let mut config = ConfigFile::overwrite(data.logs.get_logs_config_path());
+    let mut config = ConfigFile::overwrite(OopsieV1Controller::get_logs_config_path(&data.logs));
     config.set_number(logs_config_keys::TOTAL_LOGS_COUNT, total_logs_count as u128);
     config.set_number(
         logs_config_keys::ACTIVE_LOGS_COUNT,

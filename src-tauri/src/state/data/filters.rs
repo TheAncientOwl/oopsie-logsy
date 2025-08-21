@@ -7,15 +7,14 @@
 //! # `filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.20
+//! **Version**: 0.21
 //! **Description**: FilterTabs data and ipc transfer commands.
 //!
 
 use std::{collections::HashMap, sync::Arc};
 
 use crate::{
-    common::{json::stringify, scope_log::ScopeLog},
-    controller::oopsie::v1::common::disk_io::common::overwrite_file,
+    common::{disk_io::overwrite_file, json::stringify, scope_log::ScopeLog},
     log_error, log_warn,
 };
 

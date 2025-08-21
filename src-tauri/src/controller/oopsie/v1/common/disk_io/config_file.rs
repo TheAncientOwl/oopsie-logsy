@@ -7,13 +7,17 @@
 //! # `configuration.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Configuration file helper.
 //!
 
-use crate::{common::scope_log::ScopeLog, log_error, log_trace};
-
-use super::common::{overwrite_file, read_file_to_string, remove_file};
+use crate::{
+    common::{
+        disk_io::{overwrite_file, read_file_to_string, remove_file},
+        scope_log::ScopeLog,
+    },
+    log_error, log_trace,
+};
 
 pub struct ConfigFile {
     path: std::path::PathBuf,

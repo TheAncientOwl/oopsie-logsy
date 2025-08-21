@@ -7,18 +7,21 @@
 //! # `read_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Read logs chunk logics.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::oopsie::v1::common::{
-        disk_io::{
-            active_logs_writer::DEFAULT_FILTER_ID, config_file::ConfigFile,
-            filter_id_idx_map::FiltersIndexIdMap,
+    controller::oopsie::v1::{
+        common::{
+            disk_io::{
+                active_logs_writer::DEFAULT_FILTER_ID, config_file::ConfigFile,
+                filter_id_idx_map::FiltersIndexIdMap,
+            },
+            logs_config_keys,
         },
-        logs_config_keys,
+        OopsieV1Controller,
     },
     log_info,
     state::{
@@ -34,18 +37,18 @@ pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<ColumnLo
     let active_tags = data.regex_tags.compute_active_tags();
     let mut out = ColumnLogsChunk::new_with_field_capacity(active_tags.len(), desired_range.size());
 
-    if !data.logs.is_working_dir_set() {
+    if data.logs.get_raw_logs_path().is_empty() {
         log_info!(
             &execute,
-            "Working dir was not set, returning empty log chunk"
+            "Raw logs path was not set, returning empty log chunk"
         );
         return Ok(out);
     }
 
-    let mut field_readers = data.logs.open_field_readers(&active_tags);
-    let mut active_logs_reader = data.logs.open_active_logs_reader();
+    let mut field_readers = OopsieV1Controller::open_field_readers(&active_tags, &data.logs);
+    let mut active_logs_reader = OopsieV1Controller::open_active_logs_reader(&data.logs);
 
-    let config = ConfigFile::load(data.logs.get_logs_config_path());
+    let config = ConfigFile::load(OopsieV1Controller::get_logs_config_path(&data.logs));
     out.total_logs = config.get_number(logs_config_keys::TOTAL_LOGS_COUNT, 0) as u64;
     let active_logs_count = config.get_number(logs_config_keys::ACTIVE_LOGS_COUNT, 0) as u64;
 

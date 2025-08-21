@@ -11,6 +11,7 @@
 //! **Description**: common mod file.
 //!
 
+pub mod disk_io;
 pub mod json;
 pub mod scope_log;
 pub mod timer;

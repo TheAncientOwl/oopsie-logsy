@@ -7,7 +7,7 @@
 //! # `filter_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Filter logs logics.
 //!
 
@@ -17,14 +17,17 @@ use chrono::Utc;
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::oopsie::v1::common::{
-        disk_io::{
-            active_logs_writer::{DEFAULT_FILTER_ID, DEFAULT_FILTER_INDEX},
-            config_file::ConfigFile,
-            filter_id_idx_map::FiltersIndexIdMap,
+    controller::oopsie::v1::{
+        common::{
+            disk_io::{
+                active_logs_writer::{DEFAULT_FILTER_ID, DEFAULT_FILTER_INDEX},
+                config_file::ConfigFile,
+                filter_id_idx_map::FiltersIndexIdMap,
+            },
+            filtering_orchestrator::{self, FilteringOrchestrator},
+            logs_config_keys,
         },
-        filtering_orchestrator::{self, FilteringOrchestrator},
-        logs_config_keys,
+        OopsieV1Controller,
     },
     log_trace,
     state::data::{filters::ActiveFilter, paths::filters::get_filter_ids_map_path, AppData},
@@ -46,7 +49,7 @@ fn get_filters_disk_map(active_filters: &Vec<ActiveFilter>) -> FiltersIndexIdMap
 pub fn execute(data: &mut AppData) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
 
-    let mut config = ConfigFile::load(data.logs.get_logs_config_path());
+    let mut config = ConfigFile::load(OopsieV1Controller::get_logs_config_path(&data.logs));
     let active_tags = data.regex_tags.compute_active_tags();
 
     let mut active_filters = data.filters.compute_active_filters(&active_tags);
@@ -57,7 +60,7 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
     active_filters.sort_by(|a, b| b.priority.cmp(&a.priority));
     log_trace!(&execute, "Sorted active filters: {:?}", active_filters);
 
-    let field_readers = data.logs.open_field_readers(&active_tags);
+    let field_readers = OopsieV1Controller::open_field_readers(&active_tags, &data.logs);
     let filters_disk_map = get_filters_disk_map(&active_filters);
 
     let filtering_orchestrator = Arc::new(FilteringOrchestrator::new(
@@ -81,7 +84,7 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
     );
     config.save();
 
-    let mut active_logs_writer = data.logs.open_active_logs_writer();
+    let mut active_logs_writer = OopsieV1Controller::open_active_logs_writer(&data.logs);
     filtered_logs.iter().for_each(|log| {
         // log_debug!(&execute, "Writing log index {}", log.index);
         active_logs_writer.write(log.index, log.filter_id_index);
