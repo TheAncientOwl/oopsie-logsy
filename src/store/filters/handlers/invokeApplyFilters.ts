@@ -6,12 +6,12 @@
  *
  * @file invokeApplyFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description InvokeApplyFilters handler.
  */
 
+import { ipcInvokeApplyFilters } from '@/commands/oopsie';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
-import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
 import {
   checkCanSaveData,
@@ -87,11 +87,7 @@ export const invokeApplyFilters: IApiCallStoreHandler<
           overAlternatives,
         });
 
-        const response = await invoke<string>('apply_filters', {
-          tabs,
-          filters,
-          components,
-        });
+        const response = await ipcInvokeApplyFilters(tabs, filters, components);
 
         console.info(invokeApplyFilters.dispatch, 'rust response:', { response });
 

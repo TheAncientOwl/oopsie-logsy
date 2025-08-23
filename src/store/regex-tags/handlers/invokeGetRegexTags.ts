@@ -6,16 +6,16 @@
  *
  * @file invokeGetRegexTags.ts
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description InvokeGetTags handler.
  */
 
+import { ipcInvokeGetRegexTags } from '@/commands/oopsie';
 import {
   type IApiCallStoreHandler,
   type TNoDispatcherArgs,
   type TStoreAction,
 } from '@/store/common/storeHandler';
-import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
 import { type TRegexTag, type TStoreState, getStaticDefaultTags } from '../data';
 import { invokeApplyRegexTags } from './invokeApplyRegexTags';
@@ -48,7 +48,7 @@ export const invokeGetRegexTags: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const tags = await invoke<Array<TRegexTag>>('get_regex_tags');
+      const tags = await ipcInvokeGetRegexTags();
       console.info(invokeGetRegexTags.dispatch, `received ${tags.length} tags`);
 
       const finalTags =

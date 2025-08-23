@@ -6,20 +6,20 @@
  *
  * @file invokeGetFilters.ts
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description InvokeGetFilters handler.
  */
 
+import { ipcInvokeGetFilters } from '@/commands/oopsie';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
-import { invoke } from '@tauri-apps/api/core';
 import { EActionType, type TDispatch } from '../actions';
 import {
   DefaultFactory,
   type TFilter,
   type TFilterComponent,
-  type TStoreState,
   type TFilterTab,
   type TOverAlternatives,
+  type TStoreState,
 } from '../data';
 import { invokeApplyFilters } from './invokeApplyFilters';
 
@@ -53,8 +53,8 @@ export const invokeGetFilters: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const [tabs, filters, components] =
-        await invoke<[Array<TFilterTab>, Array<TFilter>, Array<TFilterComponent>]>('get_filters');
+      const [tabs, filters, components] = await ipcInvokeGetFilters();
+
       if (tabs.length !== 0) {
         console.trace(invokeGetFilters.dispatch, `Received ${tabs.length} tabs:`, tabs);
         console.trace(invokeGetFilters.dispatch, `Received ${filters.length} filters:`, filters);

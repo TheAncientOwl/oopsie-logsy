@@ -6,14 +6,14 @@
  *
  * @file invokeGetLogsChunk.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description InvokeGetChunk handler.
  */
 
-import { IApiCallStoreHandler, TStoreAction } from '@/store/common/storeHandler';
-import { EActionType, TDispatch } from '../actions';
-import { TColumnLogsChunk, TStoreState } from '../data';
-import { invoke } from '@tauri-apps/api/core';
+import { ipcInvokeGetLogsChunk } from '@/commands/oopsie';
+import { IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
+import { EActionType, type TDispatch } from '../actions';
+import { type TColumnLogsChunk, type TStoreState } from '../data';
 
 const action = {
   ok: EActionType.InokeGetChunkOK,
@@ -49,9 +49,7 @@ export const invokeGetLogsChunk: IApiCallStoreHandler<
     try {
       console.trace(invokeGetLogsChunk.dispatch, `Requesting logs chunk [${begin}, ${end}]`);
 
-      const response = await invoke<TColumnLogsChunk>('get_logs_chunk', {
-        desiredRange: { begin, end },
-      });
+      const response = await ipcInvokeGetLogsChunk(begin, end);
 
       console.info(invokeGetLogsChunk.dispatch, 'rust response:', response);
 

@@ -6,12 +6,12 @@
  *
  * @file invokeApplyRegexTags.ts
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description InvokeApplyRegexTags handler.
  */
 
+import { ipcInvokeApplyRegexTags } from '@/commands/oopsie';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
-import { invoke } from '@tauri-apps/api/core';
 import { type TDispatch, EActionType } from '../actions';
 import { type TRegexTag, type TStoreState } from '../data';
 
@@ -44,7 +44,7 @@ export const invokeApplyRegexTags: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke<string>('apply_regex_tags', { tags });
+      const response = await ipcInvokeApplyRegexTags(tags);
 
       console.info(invokeApplyRegexTags.dispatch, 'rust response:', { logs: response });
 

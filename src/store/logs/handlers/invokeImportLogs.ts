@@ -6,15 +6,15 @@
  *
  * @file invokeSetCurrentLogPaths.ts
  * @author Alexandru Delegeanu
- * @version 0.7
+ * @version 0.8
  * @description InvokeSetCurrentLogPaths handler.
  */
 
+import { ipcInvokeImportLogs } from '@/commands/oopsie';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
-import { invoke } from '@tauri-apps/api/core';
+import { getStaticDefaultTags } from '@/store/regex-tags/data';
 import { EActionType, type TDispatch } from '../actions';
 import { type TStoreState } from '../data';
-import { getStaticDefaultTags } from '@/store/regex-tags/data';
 
 const action = {
   ok: EActionType.InvokeImportLogsOK,
@@ -44,7 +44,7 @@ export const invokeImportLogs: IApiCallStoreHandler<
     dispatch({ type: EActionType.Loading, payload: {} });
 
     try {
-      const response = await invoke<string>('import_logs', { paths });
+      const response = await ipcInvokeImportLogs(paths);
 
       console.info(invokeImportLogs.dispatch, 'rust response:', response);
 
