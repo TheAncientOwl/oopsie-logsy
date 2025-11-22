@@ -7,15 +7,15 @@
 //! # `apply_filters.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.12
+//! **Version**: 0.13
 //! **Description**: Set FilterTabs command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
+    controller::OopsieLogsyController,
     log_trace,
     state::{
-        controller::OopsieLogsyController,
         data::filters::{Filter, FilterComponent, FilterTab},
         AppState, AppStateMutex,
     },

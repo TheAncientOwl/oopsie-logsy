@@ -13,21 +13,21 @@
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::oopsie::v1::{
-        common::{
-            disk_io::{
-                active_logs_writer::DEFAULT_FILTER_ID, config_file::ConfigFile,
-                filter_id_idx_map::FiltersIndexIdMap,
+    controller::{
+        common::index_range::IndexRange,
+        strategies::v1::{
+            common::{
+                disk_io::{
+                    active_logs_writer::DEFAULT_FILTER_ID, config_file::ConfigFile,
+                    filter_id_idx_map::FiltersIndexIdMap,
+                },
+                logs_config_keys,
             },
-            logs_config_keys,
+            OopsieV1Controller,
         },
-        OopsieV1Controller,
     },
     log_info,
-    state::{
-        controller::common::index_range::IndexRange,
-        data::{logs::ColumnLogsChunk, paths::filters::get_filter_ids_map_path, AppData},
-    },
+    state::data::{logs::ColumnLogsChunk, paths::filters::get_filter_ids_map_path, AppData},
 };
 
 // TODO: consider using separate threads for each field. Current impl works for protoyping

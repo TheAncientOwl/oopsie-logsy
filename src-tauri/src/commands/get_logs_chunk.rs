@@ -7,18 +7,15 @@
 //! # `get_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: GetLogsChunk command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
+    controller::{common::index_range::IndexRange, OopsieLogsyController},
     log_trace,
-    state::{
-        controller::{common::index_range::IndexRange, OopsieLogsyController},
-        data::logs::ColumnLogsChunk,
-        AppState, AppStateMutex,
-    },
+    state::{data::logs::ColumnLogsChunk, AppState, AppStateMutex},
 };
 
 #[tauri::command]

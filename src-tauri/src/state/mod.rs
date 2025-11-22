@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: State mod file.
 //!
 
@@ -16,11 +16,10 @@ use std::sync::Mutex;
 use tauri::State;
 
 use crate::{
-    controller::oopsie::v1::OopsieV1Controller,
-    state::{controller::OopsieLogsyControllerStrategy, data::AppData},
+    controller::{strategies::v1::OopsieV1Controller, OopsieLogsyControllerStrategy},
+    state::data::AppData,
 };
 
-pub mod controller;
 pub mod data;
 
 pub struct AppState {

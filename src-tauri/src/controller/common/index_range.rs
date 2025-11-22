@@ -7,7 +7,7 @@
 //! # `index.range.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Utility struct. Inclusive range [begin, end]
 //!
 

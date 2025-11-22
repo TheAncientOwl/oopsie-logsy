@@ -7,16 +7,15 @@
 //! # `apply_regex_tags.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.10
+//! **Version**: 0.11
 //! **Description**: Set RegexTags command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
+    controller::OopsieLogsyController,
     log_trace,
-    state::{
-        controller::OopsieLogsyController, data::regex_tags::RegexTag, AppState, AppStateMutex,
-    },
+    state::{data::regex_tags::RegexTag, AppState, AppStateMutex},
 };
 
 #[tauri::command]

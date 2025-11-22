@@ -12,19 +12,20 @@
 //!
 
 use crate::{
-    controller::oopsie::v1::common::disk_io::{
-        active_logs_reader::ActiveLogsReader, active_logs_writer::ActiveLogsWriter,
-        log_field_reader::LogFieldReader, log_field_writer::LogFieldWriter,
+    controller::{
+        common::index_range::IndexRange,
+        strategies::v1::common::disk_io::{
+            active_logs_reader::ActiveLogsReader, active_logs_writer::ActiveLogsWriter,
+            log_field_reader::LogFieldReader, log_field_writer::LogFieldWriter,
+        },
+        OopsieLogsyController,
     },
     log_assert, log_error,
-    state::{
-        controller::{common::index_range::IndexRange, OopsieLogsyController},
-        data::{
-            logs::{ColumnLogsChunk, LogsManager},
-            paths::common::get_oopsie_home_dir,
-            regex_tags::RegexTag,
-            AppData,
-        },
+    state::data::{
+        logs::{ColumnLogsChunk, LogsManager},
+        paths::common::get_oopsie_home_dir,
+        regex_tags::RegexTag,
+        AppData,
     },
 };
 

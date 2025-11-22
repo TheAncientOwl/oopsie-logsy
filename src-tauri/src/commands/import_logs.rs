@@ -7,14 +7,15 @@
 //! # `import_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.12
+//! **Version**: 0.13
 //! **Description**: Set CurrentLogPaths command.
 //!
 
 use crate::{
     common::scope_log::ScopeLog,
+    controller::OopsieLogsyController,
     log_trace,
-    state::{controller::OopsieLogsyController, AppState, AppStateMutex},
+    state::{AppState, AppStateMutex},
 };
 
 #[tauri::command]
