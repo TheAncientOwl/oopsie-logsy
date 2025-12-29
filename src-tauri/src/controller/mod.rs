@@ -72,18 +72,21 @@ pub trait OopsieLogsyController {
 
 pub enum OopsieLogsyControllerStrategy {
     OopsieV1(controller::strategies::v1::OopsieV1Controller),
+    OopsieV2(controller::strategies::v2::OopsieV2Controller),
 }
 
 impl OopsieLogsyController for OopsieLogsyControllerStrategy {
     fn convert_logs(&mut self, app_data: &mut AppData) -> Result<String, String> {
         match self {
             OopsieLogsyControllerStrategy::OopsieV1(inner) => inner.convert_logs(app_data),
+            OopsieLogsyControllerStrategy::OopsieV2(inner) => inner.convert_logs(app_data),
         }
     }
 
     fn filter_logs(&mut self, app_data: &mut AppData) -> Result<String, String> {
         match self {
             OopsieLogsyControllerStrategy::OopsieV1(inner) => inner.filter_logs(app_data),
+            OopsieLogsyControllerStrategy::OopsieV2(inner) => inner.filter_logs(app_data),
         }
     }
 
@@ -94,6 +97,9 @@ impl OopsieLogsyController for OopsieLogsyControllerStrategy {
     ) -> Result<ColumnLogsChunk, String> {
         match self {
             OopsieLogsyControllerStrategy::OopsieV1(inner) => {
+                inner.get_filtered_logs_chunk(app_data, desired_range)
+            }
+            OopsieLogsyControllerStrategy::OopsieV2(inner) => {
                 inner.get_filtered_logs_chunk(app_data, desired_range)
             }
         }

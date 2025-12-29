@@ -16,7 +16,7 @@ use std::sync::Mutex;
 use tauri::State;
 
 use crate::{
-    controller::{strategies::v1::OopsieV1Controller, OopsieLogsyControllerStrategy},
+    controller::{strategies::v2::OopsieV2Controller, OopsieLogsyControllerStrategy},
     state::data::AppData,
 };
 
@@ -31,7 +31,7 @@ impl AppState {
     pub fn default() -> Self {
         Self {
             data: AppData::default(),
-            controller: OopsieLogsyControllerStrategy::OopsieV1(OopsieV1Controller::new()),
+            controller: OopsieLogsyControllerStrategy::OopsieV2(OopsieV2Controller::new()),
         }
     }
 }
