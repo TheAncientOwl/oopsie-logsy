@@ -7,7 +7,7 @@
 //! # `logger.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.7
+//! **Version**: 0.8
 //! **Description**: Logger utilities.
 //!
 
@@ -157,12 +157,9 @@ pub fn log<T>(level: LogLevel, _caller: &T, args: std::fmt::Arguments) {
 
 pub fn assert<T>(caller: &T, condition: bool, message: std::fmt::Arguments) {
     if !condition {
-        log(
-            LogLevel::Assert,
-            caller,
-            format_args!("Assertion Failed: {}", message),
-        );
-        panic!("Assertion Failed");
+        let msg = format_args!("[Error] Assertion Failed: {}", message);
+        log(LogLevel::Assert, caller, msg);
+        panic!("{}", msg);
     }
 }
 
