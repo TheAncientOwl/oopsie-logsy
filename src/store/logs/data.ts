@@ -6,25 +6,22 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.5
+ * @version 0.6
  * @description Logs data.
  */
 
-import { UUID } from '../common/identifier';
-import { getStaticDefaultTags } from '../regex-tags/data';
-
 // <types>
-export type TColumnLogs = Array<Array<string>>;
+// format: FilterUUID, field-1, field-2, ..., field-n
+export type TLogRow = Array<string>;
 
-export type TColumnLogsChunk = {
-  logs: TColumnLogs;
-  filterIds: Array<UUID>;
+export type TLogsChunk = {
+  data: Array<TLogRow>;
   totalLogs: number;
 };
 
 export type TStoreState = {
   loading: boolean;
-  chunkData: TColumnLogsChunk;
+  chunkData: TLogsChunk;
   requested_chunk: boolean;
   chunk: {
     begin: number;
@@ -40,11 +37,8 @@ export const LOG_VIEW_CHUNK_SIZE = 200;
 export const defaultState: TStoreState = {
   loading: false,
   chunkData: {
-    logs: getStaticDefaultTags()
-      .filter(tag => tag.displayed)
-      .map(() => []),
+    data: [],
     totalLogs: 0,
-    filterIds: [],
   },
   requested_chunk: false,
   chunk: {

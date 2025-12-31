@@ -7,7 +7,7 @@
 //! # `get_filtered_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Read filtered logs chunk.
 //!
 
@@ -17,14 +17,13 @@ use crate::{
     common::scope_log::ScopeLog,
     controller::{common::index_range::IndexRange, strategies::v2::OopsieV2Controller},
     log_debug, log_error, log_info,
-    state::data::{logs::ColumnLogsChunk, AppData},
+    state::data::{logs::LogsChunk, AppData},
 };
 
-pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<ColumnLogsChunk, String> {
+pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<LogsChunk, String> {
     let _log = ScopeLog::new(&execute);
 
-    let active_tags = data.regex_tags.compute_active_tags();
-    let mut out = ColumnLogsChunk::new_with_field_capacity(active_tags.len(), desired_range.size());
+    let mut out = LogsChunk::with_capacity(desired_range.size());
 
     if data.logs.get_raw_logs_path().is_empty() {
         log_info!(
@@ -57,7 +56,7 @@ pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<ColumnLo
         desired_range.size() as IdxSize,
     );
 
-    let desired_frame = {
+    let mut desired_frame = {
         // Run the blocking collect in a separate thread
         let lazy = desired_lazy_frame;
         let handle = std::thread::spawn(move || lazy.collect());
@@ -77,46 +76,36 @@ pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<ColumnLo
         }
     };
 
-    if let Ok(columns) = desired_frame.columns(desired_frame.get_column_names()) {
-        // filter IDs
-        let filter_ids_col = columns[0]
-            .cast(&polars::prelude::DataType::String)
-            .map_err(|err| format!("Polars CSV cast error: {:?}", err))?;
+    // Ensure the frame is a single chunk for faster iteration
+    let desired_frame_chunk = desired_frame.as_single_chunk();
 
-        let filter_ids_val = match filter_ids_col.str() {
-            Ok(data) => data,
-            Err(err) => {
-                log_error!(&execute, "Polars CSV error: {:?}", err);
-                return Err(format!("Polars CSV error: {:?}", err));
-            }
-        };
+    // Get the series as string
+    let string_columns: Vec<_> = desired_frame_chunk
+        .get_columns()
+        .iter()
+        .map(|s| {
+            s.cast(&polars::prelude::DataType::String)
+                .expect("Failed to cast to string")
+        })
+        .collect();
 
-        filter_ids_val.into_iter().for_each(|idk| {
-            out.filter_ids
-                .push(idk.unwrap_or("ERROR-MISSING").to_string());
-        });
+    let mut iters: Vec<_> = string_columns
+        .iter()
+        .map(|s| s.str().expect("All columns are now strings").into_iter())
+        .collect();
 
-        // logs
-        for col_idx in 1..columns.len() {
-            let col = columns[col_idx]
-                .cast(&polars::prelude::DataType::String)
-                .map_err(|err| format!("Polars CSV cast error: {:?}", err))?;
-
-            let val = match col.str() {
-                Ok(data) => data,
-                Err(err) => {
-                    log_error!(&execute, "Polars CSV error: {:?}", err);
-                    return Err(format!("Polars CSV error: {:?}", err));
-                }
-            };
-
-            val.into_iter().for_each(|idk| {
-                out.logs[col_idx - 1].push(idk.unwrap_or("ERROR-MISSING").to_string());
-            });
+    // Iterate over rows
+    let height = desired_frame_chunk.height();
+    for _ in 0..height {
+        let mut row_vec = Vec::with_capacity(iters.len());
+        for col_iter in &mut iters {
+            let value = col_iter.next().unwrap_or(None).unwrap_or("");
+            row_vec.push(value.to_string());
         }
+        out.data.push(row_vec);
     }
 
-    // TODO: I don't remember what is this at this point, do we still need it? - perhaps
+    // TODO: return total number of logs
     out.total_logs = 404;
 
     Ok(out)

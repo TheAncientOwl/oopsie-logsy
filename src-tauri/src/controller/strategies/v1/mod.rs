@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Oopsie V1 Mod file.
 //!
 
@@ -22,7 +22,7 @@ use crate::{
     },
     log_assert, log_error,
     state::data::{
-        logs::{ColumnLogsChunk, LogsManager},
+        logs::{LogsChunk, LogsManager},
         paths::common::get_oopsie_home_dir,
         regex_tags::RegexTag,
         AppData,
@@ -134,7 +134,7 @@ impl OopsieLogsyController for OopsieV1Controller {
         &mut self,
         app_data: &mut AppData,
         desired_range: IndexRange,
-    ) -> Result<ColumnLogsChunk, String> {
+    ) -> Result<LogsChunk, String> {
         read_logs_chunk::execute(app_data, desired_range)
     }
 }

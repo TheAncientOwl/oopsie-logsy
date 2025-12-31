@@ -7,12 +7,14 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Oopsie V2 Mod file.
 //!
 //! **Strategy**:
-//!     - store each field in its own file, one value per line
-//!     - filtered logs indices are stored in a file
+//!     - CSV all the way
+//!     - one file for parsed data
+//!     - one file for filtered data
+//!     - filtered logs indices are stored as first field in filtered file
 //!
 
 pub mod convert_logs;
@@ -91,7 +93,7 @@ impl OopsieLogsyController for OopsieV2Controller {
         &mut self,
         app_data: &mut crate::state::data::AppData,
         desired_range: crate::controller::common::index_range::IndexRange,
-    ) -> Result<crate::state::data::logs::ColumnLogsChunk, String> {
+    ) -> Result<crate::state::data::logs::LogsChunk, String> {
         log_trace!(&OopsieV2Controller::get_filtered_logs_chunk, "");
         get_filtered_logs_chunk::execute(app_data, desired_range)
     }
@@ -119,7 +121,7 @@ mod tests {
         state::{
             data::{
                 filters::{Filter, FilterColors, FilterComponent, FilterTab},
-                logs::{ColumnLogsChunk, LogsManager},
+                logs::{LogsChunk, LogsManager},
                 regex_tags::RegexTag,
             },
             AppState,
@@ -317,7 +319,7 @@ mod tests {
                     "Error while filtering: {}",
                     err
                 );
-                ColumnLogsChunk::new(0)
+                LogsChunk::new()
             }
         };
 
@@ -338,68 +340,26 @@ mod tests {
 
         log_assert!(
             &test_get_filtered_logs,
-            raw_data.len() == fetched_data.filter_ids.len(),
-            "Missmatch in IDs length"
-        );
-        log_assert!(
-            &test_get_filtered_logs,
-            raw_data.len() == fetched_data.logs[0].len(),
-            "Missmatch in IDs length"
+            raw_data.len() == fetched_data.data.len(),
+            "Missmatch in data length"
         );
 
+        let labels = vec!["ID", "Timestamp", "Channel", "Level", "Payload"];
         for row_index in 0..raw_data.len() {
-            match raw_data.get(row_index) {
-                Some(raw_line_data) => {
-                    let raw_line_index = row_index + desired_range.begin() as usize;
+            let raw_line_index = row_index + desired_range.begin() as usize;
+            let raw = &raw_data[row_index];
+            let filtered = &fetched_data.data[row_index];
 
-                    let assert_field =
-                        |raw_field_index: usize, full_fetched_data: &Vec<String>, label: &str| {
-                            match raw_line_data.get(raw_field_index) {
-                                Some(raw_data) => {
-                                    let fetched_data = match full_fetched_data.get(row_index) {
-                                        Some(data) => data,
-                                        None => {
-                                            log_assert!(
-                                                &test_get_filtered_logs,
-                                                false,
-                                                "Missing {} in actual data on line {}",
-                                                label,
-                                                raw_line_index
-                                            );
-                                            "MISSING"
-                                        }
-                                    };
-
-                                    log_assert!(
-                                        &test_get_filtered_logs,
-                                        raw_data.eq(fetched_data),
-                                        "Missmatch {} on line {}\n\traw: {}, fetched: {}",
-                                        label,
-                                        raw_line_index,
-                                        raw_data,
-                                        fetched_data
-                                    );
-                                }
-                                None => {
-                                    log_assert!(
-                                        &test_get_filtered_logs,
-                                        false,
-                                        "Missing filter ID on line {}",
-                                        raw_line_index
-                                    );
-                                }
-                            }
-                        };
-
-                    assert_field(0, &fetched_data.filter_ids, "ID");
-                    assert_field(1, &fetched_data.logs.get(0).unwrap(), "Timestamp");
-                    assert_field(2, &fetched_data.logs.get(1).unwrap(), "Channel");
-                    assert_field(3, &fetched_data.logs.get(2).unwrap(), "Level");
-                    assert_field(4, &fetched_data.logs.get(3).unwrap(), "Payload");
-                }
-                None => {
-                    log_assert!(&test_get_filtered_logs, false, "Missing row_data");
-                }
+            for field_idx in 0..5 {
+                log_assert!(
+                    &test_get_filtered_logs,
+                    raw[field_idx].eq(&filtered[field_idx]),
+                    "Missmatch {} on line {}\n\traw: {}, filtered: {}",
+                    labels[field_idx],
+                    raw_line_index,
+                    raw.get(field_idx).unwrap(),
+                    filtered[field_idx]
+                );
             }
         }
 
@@ -483,8 +443,6 @@ mod tests {
         );
 
         // >> check what was filtered
-        // let raw_input_reader = BufReader::new(File::open(&raw_input_file_path)?);
-
         let mut filtered_db_reader = csv::ReaderBuilder::new().has_headers(false).from_path(
             OopsieV2Controller::get_filtered_database_path(&app_state.data.logs),
         )?;

@@ -6,12 +6,12 @@
  *
  * @file oopsie.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Wrapper over tauri's invoke for OopsieLogsy backend commands.
  */
 
 import { TFilter, TFilterComponent, TFilterTab } from '@/store/filters/data';
-import { TColumnLogsChunk } from '@/store/logs/data';
+import { TLogsChunk } from '@/store/logs/data';
 import { TRegexTag } from '@/store/regex-tags/data';
 import { invoke } from '@tauri-apps/api/core';
 
@@ -24,7 +24,7 @@ export const ipcInvokeGetFilters = () =>
   invoke<[Array<TFilterTab>, Array<TFilter>, Array<TFilterComponent>]>('get_filters');
 
 export const ipcInvokeGetLogsChunk = (begin: number, end: number) =>
-  invoke<TColumnLogsChunk>('get_logs_chunk', {
+  invoke<TLogsChunk>('get_logs_chunk', {
     desiredRange: { begin, end },
   });
 

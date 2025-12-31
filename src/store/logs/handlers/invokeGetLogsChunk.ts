@@ -6,14 +6,14 @@
  *
  * @file invokeGetLogsChunk.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description InvokeGetChunk handler.
  */
 
 import { ipcInvokeGetLogsChunk } from '@/commands/oopsie';
 import { IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
 import { EActionType, type TDispatch } from '../actions';
-import { type TColumnLogsChunk, type TStoreState } from '../data';
+import { type TLogsChunk, type TStoreState } from '../data';
 
 const action = {
   ok: EActionType.InokeGetChunkOK,
@@ -21,7 +21,7 @@ const action = {
 };
 
 export type TPayloadOk = {
-  chunkData: TColumnLogsChunk;
+  chunkData: TLogsChunk;
   chunk: {
     begin: number;
     end: number;

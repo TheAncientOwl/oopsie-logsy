@@ -7,7 +7,7 @@
 //! # `current_log_paths.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.19
+//! **Version**: 0.20
 //! **Description**: CurrentLogPaths data and ipc transfer commands.
 //!
 
@@ -15,13 +15,12 @@ use crate::common::scope_log::ScopeLog;
 use serde::{Deserialize, Serialize};
 
 // <data>
-pub type ColumnLogs = Vec<Vec<String>>;
+// format: FilterUUID, field-1, field-2, ..., field-n
+pub type LogRow = Vec<String>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ColumnLogsChunk {
-    pub logs: ColumnLogs,
-    #[serde(rename = "filterIds")]
-    pub filter_ids: Vec<String>,
+pub struct LogsChunk {
+    pub data: Vec<LogRow>,
     #[serde(rename = "totalLogs")]
     pub total_logs: u64,
 }
@@ -49,27 +48,17 @@ impl LogsManager {
     }
 }
 
-impl ColumnLogsChunk {
-    pub fn new(fields: usize) -> Self {
-        let mut logs = Vec::with_capacity(fields);
-        for _ in 0..fields {
-            logs.push(Vec::new());
-        }
+impl LogsChunk {
+    pub fn new() -> Self {
         Self {
-            logs,
-            filter_ids: Vec::new(),
+            data: Vec::new(),
             total_logs: 0,
         }
     }
 
-    pub fn new_with_field_capacity(fields: usize, capacity: usize) -> Self {
-        let mut logs = Vec::with_capacity(fields);
-        for _ in 0..fields {
-            logs.push(Vec::with_capacity(capacity));
-        }
+    pub fn with_capacity(capacity: usize) -> Self {
         Self {
-            logs,
-            filter_ids: Vec::with_capacity(capacity),
+            data: Vec::with_capacity(capacity),
             total_logs: 0,
         }
     }

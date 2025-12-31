@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Controller mod file.
 //!
 
@@ -16,7 +16,7 @@ pub mod strategies;
 
 use crate::{
     controller::{self, common::index_range::IndexRange},
-    state::data::{logs::ColumnLogsChunk, AppData},
+    state::data::{logs::LogsChunk, AppData},
 };
 
 /// Logs controller responsible with I/O and filtering.
@@ -67,7 +67,7 @@ pub trait OopsieLogsyController {
         &mut self,
         app_data: &mut AppData,
         desired_range: IndexRange,
-    ) -> Result<ColumnLogsChunk, String>;
+    ) -> Result<LogsChunk, String>;
 }
 
 pub enum OopsieLogsyControllerStrategy {
@@ -94,7 +94,7 @@ impl OopsieLogsyController for OopsieLogsyControllerStrategy {
         &mut self,
         app_data: &mut AppData,
         desired_range: IndexRange,
-    ) -> Result<ColumnLogsChunk, String> {
+    ) -> Result<LogsChunk, String> {
         match self {
             OopsieLogsyControllerStrategy::OopsieV1(inner) => {
                 inner.get_filtered_logs_chunk(app_data, desired_range)

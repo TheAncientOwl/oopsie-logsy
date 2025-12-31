@@ -6,13 +6,12 @@
  *
  * @file invokeSetCurrentLogPaths.ts
  * @author Alexandru Delegeanu
- * @version 0.8
+ * @version 0.9
  * @description InvokeSetCurrentLogPaths handler.
  */
 
 import { ipcInvokeImportLogs } from '@/commands/oopsie';
 import { type IApiCallStoreHandler, type TStoreAction } from '@/store/common/storeHandler';
-import { getStaticDefaultTags } from '@/store/regex-tags/data';
 import { EActionType, type TDispatch } from '../actions';
 import { type TStoreState } from '../data';
 
@@ -72,9 +71,7 @@ export const invokeImportLogs: IApiCallStoreHandler<
         ...state,
         loading: false,
         chunkData: {
-          logs: getStaticDefaultTags()
-            .filter(tag => tag.displayed)
-            .map(() => []),
+          data: [],
           totalLogs: 0,
           filterIds: [],
         },

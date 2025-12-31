@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description Display logs in table format
  */
 
@@ -33,7 +33,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
   const headerRef = useRef<HTMLTableSectionElement>(null);
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
-  const numberOfItems = props.logsChunk.logs.length === 0 ? 0 : props.logsChunk.logs[0].length;
+  const numberOfItems = props.logsChunk.data.length === 0 ? 0 : props.logsChunk.data.length;
   const innerRef = ref as React.RefObject<HTMLDivElement>;
   const windowHeight = innerRef.current ? innerRef.current.offsetHeight : 300;
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
@@ -71,10 +71,11 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 
   const generateLogRows = () => {
     const items: Array<JSX.Element> = [];
+    console.debug(LogView, { renderedNodesCount });
     for (let i = 0; i < renderedNodesCount; i++) {
       const rowIndex = i + startIndex;
 
-      const filterId = props.logsChunk.filterIds[rowIndex];
+      const filterId = props.logsChunk.data[rowIndex][0];
 
       const colors = props.filterToColors.get(filterId);
 
@@ -100,7 +101,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
             {(_, fieldIndex) => {
               return (
                 <Table.Cell minWidth='100px' borderColor='inherit' width='100%' maxWidth='100%'>
-                  {props.logsChunk.logs[fieldIndex][rowIndex]}
+                  {props.logsChunk.data[rowIndex][fieldIndex + 1]}
                 </Table.Cell>
               );
             }}

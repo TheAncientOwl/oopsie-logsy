@@ -7,7 +7,7 @@
 //! # `get_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: GetLogsChunk command.
 //!
 
@@ -15,14 +15,14 @@ use crate::{
     common::scope_log::ScopeLog,
     controller::{common::index_range::IndexRange, OopsieLogsyController},
     log_trace,
-    state::{data::logs::ColumnLogsChunk, AppState, AppStateMutex},
+    state::{data::logs::LogsChunk, AppState, AppStateMutex},
 };
 
 #[tauri::command]
 pub async fn get_logs_chunk(
     state: AppStateMutex<'_>,
     desired_range: IndexRange,
-) -> Result<ColumnLogsChunk, String> {
+) -> Result<LogsChunk, String> {
     let _log = ScopeLog::new_command(&get_logs_chunk);
 
     log_trace!(
