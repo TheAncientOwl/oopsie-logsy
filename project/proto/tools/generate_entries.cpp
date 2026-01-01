@@ -6,7 +6,7 @@
  *
  * @file generate_entries.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Generator tool for log entries.
  */
 
@@ -85,7 +85,7 @@ void generate_and_write_log_entries(
 
     for (int i = 0; i < count; ++i)
     {
-        int timestamp = start_timestamp + i * 5;
+        int timestamp = start_timestamp + i;
         std::string channel = channels[channel_dist(gen)];
         std::string level = levels[level_dist(gen)];
         std::string payload = generate_payload(min_payload_len, max_payload_len);
