@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.13
+ * @version 0.14
  * @description Display logs in table format
  */
 
@@ -128,11 +128,11 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       const rowIndex = i + startIndex;
 
       const row = rowsCache.data.get(rowIndex);
-      if (row === undefined) {
-        continue;
-      }
+      // if (row === undefined) {
+      //   continue;
+      // }
 
-      const filterId = row[0];
+      const filterId = row ? row[0] : 'default';
 
       const colors = props.filterToColors.get(filterId);
 
@@ -158,7 +158,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
             {(_, fieldIndex) => {
               return (
                 <Table.Cell minWidth='100px' borderColor='inherit' width='100%' maxWidth='100%'>
-                  {row[fieldIndex + 1]}
+                  {row ? row[fieldIndex + 1] : 'Loading...'}
                 </Table.Cell>
               );
             }}
