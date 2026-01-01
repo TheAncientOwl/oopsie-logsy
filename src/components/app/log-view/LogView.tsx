@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.14
+ * @version 0.15
  * @description Display logs in table format
  */
 
@@ -78,13 +78,17 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       console.trace(LogViewImpl, 'Updating rows cache', {
         newChunk: props.logsChunk,
         startIndex,
+        rowsCache: rowsCache.data,
       });
 
       for (let idx = 0; idx < props.logsChunk.data.length; ++idx) {
-        rowsCache.data.set(idx + startIndex, props.logsChunk.data[idx]);
+        const row = props.logsChunk.data[idx];
+        rowsCache.data.set(Number(row[0]), row);
       }
 
       setRowsCache(prev => ({ ...prev }));
+
+      console.trace(LogViewImpl, 'Rows cache', { rowsCache: rowsCache.data });
     }
 
     prevLogsMetadata.current = {
@@ -132,7 +136,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       //   continue;
       // }
 
-      const filterId = row ? row[0] : 'default';
+      const filterId = row ? row[1] : 'default';
 
       const colors = props.filterToColors.get(filterId);
 
@@ -158,7 +162,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
             {(_, fieldIndex) => {
               return (
                 <Table.Cell minWidth='100px' borderColor='inherit' width='100%' maxWidth='100%'>
-                  {row ? row[fieldIndex + 1] : 'Loading...'}
+                  {row ? row[fieldIndex + 2] : 'Loading...'}
                 </Table.Cell>
               );
             }}

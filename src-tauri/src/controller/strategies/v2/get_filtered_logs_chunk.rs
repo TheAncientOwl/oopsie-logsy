@@ -7,7 +7,7 @@
 //! # `get_filtered_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Read filtered logs chunk.
 //!
 
@@ -110,12 +110,17 @@ pub fn execute(
 
     // Iterate over rows
     let height = desired_frame_chunk.height();
-    for _ in 0..height {
-        let mut row_vec = Vec::with_capacity(iters.len());
+    let row_length = iters.len() + 1; // +1 for the row index
+    for row_idx in 0..height {
+        let mut row_vec = Vec::with_capacity(row_length);
+
+        row_vec.push((row_idx + desired_range.begin() as usize).to_string());
+
         for col_iter in &mut iters {
             let value = col_iter.next().unwrap_or(None).unwrap_or("");
             row_vec.push(value.to_string());
         }
+
         out.data.push(row_vec);
     }
 
