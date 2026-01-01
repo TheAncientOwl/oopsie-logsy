@@ -7,13 +7,14 @@
 //! # `convert_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Convert raw logs to OopsieLogsyV2 format.
 //!
 
 use std::{fs::File, io::BufRead};
 
 use chrono::Utc;
+use polars::prelude::LazyFrame;
 
 use crate::{
     common::scope_log::ScopeLog,
@@ -27,8 +28,10 @@ use crate::{
 
 pub const DEFAULT_FILTER_ID: &str = "default";
 
-pub fn execute(data: &mut AppData) -> Result<String, String> {
+pub fn execute(data: &mut AppData, logs_frame: &mut Option<LazyFrame>) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
+
+    *logs_frame = None;
 
     // TODO: cleanup
     let input_path = &data.logs.get_raw_logs_path()[0];

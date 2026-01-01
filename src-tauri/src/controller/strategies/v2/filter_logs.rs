@@ -7,12 +7,13 @@
 //! # `filter_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Filter logs.
 //!
 
 use chrono::Utc;
 use csv::StringRecord;
+use polars::prelude::LazyFrame;
 
 use crate::{
     common::scope_log::ScopeLog,
@@ -41,8 +42,10 @@ fn find_matching_filter<'a>(
     })
 }
 
-pub fn execute(data: &mut AppData) -> Result<String, String> {
+pub fn execute(data: &mut AppData, logs_frame: &mut Option<LazyFrame>) -> Result<String, String> {
     let _log = ScopeLog::new(&execute);
+
+    *logs_frame = None;
 
     let active_tags = data.regex_tags.compute_active_tags();
     log_debug!(&execute, "Active tags: {:?}", active_tags);

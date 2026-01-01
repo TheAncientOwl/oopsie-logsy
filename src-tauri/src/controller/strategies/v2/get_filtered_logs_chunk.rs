@@ -7,11 +7,11 @@
 //! # `get_filtered_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Read filtered logs chunk.
 //!
 
-use polars::prelude::{IdxSize, LazyCsvReader, LazyFileListReader, PlPath};
+use polars::prelude::{IdxSize, LazyCsvReader, LazyFileListReader, LazyFrame, PlPath};
 
 use crate::{
     common::scope_log::ScopeLog,
@@ -26,7 +26,11 @@ use crate::{
     state::data::{logs::LogsChunk, AppData},
 };
 
-pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<LogsChunk, String> {
+pub fn execute(
+    data: &mut AppData,
+    desired_range: IndexRange,
+    logs_frame: &mut Option<LazyFrame>,
+) -> Result<LogsChunk, String> {
     let _log = ScopeLog::new(&execute);
 
     let mut out = LogsChunk::with_capacity(desired_range.size());
@@ -41,23 +45,27 @@ pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<LogsChun
 
     log_debug!(&execute, "Desired range: {:?}", desired_range);
 
-    let csv_path = OopsieV2Controller::get_filtered_database_path(&data.logs);
+    if logs_frame.is_none() {
+        let csv_path = OopsieV2Controller::get_filtered_database_path(&data.logs);
 
-    let lazy_csv_reader = LazyCsvReader::new(PlPath::new(csv_path.to_str().expect(
-        "[OopsieV2Controller] Could not create PlPath from input filtered database file path",
-    )))
-    .with_has_header(false)
-    .finish();
+        let lazy_csv_reader = LazyCsvReader::new(PlPath::new(csv_path.to_str().expect(
+            "[OopsieV2Controller] Could not create PlPath from input filtered database file path",
+        )))
+        .with_has_header(false)
+        .finish();
 
-    let lazy_frame = match lazy_csv_reader {
-        Ok(frame) => frame,
-        Err(err) => {
-            log_error!(&execute, "Polars CSV error: {:?}", err);
-            return Err(format!("Polars CSV error: {:?}", err));
-        }
-    };
+        let frame = match lazy_csv_reader {
+            Ok(frame) => frame,
+            Err(err) => {
+                log_error!(&execute, "Polars CSV error: {:?}", err);
+                return Err(format!("Polars CSV error: {:?}", err));
+            }
+        };
 
-    let desired_lazy_frame = lazy_frame.slice(
+        logs_frame.replace(frame);
+    }
+
+    let desired_lazy_frame = logs_frame.as_ref().unwrap().clone().slice(
         desired_range.begin() as i64,
         desired_range.size() as IdxSize,
     );

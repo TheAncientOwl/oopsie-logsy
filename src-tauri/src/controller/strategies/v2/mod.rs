@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Oopsie V2 Mod file.
 //!
 //! **Strategy**:
@@ -22,17 +22,23 @@ pub mod convert_logs;
 pub mod filter_logs;
 pub mod get_filtered_logs_chunk;
 
+use polars::prelude::LazyFrame;
+
 use crate::{
     controller::OopsieLogsyController,
     log_assert, log_error, log_trace,
     state::data::{logs::LogsManager, paths::common::get_oopsie_home_dir},
 };
 
-pub struct OopsieV2Controller {}
+pub struct OopsieV2Controller {
+    pub logs_lazy_frame: Option<LazyFrame>,
+}
 
 impl OopsieV2Controller {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            logs_lazy_frame: Option::None,
+        }
     }
 
     pub fn get_working_dir(logs_manager: &LogsManager) -> std::path::PathBuf {
@@ -84,7 +90,7 @@ impl OopsieLogsyController for OopsieV2Controller {
         app_data: &mut crate::state::data::AppData,
     ) -> Result<String, String> {
         log_trace!(&OopsieV2Controller::convert_logs, "");
-        convert_logs::execute(app_data)
+        convert_logs::execute(app_data, &mut self.logs_lazy_frame)
     }
 
     fn filter_logs(
@@ -92,7 +98,7 @@ impl OopsieLogsyController for OopsieV2Controller {
         app_data: &mut crate::state::data::AppData,
     ) -> Result<String, String> {
         log_trace!(&OopsieV2Controller::filter_logs, "");
-        filter_logs::execute(app_data)
+        filter_logs::execute(app_data, &mut self.logs_lazy_frame)
     }
 
     fn get_filtered_logs_chunk(
@@ -101,7 +107,7 @@ impl OopsieLogsyController for OopsieV2Controller {
         desired_range: crate::controller::common::index_range::IndexRange,
     ) -> Result<crate::state::data::logs::LogsChunk, String> {
         log_trace!(&OopsieV2Controller::get_filtered_logs_chunk, "");
-        get_filtered_logs_chunk::execute(app_data, desired_range)
+        get_filtered_logs_chunk::execute(app_data, desired_range, &mut self.logs_lazy_frame)
     }
 }
 
