@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Display logs in table format
  */
 
@@ -15,17 +15,41 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { type TRootState } from '@/store';
 import { type UUID } from '@/store/common/identifier';
 import { type TFilterColors } from '@/store/filters/data';
+import { TLogRow } from '@/store/logs/data';
 import { invokeGetLogsChunk } from '@/store/logs/handlers';
 import { Box, Table } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-const itemHeight = 45;
-const overscan = 5;
+const ITEM_HEIGHT = 45;
+const ITEMS_OVERSCAN = 15;
+const CHUNK_SIZE = 200;
 
+type TRowsCache = Map<number, TLogRow>;
+
+// TODO: cleanup
+// TODO: remove no longer needed logs, since with current impl we will reach to have every log in memory
 const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, ref) => {
+  let [rowsCache, setRowsCache] = useState({ data: new Map() as TRowsCache });
+  const rowsCacheMetadata = useRef({ bounds: { begin: 0, end: 0 } });
+  const prevLogsMetadata = useRef<{
+    logsChunk: typeof props.logsChunk | null;
+    startIndex: number | null;
+  }>({
+    logsChunk: null,
+    startIndex: null,
+  });
+
   useEffect(() => {
     props.invokeGetLogsChunk(0, 200);
+
+    rowsCacheMetadata.current.bounds.begin = 0;
+    rowsCacheMetadata.current.bounds.begin = 200;
+
+    rowsCache.data.clear();
+    setRowsCache(prev => ({ ...prev }));
+
+    console.trace(LogViewImpl, 'Cleared rows cache');
   }, [props.activeLogsChangedTime]);
 
   const [scrollTop, setScrollTop] = useState(0);
@@ -33,12 +57,45 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
   const headerRef = useRef<HTMLTableSectionElement>(null);
   const bodyRef = useRef<HTMLTableSectionElement>(null);
 
-  const numberOfItems = props.logsChunk.data.length === 0 ? 0 : props.logsChunk.data.length;
+  const numberOfItems = props.logsChunk.totalLogs;
   const innerRef = ref as React.RefObject<HTMLDivElement>;
   const windowHeight = innerRef.current ? innerRef.current.offsetHeight : 300;
-  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
-  let renderedNodesCount = Math.floor(windowHeight / itemHeight) + 2 * overscan;
-  renderedNodesCount = Math.min(numberOfItems - startIndex, renderedNodesCount);
+  const rawIndex = Math.floor(scrollTop / ITEM_HEIGHT) - ITEMS_OVERSCAN;
+  const startIndex = Math.max(0, Math.min(rawIndex, props.logsChunk.totalLogs - 1));
+  const renderedNodesCount = Math.min(
+    numberOfItems - startIndex,
+    Math.floor(windowHeight / ITEM_HEIGHT) + 2 * ITEMS_OVERSCAN
+  );
+
+  const endIndex = startIndex + renderedNodesCount;
+
+  console.debug(LogViewImpl, { startIndex, endIndex, rowsCache });
+
+  useEffect(() => {
+    const prev = prevLogsMetadata.current;
+    const logsChunkChanged = prev.logsChunk !== null && prev.logsChunk !== props.logsChunk;
+    const startIndexChanged = prev.startIndex !== null && prev.startIndex !== startIndex;
+
+    if (logsChunkChanged || (logsChunkChanged && startIndexChanged)) {
+      console.trace(LogViewImpl, 'Updating rows cache', {
+        newChunk: props.logsChunk,
+        startIndex,
+      });
+
+      for (let idx = 0; idx < props.logsChunk.data.length; ++idx) {
+        rowsCache.data.set(idx + startIndex, props.logsChunk.data[idx]);
+      }
+
+      setRowsCache(prev => ({ ...prev }));
+    }
+
+    prevLogsMetadata.current = {
+      logsChunk: props.logsChunk,
+      startIndex,
+    };
+  }, [props.logsChunk, startIndex]);
+
+  console.debug(LogViewImpl, { rowsCache });
 
   const syncWidths = () => {
     if (!headerRef.current || !bodyRef.current) return;
@@ -70,12 +127,17 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
   }, [props.tags, props.logsChunk, renderedNodesCount]);
 
   const generateLogRows = () => {
+    console.debug(LogViewImpl, { startIndex });
     const items: Array<JSX.Element> = [];
-    console.debug(LogView, { renderedNodesCount });
     for (let i = 0; i < renderedNodesCount; i++) {
       const rowIndex = i + startIndex;
 
-      const filterId = props.logsChunk.data[rowIndex][0];
+      const row = rowsCache.data.get(rowIndex);
+      if (row === undefined) {
+        continue;
+      }
+
+      const filterId = row[0];
 
       const colors = props.filterToColors.get(filterId);
 
@@ -101,7 +163,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
             {(_, fieldIndex) => {
               return (
                 <Table.Cell minWidth='100px' borderColor='inherit' width='100%' maxWidth='100%'>
-                  {props.logsChunk.data[rowIndex][fieldIndex + 1]}
+                  {row[fieldIndex + 1]}
                 </Table.Cell>
               );
             }}
@@ -112,6 +174,31 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
     return items;
   };
 
+  const totalLogs = useRef(0);
+  totalLogs.current = props.logsChunk.totalLogs;
+
+  const fetchMissingLogs = (startIndex: number, endIndex: number) => {
+    let chunkBegin: null | number = null;
+
+    for (let idx = startIndex; idx < endIndex + ITEMS_OVERSCAN; idx++) {
+      if (!rowsCache.data.has(idx)) {
+        chunkBegin = idx;
+        break;
+      }
+    }
+
+    if (chunkBegin === null) return;
+
+    const chunkEnd = Math.min(totalLogs.current, chunkBegin + CHUNK_SIZE + ITEMS_OVERSCAN);
+
+    console.trace(LogViewImpl, 'Fetching logs', { chunkBegin, chunkEnd });
+
+    props.invokeGetLogsChunk(chunkBegin, chunkEnd);
+  };
+
+  // Debounced version
+  const fetchMissingLogsDebounced = useDebounce(fetchMissingLogs, 100);
+
   return (
     <Box
       ref={ref}
@@ -120,6 +207,8 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       onScroll={e => {
         setScrollTop(e.currentTarget.scrollTop);
         syncWidthsDebounced();
+
+        fetchMissingLogsDebounced(startIndex, endIndex);
       }}
       position='relative'
     >
@@ -154,8 +243,8 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
           </Table.Header>
         </Table.Root>
 
-        <Box width='100vw' height={`${numberOfItems * itemHeight}px`}>
-          <Table.Root transform={`translateY(${startIndex * itemHeight}px)`} width='100%'>
+        <Box width='100vw' height={`${numberOfItems * ITEM_HEIGHT}px`}>
+          <Table.Root transform={`translateY(${startIndex * ITEM_HEIGHT}px)`} width='100%'>
             <Table.Body ref={bodyRef}>{generateLogRows()}</Table.Body>
           </Table.Root>
         </Box>
