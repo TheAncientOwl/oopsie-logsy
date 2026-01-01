@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.12
+ * @version 0.13
  * @description Display logs in table format
  */
 
@@ -69,8 +69,6 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 
   const endIndex = startIndex + renderedNodesCount;
 
-  console.debug(LogViewImpl, { startIndex, endIndex, rowsCache });
-
   useEffect(() => {
     const prev = prevLogsMetadata.current;
     const logsChunkChanged = prev.logsChunk !== null && prev.logsChunk !== props.logsChunk;
@@ -94,8 +92,6 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       startIndex,
     };
   }, [props.logsChunk, startIndex]);
-
-  console.debug(LogViewImpl, { rowsCache });
 
   const syncWidths = () => {
     if (!headerRef.current || !bodyRef.current) return;
@@ -127,7 +123,6 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
   }, [props.tags, props.logsChunk, renderedNodesCount]);
 
   const generateLogRows = () => {
-    console.debug(LogViewImpl, { startIndex });
     const items: Array<JSX.Element> = [];
     for (let i = 0; i < renderedNodesCount; i++) {
       const rowIndex = i + startIndex;
