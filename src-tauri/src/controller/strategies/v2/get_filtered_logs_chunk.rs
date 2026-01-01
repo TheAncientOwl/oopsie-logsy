@@ -7,7 +7,7 @@
 //! # `get_filtered_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.2
+//! **Version**: 0.3
 //! **Description**: Read filtered logs chunk.
 //!
 
@@ -15,7 +15,13 @@ use polars::prelude::{IdxSize, LazyCsvReader, LazyFileListReader, PlPath};
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::{common::index_range::IndexRange, strategies::v2::OopsieV2Controller},
+    controller::{
+        common::index_range::IndexRange,
+        strategies::v2::{
+            common::config_file::{ConfigFile, TOTAL_FILTERED_LOGS_KEY},
+            OopsieV2Controller,
+        },
+    },
     log_debug, log_error, log_info,
     state::data::{logs::LogsChunk, AppData},
 };
@@ -105,8 +111,8 @@ pub fn execute(data: &mut AppData, desired_range: IndexRange) -> Result<LogsChun
         out.data.push(row_vec);
     }
 
-    // TODO: return total number of logs
-    out.total_logs = 404;
+    out.total_logs = ConfigFile::load(OopsieV2Controller::get_config_path(&data.logs))
+        .get_number(TOTAL_FILTERED_LOGS_KEY, 0) as u64;
 
     Ok(out)
 }

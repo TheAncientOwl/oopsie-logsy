@@ -7,7 +7,7 @@
 //! # `filter_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Filter logs.
 //!
 
@@ -16,7 +16,10 @@ use csv::StringRecord;
 
 use crate::{
     common::scope_log::ScopeLog,
-    controller::strategies::v2::OopsieV2Controller,
+    controller::strategies::{
+        v1::common::disk_io::config_file::ConfigFile,
+        v2::{common::config_file::TOTAL_FILTERED_LOGS_KEY, OopsieV2Controller},
+    },
     log_debug, log_error, log_info,
     state::data::{filters::ActiveFilter, AppData},
 };
@@ -70,6 +73,7 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
             }
         };
 
+    let mut total_logs: u128 = 0;
     for record in csv_reader.records() {
         let data = match record {
             Ok(data) => data,
@@ -80,12 +84,17 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
         };
 
         if let Some(active_filter) = find_matching_filter(&data, &active_filters) {
+            total_logs += 1;
             let _res = csv_writer.write_field(&active_filter.filter_id);
             let _res = csv_writer.write_record(&data);
         }
     }
 
     let _res = csv_writer.flush();
+
+    let mut config = ConfigFile::overwrite(OopsieV2Controller::get_config_path(&data.logs));
+    config.set_number(TOTAL_FILTERED_LOGS_KEY, total_logs);
+    config.save();
 
     Ok(Utc::now().format("%Y-%m-%d_%H-%M-%S").to_string())
 }

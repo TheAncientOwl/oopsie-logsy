@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.3
+//! **Version**: 0.4
 //! **Description**: Oopsie V2 Mod file.
 //!
 //! **Strategy**:
@@ -17,6 +17,7 @@
 //!     - filtered logs indices are stored as first field in filtered file
 //!
 
+pub mod common;
 pub mod convert_logs;
 pub mod filter_logs;
 pub mod get_filtered_logs_chunk;
@@ -69,6 +70,11 @@ impl OopsieV2Controller {
     pub fn get_filtered_database_path(logs_manager: &LogsManager) -> std::path::PathBuf {
         let working_dir = OopsieV2Controller::get_working_dir(logs_manager);
         working_dir.join("oopsie.filtered.csv")
+    }
+
+    pub fn get_config_path(logs_manager: &LogsManager) -> std::path::PathBuf {
+        let working_dir = OopsieV2Controller::get_working_dir(logs_manager);
+        working_dir.join("config.json")
     }
 }
 

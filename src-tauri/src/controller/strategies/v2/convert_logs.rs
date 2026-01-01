@@ -7,7 +7,7 @@
 //! # `convert_logs.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.1
+//! **Version**: 0.2
 //! **Description**: Convert raw logs to OopsieLogsyV2 format.
 //!
 
@@ -16,8 +16,13 @@ use std::{fs::File, io::BufRead};
 use chrono::Utc;
 
 use crate::{
-    common::scope_log::ScopeLog, controller::strategies::v2::OopsieV2Controller, log_trace,
-    log_warn, state::data::AppData,
+    common::scope_log::ScopeLog,
+    controller::strategies::v2::{
+        common::config_file::{ConfigFile, TOTAL_FILTERED_LOGS_KEY},
+        OopsieV2Controller,
+    },
+    log_trace, log_warn,
+    state::data::AppData,
 };
 
 pub const DEFAULT_FILTER_ID: &str = "default";
@@ -48,10 +53,13 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
         .expect("[OopsieV2Controller] Failed to open logs input file for conversion");
     let reader = std::io::BufReader::new(in_file);
 
+    let mut total_logs: u128 = 0;
     for line in reader.lines() {
         let line = line.expect("Failed to read line");
 
         if let Some(caps) = line_regex.captures(&line) {
+            total_logs += 1;
+
             let _res = filtered_csv_writer.write_field(DEFAULT_FILTER_ID);
 
             for idx in 1..caps.len() {
@@ -76,6 +84,10 @@ pub fn execute(data: &mut AppData) -> Result<String, String> {
 
     let _res = main_csv_writer.flush();
     let _res = filtered_csv_writer.flush();
+
+    let mut config = ConfigFile::overwrite(OopsieV2Controller::get_config_path(&data.logs));
+    config.set_number(TOTAL_FILTERED_LOGS_KEY, total_logs);
+    config.save();
 
     Ok(Utc::now().format("%Y-%m-%d_%H-%M-%S").to_string())
 }
