@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.15
+ * @version 0.16
  * @description Display logs in table format
  */
 
@@ -41,6 +41,11 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
   });
 
   useEffect(() => {
+    const container = (ref as React.RefObject<HTMLDivElement>).current;
+    if (container) {
+      container.scrollTop = 0;
+    }
+
     props.invokeGetLogsChunk(0, 200);
 
     rowsCacheMetadata.current.bounds.begin = 0;
