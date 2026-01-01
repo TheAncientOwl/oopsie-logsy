@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.16
+ * @version 0.17
  * @description Display logs in table format
  */
 
@@ -15,30 +15,67 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { type TRootState } from '@/store';
 import { type UUID } from '@/store/common/identifier';
 import { type TFilterColors } from '@/store/filters/data';
-import { TLogRow } from '@/store/logs/data';
+import { TLogRow, TLogsChunk } from '@/store/logs/data';
 import { invokeGetLogsChunk } from '@/store/logs/handlers';
 import { Box, Table } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 const ITEM_HEIGHT = 45;
 const ITEMS_OVERSCAN = 15;
 const CHUNK_SIZE = 200;
 
-type TRowsCache = Map<number, TLogRow>;
-
-// TODO: cleanup
-// TODO: remove no longer needed logs, since with current impl we will reach to have every log in memory
-const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, ref) => {
-  let [rowsCache, setRowsCache] = useState({ data: new Map() as TRowsCache });
-  const rowsCacheMetadata = useRef({ bounds: { begin: 0, end: 0 } });
-  const prevLogsMetadata = useRef<{
-    logsChunk: typeof props.logsChunk | null;
+const useRowsCache = () => {
+  const [cache, setCache] = useState({ data: new Map<number, TLogRow>() });
+  const prevMetadata = useRef<{
+    logsChunk: TLogsChunk | null;
     startIndex: number | null;
   }>({
     logsChunk: null,
     startIndex: null,
   });
+
+  const update = (currentLogsChunk: TLogsChunk, currentStartIndex: number) => {
+    const prev = prevMetadata.current;
+    const logsChunkChanged = prev.logsChunk !== null && prev.logsChunk !== currentLogsChunk;
+    const startIndexChanged = prev.startIndex !== null && prev.startIndex !== currentStartIndex;
+
+    if (logsChunkChanged || (logsChunkChanged && startIndexChanged)) {
+      console.trace(LogViewImpl, 'Updating rows cache', {
+        newChunk: currentLogsChunk,
+        startIndex: currentStartIndex,
+        rowsCache: cache.data,
+      });
+
+      for (let idx = 0; idx < currentLogsChunk.data.length; ++idx) {
+        const row = currentLogsChunk.data[idx];
+        cache.data.set(Number(row[0]), row);
+      }
+
+      setCache(prev => ({ ...prev }));
+
+      console.trace(LogViewImpl, 'Rows cache', { rowsCache: cache.data });
+    }
+
+    prevMetadata.current = {
+      logsChunk: currentLogsChunk,
+      startIndex: currentStartIndex,
+    };
+  };
+
+  const clear = useCallback(() => {
+    cache.data.clear();
+    setCache(prev => ({ ...prev }));
+
+    console.trace(useRowsCache, 'Cleared rows cache');
+  }, []);
+
+  return { data: cache.data, update, clear };
+};
+
+// TODO: remove no longer needed logs, since with current impl we will reach to have every log in memory
+const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, ref) => {
+  const rowsCache = useRowsCache();
 
   useEffect(() => {
     const container = (ref as React.RefObject<HTMLDivElement>).current;
@@ -48,13 +85,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 
     props.invokeGetLogsChunk(0, 200);
 
-    rowsCacheMetadata.current.bounds.begin = 0;
-    rowsCacheMetadata.current.bounds.begin = 200;
-
-    rowsCache.data.clear();
-    setRowsCache(prev => ({ ...prev }));
-
-    console.trace(LogViewImpl, 'Cleared rows cache');
+    rowsCache.clear();
   }, [props.activeLogsChangedTime]);
 
   const [scrollTop, setScrollTop] = useState(0);
@@ -74,33 +105,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 
   const endIndex = startIndex + renderedNodesCount;
 
-  useEffect(() => {
-    const prev = prevLogsMetadata.current;
-    const logsChunkChanged = prev.logsChunk !== null && prev.logsChunk !== props.logsChunk;
-    const startIndexChanged = prev.startIndex !== null && prev.startIndex !== startIndex;
-
-    if (logsChunkChanged || (logsChunkChanged && startIndexChanged)) {
-      console.trace(LogViewImpl, 'Updating rows cache', {
-        newChunk: props.logsChunk,
-        startIndex,
-        rowsCache: rowsCache.data,
-      });
-
-      for (let idx = 0; idx < props.logsChunk.data.length; ++idx) {
-        const row = props.logsChunk.data[idx];
-        rowsCache.data.set(Number(row[0]), row);
-      }
-
-      setRowsCache(prev => ({ ...prev }));
-
-      console.trace(LogViewImpl, 'Rows cache', { rowsCache: rowsCache.data });
-    }
-
-    prevLogsMetadata.current = {
-      logsChunk: props.logsChunk,
-      startIndex,
-    };
-  }, [props.logsChunk, startIndex]);
+  useEffect(() => rowsCache.update(props.logsChunk, startIndex), [props.logsChunk, startIndex]);
 
   const syncWidths = () => {
     if (!headerRef.current || !bodyRef.current) return;
@@ -137,9 +142,6 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
       const rowIndex = i + startIndex;
 
       const row = rowsCache.data.get(rowIndex);
-      // if (row === undefined) {
-      //   continue;
-      // }
 
       const filterId = row ? row[1] : 'default';
 
