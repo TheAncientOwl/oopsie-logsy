@@ -6,14 +6,14 @@
  *
  * @file useDebounce.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Hook for @see utils/debounce.ts.
  */
 
 import { debounce } from '@/utils/debounce';
 import { useRef } from 'react';
 
-export const useDebounce = (fn: () => void, delay = 100) => {
+export const useDebounce = <T extends (...args: any[]) => any>(fn: T, delay = 100) => {
   const ref = useRef(debounce(fn, delay));
-  return ref.current;
+  return ref.current as (...args: Parameters<T>) => void;
 };
