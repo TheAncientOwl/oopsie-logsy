@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Theme data.
  */
 
@@ -55,7 +55,7 @@ type TSettingsTheme = {
   };
 };
 
-type TLogViewTheme = {
+export type TLogViewTheme = {
   table: {
     text: TColor;
     border: TColor;
