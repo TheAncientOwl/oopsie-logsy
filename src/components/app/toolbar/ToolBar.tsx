@@ -6,16 +6,24 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.9
+ * @version 0.10
  * @description App main toolbar
  */
 
 import { TooltipIconButton } from '@/components/ui/buttons/TooltipIconButton';
-import { FiltersIcon, NextIcon, PrevIcon, SettingsIcon } from '@/components/ui/icons';
+import { FiltersIcon, NextIcon, PrevIcon, SearchIcon, SettingsIcon } from '@/components/ui/icons';
 import { TRootState } from '@/store';
-import { ButtonGroup, Flex, Input } from '@chakra-ui/react';
-import React from 'react';
+import {
+  invokeApplySearch,
+  invokeNextSearch,
+  invokePrevSearch,
+  invokeSearchGetActiveData,
+} from '@/store/global-search/handlers';
+import { ButtonGroup, Flex, Separator, Spinner } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { SearchInput } from './SearchInput';
+import { SearchTagSelector } from './SearchTagSelector';
 
 type TToolBarProps = {
   onSettingsToggle: () => void;
@@ -52,8 +60,33 @@ const ToolBarImpl: React.FC<TToolBarProps & TPropsFromRedux> = props => {
           >
             <FiltersIcon />
           </TooltipIconButton>
+        </ButtonGroup>
+
+        <Separator
+          variant='solid'
+          margin='auto 5px'
+          size='lg'
+          height='35px'
+          borderStartWidth='medium'
+          borderColor='green.700'
+        />
+
+        <SearchTagSelector />
+
+        <ButtonGroup>
+          <TooltipIconButton
+            disabled={props.searchInProgress || props.searchPattern === ''}
+            tooltip='Search'
+            onClick={() => props.invokeApplySearch(props.alternativeId, props.searchPattern)}
+            variant={props.theme.buttons.search.variant}
+            colorPalette={props.theme.buttons.search.colorPalette}
+          >
+            {props.searchInProgress ? <Spinner /> : <SearchIcon />}
+          </TooltipIconButton>
 
           <TooltipIconButton
+            disabled={!props.hasPrev || props.searchInProgress}
+            onClick={() => props.invokePrevSearch()}
             tooltip='Prev'
             variant={props.theme.buttons.prev.variant}
             colorPalette={props.theme.buttons.prev.colorPalette}
@@ -62,6 +95,8 @@ const ToolBarImpl: React.FC<TToolBarProps & TPropsFromRedux> = props => {
           </TooltipIconButton>
 
           <TooltipIconButton
+            disabled={!props.hasNext || props.searchInProgress}
+            onClick={() => props.invokeNextSearch()}
             tooltip='Next'
             variant={props.theme.buttons.next.variant}
             colorPalette={props.theme.buttons.next.colorPalette}
@@ -70,23 +105,27 @@ const ToolBarImpl: React.FC<TToolBarProps & TPropsFromRedux> = props => {
           </TooltipIconButton>
         </ButtonGroup>
       </Flex>
-      <Input
-        placeholder='search'
-        backgroundColor={props.theme.input.background}
-        colorPalette={props.theme.input.colorPalette}
-        variant={props.theme.input.variant}
-        color={props.theme.input.text}
-      />
+      <SearchInput />
     </Flex>
   );
 };
 
 // <redux>
 const mapState = (state: TRootState) => ({
+  hasPrev: state.globalSearch.searchResult.hasPrev,
+  hasNext: state.globalSearch.searchResult.hasNext,
+  searchInProgress: state.globalSearch.searchLoading,
+  alternativeId: state.globalSearch.alternativeId,
+  searchPattern: state.globalSearch.searchPattern,
   theme: state.theme.themes[state.theme.activeThemeIndex].toolbar,
 });
 
-const mapDispatch = {};
+const mapDispatch = {
+  invokeSearchGetActiveData: invokeSearchGetActiveData.dispatch,
+  invokeApplySearch: invokeApplySearch.dispatch,
+  invokeNextSearch: invokeNextSearch.dispatch,
+  invokePrevSearch: invokePrevSearch.dispatch,
+};
 
 const connector = connect(mapState, mapDispatch, null, { forwardRef: true });
 type TPropsFromRedux = ConnectedProps<typeof connector>;

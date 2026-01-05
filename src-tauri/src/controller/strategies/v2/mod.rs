@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Oopsie V2 Mod file.
 //!
 //! **Strategy**:
@@ -15,12 +15,21 @@
 //!     - one file for parsed data
 //!     - one file for filtered data
 //!     - filtered logs indices are stored as first field in filtered file
+//!     - global search indices are saved to a binary file
 //!
 
 pub mod common;
 pub mod convert_logs;
 pub mod filter_logs;
 pub mod get_filtered_logs_chunk;
+pub mod search_apply;
+pub mod search_next;
+pub mod search_prev;
+
+use std::{
+    fs::{File, OpenOptions},
+    io::BufReader,
+};
 
 use polars::prelude::LazyFrame;
 
@@ -32,12 +41,14 @@ use crate::{
 
 pub struct OopsieV2Controller {
     pub logs_lazy_frame: Option<LazyFrame>,
+    pub matches_reader: Option<BufReader<File>>,
 }
 
 impl OopsieV2Controller {
     pub fn new() -> Self {
         Self {
             logs_lazy_frame: Option::None,
+            matches_reader: Option::None,
         }
     }
 
@@ -82,6 +93,21 @@ impl OopsieV2Controller {
         let working_dir = OopsieV2Controller::get_working_dir(logs_manager);
         working_dir.join("config.json")
     }
+
+    pub fn get_search_matches_path(logs_manager: &LogsManager) -> std::path::PathBuf {
+        let working_dir = OopsieV2Controller::get_working_dir(logs_manager);
+        working_dir.join("matches.idx")
+    }
+
+    pub fn open_search_matches_reader(logs_manager: &LogsManager) -> BufReader<File> {
+        BufReader::new(
+            OpenOptions::new()
+                .read(true)
+                .open(OopsieV2Controller::get_search_matches_path(&logs_manager))
+                .map_err(|e| format!("Failed to open matches.bin: {}", e))
+                .expect("Could not open matches file"),
+        )
+    }
 }
 
 impl OopsieLogsyController for OopsieV2Controller {
@@ -108,6 +134,32 @@ impl OopsieLogsyController for OopsieV2Controller {
     ) -> Result<crate::state::data::logs::LogsChunk, String> {
         log_trace!(&OopsieV2Controller::get_filtered_logs_chunk, "");
         get_filtered_logs_chunk::execute(app_data, desired_range, &mut self.logs_lazy_frame)
+    }
+
+    fn search_apply(
+        &mut self,
+        app_data: &mut crate::state::data::AppData,
+        alternative: String,
+        pattern: String,
+    ) -> Result<crate::state::data::global_search::SearchResult, String> {
+        log_trace!(&OopsieV2Controller::search_apply, "");
+        search_apply::execute(app_data, alternative, pattern, &mut self.matches_reader)
+    }
+
+    fn search_next(
+        &mut self,
+        app_data: &mut crate::state::data::AppData,
+    ) -> Result<crate::state::data::global_search::SearchResult, String> {
+        log_trace!(&OopsieV2Controller::search_next, "");
+        search_next::execute(app_data, &mut self.matches_reader)
+    }
+
+    fn search_prev(
+        &mut self,
+        app_data: &mut crate::state::data::AppData,
+    ) -> Result<crate::state::data::global_search::SearchResult, String> {
+        log_trace!(&OopsieV2Controller::search_prev, "");
+        search_prev::execute(app_data, &mut self.matches_reader)
     }
 }
 

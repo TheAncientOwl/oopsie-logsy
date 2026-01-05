@@ -6,7 +6,7 @@
  *
  * @file oopsie.ts
  * @author Alexandru Delegeanu
- * @version 0.2
+ * @version 0.3
  * @description Wrapper over tauri's invoke for OopsieLogsy backend commands.
  */
 
@@ -40,3 +40,30 @@ export const ipcInvokeApplyFilters = (
     filters,
     components,
   });
+
+export type TSearchResult = {
+  hasPrev: boolean;
+  hasNext: boolean;
+  rowIndex: number | undefined;
+  searchIndex: number | undefined;
+  searchTotal: number | undefined;
+};
+
+export const ipcInvokeApplySearch = (alternative: string, pattern: string) =>
+  invoke<TSearchResult>('search_apply', {
+    alternative,
+    pattern,
+  });
+
+export const ipcInvokeNextSearch = () => invoke<TSearchResult>('search_next');
+
+export const ipcInvokePrevSearch = () => invoke<TSearchResult>('search_prev');
+
+export type TActiveDataResult = {
+  result: TSearchResult;
+  alternativeId: string;
+  pattern: string;
+};
+
+export const ipcInvokeGetSearchActiveData = () =>
+  invoke<TActiveDataResult>('search_get_active_data');

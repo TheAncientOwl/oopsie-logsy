@@ -6,7 +6,7 @@
  *
  * @file darkTheme.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Theme maker helper.
  */
 
@@ -261,6 +261,28 @@ export const makeDarkTheme = (): TAppTheme => ({
       prev: {
         variant: 'outline',
         colorPalette: 'green',
+      },
+      search: {
+        variant: 'outline',
+        colorPalette: 'green',
+      },
+    },
+    select: {
+      background: 'black',
+      colorPalette: 'green',
+      variant: 'outline',
+      text: {
+        valid: 'green',
+        invalid: 'red.600',
+      },
+      border: 'green',
+      alternatives: {
+        background: 'black',
+        text: 'green',
+        hover: {
+          background: 'gray.500',
+          text: 'gray.300',
+        },
       },
     },
   },

@@ -7,7 +7,7 @@
 //! # `lib.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.12
+//! **Version**: 0.13
 //! **Description**: OopsieLogsy tauri lib.
 //!
 
@@ -44,7 +44,11 @@ pub fn run() {
             commands::apply_filters::apply_filters,
             commands::get_filters::get_filters,
             commands::import_logs::import_logs,
-            commands::get_logs_chunk::get_logs_chunk
+            commands::get_logs_chunk::get_logs_chunk,
+            commands::search::search_get_active_data,
+            commands::search::search_apply,
+            commands::search::search_next,
+            commands::search::search_prev,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

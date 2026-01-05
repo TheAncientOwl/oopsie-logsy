@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Oopsie V1 Mod file.
 //!
 
@@ -136,5 +136,31 @@ impl OopsieLogsyController for OopsieV1Controller {
         desired_range: IndexRange,
     ) -> Result<LogsChunk, String> {
         read_logs_chunk::execute(app_data, desired_range)
+    }
+
+    fn search_apply(
+        &mut self,
+        _app_data: &mut AppData,
+        _alternative: String,
+        _pattern: String,
+    ) -> Result<crate::state::data::global_search::SearchResult, String> {
+        log_assert!(&OopsieV1Controller::search_apply, false, "Not supported");
+        Err(String::from("Not supported"))
+    }
+
+    fn search_next(
+        &mut self,
+        _app_data: &mut AppData,
+    ) -> Result<crate::state::data::global_search::SearchResult, String> {
+        log_assert!(&OopsieV1Controller::search_next, false, "Not supported");
+        Err(String::from("Not supported"))
+    }
+
+    fn search_prev(
+        &mut self,
+        _app_data: &mut AppData,
+    ) -> Result<crate::state::data::global_search::SearchResult, String> {
+        log_assert!(&OopsieV1Controller::search_prev, false, "Not supported");
+        Err(String::from("Not supported"))
     }
 }

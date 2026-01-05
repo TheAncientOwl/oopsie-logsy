@@ -7,7 +7,7 @@
 //! # `mod.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.4
+//! **Version**: 0.5
 //! **Description**: Controller mod file.
 //!
 
@@ -16,7 +16,7 @@ pub mod strategies;
 
 use crate::{
     controller::{self, common::index_range::IndexRange},
-    state::data::{logs::LogsChunk, AppData},
+    state::data::{global_search::SearchResult, logs::LogsChunk, AppData},
 };
 
 /// Logs controller responsible with I/O and filtering.
@@ -68,6 +68,46 @@ pub trait OopsieLogsyController {
         app_data: &mut AppData,
         desired_range: IndexRange,
     ) -> Result<LogsChunk, String>;
+
+    ///
+    /// Filter for searched logs
+    ///
+    /// ## Params
+    /// `app_data`: OopsieLogsy application data
+    /// `alternative`: ID
+    /// `pattern`: what logs to log for, applied to given alternative
+    ///
+    /// ## Returns
+    /// search result
+    ///
+    fn search_apply(
+        &mut self,
+        app_data: &mut AppData,
+        alternative: String,
+        pattern: String,
+    ) -> Result<SearchResult, String>;
+
+    ///
+    /// Get next item in global search
+    ///
+    /// ## Params
+    /// `app_data`: OopsieLogsy application data
+    ///
+    /// ## Returns
+    /// search result
+    ///
+    fn search_next(&mut self, app_data: &mut AppData) -> Result<SearchResult, String>;
+
+    ///
+    /// Get prev item in global search
+    ///
+    /// ## Params
+    /// `app_data`: OopsieLogsy application data
+    ///
+    /// ## Returns
+    /// search result
+    ///
+    fn search_prev(&mut self, app_data: &mut AppData) -> Result<SearchResult, String>;
 }
 
 pub enum OopsieLogsyControllerStrategy {
@@ -102,6 +142,36 @@ impl OopsieLogsyController for OopsieLogsyControllerStrategy {
             OopsieLogsyControllerStrategy::OopsieV2(inner) => {
                 inner.get_filtered_logs_chunk(app_data, desired_range)
             }
+        }
+    }
+
+    fn search_apply(
+        &mut self,
+        app_data: &mut AppData,
+        alternative: String,
+        pattern: String,
+    ) -> Result<SearchResult, String> {
+        match self {
+            OopsieLogsyControllerStrategy::OopsieV1(inner) => {
+                inner.search_apply(app_data, alternative, pattern)
+            }
+            OopsieLogsyControllerStrategy::OopsieV2(inner) => {
+                inner.search_apply(app_data, alternative, pattern)
+            }
+        }
+    }
+
+    fn search_next(&mut self, app_data: &mut AppData) -> Result<SearchResult, String> {
+        match self {
+            OopsieLogsyControllerStrategy::OopsieV1(inner) => inner.search_next(app_data),
+            OopsieLogsyControllerStrategy::OopsieV2(inner) => inner.search_next(app_data),
+        }
+    }
+
+    fn search_prev(&mut self, app_data: &mut AppData) -> Result<SearchResult, String> {
+        match self {
+            OopsieLogsyControllerStrategy::OopsieV1(inner) => inner.search_prev(app_data),
+            OopsieLogsyControllerStrategy::OopsieV2(inner) => inner.search_prev(app_data),
         }
     }
 }

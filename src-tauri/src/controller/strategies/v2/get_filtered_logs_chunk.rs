@@ -7,7 +7,7 @@
 //! # `get_filtered_logs_chunk.rs`
 //!
 //! **Author**: Alexandru Delegeanu
-//! **Version**: 0.5
+//! **Version**: 0.6
 //! **Description**: Read filtered logs chunk.
 //!
 
@@ -22,7 +22,7 @@ use crate::{
             OopsieV2Controller,
         },
     },
-    log_debug, log_error, log_info,
+    log_error, log_info,
     state::data::{logs::LogsChunk, AppData},
 };
 
@@ -42,8 +42,6 @@ pub fn execute(
         );
         return Ok(out);
     }
-
-    log_debug!(&execute, "Desired range: {:?}", desired_range);
 
     if logs_frame.is_none() {
         let csv_path = OopsieV2Controller::get_filtered_database_path(&data.logs);

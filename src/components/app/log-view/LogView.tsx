@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.18
+ * @version 0.19
  * @description Display logs in table format
  */
 
@@ -53,6 +53,24 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
 
     syncWidthsDebounced();
   }, [props.activeLogsChangedTime]);
+
+  useEffect(() => {
+    if (props.searchResultRowIndex === undefined) return;
+
+    const container = (ref as React.RefObject<HTMLDivElement>).current;
+    if (!container) return;
+
+    const rowTop = props.searchResultRowIndex * ITEM_HEIGHT;
+    const rowBottom = rowTop + ITEM_HEIGHT;
+
+    const visibleTop = container.scrollTop;
+    const visibleBottom = visibleTop + container.clientHeight;
+
+    // If the row is not fully visible
+    if (rowTop < visibleTop || rowBottom > visibleBottom) {
+      container.scrollTop = rowTop; // scroll it into view at top
+    }
+  }, [props.searchResultRowIndex]);
 
   return (
     <Box
@@ -108,6 +126,7 @@ const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, re
                 filterToColors={props.filterToColors}
                 theme={props.theme}
                 tags={props.tags}
+                searchResultRowIndex={props.searchResultRowIndex}
               />
             </Table.Body>
           </Table.Root>
@@ -122,6 +141,7 @@ const mapState = (state: TRootState) => ({
   theme: state.theme.themes[state.theme.activeThemeIndex].logView,
   tags: state.logRegexTags.tags.filter(tag => tag.displayed),
   logsChunk: state.logs.chunkData,
+  searchResultRowIndex: state.globalSearch.searchResult.rowIndex,
   filterToColors: new Map<UUID, TFilterColors>(
     state.filters.filters.map(filter => [filter.id, filter.colors])
   ),

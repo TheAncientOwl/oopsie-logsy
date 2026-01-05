@@ -21,7 +21,7 @@ use crate::{
         v1::common::disk_io::config_file::ConfigFile,
         v2::{common::config_file::TOTAL_FILTERED_LOGS_KEY, OopsieV2Controller},
     },
-    log_debug, log_error, log_info,
+    log_error, log_info,
     state::data::{filters::ActiveFilter, AppData},
 };
 
@@ -48,7 +48,6 @@ pub fn execute(data: &mut AppData, logs_frame: &mut Option<LazyFrame>) -> Result
     *logs_frame = None;
 
     let active_tags = data.regex_tags.compute_active_tags();
-    log_debug!(&execute, "Active tags: {:?}", active_tags);
 
     let mut active_filters = data.filters.compute_active_filters(&active_tags);
     if active_filters.len() == 0 {

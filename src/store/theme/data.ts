@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.4
+ * @version 0.5
  * @description Theme data.
  */
 
@@ -185,6 +185,25 @@ type TToolbarTheme = {
     filters: TButton;
     next: TButton;
     prev: TButton;
+    search: TButton;
+  };
+  select: {
+    background: TColor;
+    colorPalette: TColorPalette;
+    variant: TInputVariant;
+    text: {
+      valid: TColor;
+      invalid: TColor;
+    };
+    border: TColor;
+    alternatives: {
+      background: TColor;
+      text: TColor;
+      hover: {
+        background: TColor;
+        text: TColor;
+      };
+    };
   };
 };
 

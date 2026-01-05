@@ -6,7 +6,7 @@
  *
  * @file lightTheme.ts
  * @author Alexandru Delegeanu
- * @version 0.3
+ * @version 0.4
  * @description Theme maker helper.
  */
 
@@ -261,6 +261,28 @@ export const makeLightTheme = (): TAppTheme => ({
       prev: {
         variant: 'solid',
         colorPalette: 'green',
+      },
+      search: {
+        variant: 'solid',
+        colorPalette: 'green',
+      },
+    },
+    select: {
+      background: 'white',
+      colorPalette: 'green',
+      variant: 'outline',
+      text: {
+        valid: 'green',
+        invalid: 'red.600',
+      },
+      border: 'green',
+      alternatives: {
+        background: 'white',
+        text: 'green',
+        hover: {
+          background: 'blackAlpha.100',
+          text: 'gray.300',
+        },
       },
     },
   },

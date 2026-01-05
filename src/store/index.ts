@@ -6,7 +6,7 @@
  *
  * @file index.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Store index file.
  */
 
@@ -16,6 +16,7 @@ import { logRegexTagsReducer } from './regex-tags/reducer';
 import { themeReducer } from './theme/reducer';
 
 import { configureStore, Middleware } from '@reduxjs/toolkit';
+import { globalSearchReducer } from './global-search/reducer';
 import { logsReducer } from './logs/reducer';
 
 const storeWatcher: Middleware = storeAPI => next => action => {
@@ -32,6 +33,7 @@ export const store = configureStore({
     filters: filtersTagsReducer,
     theme: themeReducer,
     logs: logsReducer,
+    globalSearch: globalSearchReducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk, storeWatcher),
 });

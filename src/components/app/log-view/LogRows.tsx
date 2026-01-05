@@ -6,7 +6,7 @@
  *
  * @file LogRows.tsx
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Render log rows.
  */
 
@@ -23,6 +23,7 @@ type TLogRowsProps = {
   filterToColors: Map<string, TFilterColors>;
   theme: TLogViewTheme;
   tags: TRegexTag[]; // TODO: can be replaced
+  searchResultRowIndex: number | undefined;
 };
 
 export const LogRows = (props: TLogRowsProps) => {
@@ -45,14 +46,16 @@ export const LogRows = (props: TLogRowsProps) => {
 
     const textColor = colors !== undefined ? colors.fg : 'inherit';
 
+    const isResultRow = rowIndex == props.searchResultRowIndex;
+
     items.push(
       <Table.Row
         data-index={rowIndex}
         key={rowIndex}
         textWrap='nowrap'
-        backgroundColor={backgroundColor}
-        borderColor={props.theme.table.border}
-        color={textColor}
+        backgroundColor={isResultRow ? 'green.subtle' : backgroundColor}
+        borderColor={isResultRow ? 'green' : props.theme.table.border}
+        color={isResultRow ? 'green' : textColor}
       >
         <For each={props.tags}>
           {(_, fieldIndex) => {

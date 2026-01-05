@@ -6,7 +6,7 @@
  *
  * @file App.tsx
  * @author Alexandru Delegeanu
- * @version 0.19
+ * @version 0.20
  * @description App class
  */
 
@@ -45,7 +45,7 @@ const updateLayoutHeights = (
 };
 
 const AppImpl: React.FC<TPropsFromRedux> = props => {
-  const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(true);
+  const [settingsMenuOpen, toggleSettingsMenu] = useSwitch(false);
   const [filtersMenuOpen, setFiltersMenuOpen] = useState(false);
 
   const toolbarBoxRef = useRef<HTMLDivElement>(null);

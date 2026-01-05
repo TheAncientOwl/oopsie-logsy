@@ -6,7 +6,7 @@
  *
  * @file icons.tsx
  * @author Alexandru Delegeanu
- * @version 0.11
+ * @version 0.12
  * @description Icons used along the app design
  */
 
@@ -25,6 +25,7 @@ import {
   FaPencilAlt,
   FaPlus,
   FaSave,
+  FaSearch,
   FaStar,
 } from 'react-icons/fa';
 import { GiSettingsKnobs, GiStarFormation } from 'react-icons/gi';
@@ -73,6 +74,7 @@ export const DragIcon = MdDragIndicator;
 export const FiltersIcon = GiSettingsKnobs;
 export const PrevIcon = BsArrowLeft;
 export const NextIcon = BsArrowRight;
+export const SearchIcon = FaSearch;
 
 const ColorModeIconImpl: React.FC<TPropsFromRedux> = props => {
   return props.activeThemeIndex === 0 ? <LuMoon /> : <LuSun />;
