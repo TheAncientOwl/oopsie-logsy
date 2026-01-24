@@ -6,7 +6,7 @@
  *
  * @file LogView.tsx
  * @author Alexandru Delegeanu
- * @version 0.19
+ * @version 0.20
  * @description Display logs in table format
  */
 
@@ -25,13 +25,16 @@ import { LogRows } from './LogRows';
 
 export const ITEM_HEIGHT = 45;
 export const ITEMS_OVERSCAN = 15;
-export const CHUNK_SIZE = 200;
 
 const LogViewImpl = React.forwardRef<HTMLDivElement, TPropsFromRedux>((props, ref) => {
-  const rowsCache = useRowsCache(props.logsChunk.totalLogs, props.invokeGetLogsChunk);
-  const { setScrollTop, startIndex, renderedNodesCount, endIndex } = useVirtualization(
+  const { setScrollTop, startIndex, renderedNodesCount, endIndex, scrollDirection } =
+    useVirtualization(props.logsChunk.totalLogs, ref);
+  const rowsCache = useRowsCache(
     props.logsChunk.totalLogs,
-    ref
+    props.invokeGetLogsChunk,
+    scrollDirection,
+    startIndex,
+    endIndex
   );
   const { headerRef, bodyRef, syncWidthsDebounced } = useSyncTableWidths([
     props.tags,

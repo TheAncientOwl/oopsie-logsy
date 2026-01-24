@@ -6,7 +6,7 @@
  *
  * @file data.ts
  * @author Alexandru Delegeanu
- * @version 0.6
+ * @version 0.7
  * @description Logs data.
  */
 
@@ -32,7 +32,6 @@ export type TStoreState = {
 // </types>
 
 // <data>
-export const LOG_VIEW_CHUNK_SIZE = 200;
 
 export const defaultState: TStoreState = {
   loading: false,

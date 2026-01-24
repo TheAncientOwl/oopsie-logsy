@@ -6,18 +6,25 @@
  *
  * @file useVirtualization.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Bounds math of table virtualization.
  */
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ITEM_HEIGHT, ITEMS_OVERSCAN } from '../LogView';
+
+export enum EScrollDirection {
+  None = 'None',
+  Up = 'Up',
+  Down = 'Down',
+}
 
 export const useVirtualization = (
   totalNumberOfItems: number,
   ref: React.ForwardedRef<HTMLDivElement>
 ) => {
-  const [scrollTop, setScrollTop] = useState(0);
+  const scrollDirection = useRef(EScrollDirection.None);
+  const [scrollTop, setScrollTopState] = useState(0);
 
   const innerRef = ref as React.RefObject<HTMLDivElement>;
   const windowHeight = innerRef.current ? innerRef.current.offsetHeight : 300;
@@ -31,5 +38,31 @@ export const useVirtualization = (
   );
   const endIndex = startIndex + renderedNodesCount;
 
-  return { scrollTop, setScrollTop, startIndex, renderedNodesCount, endIndex };
+  const setScrollTop = useCallback(
+    (newScrollTop: number) => {
+      let diff = scrollTop - newScrollTop;
+
+      if (diff > 0) {
+        scrollDirection.current = EScrollDirection.Up;
+      } else if (diff < 0) {
+        scrollDirection.current = EScrollDirection.Down;
+      } else {
+        scrollDirection.current = EScrollDirection.None;
+      }
+
+      if (diff == 0) {
+        scrollDirection.current = EScrollDirection.None;
+      } else if (diff) setScrollTopState(newScrollTop);
+    },
+    [setScrollTopState, scrollTop, scrollDirection]
+  );
+
+  return {
+    scrollTop,
+    setScrollTop,
+    scrollDirection: scrollDirection.current,
+    startIndex,
+    renderedNodesCount,
+    endIndex,
+  };
 };

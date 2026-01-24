@@ -6,19 +6,49 @@
  *
  * @file useRowsCache.ts
  * @author Alexandru Delegeanu
- * @version 0.1
+ * @version 0.2
  * @description Cache rows by index. Row format: [index, filter-id, field-1, field-2, ..., field-n]
  */
 
 import { TLogRow, TLogsChunk } from '@/store/logs/data';
 import { useCallback, useRef, useState } from 'react';
-import { CHUNK_SIZE, ITEMS_OVERSCAN } from '../LogView';
+import { ITEMS_OVERSCAN } from '../LogView';
 import { useDebounce } from '@/hooks/useDebounce';
+import { EScrollDirection } from './useVirtualization';
+
+export const CHUNK_SIZE = 200;
+
+const getMinKey = <T>(map: Map<number, T>): number | undefined => {
+  let minKey = Infinity;
+
+  for (const key of map.keys()) {
+    if (key < minKey) {
+      minKey = key;
+    }
+  }
+
+  return minKey === Infinity ? undefined : minKey;
+};
+
+const getMaxKey = <T>(map: Map<number, T>): number | undefined => {
+  let maxKey = -Infinity;
+
+  for (const key of map.keys()) {
+    if (key > maxKey) {
+      maxKey = key;
+    }
+  }
+
+  return maxKey === -Infinity ? undefined : maxKey;
+};
 
 // TODO: remove no longer needed logs, since with current impl we will reach to have every log in memory
 export const useRowsCache = (
   totalLogs: number,
-  invokeGetLogsChunk: (begin: number, end: number) => Promise<void>
+  invokeGetLogsChunk: (begin: number, end: number) => Promise<void>,
+  scrollDirection: EScrollDirection,
+  startIndex: number,
+  endIndex: number
 ) => {
   const [cache, setCache] = useState({ data: new Map<number, TLogRow>() });
   const prevMetadata = useRef<{
@@ -46,7 +76,43 @@ export const useRowsCache = (
         cache.data.set(Number(row[0]), row);
       }
 
-      setCache(prev => ({ ...prev }));
+      switch (scrollDirection) {
+        case EScrollDirection.Down: {
+          const firstItem = getMinKey(cache.data);
+          if (firstItem === undefined) {
+            break;
+          }
+
+          const lastNotVisibleOnTop = Math.max(firstItem, startIndex - ITEMS_OVERSCAN * 2);
+          if (firstItem > lastNotVisibleOnTop) {
+            break;
+          }
+
+          for (let idx = firstItem; idx < lastNotVisibleOnTop; ++idx) {
+            cache.data.delete(idx);
+          }
+
+          break;
+        }
+        case EScrollDirection.Up: {
+          const lastItem = getMaxKey(cache.data);
+          if (lastItem === undefined) {
+            break;
+          }
+
+          const lastNotVisibleOnBottom = Math.min(lastItem, endIndex + ITEMS_OVERSCAN * 2);
+          console.log(`Last not visible: ${lastNotVisibleOnBottom}`);
+          if (lastNotVisibleOnBottom > lastItem) {
+            break;
+          }
+
+          for (let idx = lastNotVisibleOnBottom; idx < lastItem; ++idx) {
+            cache.data.delete(idx);
+          }
+
+          break;
+        }
+      }
 
       console.trace(useRowsCache, 'Rows cache', { rowsCache: cache.data });
     }
