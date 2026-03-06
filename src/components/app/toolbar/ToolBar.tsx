@@ -6,7 +6,7 @@
  *
  * @file ToolBar.tsx
  * @author Alexandru Delegeanu
- * @version 0.10
+ * @version 0.11
  * @description App main toolbar
  */
 
@@ -20,7 +20,7 @@ import {
   invokeSearchGetActiveData,
 } from '@/store/global-search/handlers';
 import { ButtonGroup, Flex, Separator, Spinner } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { SearchInput } from './SearchInput';
 import { SearchTagSelector } from './SearchTagSelector';
