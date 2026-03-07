@@ -68,3 +68,49 @@ npm run tauri build
 ## 📄 License
 
 MIT
+
+## 🖼️ Gallery
+
+Below are a few screenshots that showcase the main workflow of OopsieLogsy, from configuring a regex parser to exploring and filtering large log files.
+
+### » Regex Configurator
+
+Define the regular expression used to split each log line into structured columns.
+
+<img alt='Regex Configurator' src="./gallery/1.regex-configurator.png" width="600">
+
+### » Logs Import
+
+Import large log files.
+
+<img alt='Logs Import' src="./gallery/2.logs-import.png" width="600">
+
+### » Logs View
+
+View parsed logs in a structured table designed for smooth navigation through large datasets.
+
+<img alt='Logs View' src="./gallery/3.logs-view.png" width="600">
+
+### » Default Log Filters
+
+Quickly enable or disable common log filters to focus on relevant messages.
+
+<img alt='Default Log Filters' src="./gallery/4.default-log-filters.png" width="600">
+
+### » Highlight Log Levels
+
+Color highlighting helps important log levels stand out during inspection. Here we can see each log level with a specific color.
+
+<img alt='Highlight Log Levels' src="./gallery/5.level-filters.png" width="600">
+
+### » Filter Logs
+
+Apply custom filters to narrow down logs based on channels, levels, or message content.
+
+<img alt='Filter Logs' src="./gallery/6.filtered-logs--channel3-error.png" width="600">
+
+### » Next/Prev Log
+
+Navigate between matches when searching through logs to quickly jump to the next relevant entry.
+
+<img alt='Next/Prev Log' src="./gallery/7.find-next.png" width="600">
