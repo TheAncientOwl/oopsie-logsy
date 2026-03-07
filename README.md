@@ -1,6 +1,6 @@
 # ☕ 🪵 OopsieLogsy
 
-**OopsieLogsy** is a simple, fast, and efficient log viewer designed to make large log files easier to explore and understand.
+**OopsieLogsy** is a simple, yet efficient log viewer designed to make large log files easier to explore and understand.
 
 Built with **Tauri + React**, OopsieLogsy focuses on performance, clarity, and a clean developer-friendly workflow.
 
